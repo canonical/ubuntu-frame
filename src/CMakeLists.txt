@@ -13,6 +13,6 @@ add_executable(ubuntu_core_kiosk
 target_include_directories(ubuntu_core_kiosk PUBLIC SYSTEM ${MIRAL_INCLUDE_DIRS})
 target_link_libraries(ubuntu_core_kiosk ${MIRAL_LDFLAGS})
 
-install(PROGRAMS ${CMAKE_BINARY_DIR}/ubuntu_core_kiosk ${CMAKE_BINARY_DIR}/x11_kiosk_launch
+install(PROGRAMS ${CMAKE_BINARY_DIR}/ubuntu_core_kiosk
     DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
 )

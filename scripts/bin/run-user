@@ -1,0 +1,8 @@
+#!/bin/sh
+set -ex
+
+mkdir -p "$HOME/.config/"
+# Copy the daemon config, dropping configuration keys that are specific to daemon execution
+grep -vE "(^vt=|^console-provider=vt|^display-layout=)" "$SNAP_DATA/ubuntu-core-kiosk.config" > "$HOME/.config/ubuntu-core-kiosk.config"
+
+exec "$@"

@@ -1,0 +1,49 @@
+#!/bin/sh
+set -e
+
+# we install with the daemon disabled, the configure hook
+# will start and enable it if appropriate
+snapctl stop --disable $SNAP_NAME.daemon
+
+display_layout=$(snapctl get display-layout)
+if [ "$display_layout" = "" ]
+then display_layout=default
+fi
+
+vt=$(snapctl get vt)
+if [ "$vt" = "" ]
+then
+  # If 'vt.handoff' is set, Mir only starts first time on the default VT. (#779)
+  # Until we understand and fix properly, set the config the way that works.
+  if ! grep -q snap_core= /proc/cmdline || ! grep -q vt.handoff= /proc/cmdline
+  then vt=4
+  else vt=0
+  fi
+fi
+
+cursor=$(snapctl get cursor)
+if [ "$cursor" = "" ]
+then
+  cursor=auto
+  # Workaround for https://github.com/MirServer/mir-kiosk/issues/23
+  # "Mouse offset from image on Raspberry Pi 3 with Ubuntu Core 18"
+  if grep -q snap_core=core18 /proc/cmdline && grep -q snap_kernel=pi-kernel /proc/cmdline
+  then cursor=software
+  fi
+fi
+
+daemon=$(snapctl get daemon)
+if [ "$daemon" = "" ]
+then
+  if grep -q -e snap_core= -e snapd_recovery_mode= /proc/cmdline
+  then daemon=true
+  else daemon=false
+  fi
+fi
+
+show_splash=$(snapctl get show-splash)
+if [ "$show_splash" = "" ]
+then show_splash=true
+fi
+
+snapctl set display-layout=$display_layout vt=$vt cursor=$cursor daemon=$daemon show-splash=$show_splash

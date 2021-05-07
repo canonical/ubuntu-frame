@@ -1,0 +1,98 @@
+name: ubuntu-core-kiosk
+adopt-info: ubuntu-core-kiosk
+summary: A Mir based shell for kiosk type applications
+description: A Mir based shell for kiosk type applications
+confinement: strict
+base: core20
+license: GPL-3.0
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: armhf
+
+environment:
+  # Prep for Mir
+  MIR_CLIENT_PLATFORM_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/mir/client-platform
+  MIR_SERVER_PLATFORM_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/mir/server-platform
+  # Prep EGL
+  LIBGL_DRIVERS_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri
+
+layout:
+  /usr/share:
+    bind: $SNAP/usr/share
+
+apps:
+  ubuntu-core-kiosk:
+    command-chain: [bin/run-user, bin/run-kiosk]
+    command: usr/local/bin/ubuntu_core_kiosk
+    plugs:
+      - login-session-control
+      - x11
+
+  daemon:
+    command-chain: [bin/run-daemon, bin/run-kiosk]
+    command: usr/local/bin/ubuntu_core_kiosk
+    daemon: simple
+    restart-delay: 3s
+    environment:
+      # XDG config
+      XDG_CONFIG_HOME: $SNAP_DATA
+
+slots:
+  wayland:
+
+plugs:
+  opengl:
+
+parts:
+  recipe-version:
+    plugin: nil
+    source: .
+    source-type: git
+    override-build: |
+      git rev-list --count HEAD > $SNAPCRAFT_PART_INSTALL/recipe-version
+    prime:
+      - -recipe-version
+
+  ppa-setup:
+    plugin: nil
+    override-pull: |
+      sudo apt --assume-yes install software-properties-common
+      sudo add-apt-repository -y ppa:mir-team/release
+      snapcraftctl pull
+
+  ubuntu-core-kiosk:
+    after: [recipe-version, ppa-setup]
+    override-pull: |
+      snapcraftctl pull
+      mir_version=`LANG=C apt-cache policy mir-graphics-drivers-desktop | sed -rne 's/^\s+Candidate:\s+([^-]*)-.+$/\1/p'`
+      recipe_version=`cat $SNAPCRAFT_STAGE/recipe-version`
+      snapcraftctl set-version $recipe_version-mir$mir_version
+      if echo $mir_version | grep -e '+dev' -e '~rc' -q; then snapcraftctl set-grade devel; else snapcraftctl set-grade stable; fi
+    plugin: cmake
+    source: src
+    override-build: |
+      sudo apt install --assume-yes libmiral-dev
+      snapcraftctl build
+    build-packages:
+      - pkg-config
+      - libmiral-dev
+    stage-packages:
+      - libmiral4
+
+  platform:
+    after: [ppa-setup]
+    plugin: nil
+    stage-packages:
+      - mir-platform-graphics-gbm-kms
+      - mir-platform-graphics-x
+      - libgl1-mesa-dri
+
+  icons:
+    plugin: nil
+    stage-packages: [dmz-cursor-theme]
+
+  scripts:
+    plugin: dump
+    source: scripts
