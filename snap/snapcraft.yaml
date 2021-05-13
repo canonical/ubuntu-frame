@@ -96,3 +96,8 @@ parts:
   scripts:
     plugin: dump
     source: scripts
+
+  swaybg:
+    plugin: nil
+    stage-packages:
+      - swaybg
