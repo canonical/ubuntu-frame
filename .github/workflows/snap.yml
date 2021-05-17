@@ -1,0 +1,45 @@
+name: Snap
+
+on:
+  push:
+    branches:
+    - staging
+    - trying
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  Snap:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 30
+
+    steps:
+    - name: Install Snapcraft
+      uses: samuelmeuli/action-snapcraft@v1
+      with:
+        snapcraft_token: ${{ secrets.SNAPCRAFT_TOKEN }}
+        use_lxd: true
+
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Patch PPA and version
+      run: |
+        sed -i 's@mir-team/release@mir-team/dev@' snap/snapcraft.yaml
+        sed -i 's@rev-list --count@rev-parse --short@' snap/snapcraft.yaml
+
+    - name: Build and verify the snap
+      env:
+        SNAPCRAFT_BUILD_INFO: 1
+        SNAP_ENFORCE_RESQUASHFS: 0
+      run: |
+        sg lxd -c '/snap/bin/snapcraft --use-lxd'
+
+        sudo snap install review-tools
+        /snap/bin/review-tools.snap-review --slots snap/local/slots.json --plugs snap/local/plugs.json *.snap
+
+    - name: Publish the snap
+      if: ${{ github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name }}
+      run: |
+        snapcraft upload *.snap --release "edge/pr${{ github.event.number }}"
