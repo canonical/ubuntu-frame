@@ -1,5 +1,5 @@
 #!/bin/sh
-set -ex
+set -eux
 
 mkdir -p "$HOME/.config/"
 # Copy the daemon config, dropping configuration keys that are specific to daemon execution

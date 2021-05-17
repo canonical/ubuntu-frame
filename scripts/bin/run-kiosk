@@ -1,11 +1,12 @@
 #!/bin/sh
+set -eux
 
 XDG_RUNTIME_DIR=$(dirname "$XDG_RUNTIME_DIR")
 export XDG_RUNTIME_DIR
 mkdir -p "$XDG_RUNTIME_DIR" -m 700
 
 # If there's an existing Wayland server, we're likely on a Wayland desktop
-if [ -n "$WAYLAND_DISPLAY" ] && [ -e "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]
+if [ -n "${WAYLAND_DISPLAY:-}" ] && [ -e "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]
 then
   # Allow Mir to select an uncontested WAYLAND_DISPLAY
   unset WAYLAND_DISPLAY
