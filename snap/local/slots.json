@@ -1,0 +1,5 @@
+{
+  "wayland":{
+    "allow-installation": "true"
+  }
+}
