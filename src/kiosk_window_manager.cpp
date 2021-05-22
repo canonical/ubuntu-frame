@@ -24,6 +24,7 @@
 #include <miral/window_manager_tools.h>
 
 #include <linux/input.h>
+#include <unistd.h>
 
 namespace ms = mir::scene;
 using namespace miral;
@@ -84,6 +85,14 @@ auto KioskWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 
         if (!request.state().is_set() || request.state().value() != mir_window_state_restored)
             specification.state() = request.state();
+    }
+
+    // TODO This is a hack to ensure the wallpaper remains in the background
+    // Ideally the wallpaper would use layer-shell, but there's no convenient -dev package
+    // for that extension
+    if (pid_of(app_info.application()) == getpid())
+    {
+        specification.depth_layer() = mir_depth_layer_background;
     }
 
     return specification;

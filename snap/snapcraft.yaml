@@ -15,8 +15,9 @@ environment:
   # Prep for Mir
   MIR_CLIENT_PLATFORM_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/mir/client-platform
   MIR_SERVER_PLATFORM_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/mir/server-platform
-  # Prep EGL
-  LIBGL_DRIVERS_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri
+  # Setup EGL from the plugs
+  LD_LIBRARY_PATH: ${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}:$SNAP/graphics/lib
+  LIBGL_DRIVERS_PATH: $SNAP/graphics/dri
 
 layout:
   /usr/share:
@@ -44,6 +45,10 @@ slots:
 
 plugs:
   opengl:
+  graphics-core20:
+    interface: content
+    target: $SNAP/graphics
+    default-provider: mesa-core20
 
 parts:
   recipe-version:
@@ -78,8 +83,22 @@ parts:
     build-packages:
       - pkg-config
       - libmiral-dev
+      - libwayland-dev
+      - libboost1.71-dev
     stage-packages:
       - libmiral4
+    prime:
+      - -usr/doc
+      - -usr/doc-base
+      - -usr/share/bug
+      - -usr/share/doc
+      - -usr/share/doc-base
+      - -usr/share/libdrm
+      - -usr/share/lintian
+      - -usr/share/man
+      - -usr/share/pkgconfig
+      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libdrm.so*
+      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libglapi.so*
 
   platform:
     after: [ppa-setup]
@@ -87,17 +106,18 @@ parts:
     stage-packages:
       - mir-platform-graphics-gbm-kms
       - mir-platform-graphics-x
-      - libgl1-mesa-dri
+    prime:
+      - usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libdrm.so*
+      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libglapi.so*
+      - -usr/share/doc
 
   icons:
     plugin: nil
     stage-packages: [dmz-cursor-theme]
+    prime:
+      - -usr/share/doc
 
   scripts:
     plugin: dump
     source: scripts
-
-  swaybg:
-    plugin: nil
-    stage-packages:
-      - swaybg
