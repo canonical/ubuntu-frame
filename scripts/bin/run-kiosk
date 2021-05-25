@@ -1,5 +1,6 @@
 #!/bin/sh
 set -eux
+if [ "$1" = "--help" ]; then set +x; fi
 
 XDG_RUNTIME_DIR=$(dirname "$XDG_RUNTIME_DIR")
 export XDG_RUNTIME_DIR
