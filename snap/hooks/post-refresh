@@ -1,15 +1,1 @@
-#!/bin/sh
-set -eux
-
-# we install with the daemon disabled, the configure hook
-# will start and enable it if appropriate
-snapctl stop --disable "$SNAP_INSTANCE_NAME.daemon"
-
-daemon=$(snapctl get daemon)
-if [ "$daemon" = "" ]
-then
-  if grep -q -e snap_core= -e snapd_recovery_mode= /proc/cmdline
-  then snapctl set daemon=true
-  else snapctl set daemon=false
-  fi
-fi
+install
