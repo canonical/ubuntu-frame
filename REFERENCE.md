@@ -198,7 +198,7 @@ user options:
   -h [ --help ]                         this help text
 ```
 
-You might notice that the options are described as "command-line options", and they can be supplied that way when running the snap from the command-line (and not as a daemon). That can be a convenient way of testing their effect. (See [RUNNING_ON_YOUR_DESKTOP.md](RUNNING_ON_YOUR_DESKTOP.md)) for an example. 
+You might notice that the options are described as "command-line options", and they can be supplied that way when running the snap from the command-line (and not as a daemon). That can be a convenient way of testing their effect. (See [RUNNING_ON_YOUR_DESKTOP.md](RUNNING_ON_YOUR_DESKTOP.md) for an example). 
 
 ### The `kiosk-display` snap configuration option
 
@@ -212,7 +212,7 @@ One of the options in `kiosk-config` is:
                                         $XDG_CONFIG_DIRS)
 ```
 
-But unless `kiosk-display` is set, there is no such file. The contents of this file describe the graphics cards and outputs on the system and, as such, vary between systems. You can get a template for your system by running `ubuntu-core-kiosk` and checking for an `ubuntu_core_kiosk.display` file. For example:
+The contents of this file describe the graphics cards and outputs on the system and, as such, vary between systems. You can get a template for your system by running `ubuntu-core-kiosk` and checking for an `ubuntu_core_kiosk.display` file. For example:
 ```bash
 $ cat /var/snap/ubuntu-core-kiosk/current/ubuntu_core_kiosk.display
 layouts:
@@ -278,12 +278,18 @@ defaults:
 
 ## Further reading
 
-These references for building kiosk snaps currently refer to `mir-kiosk` but you can use `ubuntu-core-kiosk` instead. 
+Developers working with Ubuntu Core Kiosk may also find the following useful:
+
+* [RUNNING_IN_A_VM.md](RUNNING_IN_A_VM.md)
+* [RUNNING_ON_YOUR_DESKTOP.md](RUNNING_ON_YOUR_DESKTOP.md)
+  
+The following tutorials for building kiosk snaps currently refer to `mir-kiosk` but you can use `ubuntu-core-kiosk` instead as it is a more flexible replacement. 
 
 * [Make a secure Ubuntu kiosk](https://ubuntu.com/tutorials/secure-ubuntu-kiosk)
 * [Make a Wayland-native Kiosk snap](https://ubuntu.com/tutorials/wayland-kiosk)
 * [Make a X11-based Kiosk Snap](https://ubuntu.com/tutorials/x11-kiosk)
 * [Make a HTML5/Electron-based Kiosk Snap](https://ubuntu.com/tutorials/electron-kiosk)
-* [HOWTO: Run your kiosk snap on your desktop](https://discourse.ubuntu.com/t/howto-run-your-kiosk-snap-on-your-desktop/)
 
-For a discussion of running `ubuntu-core-kiosk` in a desktop development environment see: [RUNNING_ON_YOUR_DESKTOP.md](RUNNING_ON_YOUR_DESKTOP.md)
+Similarly, the following article describes some useful debugging techniques that can be applied when using `ubuntu-core-kiosk` as well as `mir-kiosk`.
+
+* [Debugging Graphical Apps on Ubuntu Core](https://forum.snapcraft.io/t/debugging-graphical-apps-on-ubuntu-core/23671)
