@@ -2,15 +2,13 @@
 
 ## Overview
 
-The `ubuntu-core-kiosk` snap provides the foundation for any graphical kiosk implementation. It provides a shell handling multiple displays, touch, mouse and keyboard input, letting you run any application you want, instantly turning it into a kiosk application.
+The `ubuntu-core-kiosk` snap provides the foundation for any graphical kiosk implementation. It provides a shell handling multiple displays, touch, mouse and keyboard input, letting you run any application you want, instantly turning it into a kiosk application. Although primarily intended for use on Ubuntu Core it can be used on Classic linux systems and even run as an application within a traditional desktop environment.
 
 There are three snap configuration options:
 
-* `daemon=[true|false]` enables the daemon (defaults to false on classic systems)
+* `daemon=[true|false]` enables the daemon (defaults to true on Ubuntu Core and false on classic systems)
 * `kiosk-config=<contents for ubuntu_core_kiosk.config>`
 * `kiosk-display=<contents for ubuntu_core_kiosk.display>`
-
-Although primarily intended for use on Ubuntu Core it can be used on Classic linux systems and even run as an application within a traditional desktop environment.
 
 ## The snap configuration options
 
@@ -18,7 +16,7 @@ Although primarily intended for use on Ubuntu Core it can be used on Classic lin
 
 This controls the `ubuntu-core-kiosk.daemon` process. If `daemon=true` then the daemon runs and *takes control of the display on your computer*, otherwise the daemon is disabled.
 
-On a default installation `daemon` is only set to `true` on Ubuntu Core systems. But can be set to `true` either manually or from a gadget snap.  
+On a default installation `daemon` is only set to `true` on Ubuntu Core systems. But can be set to `true` either manually or from a gadget snap.
 
 You can see the value of this using the following command:
 
@@ -33,7 +31,7 @@ $ snap set ubuntu-core-kiosk daemon=true
 
 ### The `kiosk-config` snap configuration option
 
-This provides a way to modify the kiosk configuration file. The default file looks like this:
+This provides a way to modify the kiosk configuration file. Every time the option is set the provided config is merged with the default config and written to the file. The default file looks like this:
 
 ```bash
 $ cat /var/snap/ubuntu-core-kiosk/current/ubuntu_core_kiosk.config 
@@ -76,7 +74,7 @@ add-wayland-extensions=zwp_pointer_constraints_v1:zwp_relative_pointer_manager_v
 
 A full list of the current configuration options supported by `ubuntu-core-kiosk` can be obtained by `--help`:
 
-```bash
+```
 $ ubuntu-core-kiosk --help
 usage: /snap/ubuntu-core-kiosk/117/usr/local/bin/ubuntu_core_kiosk [options]
 
@@ -213,7 +211,7 @@ One of the options in `kiosk-config` is:
 ```
 
 The contents of this file describe the graphics cards and outputs on the system and, as such, vary between systems. You can get a template for your system by running `ubuntu-core-kiosk` and checking for an `ubuntu_core_kiosk.display` file. For example:
-```bash
+```yaml
 $ cat /var/snap/ubuntu-core-kiosk/current/ubuntu_core_kiosk.display
 layouts:
 # keys here are layout labels (used for atomically switching between them)
@@ -241,7 +239,7 @@ layouts:
 
 For an inverted display on this system, you would use:
 
-```bash
+```yaml
 $ snap set ubuntu-core-kiosk kiosk-display="
 layouts:
   default:
