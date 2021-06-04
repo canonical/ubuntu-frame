@@ -11,8 +11,8 @@ The application you choose (or provide) gets a fullscreen window (or windows) an
 There are three snap configuration options:
 
 * `daemon=[true|false]` enables the daemon (defaults to false on classic systems)
-* `kiosk-config=<options for the shell>`
-* `kiosk-display=<options for display layout>`
+* `config=<options for the shell>`
+* `display=<options for display layout>`
 
 The configuration options are described in detail in [REFERENCE.md](REFERENCE.md)
 

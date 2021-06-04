@@ -32,14 +32,14 @@ You should now have a command prompt reading something like `<your‑user>@local
 
     $ snap install ubuntu-core-kiosk
 
-Once the installation completes the QEMU window should show a graduated grey screen. This is the default Ubuntu Core Kiosk wallpaper. This can be changed using the “kiosk-config” snap configuration option:
+Once the installation completes the QEMU window should show a graduated grey screen. This is the default Ubuntu Core Kiosk wallpaper. This can be changed using the “config” snap configuration option:
 
-    $ snap set ubuntu-core-kiosk kiosk-config="
+    $ snap set ubuntu-core-kiosk config="
     wallpaper-top=0x92006a
     wallpaper-bottom=0xdd4814
     "
 
-The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of configuration options to control the kiosk display, but they are all set using `kiosk-config` and `kiosk-display` (more details in [REFERENCE.md](REFERENCE.md))
+The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of configuration options to control the kiosk display, but they are all set using `config` and `display` (more details in [REFERENCE.md](REFERENCE.md))
 
 ## Install a Web Kiosk
 
