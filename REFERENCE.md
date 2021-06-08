@@ -72,6 +72,15 @@ add-wayland-extensions=zwp_pointer_constraints_v1:zwp_relative_pointer_manager_v
 "
 ```
 
+Each "set" command overwrites the previous content, so if you're combining config options, put them all into the same "set" command:
+```bash
+$ snap set ubuntu-frame config="
+wallpaper-top=0x92006a
+wallpaper-bottom=0xdd4814
+add-wayland-extensions=zwp_pointer_constraints_v1:zwp_relative_pointer_manager_v1
+"
+```
+
 A full list of the current configuration options supported by `ubuntu-frame` can be obtained by `--help`:
 
 ```
