@@ -25,14 +25,14 @@ layout:
 
 apps:
   ubuntu-frame:
-    command-chain: [bin/run-user, bin/run-kiosk]
+    command-chain: [bin/run-user, bin/run-frame]
     command: usr/local/bin/frame
     plugs:
       - login-session-control
       - x11
 
   daemon:
-    command-chain: [bin/run-daemon, bin/run-kiosk]
+    command-chain: [bin/run-daemon, bin/run-frame]
     command: usr/local/bin/frame
     daemon: simple
     restart-delay: 3s
