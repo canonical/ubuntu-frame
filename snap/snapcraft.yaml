@@ -1,5 +1,5 @@
-name: ubuntu-core-kiosk
-adopt-info: ubuntu-core-kiosk
+name: ubuntu-frame
+adopt-info: ubuntu-frame
 summary: A Mir based shell for kiosk type applications
 description: A Mir based shell for kiosk type applications
 confinement: strict
@@ -24,16 +24,16 @@ layout:
     bind: $SNAP/usr/share
 
 apps:
-  ubuntu-core-kiosk:
+  ubuntu-frame:
     command-chain: [bin/run-user, bin/run-kiosk]
-    command: usr/local/bin/ubuntu_core_kiosk
+    command: usr/local/bin/frame
     plugs:
       - login-session-control
       - x11
 
   daemon:
     command-chain: [bin/run-daemon, bin/run-kiosk]
-    command: usr/local/bin/ubuntu_core_kiosk
+    command: usr/local/bin/frame
     daemon: simple
     restart-delay: 3s
     environment:
@@ -67,7 +67,7 @@ parts:
       sudo add-apt-repository -y ppa:mir-team/release
       snapcraftctl pull
 
-  ubuntu-core-kiosk:
+  ubuntu-frame:
     after: [recipe-version, ppa-setup]
     override-pull: |
       snapcraftctl pull

@@ -5,6 +5,6 @@ if [ "$1" = "--help" ]; then set +x; fi
 
 mkdir -p "$HOME/.config/"
 # Copy the daemon config, dropping configuration keys that are specific to daemon execution
-grep -vE "(^vt=|^console-provider=vt|^display-layout=)" "$SNAP_DATA/ubuntu_core_kiosk.config" > "$HOME/.config/ubuntu_core_kiosk.config"
+grep -vE "(^vt=|^console-provider=vt|^display-layout=)" "$SNAP_DATA/frame.config" > "$HOME/.config/frame.config"
 
 exec "$@"

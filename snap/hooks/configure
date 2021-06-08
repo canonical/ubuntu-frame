@@ -2,8 +2,8 @@
 set -euo pipefail
 
 config_changes=0
-display_file="$SNAP_DATA/ubuntu_core_kiosk.display"
-config_file="$SNAP_DATA/ubuntu_core_kiosk.config"
+display_file="$SNAP_DATA/frame.display"
+config_file="$SNAP_DATA/frame.config"
 
 # display_file
 # A display configuration can be supplied through the display option

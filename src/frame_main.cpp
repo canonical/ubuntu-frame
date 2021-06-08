@@ -16,7 +16,7 @@
  * Authored by: Alan Griffiths <alan@octopull.co.uk>
  */
 
-#include "kiosk_window_manager.h"
+#include "frame_window_manager.h"
 #include "egwallpaper.h"
 
 #include <miral/command_line_option.h>

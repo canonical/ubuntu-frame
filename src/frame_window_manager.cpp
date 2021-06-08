@@ -16,7 +16,7 @@
  * Authored By: Alan Griffiths <alan@octopull.co.uk>
  */
 
-#include "kiosk_window_manager.h"
+#include "frame_window_manager.h"
 
 #include <miral/application_info.h>
 #include <miral/toolkit_event.h>

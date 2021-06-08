@@ -1,6 +1,6 @@
-# Ubuntu Core Kiosk
+# Ubuntu Frame
 
-This is a quick introduction to running Ubuntu Core Kiosk in a virtual machine.
+This is a quick introduction to running Ubuntu Frame in a virtual machine.
 
 ## Setup a VM
 We need to be able to run the VM and, as the default build of qemu on Ubuntu doesn’t support graphics, we will use a handy snap that enables this:
@@ -27,14 +27,14 @@ Connect to the VP using ssh from a terminal window (ignore the address shown in 
 
     $ ssh -P 10022 <your‑user>@localhost
 
-## Install Ubuntu Core Kiosk
-You should now have a command prompt reading something like `<your‑user>@localhost:~$`. Now install Ubuntu Core Kiosk with the following command:
+## Install Ubuntu Frame
+You should now have a command prompt reading something like `<your‑user>@localhost:~$`. Now install Ubuntu Frame with the following command:
 
-    $ snap install ubuntu-core-kiosk
+    $ snap install ubuntu-frame
 
-Once the installation completes the QEMU window should show a graduated grey screen. This is the default Ubuntu Core Kiosk wallpaper. This can be changed using the “config” snap configuration option:
+Once the installation completes the QEMU window should show a graduated grey screen. This is the default Ubuntu Frame wallpaper. This can be changed using the “config” snap configuration option:
 
-    $ snap set ubuntu-core-kiosk config="
+    $ snap set ubuntu-frame config="
     wallpaper-top=0x92006a
     wallpaper-bottom=0xdd4814
     "
