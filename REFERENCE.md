@@ -267,8 +267,8 @@ The [snapcraft documentation](https://snapcraft.io/docs/gadget-snap) describes g
 
 ```yaml
 defaults:
-  Ip2mw7v1TbELd6IvCG6srr70rWlV7io7:
-    display-config: |
+  BPZbvWzvoMTrpec4goCXlckLe2IhfthK:
+    display: |
       layouts:
         default:
           cards:
