@@ -1,7 +1,7 @@
 name: ubuntu-frame
 adopt-info: ubuntu-frame
-summary: A Mir based shell for kiosk type applications
-description: A Mir based shell for kiosk type applications
+summary: The foundation for many embedded graphical display implementations
+description: ubuntu-frame is a simple fullscreen shell (based on Wayland) used for kiosks, industrial displays, digital signage, smart mirrors, etc.
 confinement: strict
 base: core20
 license: GPL-3.0
