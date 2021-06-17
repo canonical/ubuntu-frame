@@ -48,7 +48,7 @@ int main(int argc, char const* argv[])
             CommandLineOption{[&](auto& option) { wallpaper.bottom(option);},
                               "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
             StartupInternalClient{std::ref(wallpaper)},
-            set_window_management_policy<KioskWindowManagerPolicy>(),
+            set_window_management_policy<FrameWindowManagerPolicy>(),
             Keymap{}
         });
 }

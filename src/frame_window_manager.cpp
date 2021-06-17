@@ -30,12 +30,12 @@ namespace ms = mir::scene;
 using namespace miral;
 using namespace miral::toolkit;
 
-bool KioskWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* event)
+bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* event)
 {
     return false;
 }
 
-bool KioskWindowManagerPolicy::handle_touch_event(MirTouchEvent const* event)
+bool FrameWindowManagerPolicy::handle_touch_event(MirTouchEvent const* event)
 {
     auto const count = mir_touch_event_point_count(event);
 
@@ -55,7 +55,7 @@ bool KioskWindowManagerPolicy::handle_touch_event(MirTouchEvent const* event)
     return false;
 }
 
-bool KioskWindowManagerPolicy::handle_pointer_event(MirPointerEvent const* event)
+bool FrameWindowManagerPolicy::handle_pointer_event(MirPointerEvent const* event)
 {
     auto const action = mir_pointer_event_action(event);
 
@@ -71,7 +71,7 @@ bool KioskWindowManagerPolicy::handle_pointer_event(MirPointerEvent const* event
     return false;
 }
 
-auto KioskWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info, WindowSpecification const& request)
+auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info, WindowSpecification const& request)
 -> WindowSpecification
 {
     WindowSpecification specification = CanonicalWindowManagerPolicy::place_new_window(app_info, request);
@@ -98,7 +98,7 @@ auto KioskWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
     return specification;
 }
 
-void KioskWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, WindowSpecification const& modifications)
+void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, WindowSpecification const& modifications)
 {
     WindowSpecification specification = modifications;
 
@@ -116,21 +116,21 @@ void KioskWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
     CanonicalWindowManagerPolicy::handle_modify_window(window_info, specification);
 }
 
-void KioskWindowManagerPolicy::handle_request_drag_and_drop(WindowInfo& /*window_info*/)
+void FrameWindowManagerPolicy::handle_request_drag_and_drop(WindowInfo& /*window_info*/)
 {
 }
 
-void KioskWindowManagerPolicy::handle_request_move(WindowInfo& /*window_info*/, MirInputEvent const* /*input_event*/)
+void FrameWindowManagerPolicy::handle_request_move(WindowInfo& /*window_info*/, MirInputEvent const* /*input_event*/)
 {
 }
 
-void KioskWindowManagerPolicy::handle_request_resize(WindowInfo& /*window_info*/, MirInputEvent const* /*input_event*/, MirResizeEdge /*edge*/)
+void FrameWindowManagerPolicy::handle_request_resize(WindowInfo& /*window_info*/, MirInputEvent const* /*input_event*/, MirResizeEdge /*edge*/)
 {
 }
 
 Rectangle
-KioskWindowManagerPolicy::confirm_placement_on_display(WindowInfo const& /*window_info*/, MirWindowState /*new_state*/,
-    Rectangle const& new_placement)
+FrameWindowManagerPolicy::confirm_placement_on_display(WindowInfo const& /*window_info*/, MirWindowState /*new_state*/,
+                                                       Rectangle const& new_placement)
 {
     return new_placement;
 }
