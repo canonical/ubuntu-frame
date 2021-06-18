@@ -25,7 +25,7 @@
 
 using namespace mir::geometry;
 
-class KioskWindowManagerPolicy : public miral::CanonicalWindowManagerPolicy
+class FrameWindowManagerPolicy : public miral::CanonicalWindowManagerPolicy
 {
 public:
     using miral::CanonicalWindowManagerPolicy::CanonicalWindowManagerPolicy;

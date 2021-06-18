@@ -31,7 +31,7 @@ $ snap set ubuntu-frame daemon=true
 
 ### The `config` snap configuration option
 
-This provides a way to modify the kiosk configuration file. Every time the option is set the provided config is merged with the default config and written to the file. The default file looks like this:
+This provides a way to modify the Frame configuration file. Every time the option is set the provided config is merged with the default config and written to the file. The default file looks like this:
 
 ```bash
 $ cat /var/snap/ubuntu-frame/current/frame.config 
@@ -51,7 +51,7 @@ vt=4
 # Mouse pointer to use (auto|none|software)
 cursor=auto
 
-# As kiosk HAS to run mesa-kms we can safely override the probe for KMS everywhere
+# As frame HAS to run mesa-kms we can safely override the probe for KMS everywhere
 env-hacks=MIR_MESA_KMS_DISABLE_MODESET_PROBE
 ```
 
