@@ -39,7 +39,7 @@ Once the installation completes the QEMU window should show a graduated grey scr
     wallpaper-bottom=0xdd4814
     "
 
-The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of configuration options to control the Ubuntu Frame, but they are all set using `config` and `display` (more details in [REFERENCE.md](REFERENCE.md))
+The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of configuration options to control Ubuntu Frame, but they are all set using `config` and `display` (more details in [REFERENCE.md](REFERENCE.md))
 
 ## Install a Web Kiosk
 
