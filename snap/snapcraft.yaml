@@ -5,6 +5,7 @@ description: A Mir based shell for kiosk type applications
 confinement: strict
 base: core20
 license: GPL-3.0
+compression: lzo
 
 architectures:
   - build-on: amd64
