@@ -128,9 +128,10 @@ void FrameWindowManagerPolicy::handle_request_resize(WindowInfo& /*window_info*/
 {
 }
 
-Rectangle
-FrameWindowManagerPolicy::confirm_placement_on_display(WindowInfo const& /*window_info*/, MirWindowState /*new_state*/,
-                                                       Rectangle const& new_placement)
+auto FrameWindowManagerPolicy::confirm_placement_on_display(
+    WindowInfo const& /*window_info*/,
+    MirWindowState /*new_state*/,
+    Rectangle const& new_placement) -> Rectangle
 {
     return new_placement;
 }
