@@ -1,0 +1,5 @@
+.idea
+.project
+src/build-*
+src/cmake-*
+src/build
