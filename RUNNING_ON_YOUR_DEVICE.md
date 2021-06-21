@@ -17,11 +17,11 @@ You should now have a command prompt reading something like `<your‑user>@yourd
 
     $ snap install ubuntu-frame
 
-If you are using Ubuntu Core, you can skip this next step: On other versions of Linux, Ubuntu Core does not start by default. To change this default run the following command:
+If you are using Ubuntu Core, you can skip this next step. On other versions of Linux, Ubuntu Frame does not start by default. To change this default run the following command:
 
     $ snap set ubuntu-frame daemon=true
 
-Once ubuntu-frame starts the installation completes the display should show a graduated grey screen. This is the default Ubuntu Frame wallpaper. This can be changed using the “config” snap configuration option:
+Once Ubuntu Frame starts the display should show a graduated grey screen. This is the default Ubuntu Frame wallpaper. This can be changed using the “config” snap configuration option:
 
     $ snap set ubuntu-frame config="
     wallpaper-top=0x92006a
