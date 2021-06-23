@@ -287,8 +287,9 @@ defaults:
 
 Developers working with Ubuntu Frame may also find the following useful:
 
-* [RUNNING_IN_A_VM.md](RUNNING_IN_A_VM.md)
 * [RUNNING_ON_YOUR_DESKTOP.md](RUNNING_ON_YOUR_DESKTOP.md)
+* [RUNNING_IN_A_VM.md](RUNNING_IN_A_VM.md)
+* [RUNNING_ON_YOUR_DEVICE.md](RUNNING_ON_YOUR_DEVICE.md)
   
 The following tutorials for building kiosk snaps currently refer to `mir-kiosk` but you can use `ubuntu-frame` instead as it is a more flexible replacement. 
 

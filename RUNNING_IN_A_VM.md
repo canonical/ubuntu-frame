@@ -1,6 +1,6 @@
 # Ubuntu Frame
 
-This is a quick introduction to running Ubuntu Frame in a virtual machine.
+This is a quick reference for running Ubuntu Frame in a virtual machine.
 
 ## Setup a VM
 We need to be able to run the VM and, as the default build of qemu on Ubuntu doesn’t support graphics, we will use a handy snap that enables this:
@@ -52,3 +52,7 @@ Once the installation completes the QEMU window should show the WPE website. Thi
     $ snap set wpe-webkit-mir-kiosk url=https://mir-server.io
 
 This will show the Mir Server website.
+
+## Next steps
+
+For more detail about running and configuring Ubuntu Frame, and for resources to help build your own snaps to work with it see [REFERENCE.md](REFERENCE.md).

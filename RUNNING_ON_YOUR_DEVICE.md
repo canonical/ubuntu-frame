@@ -1,10 +1,10 @@
 # Ubuntu Frame
 
-This is a quick introduction to running Ubuntu Frame on a device.
+This is a quick reference for running Ubuntu Frame on a device.
 
 ## Setup your device
 
-You need either Ubuntu Core or a version of Linux supporting snaps.
+You need either [Ubuntu Core](https://ubuntu.com/core) or a version of Linux supporting snaps.
 
 1. Setting up Ubuntu Core is described in [Get Ubuntu for IoT](https://ubuntu.com/download/iot)
 2. Setting up snapd on other versions of Linux is described in [Installing snapd](https://snapcraft.io/docs/installing-snapd)
@@ -36,8 +36,16 @@ Still in your ssh session, install web kiosk:
 
     $ snap install wpe-webkit-mir-kiosk
 
-Once the installation completes the display should show the WPE website. This can be changed using the “url” snap configuration option:
+If you are using Ubuntu Core, you can skip this next step. On other versions of Linux, wpe-webkit-mir-kiosk does not start by default. To change this default run the following command:
+
+    $ snap set wpe-webkit-mir-kiosk daemon=true
+
+Once installed and configured the display should show the WPE website. This can be changed using the “url” snap configuration option:
 
     $ snap set wpe-webkit-mir-kiosk url=https://mir-server.io
 
 This will show the Mir Server website.
+
+## Next steps
+
+For more detail about running and configuring Ubuntu Frame, and for resources to help build your own snaps to work with it see [REFERENCE.md](REFERENCE.md).
