@@ -2,6 +2,6 @@
 set -euo pipefail
 
 if snapctl is-connected graphics-core20; then
-  echo "Multiple providers for the 'graphics-core20' content interface are not supported."
+  echo "Please disconnect the current provider for 'graphics-core20' before connecting a new one"
   exit 1
 fi
