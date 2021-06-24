@@ -16,6 +16,7 @@ environment:
   # Prep for Mir
   MIR_CLIENT_PLATFORM_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/mir/client-platform
   MIR_SERVER_PLATFORM_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/mir/server-platform
+  LIBINPUT_QUIRKS_DIR: ${SNAP}/usr/share/libinput
   # Setup EGL from the plugs
   LD_LIBRARY_PATH:    $SNAP/graphics/lib
   LIBGL_DRIVERS_PATH: $SNAP/graphics/dri
@@ -109,6 +110,7 @@ parts:
       - mir-platform-graphics-x
     prime:
       - usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      - usr/share/libinput
       - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libdrm.so*
       - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libglapi.so*
       - -usr/share/doc
