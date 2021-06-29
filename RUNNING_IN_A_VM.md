@@ -8,24 +8,23 @@ We need to be able to run the VM and, as the default build of qemu on Ubuntu doe
     $ sudo snap install qemu-virgil
     $ sudo snap connect qemu-virgil:kvm
 
-We also download an Ubuntu Core image. It’s currently easiest to get core18 working (as core20 requires UEFI and our qemu backend doesn't support UEFI booting). On an x86 computer download the `ubuntu-core-18-amd64.img.xz` image from here:
-
-[https://cdimage.ubuntu.com/ubuntu-core/18/stable/current/](https://cdimage.ubuntu.com/ubuntu-core/18/stable/current/)
+We also download an Ubuntu Core image from [https://cdimage.ubuntu.com/ubuntu-core/20/stable/current/](https://cdimage.ubuntu.com/ubuntu-core/20/stable/current/)
 
 Now, uncompress the image and move it to a convenient location:
 
-    $ unxz ~/Downloads/ubuntu-core-18-amd64.img.xz
-    $ mv ~/Downloads/ubuntu-core-18-amd64.img ~/snap/qemu-virgil/common/
+    $ unxz ~/Downloads/ubuntu-core-20-amd64.img.xz
+    $ mv ~/Downloads/ubuntu-core-20-amd64.img ~/snap/qemu-virgil/common/
     $ qemu-virgil -enable-kvm -m 512 -device virtio-vga,virgl=on\
      -display sdl,gl=on -netdev user,id=ethernet.0,hostfwd=tcp::10022-:22\
-     -device rtl8139,netdev=ethernet.0 -soundhw ac97\
-     ~/snap/qemu-virgil/common/ubuntu-core-18-amd64.img
+     -device rtl8139,netdev=ethernet.0\
+     -drive file=/snap/qemu-virgil/current/usr/share/qemu/edk2-x86_64-code.fd,if=pflash,format=raw,unit=0,readonly=on\
+     ~/snap/qemu-virgil/common/ubuntu-core-20-amd64.img
 
 This will create a QEMU window on your desktop and you need to follow through the prompts to initialise the VM with your launchpad account. (If you don’t have a launchpad account, get one and set up a public SSH key.)
 
 Connect to the VP using ssh from a terminal window (ignore the address shown in the QEMU window and use the port set in the above command):
 
-    $ ssh -P 10022 <your‑user>@localhost
+    $ ssh -p 10022 <your‑user>@localhost
 
 ## Install Ubuntu Frame
 You should now have a command prompt reading something like `<your‑user>@localhost:~$`. Now install Ubuntu Frame with the following command:
@@ -46,6 +45,7 @@ The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of co
 Still in your ssh session, install web kiosk:
 
     $ snap install wpe-webkit-mir-kiosk
+    $ snap connect wpe-webkit-mir-kiosk:wayland ubuntu-frame:wayland
 
 Once the installation completes the QEMU window should show the WPE website. This can be changed using the “url” snap configuration option:
 
