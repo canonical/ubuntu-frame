@@ -11,30 +11,36 @@ There are two ways to do this, and they achieve slightly different things.
 1. Running as the current user; and,
 2. Running as root (but hosted on your desktop environment).
 
+In both cases, you first need to install Ubuntu Frame
+
+    $ snap install ubuntu-frame
+
+(Note: Until ubuntu-frame is released you will need to append --beta to this command.)
+
 ### Running as the current user
 
 This will allow you to test applications you intend to use with `ubuntu-frame` without first packaging them as a snap or dealing with the complications of running as `daemons` under snapcraft.
 
 This is as easy as running:
 ```bash
-$ ubuntu-frame
+$ WAYLAND_DISPLAY=wayland-99 ubuntu-frame
 ```
 This will create a "Mir on X" window on your desktop and a (new) Wayland socket in `$XDG_RUNTIME_DIR`:
 ```bash
 $ ls $XDG_RUNTIME_DIR/wayland*
-/run/user/1000/wayland-0       /run/user/1000/wayland-1
-/run/user/1000/wayland-0.lock  /run/user/1000/wayland-1.lock
+/run/user/1000/wayland-0       /run/user/1000/wayland-99
+/run/user/1000/wayland-0.lock  /run/user/1000/wayland-99.lock
 ```
-This what happens on a Wayland based desktop. On an Xorg based desktop you'll only see the `wayland-0*` files and you should use `wayland-0` in the following example.
+This what happens on a Wayland based desktop _(we suggest `wayland-99` to avoid clashing with your desktop session's `wayland-0`)_. On an Xorg based desktop you'll only see the `wayland-99*` files.
 
 You can connect any Wayland supporting application (for example, one you are developing) using the `WAYLAND_DISPLAY` environment variable:
 ```bash
-$ WAYLAND_DISPLAY=wayland-1 glmark2-wayland
+$ WAYLAND_DISPLAY=wayland-99 gnome-system-monitor
 ```
 
 You can supply also configuration options (see [REFERENCE.md](REFERENCE.md)) on the commandline. For example, for testing multiple displays:
 ```bash
-ubuntu-frame --x11-output 800x600:800x600
+$ WAYLAND_DISPLAY=wayland-99 ubuntu-frame --x11-output 800x600:800x600
 ```
 
 ### Running as root

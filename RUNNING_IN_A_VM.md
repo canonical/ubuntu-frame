@@ -7,6 +7,7 @@ We need to be able to run the VM and, as the default build of qemu on Ubuntu doe
 
     $ sudo snap install qemu-virgil
     $ sudo snap connect qemu-virgil:kvm
+    $ qemu-virgil --version
 
 We also download an Ubuntu Core image from [https://cdimage.ubuntu.com/ubuntu-core/20/stable/current/](https://cdimage.ubuntu.com/ubuntu-core/20/stable/current/)
 
@@ -31,6 +32,8 @@ You should now have a command prompt reading something like `<your‑user>@local
 
     $ snap install ubuntu-frame
 
+_(Note: Until ubuntu-frame is released you will need to append `--beta` to this command.)_
+
 Once the installation completes the QEMU window should show a graduated grey screen. This is the default Ubuntu Frame wallpaper. This can be changed using the “config” snap configuration option:
 
     $ snap set ubuntu-frame config="
@@ -46,8 +49,11 @@ Still in your ssh session, install web kiosk:
 
     $ snap install wpe-webkit-mir-kiosk
     $ snap connect wpe-webkit-mir-kiosk:wayland ubuntu-frame:wayland
+    $ snap start wpe-webkit-mir-kiosk
 
-Once the installation completes the QEMU window should show the WPE website. This can be changed using the “url” snap configuration option:
+Once the installation completes the QEMU window should show the WPE website.
+
+The website can be changed using the “url” snap configuration option:
 
     $ snap set wpe-webkit-mir-kiosk url=https://mir-server.io
 

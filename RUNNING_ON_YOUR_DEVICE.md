@@ -17,6 +17,8 @@ You should now have a command prompt reading something like `<your‑user>@yourd
 
     $ snap install ubuntu-frame
 
+(Note: Until ubuntu-frame is released you will need to append --beta to this command.)
+
 If you are using Ubuntu Core, you can skip this next step. On other versions of Linux, Ubuntu Frame does not start by default. To change this default run the following command:
 
     $ snap set ubuntu-frame daemon=true
@@ -40,9 +42,12 @@ If you are using Ubuntu Core, you can skip this next step. On other versions of 
 
     $ snap set wpe-webkit-mir-kiosk daemon=true
 
-Once installed and configured the display should show the WPE website. This can be changed using the “url” snap configuration option:
+Once installed and configured the display should show the WPE website.
+
+The website can be changed using the “url” snap configuration option:
 
     $ snap set wpe-webkit-mir-kiosk url=https://mir-server.io
+    $ snap start wpe-webkit-mir-kiosk
 
 This will show the Mir Server website.
 
