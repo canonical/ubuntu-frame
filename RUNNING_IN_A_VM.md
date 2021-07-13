@@ -48,8 +48,6 @@ The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of co
 Still in your ssh session, install web kiosk:
 
     $ snap install wpe-webkit-mir-kiosk
-    $ snap connect wpe-webkit-mir-kiosk:wayland ubuntu-frame:wayland
-    $ snap start wpe-webkit-mir-kiosk
 
 Once the installation completes the QEMU window should show the WPE website.
 
