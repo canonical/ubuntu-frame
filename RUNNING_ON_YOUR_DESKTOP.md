@@ -15,8 +15,6 @@ In both cases, you first need to install Ubuntu Frame
 
     $ snap install ubuntu-frame
 
-(Note: Until ubuntu-frame is released you will need to append --beta to this command.)
-
 ### Running as the current user
 
 This will allow you to test applications you intend to use with `ubuntu-frame` without first packaging them as a snap or dealing with the complications of running as `daemons` under snapcraft.

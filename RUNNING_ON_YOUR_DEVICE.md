@@ -17,8 +17,6 @@ You should now have a command prompt reading something like `<your‑user>@yourd
 
     $ snap install ubuntu-frame
 
-(Note: Until ubuntu-frame is released you will need to append --beta to this command.)
-
 If you are using Ubuntu Core, you can skip this next step. On other versions of Linux, Ubuntu Frame does not start by default. To change this default run the following command:
 
     $ snap set ubuntu-frame daemon=true
