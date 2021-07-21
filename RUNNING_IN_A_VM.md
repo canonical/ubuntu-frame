@@ -32,7 +32,6 @@ You should now have a command prompt reading something like `<your‑user>@local
 
     $ snap install ubuntu-frame
 
-_(Note: Until ubuntu-frame is released you will need to append `--beta` to this command.)_
 
 Once the installation completes the QEMU window should show a graduated grey screen. This is the default Ubuntu Frame wallpaper. This can be changed using the “config” snap configuration option:
 
