@@ -101,8 +101,6 @@ parts:
       - -usr/share/lintian
       - -usr/share/man
       - -usr/share/pkgconfig
-      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libdrm.so*
-      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libglapi.so*
 
   platform:
     after: [ppa-setup]
@@ -113,8 +111,6 @@ parts:
     prime:
       - usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
       - usr/share/libinput
-      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libdrm.so*
-      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libglapi.so*
       - -usr/share/doc
 
   icons:
@@ -126,3 +122,17 @@ parts:
   scripts:
     plugin: dump
     source: scripts
+
+  cleanup:
+    after: [ubuntu-frame, platform, icons, scripts]
+    plugin: nil
+    build-snaps: [ mesa-core20 ]
+    override-prime: |
+      set -eux
+      cd /snap/mesa-core20/current/egl/lib
+      find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/{} \;
+      rm -fr "$SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri"
+      rm -fr "$SNAPCRAFT_PRIME/usr/share/libdrm"
+      for CRUFT in bug lintian man; do
+        rm -rf "$SNAPCRAFT_PRIME/usr/share/$CRUFT"
+      done
