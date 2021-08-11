@@ -20,10 +20,15 @@ environment:
   # Setup EGL from the plugs
   LD_LIBRARY_PATH:    $SNAP/graphics/lib
   LIBGL_DRIVERS_PATH: $SNAP/graphics/dri
+  __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
 
 layout:
-  /usr/share:
-    bind: $SNAP/usr/share
+  /usr/share/X11:
+    bind: $SNAP/usr/share/X11
+  /usr/share/icons:
+    bind: $SNAP/usr/share/icons
+  /usr/share/libdrm:  # Needed by mesa-core20 on ARM GPUs
+    bind: $SNAP/graphics/libdrm
 
 apps:
   ubuntu-frame:
@@ -89,18 +94,6 @@ parts:
       - libboost1.71-dev
     stage-packages:
       - libmiral4
-    prime:
-      - -usr/doc
-      - -usr/doc-base
-      - -usr/share/bug
-      - -usr/share/doc
-      - -usr/share/doc-base
-      - -usr/share/libdrm
-      - -usr/share/lintian
-      - -usr/share/man
-      - -usr/share/pkgconfig
-      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libdrm.so*
-      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libglapi.so*
 
   platform:
     after: [ppa-setup]
@@ -111,16 +104,24 @@ parts:
     prime:
       - usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
       - usr/share/libinput
-      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libdrm.so*
-      - -usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libglapi.so*
-      - -usr/share/doc
 
   icons:
     plugin: nil
     stage-packages: [dmz-cursor-theme]
-    prime:
-      - -usr/share/doc
 
   scripts:
     plugin: dump
     source: scripts
+
+  cleanup:
+    after: [ubuntu-frame, platform, icons, scripts]
+    plugin: nil
+    build-snaps: [ mesa-core20 ]
+    override-prime: |
+      set -eux
+      cd /snap/mesa-core20/current/egl/lib
+      find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/{} \;
+      rm -fr "$SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri"
+      for CRUFT in bug doc doc-base glvnd libdrm lintian man pkgconfig; do
+        rm -rf "$SNAPCRAFT_PRIME/usr/share/$CRUFT"
+      done
