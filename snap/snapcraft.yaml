@@ -24,6 +24,8 @@ environment:
 layout:
   /usr/share:
     bind: $SNAP/usr/share
+  /usr/share/libdrm:  # Needed by mesa-core20 on ARM GPUs
+    bind: $SNAP/graphics/libdrm
 
 apps:
   ubuntu-frame:
