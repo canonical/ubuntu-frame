@@ -29,6 +29,8 @@ layout:
     bind: $SNAP/usr/share/icons
   /usr/share/libdrm:  # Needed by mesa-core20 on ARM GPUs
     bind: $SNAP/graphics/libdrm
+  /usr/share/drirc.d:
+    bind: $SNAP/graphics/drirc.d
 
 apps:
   ubuntu-frame:
@@ -122,6 +124,6 @@ parts:
       cd /snap/mesa-core20/current/egl/lib
       find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/{} \;
       rm -fr "$SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri"
-      for CRUFT in bug doc doc-base glvnd libdrm lintian man pkgconfig; do
+      for CRUFT in bug doc doc-base drirc.d glvnd libdrm lintian man pkgconfig; do
         rm -rf "$SNAPCRAFT_PRIME/usr/share/$CRUFT"
       done
