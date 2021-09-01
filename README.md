@@ -23,3 +23,6 @@ Developers working with Ubuntu Frame may find the following useful:
 * [RUNNING_ON_YOUR_DESKTOP.md](RUNNING_ON_YOUR_DESKTOP.md)
 * [RUNNING_IN_A_VM.md](RUNNING_IN_A_VM.md)
 * [RUNNING_ON_YOUR_DEVICE.md](RUNNING_ON_YOUR_DEVICE.md)
+
+----
+[![ubuntu-frame](https://snapcraft.io/ubuntu-frame/badge.svg)](https://snapcraft.io/ubuntu-frame)
