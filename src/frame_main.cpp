@@ -34,6 +34,10 @@ int main(int argc, char const* argv[])
 
     DisplayConfiguration display_config{runner};
     WaylandExtensions wayland_extensions;
+    wayland_extensions
+        .enable(miral::WaylandExtensions::zwlr_layer_shell_v1)
+        .enable(miral::WaylandExtensions::zwp_virtual_keyboard_v1)
+        .enable(miral::WaylandExtensions::zwp_input_method_v2);
 
     egmde::Wallpaper wallpaper;
     runner.add_stop_callback([&] { wallpaper.stop(); });
