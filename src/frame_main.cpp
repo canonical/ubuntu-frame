@@ -22,6 +22,7 @@
 #include <miral/command_line_option.h>
 #include <miral/display_configuration.h>
 #include <miral/internal_client.h>
+#include <miral/external_client.h>
 #include <miral/keymap.h>
 #include <miral/runner.h>
 #include <miral/set_window_management_policy.h>
@@ -42,6 +43,13 @@ int main(int argc, char const* argv[])
     egmde::Wallpaper wallpaper;
     runner.add_stop_callback([&] { wallpaper.stop(); });
 
+    ExternalClientLauncher launcher;
+
+    runner.add_start_callback([&]()
+        {
+            launcher.launch({"squeekboard"});
+        });
+
     return runner.run_with(
         {
             wayland_extensions,
@@ -53,6 +61,7 @@ int main(int argc, char const* argv[])
                               "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
             StartupInternalClient{std::ref(wallpaper)},
             set_window_management_policy<FrameWindowManagerPolicy>(),
-            Keymap{}
+            Keymap{},
+            launcher
         });
 }
