@@ -36,6 +36,8 @@ layout:
   # For GTK
   /usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gdk-pixbuf-2.0:
     bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gdk-pixbuf-2.0
+  /usr/share/mime:
+    bind: $SNAP/usr/share/mime
 
 apps:
   ubuntu-frame:
