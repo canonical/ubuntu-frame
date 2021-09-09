@@ -38,6 +38,8 @@ layout:
     bind: $SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gdk-pixbuf-2.0
   /usr/share/mime:
     bind: $SNAP/usr/share/mime
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
 
 apps:
   ubuntu-frame:
