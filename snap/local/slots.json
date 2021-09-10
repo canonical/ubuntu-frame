@@ -1,5 +1,8 @@
 {
   "wayland":{
     "allow-installation": "true"
+  },
+  "dbus":{
+    "allow-connection": "true"
   }
 }
