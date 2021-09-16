@@ -82,9 +82,6 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
         specification.state() = mir_window_state_fullscreen;
         specification.size() = mir::optional_value<Size>{}; // Ignore requested size (if any) when we maximize
         tools.place_and_size_for_state(specification, WindowInfo{});
-
-        if (!request.state().is_set() || request.state().value() != mir_window_state_restored)
-            specification.state() = request.state();
     }
 
     // TODO This is a hack to ensure the wallpaper remains in the background
@@ -108,9 +105,6 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
         specification.state() = mir_window_state_fullscreen;
         specification.size() = mir::optional_value<Size>{}; // Ignore requested size (if any) when we maximize
         tools.place_and_size_for_state(specification, window_info);
-
-        if (!modifications.state().is_set() || modifications.state().value() != mir_window_state_restored)
-            specification.state() = modifications.state();
     }
 
     CanonicalWindowManagerPolicy::handle_modify_window(window_info, specification);
