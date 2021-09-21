@@ -30,31 +30,6 @@ namespace ms = mir::scene;
 using namespace miral;
 using namespace miral::toolkit;
 
-namespace
-{
-// When do we override the window state requested by the client?
-bool override(mir::optional_value<MirWindowState> const& requested_state)
-{
-    if (requested_state.is_set())
-    {
-        switch (requested_state.value())
-        {
-        case mir_window_state_minimized:
-        case mir_window_state_hidden:
-        case mir_window_state_attached:
-            return false;
-
-        default:
-            return true;
-        };
-    }
-    else
-    {
-        return false;
-    }
-}
-}
-
 bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* event)
 {
     return false;
@@ -101,15 +76,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 {
     WindowSpecification specification = CanonicalWindowManagerPolicy::place_new_window(app_info, request);
 
-    if ((specification.type() == mir_window_type_normal || specification.type() == mir_window_type_freestyle) &&
-        (!specification.parent().is_set() || !specification.parent().value().lock()) &&
-        override(request.state()))
-    {
-        specification.state() = mir_window_state_fullscreen;
-        specification.size() = mir::optional_value<Size>{};     // Ignore requested size (if any) when we fullscreen
-        specification.top_left() = mir::optional_value<Point>{};// Ignore requested position (if any) when we fullscreen
-        tools.place_and_size_for_state(specification, WindowInfo{});
-    }
+    override_spec(specification, WindowInfo{});
 
     // TODO This is a hack to ensure the wallpaper remains in the background
     // Ideally the wallpaper would use layer-shell, but there's no convenient -dev package
@@ -125,17 +92,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, WindowSpecification const& modifications)
 {
     WindowSpecification specification = modifications;
-
-    if ((window_info.type() == mir_window_type_normal || window_info.type() == mir_window_type_freestyle) &&
-        !window_info.parent() &&
-        override(modifications.state()))
-    {
-        specification.state() = mir_window_state_fullscreen;
-        specification.size() = mir::optional_value<Size>{};     // Ignore requested size (if any) when we fullscreen
-        specification.top_left() = mir::optional_value<Point>{};// Ignore requested position (if any) when we fullscreen
-        tools.place_and_size_for_state(specification, window_info);
-    }
-
+    override_spec(specification, window_info);
     CanonicalWindowManagerPolicy::handle_modify_window(window_info, specification);
 }
 
@@ -157,4 +114,47 @@ auto FrameWindowManagerPolicy::confirm_placement_on_display(
     Rectangle const& new_placement) -> Rectangle
 {
     return new_placement;
+}
+
+void FrameWindowManagerPolicy::override_spec(WindowSpecification& spec, WindowInfo const& window_info)
+{
+    // Only override behavior of windows of type normal and freestyle
+    switch (spec.type().is_set() ? spec.type().value() : window_info.type())
+    {
+        case mir_window_type_normal:
+        case mir_window_type_freestyle:
+            break;
+
+        default:
+            return;
+    }
+
+    // Only override behavior if the state is being changed to something other than minimized, hidden or attached
+    if (spec.state().is_set())
+    {
+        switch (spec.state().value())
+        {
+            case mir_window_state_minimized:
+            case mir_window_state_hidden:
+            case mir_window_state_attached:
+                return;
+
+            default:;
+        }
+    }
+    else
+    {
+        return;
+    }
+
+    // Don't override behavior of windows with a parent
+    if (spec.parent().is_set() ? spec.parent().value().lock() : window_info.parent())
+    {
+        return;
+    }
+
+    spec.state() = mir_window_state_fullscreen;
+    spec.size() = mir::optional_value<Size>{};      // Ignore requested size (if any) when we fullscreen
+    spec.top_left() = mir::optional_value<Point>{}; // Ignore requested position (if any) when we fullscreen
+    tools.place_and_size_for_state(spec, window_info);
 }
