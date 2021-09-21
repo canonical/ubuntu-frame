@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2020 Canonical Ltd.
+ * Copyright © 2016-2021 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 or 3 as
@@ -29,6 +29,52 @@
 namespace ms = mir::scene;
 using namespace miral;
 using namespace miral::toolkit;
+
+namespace
+{
+bool override_state(WindowSpecification& spec, WindowInfo const& window_info)
+{
+    // Only override state change if the state is being changed
+    if (!spec.state().is_set())
+    {
+        return false;
+    }
+
+    // Only override behavior of windows of type normal and freestyle
+    switch (spec.type().is_set() ? spec.type().value() : window_info.type())
+    {
+    case mir_window_type_normal:
+    case mir_window_type_freestyle:
+        break;
+
+    default:
+        return false;
+    }
+
+    // Only override behavior of windows without a parent
+    if (spec.parent().is_set() ? spec.parent().value().lock() : window_info.parent())
+    {
+        return false;
+    }
+
+    // Only override behavior if the new state is something other than minimized, hidden or attached
+    switch (spec.state().value())
+    {
+    case mir_window_state_minimized:
+    case mir_window_state_hidden:
+    case mir_window_state_attached:
+        return false;
+
+    default:;
+    }
+
+    spec.state() = mir_window_state_fullscreen;
+    spec.size() = mir::optional_value<Size>{};      // Ignore requested size (if any) when we fullscreen
+    spec.top_left() = mir::optional_value<Point>{}; // Ignore requested position (if any) when we fullscreen
+
+    return true;
+}
+}
 
 bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* event)
 {
@@ -76,15 +122,12 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 {
     WindowSpecification specification = CanonicalWindowManagerPolicy::place_new_window(app_info, request);
 
-    if ((specification.type() == mir_window_type_normal || specification.type() == mir_window_type_freestyle) &&
-        (!specification.parent().is_set() || !specification.parent().value().lock()))
     {
-        specification.state() = mir_window_state_fullscreen;
-        specification.size() = mir::optional_value<Size>{}; // Ignore requested size (if any) when we maximize
-        tools.place_and_size_for_state(specification, WindowInfo{});
-
-        if (!request.state().is_set() || request.state().value() != mir_window_state_restored)
-            specification.state() = request.state();
+        WindowInfo window_info{};
+        if (override_state(specification, window_info))
+        {
+            tools.place_and_size_for_state(specification, window_info);
+        }
     }
 
     // TODO This is a hack to ensure the wallpaper remains in the background
@@ -102,15 +145,9 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 {
     WindowSpecification specification = modifications;
 
-    if ((window_info.type() == mir_window_type_normal || window_info.type() == mir_window_type_freestyle) &&
-        !window_info.parent())
+    if (override_state(specification, window_info))
     {
-        specification.state() = mir_window_state_fullscreen;
-        specification.size() = mir::optional_value<Size>{}; // Ignore requested size (if any) when we maximize
         tools.place_and_size_for_state(specification, window_info);
-
-        if (!modifications.state().is_set() || modifications.state().value() != mir_window_state_restored)
-            specification.state() = modifications.state();
     }
 
     CanonicalWindowManagerPolicy::handle_modify_window(window_info, specification);
