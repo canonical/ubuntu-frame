@@ -68,9 +68,9 @@ bool override_state(WindowSpecification& spec, WindowInfo const& window_info)
     default:;
     }
 
-    spec.state() = mir_window_state_fullscreen;
-    spec.size() = mir::optional_value<Size>{};      // Ignore requested size (if any) when we fullscreen
-    spec.top_left() = mir::optional_value<Point>{}; // Ignore requested position (if any) when we fullscreen
+    spec.state() = mir_window_state_maximized;
+    spec.size() = mir::optional_value<Size>{};      // Ignore requested size (if any) when we maximize
+    spec.top_left() = mir::optional_value<Point>{}; // Ignore requested position (if any) when we maximize
 
     return true;
 }
