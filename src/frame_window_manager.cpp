@@ -34,6 +34,12 @@ namespace
 {
 bool override_state(WindowSpecification& spec, WindowInfo const& window_info)
 {
+    // Only override state change if the state is being changed
+    if (!spec.state().is_set())
+    {
+        return false;
+    }
+
     // Only override behavior of windows of type normal and freestyle
     switch (spec.type().is_set() ? spec.type().value() : window_info.type())
     {
@@ -47,12 +53,6 @@ bool override_state(WindowSpecification& spec, WindowInfo const& window_info)
 
     // Only override behavior of windows without a parent
     if (spec.parent().is_set() ? spec.parent().value().lock() : window_info.parent())
-    {
-        return false;
-    }
-
-    // Only override state change if the state is being changed
-    if (!spec.state().is_set())
     {
         return false;
     }
