@@ -58,6 +58,8 @@ plugs:
     interface: content
     target: $SNAP/graphics
     default-provider: mesa-core20
+  hardware-observe:
+  browser-support:
 
 parts:
   recipe-version:
