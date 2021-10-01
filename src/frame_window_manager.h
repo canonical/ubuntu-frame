@@ -20,8 +20,13 @@
 #define MIRAL_X11_KIOSK_WINDOW_MANAGER_H
 
 #include <miral/canonical_window_manager.h>
+#include <miral/zone.h>
 
 #include <mir_toolkit/events/enums.h>
+
+#include <vector>
+#include <set>
+#include <optional>
 
 using namespace mir::geometry;
 
@@ -46,9 +51,33 @@ public:
     auto confirm_placement_on_display(const miral::WindowInfo& window_info, MirWindowState new_state,
         Rectangle const& new_placement) -> Rectangle override;
 
+    void advise_new_window(miral::WindowInfo const& window_info) override;
+    void advise_delete_window(miral::WindowInfo const& window_info) override;
+
+    void advise_application_zone_create(miral::Zone const& application_zone) override;
+    void advise_application_zone_update(miral::Zone const& updated, miral::Zone const& original) override;
+    void advise_application_zone_delete(miral::Zone const& application_zone) override;
+
 private:
-    /// Returns true if changes were made
-    auto fix_spec(miral::WindowSpecification& spec, miral::WindowInfo const& window_info) -> bool;
+    struct Container
+    {
+        miral::Zone zone;
+        std::set<miral::Window> attached;
+    };
+    std::vector<Container> containers;
+
+    /// Returns the container with the most overlap with the given rect.
+    auto container_for_rect(Rectangle const& rect) -> Container&;
+
+    /// Returns the container extents if the window is in a container.
+    auto container_extents_of(miral::Window const& window) -> std::optional<Rectangle>;
+
+    /// Puts the window in a container if it's not already, and returns the placement rectangle. Does not create
+    /// a zone if none exist.
+    auto ensure_window_in_container(miral::Window const& window) -> Rectangle;
+
+    /// Removes the window from any zones it may be in.
+    void ensure_window_not_in_container(miral::Window const& window);
 };
 
 #endif /* MIRAL_X11_KIOSK_WINDOW_MANAGER_H */
