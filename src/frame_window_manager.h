@@ -45,6 +45,10 @@ public:
 
     auto confirm_placement_on_display(const miral::WindowInfo& window_info, MirWindowState new_state,
         Rectangle const& new_placement) -> Rectangle override;
+
+private:
+    /// Returns true if changes were made
+    auto fix_spec(miral::WindowSpecification& spec, miral::WindowInfo const& window_info) -> bool;
 };
 
 #endif /* MIRAL_X11_KIOSK_WINDOW_MANAGER_H */
