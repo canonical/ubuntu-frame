@@ -30,52 +30,6 @@ namespace ms = mir::scene;
 using namespace miral;
 using namespace miral::toolkit;
 
-namespace
-{
-bool override_state(WindowSpecification& spec, WindowInfo const& window_info)
-{
-    // Only override state change if the state is being changed
-    if (!spec.state().is_set())
-    {
-        return false;
-    }
-
-    // Only override behavior of windows of type normal and freestyle
-    switch (spec.type().is_set() ? spec.type().value() : window_info.type())
-    {
-    case mir_window_type_normal:
-    case mir_window_type_freestyle:
-        break;
-
-    default:
-        return false;
-    }
-
-    // Only override behavior of windows without a parent
-    if (spec.parent().is_set() ? spec.parent().value().lock() : window_info.parent())
-    {
-        return false;
-    }
-
-    // Only override behavior if the new state is something other than minimized, hidden or attached
-    switch (spec.state().value())
-    {
-    case mir_window_state_minimized:
-    case mir_window_state_hidden:
-    case mir_window_state_attached:
-        return false;
-
-    default:;
-    }
-
-    spec.state() = mir_window_state_fullscreen;
-    spec.size() = mir::optional_value<Size>{};      // Ignore requested size (if any) when we fullscreen
-    spec.top_left() = mir::optional_value<Point>{}; // Ignore requested position (if any) when we fullscreen
-
-    return true;
-}
-}
-
 bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* event)
 {
     return false;
@@ -124,7 +78,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 
     {
         WindowInfo window_info{};
-        if (override_state(specification, window_info))
+        if (fix_spec(specification, window_info))
         {
             tools.place_and_size_for_state(specification, window_info);
         }
@@ -145,7 +99,7 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 {
     WindowSpecification specification = modifications;
 
-    if (override_state(specification, window_info))
+    if (fix_spec(specification, window_info))
     {
         tools.place_and_size_for_state(specification, window_info);
     }
@@ -171,4 +125,47 @@ auto FrameWindowManagerPolicy::confirm_placement_on_display(
     Rectangle const& new_placement) -> Rectangle
 {
     return new_placement;
+}
+
+auto FrameWindowManagerPolicy::fix_spec(WindowSpecification& spec, WindowInfo const& window_info) -> bool
+{
+    // Only override state change if the state is being changed
+    if (!spec.state().is_set())
+    {
+        return false;
+    }
+
+    // Only override behavior of windows of type normal and freestyle
+    switch (spec.type().is_set() ? spec.type().value() : window_info.type())
+    {
+    case mir_window_type_normal:
+    case mir_window_type_freestyle:
+        break;
+
+    default:
+        return false;
+    }
+
+    // Only override behavior of windows without a parent
+    if (spec.parent().is_set() ? spec.parent().value().lock() : window_info.parent())
+    {
+        return false;
+    }
+
+    // Only override behavior if the new state is something other than minimized, hidden or attached
+    switch (spec.state().value())
+    {
+    case mir_window_state_minimized:
+    case mir_window_state_hidden:
+    case mir_window_state_attached:
+        return false;
+
+    default:;
+    }
+
+    spec.state() = mir_window_state_fullscreen;
+    spec.size() = mir::optional_value<Size>{};      // Ignore requested size (if any) when we fullscreen
+    spec.top_left() = mir::optional_value<Point>{}; // Ignore requested position (if any) when we fullscreen
+
+    return true;
 }
