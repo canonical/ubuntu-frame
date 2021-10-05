@@ -60,14 +60,6 @@ apps:
 
 slots:
   wayland:
-  dbus-session:
-    interface: dbus
-    bus: session
-    name: org.gnome.SessionManager
-  dbus-session:
-    interface: dbus
-    bus: session
-    name: sm.puri.OSK0
 
 plugs:
   opengl:
