@@ -19,4 +19,17 @@ else
   gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled false
 fi
 
+# Set the keyboard layout
+osk_layout_file="$SNAP_DATA/osk-layout.txt"
+osk_layout_option=""
+if [ -e "${osk_layout_file}" ]; then
+    osk_layout_option="$(cat "${osk_layout_file}" 2>/dev/null)"
+fi
+if [ -z "${osk_layout_option}" ]; then
+  sources_value="[]"
+else
+  sources_value="$(printf "[('xkb', '%s')]" "${osk_layout_option}")"
+fi
+gsettings set org.gnome.desktop.input-sources sources "${sources_value}"
+
 exec "$@"

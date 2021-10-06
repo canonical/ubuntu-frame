@@ -20,6 +20,12 @@ if [ "$(cat "${osk_enabled_file}")" != "${osk_enabled_option}" ]; then
   let config_changes+=1
 fi
 
+osk_layout_option="$(snapctl get layout)"
+if [ "$(cat "${osk_layout_file}")" != "${osk_layout_option}" ]; then
+  echo "${osk_layout_option}" > "${osk_layout_file}"
+  let config_changes+=1
+fi
+
 # display_file
 # A display configuration can be supplied through the display option
 display_option="$(snapctl get display)"
