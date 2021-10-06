@@ -4,6 +4,18 @@ set -euo pipefail
 config_changes=0
 display_file="$SNAP_DATA/frame.display"
 config_file="$SNAP_DATA/frame.config"
+osk_file="$SNAP_DATA/osk-setting.txt"
+
+osk_option="$(snapctl get osk)"
+if [ ! -z "${osk_option}" ] && [ "${osk_option}" != "on" ] && [ "${osk_option}" != "off" ]; then
+  echo "Invalid OSK config option '${osk_option}'" 1>&2
+  exit 1
+fi
+
+if [ "$(cat "${osk_file}")" != "${osk_option}" ]; then
+  echo "${osk_option}" > "${osk_file}"
+  let config_changes+=1
+fi
 
 # display_file
 # A display configuration can be supplied through the display option
