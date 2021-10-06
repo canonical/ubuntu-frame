@@ -154,6 +154,9 @@ parts:
       - librsvg2-common
     override-build: |
       update-mime-database ${SNAPCRAFT_PART_INSTALL}/usr/share/mime
+    override-prime: |
+      snapcraftctl prime
+      # Compile the gsettings schemas
       # Index the pixbuf loaders
       LOADERS_PATH=$(echo ${SNAPCRAFT_PRIME}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/*/loaders)
       QUERY_LOADERS=/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders
