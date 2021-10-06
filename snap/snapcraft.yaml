@@ -38,6 +38,8 @@ layout:
     bind: $SNAP/usr/share/mime
   /usr/share/fonts:
     bind: $SNAP/usr/share/fonts
+  /usr/share/glib-2.0:
+    bind: $SNAP/usr/share/glib-2.0
 
 apps:
   ubuntu-frame:
@@ -152,11 +154,15 @@ parts:
       - shared-mime-info
     stage-packages:
       - librsvg2-common
+      - gsettings-desktop-schemas
+      - libglib2.0-bin
     override-build: |
+      # Update mime database
       update-mime-database ${SNAPCRAFT_PART_INSTALL}/usr/share/mime
     override-prime: |
       snapcraftctl prime
       # Compile the gsettings schemas
+      /usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/glib-2.0/glib-compile-schemas ${SNAPCRAFT_PRIME}/usr/share/glib-2.0/schemas
       # Index the pixbuf loaders
       LOADERS_PATH=$(echo ${SNAPCRAFT_PRIME}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/*/loaders)
       QUERY_LOADERS=/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders
