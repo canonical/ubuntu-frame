@@ -82,7 +82,7 @@ parts:
     plugin: nil
     override-pull: |
       sudo apt --assume-yes install software-properties-common
-      sudo add-apt-repository -y ppa:mir-team/dev
+      sudo add-apt-repository -y ppa:mir-team/release
       snapcraftctl pull
 
   ubuntu-frame:
