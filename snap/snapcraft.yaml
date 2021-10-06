@@ -21,8 +21,6 @@ environment:
   LD_LIBRARY_PATH:    $SNAP/graphics/lib
   LIBGL_DRIVERS_PATH: $SNAP/graphics/dri
   __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
-  # GTK
-  GDK_PIXBUF_MODULE_FILE: $SNAP/etc/gdk-pixbuf-loaders.cache
 
 layout:
   /usr/share/X11:
@@ -155,9 +153,12 @@ parts:
     stage-packages:
       - librsvg2-common
     override-build: |
-      update-mime-database "$SNAPCRAFT_PART_INSTALL/usr/share/mime"
-      mkdir -p "$SNAPCRAFT_PART_INSTALL/etc"
-      "/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders" > "$SNAPCRAFT_PART_INSTALL/etc/gdk-pixbuf-loaders.cache"
+      update-mime-database ${SNAPCRAFT_PART_INSTALL}/usr/share/mime
+      # Index the pixbuf loaders
+      LOADERS_PATH=$(echo ${SNAPCRAFT_PRIME}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/*/loaders)
+      QUERY_LOADERS=/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/gdk-pixbuf-2.0/gdk-pixbuf-query-loaders
+      GDK_PIXBUF_MODULEDIR=${LOADERS_PATH} ${QUERY_LOADERS} > ${LOADERS_PATH}/../loaders.cache
+      sed s!$SNAPCRAFT_PRIME!!g --in-place ${LOADERS_PATH}/../loaders.cache
 
   platform:
     after: [ppa-setup]
