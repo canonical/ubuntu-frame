@@ -7,10 +7,13 @@ mkdir -p "$HOME/.config/"
 # Copy the daemon config, dropping configuration keys that are specific to daemon execution
 grep -vE "(^vt=|^console-provider=vt|^display-layout=)" "$SNAP_DATA/frame.config" > "$HOME/.config/frame.config"
 
-# Enable or disable the OSK
-osk_file="$SNAP_DATA/osk-setting.txt"
-osk_option="$(cat "${osk_file}")"
-if [ "${osk_option}" = "on" ]; then
+# Enable or disable the keyboard
+osk_enabled_file="$SNAP_DATA/osk-enabled.txt"
+osk_enabled_option=""
+if [ -e "${osk_enabled_file}" ]; then
+  osk_enabled_option="$(cat "${osk_enabled_file}" 2>/dev/null)"
+fi
+if [ "${osk_enabled_option}" = "on" ]; then
   gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled true
 else
   gsettings set org.gnome.desktop.a11y.applications screen-keyboard-enabled false
