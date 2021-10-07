@@ -133,7 +133,7 @@ parts:
     source: https://gitlab.gnome.org/wmww/squeekboard.git
     source-branch: snap
     source-depth: 1
-    meson-parameters: [--prefix, /usr, -Dstrict=false]
+    meson-parameters: [--prefix, /usr, -Dstrict=false, -Dbuildtype=release]
     build-packages:
       - cargo
       - wayland-protocols
@@ -145,6 +145,8 @@ parts:
       - libglib2.0-0
       - libgnome-desktop-3-19
       - libgtk-3-0
+    prime:
+      - -usr/bin/squeekboard-test-layout
 
   gtk-prep:
     after: [squeekboard, libfeedback]
@@ -188,7 +190,7 @@ parts:
     source: scripts
 
   cleanup:
-    after: [ubuntu-frame, platform, icons, scripts]
+    after: [ubuntu-frame, platform, icons, scripts, gtk-prep]
     plugin: nil
     build-snaps: [ mesa-core20 ]
     override-prime: |
@@ -199,3 +201,7 @@ parts:
       for CRUFT in bug doc doc-base drirc.d glvnd libdrm lintian man pkgconfig; do
         rm -rf "$SNAPCRAFT_PRIME/usr/share/$CRUFT"
       done
+      rm -fr "$SNAPCRAFT_PRIME/usr/share/icons/Humanity"
+      rm -fr "$SNAPCRAFT_PRIME/usr/share/icons/Humanity-Dark"
+      rm -fr "$SNAPCRAFT_PRIME/usr/share/icons/ubuntu-mono-light"
+      rm -fr "$SNAPCRAFT_PRIME/usr/share/icons/ubuntu-mono-dark"
