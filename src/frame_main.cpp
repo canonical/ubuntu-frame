@@ -33,11 +33,26 @@ int main(int argc, char const* argv[])
     MirRunner runner{argc, argv};
 
     DisplayConfiguration display_config{runner};
+
+    std::mutex privileged_pids_mutex;
+    std::set<pid_t> privileged_pids;
+
+    std::set<std::string> const privileged_protocols{
+        WaylandExtensions::zwlr_layer_shell_v1,
+        WaylandExtensions::zwp_virtual_keyboard_v1,
+        WaylandExtensions::zwp_input_method_v2};
     WaylandExtensions wayland_extensions;
-    wayland_extensions
-        .enable(miral::WaylandExtensions::zwlr_layer_shell_v1)
-        .enable(miral::WaylandExtensions::zwp_virtual_keyboard_v1)
-        .enable(miral::WaylandExtensions::zwp_input_method_v2);
+    for (auto const& protocol : privileged_protocols)
+    {
+        wayland_extensions.enable(protocol);
+    }
+    wayland_extensions.set_filter([&](Application const& app, char const* protocol) -> bool
+        {
+            std::lock_guard<std::mutex> lock{privileged_pids_mutex};
+            return (
+                privileged_protocols.find(protocol) == privileged_protocols.end() ||
+                privileged_pids.find(pid_of(app)) != privileged_pids.end());
+        });
 
     egmde::Wallpaper wallpaper;
     runner.add_stop_callback([&] { wallpaper.stop(); });
