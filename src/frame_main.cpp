@@ -27,6 +27,53 @@
 #include <miral/set_window_management_policy.h>
 #include <miral/wayland_extensions.h>
 
+#include <unistd.h>
+#include <string.h>
+#include <iostream>
+#include <sys/apparmor.h>
+
+std::string const osk_auth_dir{"osk-auth"};
+
+namespace
+{
+/// Returns the name of the snap the app is from, or "" if a snap can't be detected
+std::string snap_name_of(miral::Application const& app)
+{
+    char* label_cstr;
+    char* mode_cstr;
+    errno = 0;
+    if (aa_getpeercon(miral::socket_fd_of(app), &label_cstr, &mode_cstr) < 0)
+    {
+        std::cerr
+            << "aa_getpeercon() failed for process " << miral::pid_of(app)
+            << ": " << strerror(errno)
+            << std::endl;
+        return "";
+    }
+    else
+    {
+        std::string const label{label_cstr};
+        free(label_cstr);
+        // mode_cstr should NOT be freed, as it's from the same buffer as label_cstr
+
+        std::string const snap_prefix{"snap."};
+        if (label.starts_with(snap_prefix))
+        {
+            auto right = label.find(".", snap_prefix.size());
+            if (right == std::string::npos)
+            {
+                right = label.size();
+            }
+            return label.substr(snap_prefix.size(), right - snap_prefix.size());
+        }
+        else
+        {
+            return "";
+        }
+    }
+}
+}
+
 int main(int argc, char const* argv[])
 {
     using namespace miral;
@@ -34,10 +81,31 @@ int main(int argc, char const* argv[])
 
     DisplayConfiguration display_config{runner};
     WaylandExtensions wayland_extensions;
-    wayland_extensions
-        .enable(miral::WaylandExtensions::zwlr_layer_shell_v1)
-        .enable(miral::WaylandExtensions::zwp_virtual_keyboard_v1)
-        .enable(miral::WaylandExtensions::zwp_input_method_v2);
+
+    std::set<std::string> const osk_protocols{
+        WaylandExtensions::zwlr_layer_shell_v1,
+        WaylandExtensions::zwp_virtual_keyboard_v1,
+        WaylandExtensions::zwp_input_method_v2};
+    for (auto const& protocol : osk_protocols)
+    {
+        wayland_extensions.enable(protocol);
+    }
+
+    std::set<std::string> const osk_snaps{
+        "ubuntu-frame-osk"};
+
+    wayland_extensions.set_filter([&](Application const& app, char const* protocol) -> bool
+        {
+            if (osk_protocols.find(protocol) != osk_protocols.end())
+            {
+                auto const snap_name = snap_name_of(app);
+                return osk_snaps.find(snap_name) != osk_snaps.end();
+            }
+            else
+            {
+                return true;
+            }
+        });
 
     egmde::Wallpaper wallpaper;
     runner.add_stop_callback([&] { wallpaper.stop(); });
