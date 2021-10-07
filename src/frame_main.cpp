@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2020 Canonical Ltd.
+ * Copyright © 2016-2021 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
  * under the terms of the GNU General Public License version 2 or 3 as
@@ -16,6 +16,7 @@
  * Authored by: Alan Griffiths <alan@octopull.co.uk>
  */
 
+#include "frame_authorization.h"
 #include "frame_window_manager.h"
 #include "egwallpaper.h"
 
@@ -34,10 +35,7 @@ int main(int argc, char const* argv[])
 
     DisplayConfiguration display_config{runner};
     WaylandExtensions wayland_extensions;
-    wayland_extensions
-        .enable(miral::WaylandExtensions::zwlr_layer_shell_v1)
-        .enable(miral::WaylandExtensions::zwp_virtual_keyboard_v1)
-        .enable(miral::WaylandExtensions::zwp_input_method_v2);
+    FrameAuthorization auth{wayland_extensions};
 
     egmde::Wallpaper wallpaper;
     runner.add_stop_callback([&] { wallpaper.stop(); });
