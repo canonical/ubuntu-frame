@@ -42,6 +42,8 @@ If you are using Ubuntu Core, you can skip this next step. On other versions of 
 
 Once installed and configured the display should show the WPE website.
 
+_Note [2021-08-08]: there seems to be a problem with wpe-webkit-mir-kiosk and some websites: https://gitlab.com/glancr/wpe-webkit-snap/-/issues/27_
+
 The website can be changed using the “url” snap configuration option:
 
     $ snap set wpe-webkit-mir-kiosk url=https://mir-server.io

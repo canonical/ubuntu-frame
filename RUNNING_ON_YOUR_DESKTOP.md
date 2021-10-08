@@ -70,3 +70,6 @@ $ snap install wpe-webkit-mir-kiosk
 $ snap connect wpe-webkit-mir-kiosk:wayland
 $ snap set wpe-webkit-mir-kiosk daemon=true
 ```
+
+_Note [2021-08-08]: there seems to be a problem with wpe-webkit-mir-kiosk and some websites: https://gitlab.com/glancr/wpe-webkit-snap/-/issues/27_
+
