@@ -50,7 +50,9 @@ Still in your ssh session, install web kiosk:
 
 Once the installation completes the QEMU window should show the WPE website.
 
-_Note [2021-08-08]: there seems to be a problem with wpe-webkit-mir-kiosk and some websites: https://gitlab.com/glancr/wpe-webkit-snap/-/issues/27_
+_Note [2021-10-08]: there seems to be a problem with wpe-webkit-mir-kiosk and some websites: https://gitlab.com/glancr/wpe-webkit-snap/-/issues/27_
+
+_Note [2021-10-12]: As a workaround, use `wpe-webkit-frame-temp` (e.g. `snap install --edge wpe-webkit-frame-temp`) until problems are resolved_
 
 The website can be changed using the “url” snap configuration option:
 
