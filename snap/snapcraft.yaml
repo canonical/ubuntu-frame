@@ -58,6 +58,8 @@ plugs:
     interface: content
     target: $SNAP/graphics
     default-provider: mesa-core20
+  # network-bind is needed to run via X-forwarding (development in a container or VM)
+  network-bind:
 
 parts:
   recipe-version:
