@@ -27,31 +27,44 @@
 #include <miral/set_window_management_policy.h>
 #include <miral/wayland_extensions.h>
 
+#include <unistd.h>
+
+std::string const osk_auth_dir{"osk-auth"};
+
+bool pid_is_authorized(pid_t pid, std::string const& dir)
+{
+    auto const snap = getenv("SNAP");
+    auto const auth_path = std::string{snap ? snap : ""} + "/" + dir + "/allow-" + std::to_string(pid);
+    return access(auth_path.c_str(), F_OK) == 0;
+}
+
 int main(int argc, char const* argv[])
 {
     using namespace miral;
     MirRunner runner{argc, argv};
 
     DisplayConfiguration display_config{runner};
+    WaylandExtensions wayland_extensions;
 
-    std::mutex privileged_pids_mutex;
-    std::set<pid_t> privileged_pids;
-
-    std::set<std::string> const privileged_protocols{
+    std::set<std::string> const osk_protocols{
         WaylandExtensions::zwlr_layer_shell_v1,
         WaylandExtensions::zwp_virtual_keyboard_v1,
         WaylandExtensions::zwp_input_method_v2};
-    WaylandExtensions wayland_extensions;
-    for (auto const& protocol : privileged_protocols)
+    for (auto const& protocol : osk_protocols)
     {
         wayland_extensions.enable(protocol);
     }
+
     wayland_extensions.set_filter([&](Application const& app, char const* protocol) -> bool
         {
-            std::lock_guard<std::mutex> lock{privileged_pids_mutex};
-            return (
-                privileged_protocols.find(protocol) == privileged_protocols.end() ||
-                privileged_pids.find(pid_of(app)) != privileged_pids.end());
+            if (osk_protocols.find(protocol) != osk_protocols.end())
+            {
+                return pid_is_authorized(pid_of(app), osk_auth_dir);
+            }
+            else
+            {
+                return true;
+            }
         });
 
     egmde::Wallpaper wallpaper;

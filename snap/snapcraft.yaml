@@ -58,6 +58,9 @@ plugs:
     interface: content
     target: $SNAP/graphics
     default-provider: mesa-core20
+  on-screen-keyboard-auth:
+    interface: content
+    target: $SNAP/osk-auth
 
 parts:
   recipe-version:
