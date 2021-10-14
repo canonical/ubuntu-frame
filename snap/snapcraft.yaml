@@ -37,8 +37,12 @@ apps:
     command-chain: [bin/run-user, bin/run-frame]
     command: usr/local/bin/frame
     plugs:
-      - login-session-control
-      - x11
+      - opengl                # for compositing
+      - login-session-control # to run as a user login (e.g. from a VT)
+      - x11                   # to run on a host X11 server
+      - network-bind          # to run via X-forwarding (e.g. development in a container/VM)
+    slots:
+      - wayland
 
   daemon:
     command-chain: [bin/run-daemon, bin/run-frame]
@@ -48,12 +52,12 @@ apps:
     environment:
       # XDG config
       XDG_CONFIG_HOME: $SNAP_DATA
-
-slots:
-  wayland:
+    plugs:
+      - opengl
+    slots:
+      - wayland
 
 plugs:
-  opengl:
   graphics-core20:
     interface: content
     target: $SNAP/graphics
