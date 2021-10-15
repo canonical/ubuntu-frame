@@ -98,8 +98,10 @@ parts:
       - libmiral-dev
       - libwayland-dev
       - libboost1.71-dev
+      - libapparmor-dev
     stage-packages:
       - libmiral4
+      - libapparmor1
 
   platform:
     after: [ppa-setup]
