@@ -126,7 +126,9 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
         WindowInfo window_info{};
         if (override_state(specification, window_info))
         {
+            specification.state() = mir_window_state_maximized;
             tools.place_and_size_for_state(specification, window_info);
+            specification.state() = mir_window_state_fullscreen;
         }
     }
 
@@ -147,7 +149,9 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 
     if (override_state(specification, window_info))
     {
+        specification.state() = mir_window_state_maximized;
         tools.place_and_size_for_state(specification, window_info);
+        specification.state() = mir_window_state_fullscreen;
     }
 
     CanonicalWindowManagerPolicy::handle_modify_window(window_info, specification);
@@ -166,9 +170,16 @@ void FrameWindowManagerPolicy::handle_request_resize(WindowInfo& /*window_info*/
 }
 
 auto FrameWindowManagerPolicy::confirm_placement_on_display(
-    WindowInfo const& /*window_info*/,
-    MirWindowState /*new_state*/,
+    WindowInfo const& window_info,
+    MirWindowState new_state,
     Rectangle const& new_placement) -> Rectangle
 {
+    if (new_state == mir_window_state_fullscreen)
+    {
+        WindowSpecification specification;
+        specification.state() = mir_window_state_maximized;
+        tools.place_and_size_for_state(specification, window_info);
+        return {specification.top_left().value(), specification.size().value()};
+    }
     return new_placement;
 }
