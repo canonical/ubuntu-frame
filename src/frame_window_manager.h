@@ -45,6 +45,15 @@ public:
 
     auto confirm_placement_on_display(const miral::WindowInfo& window_info, MirWindowState new_state,
         Rectangle const& new_placement) -> Rectangle override;
+
+    void advise_begin() override;
+    void advise_end() override;
+    void advise_application_zone_create(miral::Zone const& application_zone) override;
+    void advise_application_zone_update(miral::Zone const& updated, miral::Zone const& original) override;
+    void advise_application_zone_delete(miral::Zone const& application_zone) override;
+
+private:
+    bool application_zones_have_changed = false;
 };
 
 #endif /* MIRAL_X11_KIOSK_WINDOW_MANAGER_H */

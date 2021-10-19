@@ -126,7 +126,9 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
         WindowInfo window_info{};
         if (override_state(specification, window_info))
         {
+            specification.state() = mir_window_state_maximized;
             tools.place_and_size_for_state(specification, window_info);
+            specification.state() = mir_window_state_fullscreen;
         }
     }
 
@@ -147,7 +149,9 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 
     if (override_state(specification, window_info))
     {
+        specification.state() = mir_window_state_maximized;
         tools.place_and_size_for_state(specification, window_info);
+        specification.state() = mir_window_state_fullscreen;
     }
 
     CanonicalWindowManagerPolicy::handle_modify_window(window_info, specification);
@@ -166,9 +170,68 @@ void FrameWindowManagerPolicy::handle_request_resize(WindowInfo& /*window_info*/
 }
 
 auto FrameWindowManagerPolicy::confirm_placement_on_display(
-    WindowInfo const& /*window_info*/,
-    MirWindowState /*new_state*/,
+    WindowInfo const& window_info,
+    MirWindowState new_state,
     Rectangle const& new_placement) -> Rectangle
 {
+    if (new_state == mir_window_state_fullscreen)
+    {
+        WindowSpecification specification;
+        specification.state() = mir_window_state_maximized;
+        tools.place_and_size_for_state(specification, window_info);
+        return {specification.top_left().value(), specification.size().value()};
+    }
     return new_placement;
+}
+
+void FrameWindowManagerPolicy::advise_begin()
+{
+    WindowManagementPolicy::advise_begin();
+}
+
+void FrameWindowManagerPolicy::advise_end()
+{
+    WindowManagementPolicy::advise_end();
+    if (application_zones_have_changed)
+    {
+        tools.for_each_application([this](auto& app)
+            {
+               for (auto& window : app.windows())
+               {
+                   if (window)
+                   {
+                       auto& info = tools.info_for(window);
+
+                       if (info.state() == mir_window_state_fullscreen)
+                       {
+                           WindowSpecification specification;
+                           specification.state() = mir_window_state_maximized;
+                           tools.place_and_size_for_state(specification, info);
+                           specification.state() = mir_window_state_fullscreen;
+                           tools.modify_window(info, specification);
+                       }
+                   }
+               }
+            });
+
+        application_zones_have_changed = false;
+    }
+}
+
+void FrameWindowManagerPolicy::advise_application_zone_create(Zone const& application_zone)
+{
+    WindowManagementPolicy::advise_application_zone_create(application_zone);
+    application_zones_have_changed = true;
+}
+
+void FrameWindowManagerPolicy::advise_application_zone_update(Zone const& updated, Zone const& original)
+{
+    WindowManagementPolicy::advise_application_zone_update(updated, original);
+    application_zones_have_changed = true;
+}
+
+void FrameWindowManagerPolicy::advise_application_zone_delete(Zone const& application_zone)
+{
+    WindowManagementPolicy::advise_application_zone_delete(application_zone);
+    application_zones_have_changed = true;
 }
