@@ -183,3 +183,55 @@ auto FrameWindowManagerPolicy::confirm_placement_on_display(
     }
     return new_placement;
 }
+
+void FrameWindowManagerPolicy::advise_begin()
+{
+    WindowManagementPolicy::advise_begin();
+}
+
+void FrameWindowManagerPolicy::advise_end()
+{
+    WindowManagementPolicy::advise_end();
+    if (application_zones_have_changed)
+    {
+        tools.for_each_application([this](auto& app)
+            {
+               for (auto& window : app.windows())
+               {
+                   if (window)
+                   {
+                       auto& info = tools.info_for(window);
+
+                       if (info.state() == mir_window_state_fullscreen)
+                       {
+                           WindowSpecification specification;
+                           specification.state() = mir_window_state_maximized;
+                           tools.place_and_size_for_state(specification, info);
+                           specification.state() = mir_window_state_fullscreen;
+                           tools.modify_window(info, specification);
+                       }
+                   }
+               }
+            });
+
+        application_zones_have_changed = false;
+    }
+}
+
+void FrameWindowManagerPolicy::advise_application_zone_create(Zone const& application_zone)
+{
+    WindowManagementPolicy::advise_application_zone_create(application_zone);
+    application_zones_have_changed = true;
+}
+
+void FrameWindowManagerPolicy::advise_application_zone_update(Zone const& updated, Zone const& original)
+{
+    WindowManagementPolicy::advise_application_zone_update(updated, original);
+    application_zones_have_changed = true;
+}
+
+void FrameWindowManagerPolicy::advise_application_zone_delete(Zone const& application_zone)
+{
+    WindowManagementPolicy::advise_application_zone_delete(application_zone);
+    application_zones_have_changed = true;
+}
