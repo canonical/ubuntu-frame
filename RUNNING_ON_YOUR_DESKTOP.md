@@ -1,10 +1,10 @@
 # Ubuntu Frame
 
-**Disclaimer:** *This isn't about how to deploy on "Classic" linux systems such as Ubuntu Desktop or Ubuntu Server. For these systems see the `daemon` configuration option in [REFERENCE.md](REFERENCE.md)*
+This is how to run `ubuntu-frame` as an application window within your Linux desktop environment. For having Ubuntu Frame take over the whole display as you normally would for deployment, see the `daemon` configuration option in [REFERENCE.md](REFERENCE.md).
 
 ## Running on your desktop
 
-By "running on your desktop" we mean that `ubuntu-frame` runs as an application window within your desktop environment. This is achieved by running it with an X11 backend (and it appears as a "Mir on X" window).
+When run on a desktop `ubuntu-frame` uses Mir's X11 backend (and it appears as a "Mir on X" window).
 
 There are two ways to do this, and they achieve slightly different things.
 

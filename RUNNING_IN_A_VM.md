@@ -1,6 +1,6 @@
 # Ubuntu Frame
 
-This is a quick reference for running Ubuntu Frame in a virtual machine.
+This is a quick reference for running Ubuntu Frame in an Ubuntu Core virtual machine.
 
 ## Setup a VM
 We need to be able to run the VM and, as the default build of qemu on Ubuntu doesn’t support graphics, we will use a handy snap that enables this:
