@@ -21,10 +21,10 @@ environment:
   LD_LIBRARY_PATH:    $SNAP/graphics/lib
   LIBGL_DRIVERS_PATH: $SNAP/graphics/dri
   __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
+  # Setup XKB
+  XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
 
 layout:
-  /usr/share/X11:
-    bind: $SNAP/usr/share/X11
   /usr/share/icons:
     bind: $SNAP/usr/share/icons
   /usr/share/libdrm:  # Needed by mesa-core20 on ARM GPUs
