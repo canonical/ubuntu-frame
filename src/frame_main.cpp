@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2020 Canonical Ltd.
+ * Copyright © 2016-2021 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
  * under the terms of the GNU General Public License version 2 or 3 as
@@ -16,6 +16,7 @@
  * Authored by: Alan Griffiths <alan@octopull.co.uk>
  */
 
+#include "snap_name_of.h"
 #include "frame_window_manager.h"
 #include "egwallpaper.h"
 
@@ -30,49 +31,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <iostream>
-#include <sys/apparmor.h>
-
-std::string const osk_auth_dir{"osk-auth"};
-
-namespace
-{
-/// Returns the name of the snap the app is from, or "" if a snap can't be detected
-std::string snap_name_of(miral::Application const& app)
-{
-    char* label_cstr;
-    char* mode_cstr;
-    errno = 0;
-    if (aa_getpeercon(miral::socket_fd_of(app), &label_cstr, &mode_cstr) < 0)
-    {
-        std::cerr
-            << "aa_getpeercon() failed for process " << miral::pid_of(app)
-            << ": " << strerror(errno)
-            << std::endl;
-        return "";
-    }
-    else
-    {
-        std::string const label{label_cstr};
-        free(label_cstr);
-        // mode_cstr should NOT be freed, as it's from the same buffer as label_cstr
-
-        std::string const snap_prefix{"snap."};
-        if (label.starts_with(snap_prefix))
-        {
-            auto right = label.find(".", snap_prefix.size());
-            if (right == std::string::npos)
-            {
-                right = label.size();
-            }
-            return label.substr(snap_prefix.size(), right - snap_prefix.size());
-        }
-        else
-        {
-            return "";
-        }
-    }
-}
-}
 
 int main(int argc, char const* argv[])
 {
