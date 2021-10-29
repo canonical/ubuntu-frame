@@ -21,11 +21,16 @@
 #include <unistd.h>
 #include <string.h>
 #include <iostream>
+#include <miral/version.h>
 #include <sys/apparmor.h>
 
 auto snap_name_of(miral::Application const& app) -> std::string
 {
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 4, 0)
     int const app_fd = miral::socket_fd_of(app);
+#else
+    int const app_fd = -1;
+#endif
     char* label_cstr;
     char* mode_cstr;
     errno = 0;
