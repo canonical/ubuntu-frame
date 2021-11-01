@@ -28,10 +28,6 @@
 #include <miral/set_window_management_policy.h>
 #include <miral/wayland_extensions.h>
 
-#include <unistd.h>
-#include <string.h>
-#include <iostream>
-
 int main(int argc, char const* argv[])
 {
     using namespace miral;
@@ -44,6 +40,7 @@ int main(int argc, char const* argv[])
         WaylandExtensions::zwlr_layer_shell_v1,
         WaylandExtensions::zwp_virtual_keyboard_v1,
         WaylandExtensions::zwp_input_method_v2};
+
     for (auto const& protocol : osk_protocols)
     {
         wayland_extensions.enable(protocol);
