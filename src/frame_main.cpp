@@ -16,7 +16,7 @@
  * Authored by: Alan Griffiths <alan@octopull.co.uk>
  */
 
-#include "snap_name_of.h"
+#include "frame_authorization.h"
 #include "frame_window_manager.h"
 #include "egwallpaper.h"
 
@@ -35,32 +35,7 @@ int main(int argc, char const* argv[])
 
     DisplayConfiguration display_config{runner};
     WaylandExtensions wayland_extensions;
-
-    std::set<std::string> const osk_protocols{
-        WaylandExtensions::zwlr_layer_shell_v1,
-        WaylandExtensions::zwp_virtual_keyboard_v1,
-        WaylandExtensions::zwp_input_method_v2};
-
-    for (auto const& protocol : osk_protocols)
-    {
-        wayland_extensions.enable(protocol);
-    }
-
-    std::set<std::string> const osk_snaps{
-        "ubuntu-frame-osk"};
-
-    wayland_extensions.set_filter([&](Application const& app, char const* protocol) -> bool
-        {
-            if (osk_protocols.find(protocol) != osk_protocols.end())
-            {
-                auto const snap_name = snap_name_of(app);
-                return osk_snaps.find(snap_name) != osk_snaps.end();
-            }
-            else
-            {
-                return true;
-            }
-        });
+    FrameAuthorization auth{wayland_extensions};
 
     egmde::Wallpaper wallpaper;
     runner.add_stop_callback([&] { wallpaper.stop(); });

@@ -9,7 +9,7 @@ pkg_check_modules(APPARMOR libapparmor REQUIRED)
 
 add_executable(frame
     frame_main.cpp
-    snap_name_of.cpp snap_name_of.h
+    frame_authorization.cpp frame_authorization.h
     frame_window_manager.cpp frame_window_manager.h
     egwallpaper.cpp egwallpaper.h
     egfullscreenclient.cpp egfullscreenclient.h

@@ -16,13 +16,15 @@
  * Authored by: William Wold <william.wold@canonical.com>
  */
 
-#ifndef SNAP_NAME_OF
-#define SNAP_NAME_OF
+#ifndef FRAME_AUTHORIZATION_H
+#define FRAME_AUTHORIZATION_H
 
-#include <miral/application.h>
-#include <string>
+#include <miral/wayland_extensions.h>
 
-/// Returns the name of the snap the app is from, or "" if a snap can't be detected
-auto snap_name_of(miral::Application const& app) -> std::string;
+class FrameAuthorization
+{
+public:
+    FrameAuthorization(miral::WaylandExtensions& extensions);
+};
 
-#endif // SNAP_NAME_OF
+#endif // FRAME_AUTHORIZATION_H

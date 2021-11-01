@@ -16,13 +16,25 @@
  * Authored by: William Wild <william.wold@canonical.com>
  */
 
-#include "snap_name_of.h"
+#include "frame_authorization.h"
 
-#include <unistd.h>
-#include <string.h>
 #include <miral/version.h>
 #include <mir/log.h>
+#include <unistd.h>
+#include <string.h>
 #include <sys/apparmor.h>
+
+using namespace miral;
+
+namespace
+{
+std::set<std::string> const osk_protocols{
+    WaylandExtensions::zwlr_layer_shell_v1,
+    WaylandExtensions::zwp_virtual_keyboard_v1,
+    WaylandExtensions::zwp_input_method_v2};
+
+std::set<std::string> const osk_snaps{
+    "ubuntu-frame-osk"};
 
 auto snap_name_of(miral::Application const& app) -> std::string
 {
@@ -64,4 +76,26 @@ auto snap_name_of(miral::Application const& app) -> std::string
             return "";
         }
     }
+}
+}
+
+FrameAuthorization::FrameAuthorization(miral::WaylandExtensions& extensions)
+{
+    for (auto const& protocol : osk_protocols)
+    {
+        extensions.enable(protocol);
+    }
+
+    extensions.set_filter([&](Application const& app, char const* protocol) -> bool
+        {
+            if (osk_protocols.find(protocol) != osk_protocols.end())
+            {
+                auto const snap_name = snap_name_of(app);
+                return osk_snaps.find(snap_name) != osk_snaps.end();
+            }
+            else
+            {
+                return true;
+            }
+        });
 }
