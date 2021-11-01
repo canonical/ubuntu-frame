@@ -15,6 +15,8 @@ add_executable(frame
     egfullscreenclient.cpp egfullscreenclient.h
 )
 
+target_compile_definitions(frame PRIVATE MIR_LOG_COMPONENT="frame")
+
 target_include_directories(frame PUBLIC SYSTEM ${MIRAL_INCLUDE_DIRS})
 target_link_libraries(frame ${MIRAL_LDFLAGS} ${WAYLAND_CLIENT_LIBRARIES} ${APPARMOR_LIBRARIES})
 

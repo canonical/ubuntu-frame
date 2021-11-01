@@ -20,8 +20,8 @@
 
 #include <unistd.h>
 #include <string.h>
-#include <iostream>
 #include <miral/version.h>
+#include <mir/log.h>
 #include <sys/apparmor.h>
 
 auto snap_name_of(miral::Application const& app) -> std::string
@@ -40,10 +40,7 @@ auto snap_name_of(miral::Application const& app) -> std::string
     }
     else if (aa_getpeercon(app_fd, &label_cstr, &mode_cstr) < 0)
     {
-        std::cerr
-            << "aa_getpeercon() failed for process " << miral::pid_of(app)
-            << ": " << strerror(errno)
-            << std::endl;
+        mir::log_debug("aa_getpeercon() failed for process %d: %s", miral::pid_of(app), strerror(errno));
         return "";
     }
     else
