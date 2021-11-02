@@ -26,8 +26,6 @@
 
 using namespace miral;
 
-#define SOCKET_FD_OF_APP_AVAILABLE MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 4, 0)
-
 namespace
 {
 std::set<std::string> const osk_protocols{
@@ -40,7 +38,7 @@ std::set<std::string> const osk_snaps{
 
 auto snap_name_of(miral::Application const& app) -> std::string
 {
-#if SOCKET_FD_OF_APP_AVAILABLE
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 4, 0)
     int const app_fd = miral::socket_fd_of(app);
 #else
     int const app_fd = -1;
@@ -83,7 +81,7 @@ auto snap_name_of(miral::Application const& app) -> std::string
 
 FrameAuthorization::FrameAuthorization(miral::WaylandExtensions& extensions)
 {
-#if SOCKET_FD_OF_APP_AVAILABLE
+#if MIRAL_VERSION < MIR_VERSION_NUMBER(3, 4, 0)
     // We can't check the snap apps are from and conditionally enabling the protocols prevents them from being manually
     // enabled (see github.com/MirServer/mir/issues/2194), so leave them off.
     return;
