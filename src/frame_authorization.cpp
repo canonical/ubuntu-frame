@@ -81,27 +81,17 @@ auto snap_name_of(miral::Application const& app) -> std::string
 
 FrameAuthorization::FrameAuthorization(miral::WaylandExtensions& extensions)
 {
-#if MIRAL_VERSION < MIR_VERSION_NUMBER(3, 4, 0)
     // We can't check the snap apps are from and conditionally enabling the protocols prevents them from being manually
     // enabled (see github.com/MirServer/mir/issues/2194), so leave them off.
-    return;
-#endif
-
+#if MIRAL_VERSION > MIR_VERSION_NUMBER(3, 4, 0)
     for (auto const& protocol : osk_protocols)
     {
-        extensions.enable(protocol);
+        extensions.conditionally_enable(protocol, [](WaylandExtensions::Info const& info) -> bool
+            {
+                return info.recommended ||
+                       info.manually_enabled ||
+                       osk_snaps.find(snap_name_of(info.app)) != osk_snaps.end();
+            });
     }
-
-    extensions.set_filter([&](Application const& app, char const* protocol) -> bool
-        {
-            if (osk_protocols.find(protocol) != osk_protocols.end())
-            {
-                auto const snap_name = snap_name_of(app);
-                return osk_snaps.find(snap_name) != osk_snaps.end();
-            }
-            else
-            {
-                return true;
-            }
-        });
+#endif
 }
