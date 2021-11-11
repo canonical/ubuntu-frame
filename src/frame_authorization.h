@@ -21,10 +21,6 @@
 
 #include <miral/wayland_extensions.h>
 
-class FrameAuthorization
-{
-public:
-    FrameAuthorization(miral::WaylandExtensions& extensions);
-};
+void init_authorization(miral::WaylandExtensions& extensions);
 
 #endif // FRAME_AUTHORIZATION_H

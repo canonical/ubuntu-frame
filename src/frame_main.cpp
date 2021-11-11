@@ -35,7 +35,7 @@ int main(int argc, char const* argv[])
 
     DisplayConfiguration display_config{runner};
     WaylandExtensions wayland_extensions;
-    FrameAuthorization auth{wayland_extensions};
+    init_authorization(wayland_extensions);
 
     egmde::Wallpaper wallpaper;
     runner.add_stop_callback([&] { wallpaper.stop(); });
