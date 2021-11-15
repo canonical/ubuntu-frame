@@ -28,11 +28,6 @@ using namespace miral;
 
 namespace
 {
-std::set<std::string> const osk_protocols{
-    WaylandExtensions::zwlr_layer_shell_v1,
-    WaylandExtensions::zwp_virtual_keyboard_v1,
-    WaylandExtensions::zwp_input_method_v2};
-
 std::set<std::string> const osk_snaps{
     "ubuntu-frame-osk"};
 
@@ -82,7 +77,10 @@ auto snap_name_of(miral::Application const& app) -> std::string
 void init_authorization(miral::WaylandExtensions& extensions)
 {
 #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 4, 0)
-    for (auto const& protocol : osk_protocols)
+    for (auto const& protocol : {
+        WaylandExtensions::zwp_input_method_manager_v2,
+        WaylandExtensions::zwp_virtual_keyboard_manager_v1,
+        WaylandExtensions::zwp_input_method_manager_v2})
     {
         extensions.conditionally_enable(protocol, [](auto const& info)
             {
