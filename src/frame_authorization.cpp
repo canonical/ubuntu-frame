@@ -78,7 +78,7 @@ void init_authorization(miral::WaylandExtensions& extensions)
 {
 #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 4, 0)
     for (auto const& protocol : {
-        WaylandExtensions::zwp_input_method_manager_v2,
+        WaylandExtensions::zwlr_layer_shell_v1,
         WaylandExtensions::zwp_virtual_keyboard_manager_v1,
         WaylandExtensions::zwp_input_method_manager_v2})
     {
