@@ -114,6 +114,7 @@ parts:
     stage-packages:
       - mir-platform-graphics-gbm-kms
       - mir-platform-graphics-x
+      - mir-platform-graphics-eglstream-kms
     prime:
       - usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
       - usr/share/libinput
