@@ -86,9 +86,6 @@ parts:
       if echo $mir_version | grep -e '+dev' -e '~rc' -q; then snapcraftctl set-grade devel; else snapcraftctl set-grade stable; fi
     plugin: cmake
     source: src
-    override-build: |
-      sudo apt install --assume-yes libmiral-dev
-      snapcraftctl build
     build-packages:
       - pkg-config
       - libmiral-dev
