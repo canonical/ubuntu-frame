@@ -23,6 +23,10 @@ This is as easy as running:
 ```bash
 $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame
 ```
+Or, if that doesn't work (as has happened on some Nvidia enabled systems), run:
+```bash
+$ WAYLAND_DISPLAY=wayland-99 ubuntu-frame --platform-display-libs mir:x11 --platform-rendering-libs mir:x11
+```
 This will create a "Mir on X" window on your desktop and a (new) Wayland socket in `$XDG_RUNTIME_DIR`:
 ```bash
 $ ls $XDG_RUNTIME_DIR/wayland*
