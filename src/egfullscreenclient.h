@@ -30,10 +30,6 @@
 #include <mutex>
 #include <unordered_map>
 
-struct xkb_context;
-struct xkb_keymap;
-struct xkb_state;
-
 namespace egmde
 {
 class FullscreenClient
@@ -72,11 +68,11 @@ public:
 
         Output& operator=(Output&&) = delete;
 
-        int32_t x;
-        int32_t y;
-        int32_t width;
-        int32_t height;
-        int32_t transform;
+        int32_t x = 0;
+        int32_t y = 0;
+        int32_t width = 0;
+        int32_t height = 0;
+        int32_t transform = WL_OUTPUT_TRANSFORM_NORMAL;
         wl_output* output;
         int32_t scale_factor = 1;
     private:
@@ -111,7 +107,7 @@ public:
 
     struct SurfaceInfo
     {
-        SurfaceInfo(Output const* output);
+        explicit SurfaceInfo(Output const* output);
         ~SurfaceInfo();
 
         void clear_window();
@@ -127,8 +123,6 @@ public:
     };
 
     virtual void draw_screen(SurfaceInfo& info) const = 0;
-
-    void for_each_surface(std::function<void(SurfaceInfo&)> const& f) const;
 
 protected:
 
@@ -197,9 +191,6 @@ private:
     void on_output_changed(Output const*);
 
     void on_output_gone(Output const*);
-
-    // Flush pending requests (on a safe thread)
-    void flush_wl() const;
 
     mir::Fd const flush_signal;
     mir::Fd const shutdown_signal;

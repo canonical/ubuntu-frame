@@ -19,13 +19,12 @@
 #include "egwallpaper.h"
 #include "egfullscreenclient.h"
 
-#include <algorithm>
 #include <cstring>
 #include <sstream>
 
 namespace
 {
-void render_gradient(int32_t width, int32_t height, unsigned char* row_, uint8_t* bottom_colour, uint8_t* top_colour)
+void render_gradient(int32_t width, int32_t height, unsigned char* row_, uint8_t const* bottom_colour, uint8_t const* top_colour)
 {
     auto row = row_;
     for (int j = 0; j < height; j++)
@@ -163,14 +162,7 @@ void egmde::Wallpaper::operator()(wl_display* display)
     client.reset();
 }
 
-void egmde::Wallpaper::operator()(std::weak_ptr<mir::scene::Session> const& session)
+void egmde::Wallpaper::operator()(std::weak_ptr<mir::scene::Session> const& /*session*/)
 {
-    std::lock_guard<decltype(mutex)> lock{mutex};
-    weak_session = session;
 }
 
-auto egmde::Wallpaper::session() const -> std::shared_ptr<mir::scene::Session>
-{
-    std::lock_guard<decltype(mutex)> lock{mutex};
-    return weak_session.lock();
-}

@@ -87,7 +87,7 @@ fi
 if [ "$(snapctl get daemon)" = "true" ]; then
   if snapctl services "$SNAP_INSTANCE_NAME.daemon" | grep -q inactive; then
     snapctl start --enable "$SNAP_INSTANCE_NAME.daemon" 2>&1 || true
-  elif [ $config_changes -gt 0 ]; then
+  elif [ "$config_changes" -gt 0 ]; then
     snapctl restart "$SNAP_INSTANCE_NAME.daemon" || true
   fi
 else
