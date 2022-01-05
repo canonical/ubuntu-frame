@@ -26,7 +26,7 @@
 #include <sys/eventfd.h>
 #include <sys/mman.h>
 #include <sys/poll.h>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <cstring>
 #include <system_error>
@@ -301,7 +301,7 @@ auto egmde::FullscreenClient::make_shm_pool(size_t size, void** data) const
         BOOST_THROW_EXCEPTION((std::system_error{error, std::system_category(), "Failed to allocate shm buffer"}));
     }
 
-    if ((*data = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) == MAP_FAILED)
+    if ((*data = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) == MAP_FAILED)
     {
         BOOST_THROW_EXCEPTION((std::system_error{errno, std::system_category(), "Failed to mmap buffer"}));
     }
@@ -443,24 +443,6 @@ void egmde::FullscreenClient::stop()
     {
         BOOST_THROW_EXCEPTION((std::system_error{errno, std::system_category(), "Failed to shutdown internal client"}));
     }
-}
-
-void egmde::FullscreenClient::for_each_surface(std::function<void(SurfaceInfo&)> const& f) const
-{
-    {
-        std::lock_guard<decltype(outputs_mutex)> lock{outputs_mutex};
-        for (auto& os : outputs)
-        {
-            f(const_cast<SurfaceInfo&>(os.second));
-        }
-    }
-
-    flush_wl();
-}
-
-void egmde::FullscreenClient::flush_wl() const
-{
-    eventfd_write(flush_signal, 1);
 }
 
 void egmde::FullscreenClient::keyboard_keymap(wl_keyboard* /*keyboard*/, uint32_t /*format*/, int32_t /*fd*/, uint32_t /*size*/)

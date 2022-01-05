@@ -21,7 +21,7 @@
 #include <miral/version.h>
 #include <mir/log.h>
 #include <unistd.h>
-#include <string.h>
+#include <cstring>
 #include <sys/apparmor.h>
 
 using namespace miral;
@@ -59,7 +59,7 @@ auto snap_name_of(miral::Application const& app) -> std::string
         std::string const snap_prefix{"snap."};
         if (label.starts_with(snap_prefix))
         {
-            auto right = label.find(".", snap_prefix.size());
+            auto right = label.find('.', snap_prefix.size());
             if (right == std::string::npos)
             {
                 right = label.size();
