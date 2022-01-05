@@ -19,7 +19,6 @@
 #include "egwallpaper.h"
 #include "egfullscreenclient.h"
 
-#include <algorithm>
 #include <cstring>
 #include <sstream>
 

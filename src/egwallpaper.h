@@ -20,7 +20,6 @@
 #define EGMDE_EGWALLPAPER_H
 
 #include <miral/application.h>
-#include <miral/window.h>
 
 #include <memory>
 #include <mutex>
