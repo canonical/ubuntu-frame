@@ -19,29 +19,22 @@
 #ifndef MIRAL_X11_KIOSK_WINDOW_MANAGER_H
 #define MIRAL_X11_KIOSK_WINDOW_MANAGER_H
 
-#include <miral/canonical_window_manager.h>
+#include <miral/minimal_window_manager.h>
 
 #include <mir_toolkit/events/enums.h>
 
 using namespace mir::geometry;
 
-class FrameWindowManagerPolicy : public miral::CanonicalWindowManagerPolicy
+class FrameWindowManagerPolicy : public miral::MinimalWindowManager
 {
 public:
-    using miral::CanonicalWindowManagerPolicy::CanonicalWindowManagerPolicy;
+    using miral::MinimalWindowManager::MinimalWindowManager;
 
     auto place_new_window(miral::ApplicationInfo const& app_info, miral::WindowSpecification const& request)
     -> miral::WindowSpecification override;
 
     bool handle_keyboard_event(MirKeyboardEvent const* event) override;
-    bool handle_touch_event(MirTouchEvent const* event) override;
-    bool handle_pointer_event(MirPointerEvent const* event) override;
     void handle_modify_window(miral::WindowInfo& window_info, miral::WindowSpecification const& modifications) override;
-
-    void handle_request_drag_and_drop(miral::WindowInfo& window_info) override;
-    void handle_request_move(miral::WindowInfo& window_info, MirInputEvent const* input_event) override;
-    void handle_request_resize(miral::WindowInfo& window_info, MirInputEvent const* input_event,
-        MirResizeEdge edge) override;
 
     auto confirm_placement_on_display(const miral::WindowInfo& window_info, MirWindowState new_state,
         Rectangle const& new_placement) -> Rectangle override;

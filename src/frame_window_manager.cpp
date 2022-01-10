@@ -81,46 +81,10 @@ bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* eve
     return false;
 }
 
-bool FrameWindowManagerPolicy::handle_touch_event(MirTouchEvent const* event)
-{
-    auto const count = mir_touch_event_point_count(event);
-
-    long total_x = 0;
-    long total_y = 0;
-
-    for (auto i = 0U; i != count; ++i)
-    {
-        total_x += mir_touch_event_axis_value(event, i, mir_touch_axis_x);
-        total_y += mir_touch_event_axis_value(event, i, mir_touch_axis_y);
-    }
-
-    Point const cursor{total_x/count, total_y/count};
-
-    tools.select_active_window(tools.window_at(cursor));
-
-    return false;
-}
-
-bool FrameWindowManagerPolicy::handle_pointer_event(MirPointerEvent const* event)
-{
-    auto const action = mir_pointer_event_action(event);
-
-    Point const cursor{
-        mir_pointer_event_axis_value(event, mir_pointer_axis_x),
-        mir_pointer_event_axis_value(event, mir_pointer_axis_y)};
-
-    if (action == mir_pointer_action_button_down)
-    {
-        tools.select_active_window(tools.window_at(cursor));
-    }
-
-    return false;
-}
-
 auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info, WindowSpecification const& request)
 -> WindowSpecification
 {
-    WindowSpecification specification = CanonicalWindowManagerPolicy::place_new_window(app_info, request);
+    WindowSpecification specification = MinimalWindowManager::place_new_window(app_info, request);
 
     {
         WindowInfo window_info{};
@@ -154,19 +118,7 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
         specification.state() = mir_window_state_fullscreen;
     }
 
-    CanonicalWindowManagerPolicy::handle_modify_window(window_info, specification);
-}
-
-void FrameWindowManagerPolicy::handle_request_drag_and_drop(WindowInfo& /*window_info*/)
-{
-}
-
-void FrameWindowManagerPolicy::handle_request_move(WindowInfo& /*window_info*/, MirInputEvent const* /*input_event*/)
-{
-}
-
-void FrameWindowManagerPolicy::handle_request_resize(WindowInfo& /*window_info*/, MirInputEvent const* /*input_event*/, MirResizeEdge /*edge*/)
-{
+    MinimalWindowManager::handle_modify_window(window_info, specification);
 }
 
 auto FrameWindowManagerPolicy::confirm_placement_on_display(
