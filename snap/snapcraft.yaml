@@ -78,12 +78,6 @@ parts:
 
   ubuntu-frame:
     after: [recipe-version]
-    override-pull: |
-      snapcraftctl pull
-      mir_version=`LANG=C apt-cache policy mir-graphics-drivers-desktop | sed -rne 's/^\s+Candidate:\s+([^-]*)-.+$/\1/p'`
-      recipe_version=`cat $SNAPCRAFT_STAGE/recipe-version`
-      snapcraftctl set-version $recipe_version-mir$mir_version
-      if echo $mir_version | grep -e '+dev' -e '~rc' -q; then snapcraftctl set-grade devel; else snapcraftctl set-grade stable; fi
     plugin: cmake
     source: src
     build-packages:
@@ -92,6 +86,12 @@ parts:
       - libwayland-dev
       - libboost1.71-dev
       - libapparmor-dev
+    override-build: |
+      mir_version=`LANG=C apt-cache policy mir-graphics-drivers-desktop | sed -rne 's/^\s+Candidate:\s+([^-]*)-.+$/\1/p'`
+      recipe_version=`cat $SNAPCRAFT_STAGE/recipe-version`
+      snapcraftctl set-version $recipe_version-mir$mir_version
+      if echo $mir_version | grep -e '+dev' -e '~rc' -q; then snapcraftctl set-grade devel; else snapcraftctl set-grade stable; fi
+      snapcraftctl build
     stage-packages:
       - libmiral4
       - libapparmor1
