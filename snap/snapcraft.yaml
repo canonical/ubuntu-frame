@@ -55,6 +55,7 @@ apps:
     environment:
       # XDG config
       XDG_CONFIG_HOME: $SNAP_DATA
+      HOME: $SNAP_DATA
     plugs:
       - opengl
     slots:
