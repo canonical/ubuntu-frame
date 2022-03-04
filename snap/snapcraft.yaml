@@ -8,7 +8,7 @@ license: GPL-3.0
 compression: lzo
 package-repositories:
   - type: apt
-    ppa: mir-team/release
+    ppa: mir-team/dev
 
 architectures:
   - build-on: amd64
