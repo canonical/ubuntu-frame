@@ -33,11 +33,7 @@ std::set<std::string> const osk_snaps{
 
 auto snap_name_of(miral::Application const& app) -> std::string
 {
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 4, 0)
     int const app_fd = miral::socket_fd_of(app);
-#else
-    int const app_fd = -1;
-#endif
     char* label_cstr;
     char* mode_cstr;
     errno = 0;
@@ -76,7 +72,6 @@ auto snap_name_of(miral::Application const& app) -> std::string
 
 void init_authorization(miral::WaylandExtensions& extensions)
 {
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 4, 0)
     for (auto const& protocol : {
         WaylandExtensions::zwlr_layer_shell_v1,
         WaylandExtensions::zwp_virtual_keyboard_manager_v1,
@@ -92,7 +87,4 @@ void init_authorization(miral::WaylandExtensions& extensions)
                 return osk_snaps.find(snap_name) != osk_snaps.end();
             });
     }
-#endif
-
-    // Else we can't check the snap apps are from, so leave the extensions off unless the user manually enables them.
 }
