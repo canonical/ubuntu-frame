@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+
+export XDG_RUNTIME_DIR=$(dirname "$XDG_RUNTIME_DIR")
+export WAYLAND_DISPLAY=$(ls /tmp/frame-display-* | tail -n 1)
+
+exec "$@"
