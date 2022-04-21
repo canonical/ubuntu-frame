@@ -64,6 +64,15 @@ apps:
     slots:
       - wayland
 
+  screenshot:
+    command-chain: [bin/anon-shm-preload, bin/run-client]
+    command: bin/screenshot
+    plugs:
+      - home
+      - opengl
+    slots:
+      - wayland
+
 plugs:
   graphics-core20:
     interface: content
@@ -116,6 +125,14 @@ parts:
   scripts:
     plugin: dump
     source: scripts
+
+  anon-shm-preload:
+    source: https://github.com/MirServer/anon-shm-preload.git
+    plugin: cmake
+
+  grim:
+    plugin: nil
+    stage-packages: [grim]
 
   cleanup:
     after: [ubuntu-frame, platform, icons, scripts]

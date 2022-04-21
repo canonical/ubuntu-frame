@@ -1,0 +1,41 @@
+#!/bin/sh
+set -eu
+
+OUTPUT_FILE=""
+while test $# -gt 0; do
+  case $1 in
+    -h|--help)
+      echo "Take a screenshot"
+      echo "USAGE: ubuntu-frame.screenshot [output-file]"
+      exit 0
+      ;;
+    -*|--*)
+      # We need to catch this or we would accept OUTPUT_FILE values that grim treats as options
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      if test ! -z "$OUTPUT_FILE"; then
+        echo "Error: multiple output files specified"
+        exit 1
+      fi
+      OUTPUT_FILE="$1"
+      shift
+      ;;
+  esac
+done
+
+SUFFIX=""
+# If a file name was specified this is skipped
+while test -z "$OUTPUT_FILE"; do
+  # Set the default file name based on the date and time. There is no suffix the first iteration.
+  # If that file exists a suffix is added and incremented until a name is found that does not exist.
+  CANDIDATE="frame_$(date '+%Y%m%d_%H%M')${SUFFIX:+_$SUFFIX}.png"
+  SUFFIX=$(( $SUFFIX + 1 ))
+  if test ! -f "$CANDIDATE"; then
+    OUTPUT_FILE="$CANDIDATE"
+  fi
+done
+
+#exec $SNAP/usr/bin/grim "$OUTPUT_FILE"
+exec grim "$OUTPUT_FILE"
