@@ -36,6 +36,9 @@ std::vector<std::pair<std::string, std::vector<std::string>>> const protocols_fo
         WaylandExtensions::zwp_virtual_keyboard_manager_v1,
         WaylandExtensions::zwp_input_method_manager_v2,
     }},
+    {"ubuntu-frame", {
+        WaylandExtensions::zwlr_screencopy_manager_v1,
+    }},
 };
 
 auto snap_name_of(miral::Application const& app) -> std::string
