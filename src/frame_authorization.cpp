@@ -23,13 +23,20 @@
 #include <unistd.h>
 #include <cstring>
 #include <sys/apparmor.h>
+#include <set>
+#include <map>
 
 using namespace miral;
 
 namespace
 {
-std::set<std::string> const osk_snaps{
-    "ubuntu-frame-osk"};
+std::vector<std::pair<std::string, std::vector<std::string>>> const protocols_for_snaps{
+    {"ubuntu-frame-osk", {
+        WaylandExtensions::zwlr_layer_shell_v1,
+        WaylandExtensions::zwp_virtual_keyboard_manager_v1,
+        WaylandExtensions::zwp_input_method_manager_v2,
+    }},
+};
 
 auto snap_name_of(miral::Application const& app) -> std::string
 {
@@ -72,19 +79,27 @@ auto snap_name_of(miral::Application const& app) -> std::string
 
 void init_authorization(miral::WaylandExtensions& extensions)
 {
-    for (auto const& protocol : {
-        WaylandExtensions::zwlr_layer_shell_v1,
-        WaylandExtensions::zwp_virtual_keyboard_manager_v1,
-        WaylandExtensions::zwp_input_method_manager_v2})
+    // The mapping of snap names -> allowed protocols is convenient and less error-prone to specify,
+    // but to use it we need to reverse the mapping into one of protocols -> snap names.
+    std::map<std::string, std::set<std::string>> snaps_for_protocols;
+    for (auto const& [snap, protocols] : protocols_for_snaps)
     {
-        extensions.conditionally_enable(protocol, [](auto const& info)
+        for (auto const& protocol : protocols)
+        {
+            auto const iter = snaps_for_protocols.insert({protocol, {}}).first;
+            iter->second.insert(snap);
+        }
+    }
+    for (auto const& [protocol, snaps] : snaps_for_protocols)
+    {
+        extensions.conditionally_enable(protocol, [snaps=snaps](auto const& info)
             {
                 if (info.user_preference())
                 {
                     return info.user_preference().value();
                 }
                 auto const snap_name = snap_name_of(info.app());
-                return osk_snaps.find(snap_name) != osk_snaps.end();
+                return snaps.find(snap_name) != snaps.end();
             });
     }
 }
