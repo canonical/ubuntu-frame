@@ -23,14 +23,10 @@
 #include <unistd.h>
 #include <cstring>
 #include <sys/apparmor.h>
-#include <set>
-#include <map>
 
 using namespace miral;
 
-namespace
-{
-std::vector<std::pair<std::string, std::vector<std::string>>> const protocols_for_snaps{
+AuthModel const auth_model{{
     {"ubuntu-frame-osk", {
         WaylandExtensions::zwlr_layer_shell_v1,
         WaylandExtensions::zwp_virtual_keyboard_manager_v1,
@@ -39,8 +35,10 @@ std::vector<std::pair<std::string, std::vector<std::string>>> const protocols_fo
     {"ubuntu-frame", {
         WaylandExtensions::zwlr_screencopy_manager_v1,
     }},
-};
+}};
 
+namespace
+{
 auto snap_name_of(miral::Application const& app) -> std::string
 {
     int const app_fd = miral::socket_fd_of(app);
@@ -80,20 +78,29 @@ auto snap_name_of(miral::Application const& app) -> std::string
 }
 }
 
-void init_authorization(miral::WaylandExtensions& extensions)
-{
-    // The mapping of snap names -> allowed protocols is convenient and less error-prone to specify,
-    // but to use it we need to reverse the mapping into one of protocols -> snap names.
-    std::map<std::string, std::set<std::string>> snaps_for_protocols;
-    for (auto const& [snap, protocols] : protocols_for_snaps)
-    {
-        for (auto const& protocol : protocols)
+AuthModel::AuthModel(
+    std::vector<std::pair<std::string, std::vector<std::string>>> const& protocols_for_snaps)
+    : snaps_for_protocols{[&]()
         {
-            auto const iter = snaps_for_protocols.insert({protocol, {}}).first;
-            iter->second.insert(snap);
-        }
-    }
-    for (auto const& [protocol, snaps] : snaps_for_protocols)
+            // The mapping of snap names -> allowed protocols is convenient and less error-prone to specify,
+            // but to use it we need to reverse the mapping into one of protocols -> snap names.
+            std::map<std::string, std::set<std::string>> snaps_for_protocols;
+            for (auto const& [snap, protocols] : protocols_for_snaps)
+            {
+                for (auto const& protocol : protocols)
+                {
+                    auto const iter = snaps_for_protocols.insert({protocol, {}}).first;
+                    iter->second.insert(snap);
+                }
+            }
+            return snaps_for_protocols;
+        }()}
+{
+}
+
+void init_authorization(miral::WaylandExtensions& extensions, AuthModel const& model)
+{
+    for (auto const& [protocol, snaps] : model.snaps_for_protocols)
     {
         extensions.conditionally_enable(protocol, [snaps=snaps](auto const& info)
             {
