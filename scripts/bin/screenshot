@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-OUTPUT_FILE=""
+REQUESTED_OUTPUT=""
 while test $# -gt 0; do
   case $1 in
     -h|--help)
@@ -10,27 +10,36 @@ while test $# -gt 0; do
       exit 0
       ;;
     -*|--*)
-      # We need to catch this or we would accept OUTPUT_FILE values that grim treats as options
+      # We need to catch this or we would accept REQUESTED_OUTPUT values that grim treats as options
       echo "Unknown option $1"
       exit 1
       ;;
     *)
-      if test ! -z "$OUTPUT_FILE"; then
+      if test ! -z "$REQUESTED_OUTPUT"; then
         echo "Error: multiple output files specified"
         exit 1
       fi
-      OUTPUT_FILE="$1"
+      REQUESTED_OUTPUT="$1"
       shift
       ;;
   esac
 done
+
+# OUTPUT_DIR is only used if OUTPUT_FILE is empty
+OUTPUT_DIR="$SNAP_USER_COMMON"
+OUTPUT_FILE=""
+if test -d "$REQUESTED_OUTPUT"; then
+  OUTPUT_DIR="$REQUESTED_OUTPUT"
+else
+  OUTPUT_FILE="$REQUESTED_OUTPUT"
+fi
 
 SUFFIX=""
 # If a file name was specified this is skipped
 while test -z "$OUTPUT_FILE"; do
   # Set the default file name based on the date and time. There is no suffix the first iteration.
   # If that file exists a suffix is added and incremented until a name is found that does not exist.
-  CANDIDATE="$SNAP_USER_COMMON/frame_$(date '+%Y%m%d_%H%M')${SUFFIX:+_$SUFFIX}.png"
+  CANDIDATE="$OUTPUT_DIR/frame_$(date '+%Y%m%d_%H%M')${SUFFIX:+_$SUFFIX}.png"
   SUFFIX=$(( $SUFFIX + 1 ))
   if test ! -f "$CANDIDATE"; then
     OUTPUT_FILE="$CANDIDATE"
