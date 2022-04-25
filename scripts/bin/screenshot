@@ -47,5 +47,4 @@ while test -z "$OUTPUT_FILE"; do
   fi
 done
 
-#exec $SNAP/usr/bin/grim "$OUTPUT_FILE"
-exec grim "$OUTPUT_FILE"
+exec $SNAP/usr/bin/grim "$OUTPUT_FILE"
