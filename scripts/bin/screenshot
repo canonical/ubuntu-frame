@@ -46,6 +46,10 @@ while test -z "$OUTPUT_FILE"; do
   fi
 done
 
+# Check if we have permission to write to the file
+touch "$OUTPUT_FILE"
+rm "$OUTPUT_FILE"
+
 if $SNAP/usr/bin/grim "$OUTPUT_FILE"; then
   echo "Saved to $OUTPUT_FILE"
 else
