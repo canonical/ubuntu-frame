@@ -43,8 +43,12 @@ while test -z "$OUTPUT_FILE"; do
   SUFFIX=$(( $SUFFIX + 1 ))
   if test ! -f "$CANDIDATE"; then
     OUTPUT_FILE="$CANDIDATE"
-    echo "Saving screenshot to $OUTPUT_FILE"
   fi
 done
 
-exec $SNAP/usr/bin/grim "$OUTPUT_FILE"
+if $SNAP/usr/bin/grim "$OUTPUT_FILE"; then
+  echo "Saved to $OUTPUT_FILE"
+else
+  echo "Failed to save screenshot to $OUTPUT_FILE"
+  exit 1
+fi
