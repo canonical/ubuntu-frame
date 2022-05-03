@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eu
 
+SCRIPT_NAME='ubuntu-frame.screenshot'
+
 REQUESTED_OUTPUT=""
 while test $# -gt 0; do
   case $1 in
@@ -11,12 +13,12 @@ while test $# -gt 0; do
       ;;
     -*|--*)
       # We need to catch this or we would accept REQUESTED_OUTPUT values that grim treats as options
-      echo "Unknown option $1" >&2
+      echo "$SCRIPT_NAME: unknown option $1" >&2
       exit 1
       ;;
     *)
       if test ! -z "$REQUESTED_OUTPUT"; then
-        echo "Error: multiple output files specified" >&2
+        echo "$SCRIPT_NAME: please provide a single output file" >&2
         exit 1
       fi
       REQUESTED_OUTPUT="$1"
@@ -49,7 +51,7 @@ done
 # Check if we have permission to write to the file
 if ! touch "$OUTPUT_FILE" 2>/dev/null ; then
     ERROR_MESSAGE=$(touch "$OUTPUT_FILE" 2>&1 | sed 's/.*:\s*//')
-    echo "Can't save to $OUTPUT_FILE: $ERROR_MESSAGE" >&2
+    echo "$SCRIPT_NAME: can't save to $OUTPUT_FILE: $ERROR_MESSAGE" >&2
     exit 1
 fi
 rm "$OUTPUT_FILE"
@@ -57,6 +59,6 @@ rm "$OUTPUT_FILE"
 if $SNAP/usr/bin/grim "$OUTPUT_FILE"; then
   echo "Saved to $OUTPUT_FILE"
 else
-  echo "Failed to save screenshot to $OUTPUT_FILE" >&2
+  echo "$SCRIPT_NAME: failed to save screenshot to $OUTPUT_FILE" >&2
   exit 1
 fi
