@@ -47,7 +47,11 @@ while test -z "$OUTPUT_FILE"; do
 done
 
 # Check if we have permission to write to the file
-touch "$OUTPUT_FILE"
+if ! touch "$OUTPUT_FILE" 2>/dev/null ; then
+    ERROR_MESSAGE=$(touch "$OUTPUT_FILE" 2>&1 | sed 's/.*:\s*//')
+    echo "Can't save to $OUTPUT_FILE: $ERROR_MESSAGE"
+    exit 1
+fi
 rm "$OUTPUT_FILE"
 
 if $SNAP/usr/bin/grim "$OUTPUT_FILE"; then
