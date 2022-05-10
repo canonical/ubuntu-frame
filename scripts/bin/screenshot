@@ -1,14 +1,14 @@
 #!/bin/sh
 set -eu
 
-SCRIPT_NAME='ubuntu-frame.screenshot'
+SCRIPT_NAME='${SNAP_INSTANCE_NAME}.screenshot'
 
 REQUESTED_OUTPUT=""
 while test $# -gt 0; do
   case $1 in
     -h|--help)
       echo "Take a screenshot"
-      echo "USAGE: ubuntu-frame.screenshot [output-file]"
+      echo "USAGE: $SCRIPT_NAME [output-file-or-directory]"
       exit 0
       ;;
     -*|--*)
@@ -18,7 +18,7 @@ while test $# -gt 0; do
       ;;
     *)
       if test ! -z "$REQUESTED_OUTPUT"; then
-        echo "$SCRIPT_NAME: please provide a single output file" >&2
+        echo "$SCRIPT_NAME: please provide a single output file or directory" >&2
         exit 1
       fi
       REQUESTED_OUTPUT="$1"
@@ -27,7 +27,6 @@ while test $# -gt 0; do
   esac
 done
 
-# OUTPUT_DIR is only used if OUTPUT_FILE is empty
 OUTPUT_DIR="$SNAP_USER_COMMON"
 OUTPUT_FILE=""
 if test -d "$REQUESTED_OUTPUT"; then
@@ -59,6 +58,6 @@ rm "$OUTPUT_FILE"
 if $SNAP/usr/bin/grim "$OUTPUT_FILE"; then
   echo "Saved to $OUTPUT_FILE"
 else
-  echo "$SCRIPT_NAME: failed to save screenshot to $OUTPUT_FILE" >&2
+  echo "$SCRIPT_NAME: failed to obtain screenshot" >&2
   exit 1
 fi

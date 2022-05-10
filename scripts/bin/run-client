@@ -1,6 +1,9 @@
 #!/bin/sh
 set -eu
 
+# This script should be included as part of the command chain so snap run --shell uses it
+
+# Use the user's main XDG runtime dir, instead of the snap-specific one
 export XDG_RUNTIME_DIR=$(dirname "$XDG_RUNTIME_DIR")
 
 exec "$@"

@@ -69,8 +69,10 @@ apps:
     command: bin/screenshot
     plugs:
       - home
+      - removable-media
       - opengl
     slots:
+      # Should be a plug but one snap can't have both the wayland slot and plug. This works.
       - wayland
 
 plugs:
