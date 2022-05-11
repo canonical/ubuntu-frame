@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-SCRIPT_NAME='${SNAP_INSTANCE_NAME}.screenshot'
+SCRIPT_NAME="${SNAP_INSTANCE_NAME}.screenshot"
 
 REQUESTED_OUTPUT=""
 while test $# -gt 0; do
@@ -55,7 +55,7 @@ if ! touch "$OUTPUT_FILE" 2>/dev/null ; then
 fi
 rm "$OUTPUT_FILE"
 
-if $SNAP/usr/bin/grim "$OUTPUT_FILE"; then
+if $SNAP/usr/bin/grim "$OUTPUT_FILE" 2>/dev/null; then
   echo "Saved to $OUTPUT_FILE"
 else
   echo "$SCRIPT_NAME: failed to obtain screenshot" >&2
