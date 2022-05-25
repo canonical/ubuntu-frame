@@ -48,7 +48,7 @@ console-provider=vt
 # Virtual terminal to use for display (0 to use current)
 vt=4
 
-# Mouse pointer to use (auto|none|software)
+# Mouse pointer to use (auto|null|software)
 cursor=auto
 
 # As frame HAS to run mesa-kms we can safely override the probe for KMS everywhere
