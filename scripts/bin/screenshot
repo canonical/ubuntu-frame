@@ -1,63 +1,17 @@
 #!/bin/sh
 set -eu
 
-SCRIPT_NAME="${SNAP_INSTANCE_NAME}.screenshot"
-
-REQUESTED_OUTPUT=""
-while test $# -gt 0; do
-  case $1 in
-    -h|--help)
-      echo "Take a screenshot"
-      echo "USAGE: $SCRIPT_NAME [output-file-or-directory]"
-      exit 0
-      ;;
-    -*|--*)
-      # We need to catch this or we would accept REQUESTED_OUTPUT values that grim treats as options
-      echo "$SCRIPT_NAME: unknown option $1" >&2
-      exit 1
-      ;;
-    *)
-      if test ! -z "$REQUESTED_OUTPUT"; then
-        echo "$SCRIPT_NAME: please provide a single output file or directory" >&2
-        exit 1
-      fi
-      REQUESTED_OUTPUT="$1"
-      shift
-      ;;
-  esac
-done
-
-OUTPUT_DIR="$SNAP_USER_COMMON"
-OUTPUT_FILE=""
-if test -d "$REQUESTED_OUTPUT"; then
-  OUTPUT_DIR="$REQUESTED_OUTPUT"
-else
-  OUTPUT_FILE="$REQUESTED_OUTPUT"
-fi
-
 SUFFIX=""
-# If a file name was specified this is skipped
+OUTPUT_FILE=""
 while test -z "$OUTPUT_FILE"; do
   # Set the default file name based on the date and time. There is no suffix the first iteration.
   # If that file exists a suffix is added and incremented until a name is found that does not exist.
-  CANDIDATE="$OUTPUT_DIR/frame_$(date '+%Y%m%d_%H%M')${SUFFIX:+_$SUFFIX}.png"
+  CANDIDATE="$SNAP_USER_COMMON/frame_$(date '+%Y%m%d_%H%M')${SUFFIX:+_$SUFFIX}.png"
   SUFFIX=$(( $SUFFIX + 1 ))
   if test ! -f "$CANDIDATE"; then
     OUTPUT_FILE="$CANDIDATE"
   fi
 done
 
-# Check if we have permission to write to the file
-if ! touch "$OUTPUT_FILE" 2>/dev/null ; then
-    ERROR_MESSAGE=$(touch "$OUTPUT_FILE" 2>&1 | sed 's/.*:\s*//')
-    echo "$SCRIPT_NAME: can't save to $OUTPUT_FILE: $ERROR_MESSAGE" >&2
-    exit 1
-fi
-rm "$OUTPUT_FILE"
-
-if $SNAP/usr/bin/grim "$OUTPUT_FILE" 2>/dev/null; then
-  echo "Saved to $OUTPUT_FILE"
-else
-  echo "$SCRIPT_NAME: failed to obtain screenshot" >&2
-  exit 1
-fi
+$SNAP/usr/bin/grim "$OUTPUT_FILE"
+echo "$OUTPUT_FILE"
