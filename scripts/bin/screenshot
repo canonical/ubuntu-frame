@@ -6,7 +6,7 @@ OUTPUT_FILE=""
 while test -z "$OUTPUT_FILE"; do
   # Set the default file name based on the date and time. There is no suffix the first iteration.
   # If that file exists a suffix is added and incremented until a name is found that does not exist.
-  CANDIDATE="$SNAP_USER_COMMON/frame_$(date '+%Y%m%d_%H%M')${SUFFIX:+_$SUFFIX}.png"
+  CANDIDATE="$SNAP_USER_COMMON/frame_$(date --iso-8601=minutes)${SUFFIX:+_$SUFFIX}.png"
   SUFFIX=$(( $SUFFIX + 1 ))
   if test ! -f "$CANDIDATE"; then
     OUTPUT_FILE="$CANDIDATE"
