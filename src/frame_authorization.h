@@ -20,7 +20,20 @@
 #define FRAME_AUTHORIZATION_H
 
 #include <miral/wayland_extensions.h>
+#include <set>
+#include <map>
 
-void init_authorization(miral::WaylandExtensions& extensions);
+class AuthModel
+{
+public:
+    AuthModel(
+        std::vector<std::pair<std::string, std::vector<std::string>>> const& protocols_for_snaps);
+
+    std::map<std::string, std::set<std::string>> const snaps_for_protocols;
+};
+
+extern AuthModel const auth_model;
+
+void init_authorization(miral::WaylandExtensions& extensions, AuthModel const& model);
 
 #endif // FRAME_AUTHORIZATION_H
