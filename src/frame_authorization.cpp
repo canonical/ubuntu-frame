@@ -21,6 +21,7 @@
 #include <miral/version.h>
 #include <mir/log.h>
 #include <unistd.h>
+#include <algorithm>
 #include <cstring>
 #include <sys/apparmor.h>
 
@@ -63,12 +64,14 @@ auto snap_name_of(miral::Application const& app) -> std::string
         std::string const snap_prefix{"snap."};
         if (label.starts_with(snap_prefix))
         {
-            auto right = label.find('.', snap_prefix.size());
-            if (right == std::string::npos)
-            {
-                right = label.size();
-            }
-            return label.substr(snap_prefix.size(), right - snap_prefix.size());
+            // Strip the prefix (after_snap_prefix) and app name (before_app_suffix) from the label
+            auto const after_snap_prefix = begin(label) + snap_prefix.size();
+            auto const before_app_suffix = std::find(after_snap_prefix, end(label), '.');
+
+            // We also need to discard any parallel-install suffix (which starts with an underscore)
+            auto const install_suffix = std::find(after_snap_prefix, before_app_suffix, '_');
+
+            return std::string{after_snap_prefix, install_suffix};
         }
         else
         {
