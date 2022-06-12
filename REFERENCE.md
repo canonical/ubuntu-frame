@@ -85,122 +85,127 @@ A full list of the current configuration options supported by `ubuntu-frame` can
 
 ```
 $ ubuntu-frame --help
-usage: /snap/ubuntu-frame/117/usr/local/bin/frame [options]
+usage: /snap/ubuntu-frame/2307/usr/local/bin/frame [options]
 
-Command-line options (e.g. "--host-socket=/tmp/mir_socket").
+Command-line options (e.g. "--wayland-host=wayland-0").
 
 Environment variables capitalise long form with prefix "MIR_SERVER_" and "_" in place of "-".
-(E.g. "MIR_SERVER_HOST_SOCKET=/tmp/mir_socket")
+(E.g. "MIR_SERVER_WAYLAND_HOST=wayland-0")
 
-Config file entries are long form (e.g. "host-socket=/tmp/mir_socket").
+Config file entries are long form (e.g. "wayland-host=wayland-0").
 The config file (frame.config) is located via the XDG Base Directory Specification.
 ($XDG_CONFIG_HOME or $HOME/.config followed by $XDG_CONFIG_DIRS)
 
 user options:
-  --arw-file                            Make socket filename globally rw 
+  --arw-file                            Make socket filename globally rw
                                         (equivalent to chmod a=rw)
-  --platform-display-libs arg           Libraries to use for platform output 
+  --platform-display-libs arg           Libraries to use for platform output
                                         support (default: autodetect)
   --platform-rendering-libs arg         Libraries to use for platform rendering
                                         support (default: autodetect)
-  --platform-input-lib arg              Library to use for platform input 
+  --platform-input-lib arg              Library to use for platform input
                                         support (default: input-stub.so)
   --platform-path arg (=/usr/lib/x86_64-linux-gnu/mir/server-platform)
-                                        Directory to look for platform 
+                                        Directory to look for platform
                                         libraries (default: /usr/lib/x86_64-lin
                                         ux-gnu/mir/server-platform)
   -i [ --enable-input ] arg (=1)        Enable input.
   --compositor-report arg (=off)        Compositor reporting [{log,lttng,off}]
-  --connector-report arg (=off)         How to handle the Connector report. 
+  --display-report arg (=off)           How to handle the Display report.
                                         [{log,lttng,off}]
-  --display-report arg (=off)           How to handle the Display report. 
+  --input-report arg (=off)             How to handle to Input report.
                                         [{log,lttng,off}]
-  --input-report arg (=off)             How to handle to Input report. 
-                                        [{log,lttng,off}]
-  --legacy-input-report arg (=off)      How to handle the Legacy Input report. 
+  --seat-report arg (=off)              How to handle to Seat report.
                                         [{log,off}]
-  --seat-report arg (=off)              How to handle to Seat report. 
-                                        [{log,off}]
-  --session-mediator-report arg (=off)  How to handle the SessionMediator 
-                                        report. [{log,lttng,off}]
-  --msg-processor-report arg (=off)     How to handle the MessageProcessor 
-                                        report. [{log,lttng,off}]
-  --scene-report arg (=off)             How to handle the scene report. 
+  --scene-report arg (=off)             How to handle the scene report.
                                         [{log,lttng,off}]
   --shared-library-prober-report arg (=log)
-                                        How to handle the SharedLibraryProber 
+                                        How to handle the SharedLibraryProber
                                         report. [{log,lttng,off}]
-  --shell-report arg (=off)             How to handle the Shell report. 
+  --shell-report arg (=off)             How to handle the Shell report.
                                         [{log,off}]
-  --composite-delay arg (=0)            Compositor frame delay in milliseconds 
-                                        (how long to wait for new frames from 
-                                        clients before compositing). Higher 
+  --composite-delay arg (=0)            Compositor frame delay in milliseconds
+                                        (how long to wait for new frames from
+                                        clients before compositing). Higher
                                         values result in lower latency but risk
-                                        causing frame skipping. Default: A 
-                                        negative value means decide 
+                                        causing frame skipping. Default: A
+                                        negative value means decide
                                         automatically.
-  --enable-touchspots                   Display visualization of touchspots 
+  --enable-touchspots                   Display visualization of touchspots
                                         (e.g. for screencasting).
-  --cursor arg (=auto)                  Cursor (mouse pointer) to use 
+  --cursor arg (=auto)                  Cursor (mouse pointer) to use
                                         [{auto,null,software}]
   --enable-key-repeat arg (=1)          Enable server generated key repeat
-  --on-fatal-error-except               On "fatal error" conditions [e.g. 
-                                        drivers behaving in unexpected ways] 
-                                        throw an exception (instead of a core 
+  --idle-timeout arg (=0)               Time (in seconds) Mir will remain idle
+                                        before turning off the display, or 0 to
+                                        keep display on forever.
+  --on-fatal-error-except               On "fatal error" conditions [e.g.
+                                        drivers behaving in unexpected ways]
+                                        throw an exception (instead of a core
                                         dump)
-  --debug                               Enable extra development debugging. 
-                                        This is only interesting for people 
+  --debug                               Enable extra development debugging.
+                                        This is only interesting for people
                                         doing Mir server or client development.
   --console-provider arg (=auto)        Console device handling
-                                        How Mir handles console-related tasks 
+                                        How Mir handles console-related tasks
                                         (device handling, VT switching, etc)
                                         Options:
                                         logind: use logind
-                                        vt: use the Linux VT subsystem. 
+                                        vt: use the Linux VT subsystem.
                                         Requires root.
                                         none: support no console-related tasks.
-                                        Useful for nested platforms which do 
-                                        not need raw device access and which 
+                                        Useful for nested platforms which do
+                                        not need raw device access and which
                                         don't have a VT concept
                                         auto: detect the appropriate provider.
-  --vt arg (=0)                         [requires --console-provider=vt] VT to 
+  --vt arg (=0)                         [requires --console-provider=vt] VT to
                                         run on or 0 to use current.
-  --bypass arg (=0)                     [platform-specific] utilize the bypass 
+  --bypass arg (=0)                     [platform-specific] utilize the bypass
                                         optimization for fullscreen surfaces.
-  --driver-quirks arg                   [platform-specific] Driver quirks to 
+  --driver-quirks arg                   [platform-specific] Driver quirks to
                                         apply (may be specified multiple times;
                                         multiple quirks are combined)
-  --x11-output arg (=1280x1024)         [mir-on-X specific] Colon separated 
+  --x11-output arg (=1280x1024)         [mir-on-X specific] Colon separated
                                         list of WIDTHxHEIGHT sizes for "output"
                                         windows. ^SCALE may also be appended to
                                         any output
-  --env-hacks arg                       Colon separated list of environment 
+  --x11-window-title arg (=Mir on X)    [mir-on-X specific] Title for the
+                                        banner of the generated X11 window
+  --env-hacks arg                       Colon separated list of environment
                                         variable settings
-  --wayland-extensions arg              Exhaustive list of all Wayland 
-                                        extensions to enable. 
+  --wayland-extensions arg              Exhaustive list of all Wayland
+                                        extensions to enable.
                                         [wl_shell:xdg_wm_base:zwlr_foreign_topl
-                                        evel_manager_v1:zwlr_layer_shell_v1:zwp
-                                        _pointer_constraints_v1:zwp_relative_po
-                                        inter_manager_v1:zxdg_output_manager_v1
-                                        :zxdg_shell_v6]
-  --add-wayland-extensions arg          Additional Wayland extensions to 
+                                        evel_manager_v1:zwlr_layer_shell_v1:zwl
+                                        r_screencopy_manager_v1:zwp_idle_inhibi
+                                        t_manager_v1:zwp_input_method_manager_v
+                                        2:zwp_pointer_constraints_v1:zwp_relati
+                                        ve_pointer_manager_v1:zwp_text_input_ma
+                                        nager_v2:zwp_text_input_manager_v3:zwp_
+                                        virtual_keyboard_manager_v1:zxdg_output
+                                        _manager_v1:zxdg_shell_v6]
+  --add-wayland-extensions arg          Additional Wayland extensions to
                                         enable. [zwlr_foreign_toplevel_manager_
-                                        v1:zwlr_layer_shell_v1:zwp_pointer_cons
-                                        traints_v1:zwp_relative_pointer_manager
-                                        _v1]
-  --drop-wayland-extensions arg         Wayland extensions to disable. 
-                                        [wl_shell:xdg_wm_base:zxdg_output_manag
-                                        er_v1:zxdg_shell_v6]
-  --display-layout arg (=default)       Display configuration layout from 
+                                        v1:zwlr_layer_shell_v1:zwlr_screencopy_
+                                        manager_v1:zwp_idle_inhibit_manager_v1:
+                                        zwp_input_method_manager_v2:zwp_pointer
+                                        _constraints_v1:zwp_relative_pointer_ma
+                                        nager_v1:zwp_virtual_keyboard_manager_v
+                                        1]
+  --drop-wayland-extensions arg         Wayland extensions to disable.
+                                        [wl_shell:xdg_wm_base:zwp_text_input_ma
+                                        nager_v2:zwp_text_input_manager_v3:zxdg
+                                        _output_manager_v1:zxdg_shell_v6]
+  --display-layout arg (=default)       Display configuration layout from
                                         `frame.display'
-                                        (Found in $XDG_CONFIG_HOME or 
-                                        $HOME/.config, followed by 
+                                        (Found in $XDG_CONFIG_HOME or
+                                        $HOME/.config, followed by
                                         $XDG_CONFIG_DIRS)
   --wallpaper-top arg (=0x7f7f7f)       Colour of wallpaper RGB
   --wallpaper-bottom arg (=0x1f1f1f)    Colour of wallpaper RGB
   --window-management-trace             log trace message
-  --keymap arg (=gb)                    keymap <layout>[+<variant>[+<options>]]
-                                        , e,g, "gb" or "cz+qwerty" or 
+  --keymap arg (=pl)                    keymap <layout>[+<variant>[+<options>]]
+                                        , e,g, "gb" or "cz+qwerty" or
                                         "de++compose:caps"
   -h [ --help ]                         this help text
 ```
