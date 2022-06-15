@@ -74,6 +74,7 @@ config_entry "vt"                 "4"                                   "Virtual
 config_entry "cursor"             "auto"                                "Mouse pointer to use (auto|null|software)"
 config_entry "env-hacks"          "MIR_MESA_KMS_DISABLE_MODESET_PROBE"  "As Frame HAS to run mesa-kms we can safely override the probe for KMS everywhere"
 config_entry "x11-window-title"   "Ubuntu Frame"                        "Default window title when run as Mir on X"
+config_entry "driver-quirks"      "skip:driver:nvidia"                  "Do not attempt to use Nvidia driver with gbm-kms"
 
 if ! diff "${config_temp}" "${config_file}" > /dev/null; then
   mv "${config_file}"  "${config_file}.save" || true
