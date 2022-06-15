@@ -14,7 +14,7 @@ There are three snap configuration options:
 * `config=<options for the shell>`
 * `display=<options for display layout>`
 
-The configuration options are described in detail in [REFERENCE.md](REFERENCE.md)
+The configuration options are described in detail in [the Ubuntu Frame reference](https://mir-server.io/docs/reference).
 
 ## Development
 
