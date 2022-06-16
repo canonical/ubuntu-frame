@@ -33,6 +33,9 @@ AuthModel const auth_model{{
         WaylandExtensions::zwp_virtual_keyboard_manager_v1,
         WaylandExtensions::zwp_input_method_manager_v2,
     }},
+    {"ubuntu-frame-vnc", {
+        WaylandExtensions::zwlr_screencopy_manager_v1,
+    }},
     {"ubuntu-frame", {
         WaylandExtensions::zwlr_screencopy_manager_v1,
     }},
