@@ -13,8 +13,8 @@ jobs:
     steps:
     - name: Install Snapcraft
       uses: samuelmeuli/action-snapcraft@v1
-      with:
-        snapcraft_token: ${{ secrets.SNAPCRAFT_TOKEN }}
 
     - name: Close obsolete channels
+      env:
+        SNAPCRAFT_STORE_CREDENTIALS: ${SNAPCRAFT_TOKEN}
       run: snapcraft close ubuntu-frame "edge/pr${{ github.event.number }}" || true
