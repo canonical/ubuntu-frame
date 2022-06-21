@@ -20,10 +20,9 @@ jobs:
       with:
         fetch-depth: 0  # needed for version determination
 
-    - name: Patch PPA and version
+    - name: Patch Mir channel
       run: |
-        sed -i 's@mir-team/release@mir-team/dev@' snap/snapcraft.yaml
-        sed -i 's@rev-list --count@rev-parse --short@' snap/snapcraft.yaml
+        sed -i 's@- mir-core20@\0/latest/edge@' snap/snapcraft.yaml
 
     - name: Build and publish the snap
       uses: canonical/actions/build-snap@release
