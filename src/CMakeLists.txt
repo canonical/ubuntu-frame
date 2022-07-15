@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 pkg_check_modules(MIRAL miral REQUIRED)
 pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client)
 pkg_check_modules(APPARMOR libapparmor REQUIRED)
+pkg_check_modules(FREETYPE freetype2 REQUIRED)
 
 add_executable(frame
     frame_main.cpp
@@ -13,12 +14,24 @@ add_executable(frame
     frame_window_manager.cpp frame_window_manager.h
     egwallpaper.cpp egwallpaper.h
     egfullscreenclient.cpp egfullscreenclient.h
+    crash_reporter.cpp crash_reporter.h
+)
+
+# Check for boost
+find_package(Boost 1.48.0 COMPONENTS filesystem iostreams REQUIRED)
+include_directories (SYSTEM
+  ${Boost_INCLUDE_DIRS}
 )
 
 target_compile_definitions(frame PRIVATE MIR_LOG_COMPONENT="frame")
 
-target_include_directories(frame PUBLIC SYSTEM ${MIRAL_INCLUDE_DIRS})
-target_link_libraries(frame ${MIRAL_LDFLAGS} ${WAYLAND_CLIENT_LIBRARIES} ${APPARMOR_LIBRARIES})
+target_include_directories(frame 
+    PUBLIC 
+        SYSTEM 
+        ${MIRAL_INCLUDE_DIRS} 
+    PRIVATE 
+        ${FREETYPE_INCLUDE_DIRS})
+target_link_libraries(frame ${MIRAL_LDFLAGS} ${WAYLAND_CLIENT_LIBRARIES} ${APPARMOR_LIBRARIES} ${FREETYPE_LIBRARIES} ${Boost_LIBRARIES})
 
 install(PROGRAMS ${CMAKE_BINARY_DIR}/frame
     DESTINATION ${CMAKE_INSTALL_PREFIX}/bin

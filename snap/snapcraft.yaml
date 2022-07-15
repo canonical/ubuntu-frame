@@ -27,6 +27,8 @@ environment:
   __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
   # Setup XKB
   XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
+  # Define directory where log files should go
+  LOG_DIR: $SNAP/log
 
 layout:
   /usr/share/icons:
@@ -35,6 +37,9 @@ layout:
     bind: $SNAP/graphics/libdrm
   /usr/share/drirc.d:
     bind: $SNAP/graphics/drirc.d
+  /etc/fonts:
+    bind: $SNAP/etc/fonts
+
 
 apps:
   ubuntu-frame:
@@ -104,8 +109,13 @@ parts:
       - libmiral-dev
       - libwayland-dev
       - libboost1.71-dev
+      - libboost-filesystem-dev
+      - libboost-iostreams-dev
       - libapparmor-dev
+      - libfreetype6-dev
     stage-packages:
+      - libboost-filesystem1.71.0
+      - libboost-iostreams1.71.0
       - libmiral4
       - libapparmor1
 
@@ -146,3 +156,8 @@ parts:
       for CRUFT in bug doc doc-base drirc.d glvnd libdrm lintian man pkgconfig; do
         rm -rf "$SNAPCRAFT_PRIME/usr/share/$CRUFT"
       done
+
+  assets:
+    plugin: nil
+    stage-packages:
+    - fonts-ubuntu

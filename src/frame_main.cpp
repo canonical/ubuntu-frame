@@ -19,6 +19,7 @@
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
 #include "egwallpaper.h"
+#include "crash_reporter.h"
 
 #include <miral/command_line_option.h>
 #include <miral/display_configuration.h>
@@ -37,19 +38,25 @@ int main(int argc, char const* argv[])
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
-    egmde::Wallpaper wallpaper;
-    runner.add_stop_callback([&] { wallpaper.stop(); });
+    // egmde::Wallpaper wallpaper;
+    CrashReporter crash_reporter;
 
+    // runner.add_stop_callback([&] { wallpaper.stop(); });
+    runner.add_stop_callback([&] { crash_reporter.stop(); });
+    
     return runner.run_with(
         {
             wayland_extensions,
             display_config,
             display_config.layout_option(),
-            CommandLineOption{[&](auto& option) { wallpaper.top(option);},
-                              "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
-            CommandLineOption{[&](auto& option) { wallpaper.bottom(option);},
-                              "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
-            StartupInternalClient{std::ref(wallpaper)},
+            // CommandLineOption{[&](auto& option) { wallpaper.top(option);},
+            //                   "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
+            // CommandLineOption{[&](auto& option) { wallpaper.bottom(option);},
+            //                   "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
+            // StartupInternalClient{std::ref(wallpaper)},
+            CommandLineOption{[&](auto& option) { crash_reporter.set_background_colour(option);},
+                                "crash-reporter-background-colour", "Colour of crash reporter background RGB", "0x380c24"},
+            StartupInternalClient{std::ref(crash_reporter)},
             set_window_management_policy<FrameWindowManagerPolicy>(),
             Keymap{}
         });
