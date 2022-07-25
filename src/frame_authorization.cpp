@@ -19,11 +19,13 @@
 #include "frame_authorization.h"
 
 #include <miral/version.h>
+#include <mir/fd.h>
 #include <mir/log.h>
 #include <unistd.h>
 #include <algorithm>
 #include <cstring>
 #include <sys/apparmor.h>
+#include <fcntl.h>
 
 using namespace miral;
 
@@ -55,7 +57,39 @@ auto snap_name_of(miral::Application const& app) -> std::string
     }
     else if (aa_getpeercon(app_fd, &label_cstr, &mode_cstr) < 0)
     {
-        mir::log_debug("aa_getpeercon() failed for process %d: %s", miral::pid_of(app), strerror(errno));
+        mir::log_info("aa_getpeercon() failed for process %d: %s", miral::pid_of(app), strerror(errno));
+
+        if (errno == EINVAL) // EINVAL is what is returned when AppArmor isn't setup
+        {
+            mir::log_info("Fall back (without AppArmor): Identify client via /proc/%%d/cmdline");
+
+            // using the id, find the name of this process
+            char buffer[128] = {'\0' };
+            sprintf(buffer, "/proc/%d/cmdline", miral::pid_of(app));
+
+            if (mir::Fd scoped_fd{open(buffer, O_RDONLY)})
+            {
+                // Read process name from file descriptor scoped_fd
+                // http://linux.die.net/man/2/read
+                if (read(scoped_fd, buffer, sizeof buffer) > 0)
+                {
+                    std::string const path{buffer};
+                    std::string const snap_prefix{"/snap/"};
+
+                    if (path.starts_with(snap_prefix))
+                    {
+                        // Strip the prefix (after_snap_prefix) and app name (before_app_suffix) from the path
+                        auto const after_snap_prefix = begin(path) + snap_prefix.size();
+                        auto const before_app_suffix = std::find(after_snap_prefix, end(path), '/');
+
+                        // We also need to discard any parallel-install suffix (which starts with an underscore)
+                        auto const install_suffix = std::find(after_snap_prefix, before_app_suffix, '_');
+
+                        return std::string{after_snap_prefix, install_suffix};
+                    }
+                }
+            }
+        }
         return "";
     }
     else
