@@ -66,8 +66,9 @@ auto snap_name_of(miral::Application const& app) -> std::string
             // using the id, find the name of this process
             char buffer[128] = {'\0' };
             sprintf(buffer, "/proc/%d/cmdline", miral::pid_of(app));
+            mir::Fd const scoped_fd{open(buffer, O_RDONLY)};
 
-            if (mir::Fd scoped_fd{open(buffer, O_RDONLY)})
+            if (scoped_fd != mir::Fd::invalid)
             {
                 // Read process name from file descriptor scoped_fd
                 // http://linux.die.net/man/2/read
