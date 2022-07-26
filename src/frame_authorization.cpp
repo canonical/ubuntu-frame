@@ -18,14 +18,11 @@
 
 #include "frame_authorization.h"
 
-#include <miral/version.h>
 #include <mir/fd.h>
 #include <mir/log.h>
-#include <unistd.h>
-#include <algorithm>
-#include <cstring>
 #include <sys/apparmor.h>
-#include <fcntl.h>
+#include <cstring>
+#include <fstream>
 
 using namespace miral;
 
@@ -64,30 +61,21 @@ auto snap_name_of(miral::Application const& app) -> std::string
             mir::log_info("Fall back (without AppArmor): Identify client via /proc/%%d/cmdline");
 
             // using the id, find the name of this process
-            char buffer[128] = {'\0' };
-            sprintf(buffer, "/proc/%d/cmdline", miral::pid_of(app));
-            mir::Fd const scoped_fd{open(buffer, O_RDONLY)};
-
-            if (scoped_fd != mir::Fd::invalid)
+            if (std::ifstream cmdline{"/proc/" + std::to_string(miral::pid_of(app)) + "/cmdline"})
             {
-                // Read process name from file descriptor scoped_fd
-                // http://linux.die.net/man/2/read
-                if (read(scoped_fd, buffer, sizeof buffer) > 0)
+                std::string const path{std::istreambuf_iterator{cmdline}, std::istreambuf_iterator<char>{}};
+                std::string const snap_prefix{"/snap/"};
+
+                if (path.starts_with(snap_prefix))
                 {
-                    std::string const path{buffer};
-                    std::string const snap_prefix{"/snap/"};
+                    // Strip the prefix (after_snap_prefix) and app name (before_app_suffix) from the path
+                    auto const after_snap_prefix = begin(path) + snap_prefix.size();
+                    auto const before_app_suffix = std::find(after_snap_prefix, end(path), '/');
 
-                    if (path.starts_with(snap_prefix))
-                    {
-                        // Strip the prefix (after_snap_prefix) and app name (before_app_suffix) from the path
-                        auto const after_snap_prefix = begin(path) + snap_prefix.size();
-                        auto const before_app_suffix = std::find(after_snap_prefix, end(path), '/');
+                    // We also need to discard any parallel-install suffix (which starts with an underscore)
+                    auto const install_suffix = std::find(after_snap_prefix, before_app_suffix, '_');
 
-                        // We also need to discard any parallel-install suffix (which starts with an underscore)
-                        auto const install_suffix = std::find(after_snap_prefix, before_app_suffix, '_');
-
-                        return std::string{after_snap_prefix, install_suffix};
-                    }
+                    return std::string{after_snap_prefix, install_suffix};
                 }
             }
         }
