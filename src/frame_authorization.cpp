@@ -18,7 +18,6 @@
 
 #include "frame_authorization.h"
 
-#include <mir/fd.h>
 #include <mir/log.h>
 #include <sys/apparmor.h>
 #include <cstring>
