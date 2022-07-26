@@ -415,7 +415,7 @@ void TextRenderer::render_glyph(
     for (geom::Y buffer_y = buffer_top; buffer_y < buffer_bottom; buffer_y += geom::DeltaY{1})
     {
         geom::Y const glyph_y = buffer_y - glyph_offset.dy;
-        unsigned char* const glyph_row = glyph->buffer + (glyph_y.as_int() * glyph->pitch);
+        uint8_t* const glyph_row = glyph->buffer + (glyph_y.as_int() * glyph->pitch);
         Pixel* const buffer_row = buf + (buffer_y.as_int() * buf_size.width.as_int());
 
         for (geom::X buffer_x = buffer_left; buffer_x < buffer_right; buffer_x += geom::DeltaX{1})
