@@ -33,12 +33,54 @@ struct wl_display;
 
 namespace geom = mir::geometry;
 
+struct Pixel
+{
+    uint8_t b;
+    uint8_t g;
+    uint8_t r;
+    uint8_t a;
+
+    // Allow for list-like accessing of members
+    auto& operator[](size_t i)
+    {
+        switch(i)
+        {
+        case 0: return b;
+        case 1: return g;
+        case 2: return r;
+        case 3: return a;
+        default: assert(false);
+        }
+    }
+
+    operator uint32_t() const
+    {
+        return b + (g << 8) + (r << 16) + (a << 24);
+    }
+
+    Pixel(uint32_t integer)
+    {
+        b = integer & 0xFF;
+        g = (integer >> 8) & 0xFF;
+        r = (integer >> 16) & 0xFF;
+        a = (integer >> 24) & 0xFF;
+    }
+
+    Pixel(uint8_t blue, uint8_t green, uint8_t red, uint8_t alpha)
+    {
+        b = blue;
+        g = green;
+        r = red;
+        a = alpha;
+    }
+};
+
 class CrashReporter
 {
 public:
     void set_background_colour(std::string const& option);
 
-    static void render_background(int32_t width, int32_t height, unsigned char* buffer, uint8_t const* colour);
+    static void render_background(int32_t width, int32_t height, Pixel* buffer, Pixel colour);
     
     void operator()(wl_display* display);
     void operator()(std::weak_ptr<mir::scene::Session> const& session);
@@ -48,10 +90,8 @@ public:
 private:
     std::mutex mutable mutex;
 
-    // aubergine in RGB
-    uint8_t colour[4] = { 0x38, 0x0c, 0x24, 0xFF };
-
-    boost::filesystem::path const LOG_PATH = boost::filesystem::path("/log/log.txt");
+    // aubergine in BGRA
+    Pixel colour = {36, 12, 56, 255};
 
     struct Self;
     std::shared_ptr<Self> self;
@@ -72,7 +112,7 @@ public:
         std::string const& text,
         geom::Point top_left,
         geom::Height height_pixels,
-        Pixel color) const;
+        Pixel colour) const;
 
 private:
     const Path FILE_PATH = Path("/log/log.txt"); // TODO - make environment variable
@@ -89,7 +129,7 @@ private:
         geom::Size buf_size,
         FT_Bitmap const* glyph,
         geom::Point top_left,
-        Pixel color) const;
+        Pixel colour) const;
 
     static auto get_font_path() -> std::string;
     static auto convert_utf8_to_utf32(std::string const& text) -> std::u32string;

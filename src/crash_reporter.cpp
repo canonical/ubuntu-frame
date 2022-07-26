@@ -31,28 +31,26 @@
 
 struct CrashReporter::Self : egmde::FullscreenClient
 {
-    Self(wl_display* display, uint8_t* colour);
+    Self(wl_display* display, Pixel colour);
 
     void draw_screen(SurfaceInfo& info) const override;
     
-    void render_text(int32_t width, int32_t height, unsigned char* buffer, boost::filesystem::path path) const;
+    void render_text(int32_t width, int32_t height, Pixel* buffer, boost::filesystem::path const& log_path) const;
 
-    uint8_t* const colour;
+    Pixel const colour;
     TextRenderer text_renderer;
 };
 
-void CrashReporter::render_background(int32_t width, int32_t height, unsigned char* buffer, uint8_t const* colour)
+void CrashReporter::render_background(int32_t width, int32_t height, Pixel* buffer, Pixel colour)
 {
     for (int current_y = 0; current_y < height; current_y++)
     {
-        auto* pixel = (uint32_t*)buffer;
-
         for (int current_x = 0; current_x < width; current_x++)
         {
-            memcpy(pixel + current_x, colour, sizeof(pixel[current_x]));
+            memcpy(buffer + current_x, &colour, sizeof(buffer[current_x]));
         }
 
-        buffer += 4 * width;
+        buffer += width;
     }
 }
 
@@ -63,10 +61,7 @@ void CrashReporter::set_background_colour(std::string const& option)
 
     if (interpreter >> std::hex >> value)
     {
-        colour[0] = value & 0xff;
-        colour[1] = (value >> 8) & 0xff;
-        colour[2] = (value >> 16) & 0xff;
-        colour[3] = 0xff; // TODO - Do we always want this?
+        colour = value;
     }
 }
 
@@ -89,7 +84,7 @@ void CrashReporter::operator()(std::weak_ptr<mir::scene::Session> const& /*sessi
 {
 }
 
-CrashReporter::Self::Self(wl_display* display, uint8_t* colour) :
+CrashReporter::Self::Self(wl_display* display, Pixel colour) :
     FullscreenClient(display),
     colour{colour},
     text_renderer{TextRenderer()}
@@ -98,24 +93,29 @@ CrashReporter::Self::Self(wl_display* display, uint8_t* colour) :
     wl_display_roundtrip(display);
 }
 
-void CrashReporter::Self::render_text(int32_t width, int32_t height, unsigned char* buffer, boost::filesystem::path path) const
+void CrashReporter::Self::render_text(
+    int32_t width, 
+    int32_t height,
+    Pixel* buffer, 
+    boost::filesystem::path const& log_path) const
 {
-    auto log_stream = boost::filesystem::ifstream(path);
     std::string line;
 
     auto size = geom::Size{width, height};
 
     // TODO - this aint it chief
-    auto top_left = geom::Point{200, 200};
-    auto height_pixels = geom::Height(400);
-    auto color = 765; // TODO - Rewrite this to load a selectable color
-    line = "TESTING TESTY TESTY TEST TEST!"; // TODO - Actually read from text file
+    auto top_left = geom::Point{0, 0};
+    auto height_pixels = geom::Height(50);
+    auto y_kerning = height_pixels + (height_pixels / 4);
+    auto colour = Pixel(255, 255, 255, 255); // TODO - Rewrite this to load a selectable colour
+    auto stream = boost::filesystem::ifstream(log_path);
 
-    auto pixel_buffer = (uint32_t*)buffer;
-    // while(getline(log_stream, line))
-    // {
-        text_renderer.render(pixel_buffer, size, line, top_left, height_pixels, color);
-    // }
+    while (getline(stream, line))
+    {
+        text_renderer.render(buffer, size, line, top_left, height_pixels, colour);
+        auto new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
+        top_left = new_top_left;
+    }
 }
 
 void CrashReporter::Self::draw_screen(SurfaceInfo& info) const
@@ -159,7 +159,7 @@ void CrashReporter::Self::draw_screen(SurfaceInfo& info) const
             WL_SHM_FORMAT_ARGB8888);
     }
 
-    auto buffer = static_cast<unsigned char*>(info.content_area);
+    auto buffer = static_cast<Pixel*>(info.content_area);
     render_background(width, height, buffer, colour);
 
     auto log_path = boost::filesystem::path("$SNAP/log/log.txt");
@@ -320,7 +320,7 @@ void TextRenderer::render(
     std::string const& text,
     geom::Point top_left,
     geom::Height height_pixels,
-    Pixel color) const // TODO - change color type
+    Pixel colour) const
 {
     if (!area(buf_size) || height_pixels <= geom::Height{})
     {
@@ -358,7 +358,7 @@ void TextRenderer::render(
                 geom::Displacement{
                     face->glyph->bitmap_left,
                     height_pixels.as_int() - face->glyph->bitmap_top};
-            render_glyph(buf, buf_size, &face->glyph->bitmap, glyph_top_left, color);
+            render_glyph(buf, buf_size, &face->glyph->bitmap, glyph_top_left, colour);
 
             top_left += geom::Displacement{
                 face->glyph->advance.x / 64,
@@ -402,7 +402,7 @@ void TextRenderer::render_glyph(
     geom::Size buf_size,
     FT_Bitmap const* glyph,
     geom::Point top_left,
-    Pixel color) const // TODO - change color type
+    Pixel colour) const
 {
     geom::X const buffer_left = std::max(top_left.x, geom::X{});
     geom::X const buffer_right = std::min(top_left.x + geom::DeltaX{glyph->width}, as_x(buf_size.width));
@@ -412,26 +412,22 @@ void TextRenderer::render_glyph(
 
     geom::Displacement const glyph_offset = as_displacement(top_left);
 
-    unsigned char* const color_pixels = (unsigned char *)&color;
-    unsigned char const color_alpha = color_pixels[3];
-
     for (geom::Y buffer_y = buffer_top; buffer_y < buffer_bottom; buffer_y += geom::DeltaY{1})
     {
         geom::Y const glyph_y = buffer_y - glyph_offset.dy;
-        unsigned char* const glyph_row = glyph->buffer + glyph_y.as_int() * glyph->pitch;
-        Pixel* const buffer_row = buf + buffer_y.as_int() * buf_size.width.as_int(); // TODO - was Pixel
+        unsigned char* const glyph_row = glyph->buffer + (glyph_y.as_int() * glyph->pitch);
+        Pixel* const buffer_row = buf + (buffer_y.as_int() * buf_size.width.as_int());
 
         for (geom::X buffer_x = buffer_left; buffer_x < buffer_right; buffer_x += geom::DeltaX{1})
         {
             geom::X const glyph_x = buffer_x - glyph_offset.dx;
-            unsigned char const glyph_alpha = ((int)glyph_row[glyph_x.as_int()] * color_alpha) / 255;
-            unsigned char* const buffer_pixels = (unsigned char *)(buffer_row + buffer_x.as_int());
+            uint8_t const glyph_alpha = ((int)glyph_row[glyph_x.as_int()] * colour.a) / 255;
+            Pixel* buffer_pixel = buffer_row + buffer_x.as_int();
             for (int i = 0; i < 3; i++)
             {
                 // Blend color with the previous buffer color based on the glyph's alpha
-                buffer_pixels[i] =
-                    ((int)buffer_pixels[i] * (255 - glyph_alpha)) / 255 +
-                    ((int)color_pixels[i] * glyph_alpha) / 255;
+                (*buffer_pixel)[i] = ((*buffer_pixel)[i] * (255 - glyph_alpha)) / 255 +
+                    (colour[i] * glyph_alpha) / 255;
             }
         }
     }
