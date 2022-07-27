@@ -109,9 +109,9 @@ void CrashReporter::Self::render_text(
 
     // TODO - this aint it chief
     auto top_left = geom::Point{0, 0};
-    auto height_pixels = geom::Height(40);
-    auto y_kerning = height_pixels + (height_pixels / 5);
-    auto colour = Pixel(255, 255, 255, 255); // TODO - Rewrite this to load a selectable colour
+    auto const height_pixels = geom::Height(40);
+    auto const y_kerning = height_pixels + (height_pixels / 5);
+    auto const colour = Pixel(255, 255, 255, 255); // TODO - Rewrite this to load a selectable colour
     
     auto file_observer = FileObserver(log_path);
     if (file_observer.file_exists()) 
@@ -120,7 +120,7 @@ void CrashReporter::Self::render_text(
         while (getline(stream, line))
         {
             text_renderer.render(buffer, size, line, top_left, height_pixels, colour);
-            auto new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
+            auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
             top_left = new_top_left;
         }
     }
