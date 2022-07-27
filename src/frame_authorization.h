@@ -35,5 +35,6 @@ public:
 extern AuthModel const auth_model;
 
 void init_authorization(miral::WaylandExtensions& extensions, AuthModel const& model);
+void init_authorise_without_apparmor(bool enable_fallback);
 
 #endif // FRAME_AUTHORIZATION_H

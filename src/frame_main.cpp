@@ -49,6 +49,8 @@ int main(int argc, char const* argv[])
                               "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
             CommandLineOption{[&](auto& option) { wallpaper.bottom(option);},
                               "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
+            CommandLineOption{[&](bool option) { init_authorise_without_apparmor(option);},
+                              "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
             StartupInternalClient{std::ref(wallpaper)},
             set_window_management_policy<FrameWindowManagerPolicy>(),
             Keymap{}

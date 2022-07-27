@@ -76,6 +76,12 @@ config_entry "env-hacks"          "MIR_MESA_KMS_DISABLE_MODESET_PROBE"  "As Fram
 config_entry "x11-window-title"   "Ubuntu Frame"                        "Default window title when run as Mir on X"
 config_entry "driver-quirks"      "skip:driver:nvidia"                  "Do not attempt to use Nvidia driver with gbm-kms"
 
+if [ -e /sys/kernel/security/apparmor/profiles ]; then
+  config_entry "authorise-without-apparmor" "false"                     "System has AppArmor, try to use it"
+else
+  config_entry "authorise-without-apparmor" "true"                      "System missing AppArmor, use (less secure) fallback authorisation logic"
+fi
+
 if ! diff "${config_temp}" "${config_file}" > /dev/null; then
   mv "${config_file}"  "${config_file}.save" || true
   mv "${config_temp}" "${config_file}"
