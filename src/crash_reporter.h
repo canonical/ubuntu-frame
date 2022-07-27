@@ -21,6 +21,8 @@
 #include <mutex>
 #include <string>
 
+#include <sys/inotify.h>
+
 #include <miral/application.h>
 #include <mir/geometry/rectangles.h>
 
@@ -100,9 +102,6 @@ private:
 class TextRenderer
 {
 public:
-    using Pixel = uint32_t;
-    using Path = boost::filesystem::path;
-
     TextRenderer();
     ~TextRenderer();
 
@@ -115,8 +114,6 @@ public:
         Pixel colour) const;
 
 private:
-    const Path FILE_PATH = Path("/log/log.txt"); // TODO - make environment variable
-    
     FT_Library library;
     FT_Face face;
 
@@ -134,4 +131,24 @@ private:
     static auto get_font_path() -> std::string;
     static auto convert_utf8_to_utf32(std::string const& text) -> std::u32string;
 };
+
+class FileObserver
+{
+public:
+    using Path = boost::filesystem::path;
+    
+    FileObserver(Path file_path);
+    ~FileObserver();
+
+    auto file_exists() -> bool;
+
+private:
+    const size_t BUF_LEN = sizeof(inotify_event) + NAME_MAX + 1;
+
+    const Path file_path;
+
+    int fd;
+    int wd;
+};
+
 #endif //FRAME_CRASH_REPORTER

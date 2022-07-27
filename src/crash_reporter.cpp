@@ -31,6 +31,8 @@
 
 struct CrashReporter::Self : egmde::FullscreenClient
 {
+    using Path = boost::filesystem::path;
+
     Self(wl_display* display, Pixel colour);
 
     void draw_screen(SurfaceInfo& info) const override;
@@ -39,6 +41,7 @@ struct CrashReporter::Self : egmde::FullscreenClient
 
     Pixel const colour;
     TextRenderer text_renderer;
+    Path const log_path;
 };
 
 void CrashReporter::render_background(int32_t width, int32_t height, Pixel* buffer, Pixel colour)
@@ -87,7 +90,8 @@ void CrashReporter::operator()(std::weak_ptr<mir::scene::Session> const& /*sessi
 CrashReporter::Self::Self(wl_display* display, Pixel colour) :
     FullscreenClient(display),
     colour{colour},
-    text_renderer{TextRenderer()}
+    text_renderer{TextRenderer()},
+    log_path{Path("/home/graysonguarino/Documents/log/log.txt")}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);
@@ -105,16 +109,21 @@ void CrashReporter::Self::render_text(
 
     // TODO - this aint it chief
     auto top_left = geom::Point{0, 0};
-    auto height_pixels = geom::Height(50);
-    auto y_kerning = height_pixels + (height_pixels / 4);
+    auto height_pixels = geom::Height(40);
+    auto y_kerning = height_pixels + (height_pixels / 5);
     auto colour = Pixel(255, 255, 255, 255); // TODO - Rewrite this to load a selectable colour
+    
+    auto file_observer = FileObserver(log_path);
     auto stream = boost::filesystem::ifstream(log_path);
 
-    while (getline(stream, line))
+    if (file_observer.file_exists()) 
     {
-        text_renderer.render(buffer, size, line, top_left, height_pixels, colour);
-        auto new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
-        top_left = new_top_left;
+        while (getline(stream, line))
+        {
+            text_renderer.render(buffer, size, line, top_left, height_pixels, colour);
+            auto new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
+            top_left = new_top_left;
+        }
     }
 }
 
@@ -162,7 +171,6 @@ void CrashReporter::Self::draw_screen(SurfaceInfo& info) const
     auto buffer = static_cast<Pixel*>(info.content_area);
     render_background(width, height, buffer, colour);
 
-    auto log_path = boost::filesystem::path("$SNAP/log/log.txt");
     render_text(width, height, buffer, log_path);
 
     wl_surface_attach(info.surface, info.buffer, 0, 0);
@@ -441,4 +449,46 @@ auto TextRenderer::get_font_path() -> std::string
         BOOST_THROW_EXCEPTION(std::runtime_error("Failed to find a font"));
     }
     return path;
+}
+
+FileObserver::FileObserver(Path file_path)
+    : file_path{file_path}
+{
+    // Remove old log (if existant)
+    remove(file_path.c_str());
+
+    fd = inotify_init();
+    if (fd < 0)
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Initializing inotify failed with error " + std::to_string(fd)));
+    }
+
+    // Set watch on parent path as watching for file directly
+    // Doesn't work if the file exists before execution
+    wd = inotify_add_watch(
+        fd,
+        file_path.parent_path().c_str(),
+        IN_CREATE
+    );
+}
+
+FileObserver::~FileObserver()
+{
+    inotify_rm_watch(fd, wd);
+    close(fd);
+}
+
+auto FileObserver::file_exists() -> bool
+{
+    inotify_event buffer[BUF_LEN];
+    read(fd, buffer, BUF_LEN);
+
+    if (buffer->len 
+        && buffer->mask & IN_CREATE
+        && buffer->name == file_path.filename())
+    {
+        return true;
+    }
+    return false;
 }
