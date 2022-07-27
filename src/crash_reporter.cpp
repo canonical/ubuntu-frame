@@ -114,10 +114,9 @@ void CrashReporter::Self::render_text(
     auto colour = Pixel(255, 255, 255, 255); // TODO - Rewrite this to load a selectable colour
     
     auto file_observer = FileObserver(log_path);
-    auto stream = boost::filesystem::ifstream(log_path);
-
     if (file_observer.file_exists()) 
     {
+        auto stream = boost::filesystem::ifstream(log_path);
         while (getline(stream, line))
         {
             text_renderer.render(buffer, size, line, top_left, height_pixels, colour);
