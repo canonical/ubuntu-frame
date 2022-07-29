@@ -18,8 +18,7 @@
 
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
-#include "egwallpaper.h"
-#include "crash_reporter.h"
+#include "startup_client.h"
 
 #include <miral/command_line_option.h>
 #include <miral/display_configuration.h>
@@ -38,25 +37,32 @@ int main(int argc, char const* argv[])
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
-    // egmde::Wallpaper wallpaper;
-    CrashReporter crash_reporter;
+    StartupClient startup_client;
 
-    // runner.add_stop_callback([&] { wallpaper.stop(); });
-    runner.add_stop_callback([&] { crash_reporter.stop(); });
+    // Add file discriptor to main loop to watch inotify
+    // "You can do register_fd_handler"
+    // You can get access to the_main_loop 
+
+    // Add something here to get run() and that will get the main loop, with which to run inotify on
+    // "You want to end up with a top-level function that takes a server reference and sets up the file watching on that"
+    // "...and then returns"
+
+    runner.add_stop_callback([&] { startup_client.stop(); });
     
     return runner.run_with(
         {
             wayland_extensions,
             display_config,
             display_config.layout_option(),
-            // CommandLineOption{[&](auto& option) { wallpaper.top(option);},
-            //                   "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
-            // CommandLineOption{[&](auto& option) { wallpaper.bottom(option);},
-            //                   "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
-            // StartupInternalClient{std::ref(wallpaper)},
-            CommandLineOption{[&](auto& option) { crash_reporter.set_background_colour(option);},
-                                "crash-reporter-background-colour", "Colour of crash reporter background RGB", "0x380c24"},
-            StartupInternalClient{std::ref(crash_reporter)},
+            CommandLineOption{[&](auto& option) { startup_client.set_wallpaper_top_colour(option);},
+                              "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
+            CommandLineOption{[&](auto& option) { startup_client.set_wallpaper_bottom_colour(option);},
+                              "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
+            CommandLineOption{[&](auto& option) { startup_client.set_crash_background_colour(option);},
+                              "crash_background", "Colour of crash screen background RGB", "0x380c24"},
+            CommandLineOption{[&](auto& option) {startup_client.set_crash_text_colour(option);},
+                              "crash_text",       "Colour of crash screen text RGB", "0xffffff"},
+            StartupInternalClient{std::ref(startup_client)},
             set_window_management_policy<FrameWindowManagerPolicy>(),
             Keymap{}
         });

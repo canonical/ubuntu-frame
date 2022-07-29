@@ -16,7 +16,7 @@
  * Authored by: Grayson Guarino <graysonguarino@canonical.com>
  */
 
-#include "crash_reporter.h"
+#include "startup_client.h"
 #include "egfullscreenclient.h"
 
 #include "mir/log.h"
@@ -29,7 +29,7 @@
 #include <boost/filesystem.hpp>
 
 
-struct CrashReporter::Self : egmde::FullscreenClient
+struct StartupClient::Self : egmde::FullscreenClient
 {
     using Path = boost::filesystem::path;
 
@@ -44,33 +44,94 @@ struct CrashReporter::Self : egmde::FullscreenClient
     Path const log_path;
 };
 
-void CrashReporter::render_background(int32_t width, int32_t height, Pixel* buffer, Pixel colour)
+void StartupClient::set_colour(std::string const& option, WhichColour which)
+{
+    uint32_t value;
+    std::stringstream interpreter{option};
+    Pixel colour;
+
+    if (interpreter >> std::hex >> value)
+    {
+        colour.r = value & 0xFF;
+        colour.g = (value >> 8) & 0xFF;
+        colour.b = (value >> 16) & 0xFF;
+        colour.a = 0xFF;
+    }
+    
+    switch (which)
+    {
+    case wallpaper_top:
+        wallpaper_top_colour = colour;
+        break;
+    case wallpaper_bottom:
+        wallpaper_bottom_colour = colour;
+        break;
+    case crash_background:
+        wallpaper_bottom_colour = colour;
+        break;
+    case crash_text:
+        crash_text_colour = colour;
+        break;
+    default:
+        break;
+    }
+}
+
+void StartupClient::set_wallpaper_top_colour(std::string const& option)
+{
+    set_colour(option, StartupClient::WhichColour::wallpaper_top);
+}
+
+void StartupClient::set_wallpaper_bottom_colour(std::string const& option)
+{
+    set_colour(option, StartupClient::WhichColour::wallpaper_bottom);
+}
+
+void StartupClient::set_crash_background_colour(std::string const& option)
+{
+    set_colour(option, StartupClient::WhichColour::crash_background);
+}
+
+void StartupClient::set_crash_text_colour(std::string const& option)
+{
+    set_colour(option, StartupClient::WhichColour::crash_text);
+}
+
+void StartupClient::render_background(
+        int32_t width, 
+        int32_t height, 
+        Pixel* buffer, 
+        Pixel bottom_colour, 
+        Pixel top_colour)
 {
     for (int current_y = 0; current_y < height; current_y++)
     {
-        for (int current_x = 0; current_x < width; current_x++)
+        // Render gradient
+        Pixel new_pixel;
+        for (auto i = 0; i < 3; i++)
         {
-            memcpy(buffer + current_x, &colour, sizeof(buffer[current_x]));
+            new_pixel[i] = (current_y * bottom_colour[i] + (height - current_y) * top_colour[i]) / height;
+        }
+        new_pixel[3] = 0xFF;
+
+        // Copy new gradient Pixel to buffer
+        for (auto current_x = 0; current_x < width; current_x++)
+        {
+            memcpy(buffer + current_x, &new_pixel, sizeof(new_pixel));
         }
 
         buffer += width;
     }
 }
 
-void CrashReporter::set_background_colour(std::string const& option)
+void StartupClient::render_background(int32_t width, int32_t height, Pixel* buffer, Pixel colour)
 {
-    uint32_t value;
-    std::stringstream interpreter{option};
-
-    if (interpreter >> std::hex >> value)
-    {
-        colour = value;
-    }
+    render_background(width, height, buffer, colour, colour);
 }
 
-void CrashReporter::operator()(wl_display* display)
+void StartupClient::operator()(wl_display* display)
 {
-    auto client = std::make_shared<Self>(display, colour);
+    auto client = std::make_shared<Self>(display, wallpaper_top_colour);
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
         self = client;
@@ -83,11 +144,11 @@ void CrashReporter::operator()(wl_display* display)
     client.reset();
 }
 
-void CrashReporter::operator()(std::weak_ptr<mir::scene::Session> const& /*session*/)
+void StartupClient::operator()(std::weak_ptr<mir::scene::Session> const& /*session*/)
 {
 }
 
-CrashReporter::Self::Self(wl_display* display, Pixel colour) :
+StartupClient::Self::Self(wl_display* display, Pixel colour) :
     FullscreenClient(display),
     colour{colour},
     text_renderer{TextRenderer()},
@@ -97,7 +158,7 @@ CrashReporter::Self::Self(wl_display* display, Pixel colour) :
     wl_display_roundtrip(display);
 }
 
-void CrashReporter::Self::render_text(
+void StartupClient::Self::render_text(
     int32_t width, 
     int32_t height,
     Pixel* buffer, 
@@ -126,7 +187,7 @@ void CrashReporter::Self::render_text(
     }
 }
 
-void CrashReporter::Self::draw_screen(SurfaceInfo& info) const
+void StartupClient::Self::draw_screen(SurfaceInfo& info) const
 {
     bool const rotated = info.output->transform & WL_OUTPUT_TRANSFORM_90;
     auto const width = rotated ? info.output->height : info.output->width;
@@ -177,7 +238,7 @@ void CrashReporter::Self::draw_screen(SurfaceInfo& info) const
     wl_surface_commit(info.surface);
 }
 
-void CrashReporter::stop()
+void StartupClient::stop()
 {
     if (auto ss = self.get())
     {
@@ -464,11 +525,11 @@ FileObserver::FileObserver(Path file_path)
     }
 
     // Set watch on parent path as watching for file directly
-    // Doesn't work if the file exists before execution
+    // has some complicated behavior
     wd = inotify_add_watch(
         fd,
         file_path.parent_path().c_str(),
-        IN_CREATE
+        IN_CREATE | IN_MODIFY // TODO - make it work for IN_MODIFY
     );
 }
 

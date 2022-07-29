@@ -60,12 +60,17 @@ struct Pixel
         return b + (g << 8) + (r << 16) + (a << 24);
     }
 
-    Pixel(uint32_t integer)
+    Pixel()
     {
-        b = integer & 0xFF;
-        g = (integer >> 8) & 0xFF;
-        r = (integer >> 16) & 0xFF;
-        a = (integer >> 24) & 0xFF;
+        b = g = r = a = 0;
+    }
+
+    Pixel(uint32_t bgra_int)
+    {
+        b = bgra_int & 0xFF;
+        g = (bgra_int >> 8) & 0xFF;
+        r = (bgra_int >> 16) & 0xFF;
+        a = (bgra_int >> 24) & 0xFF;
     }
 
     Pixel(uint8_t blue, uint8_t green, uint8_t red, uint8_t alpha)
@@ -77,26 +82,52 @@ struct Pixel
     }
 };
 
-class CrashReporter
+class StartupClient
 {
 public:
-    void set_background_colour(std::string const& option);
+    void set_wallpaper_top_colour(std::string const& option);
+    void set_wallpaper_bottom_colour(std::string const& option);
+    void set_crash_background_colour(std::string const& option);
+    void set_crash_text_colour(std::string const& option);
 
-    static void render_background(int32_t width, int32_t height, Pixel* buffer, Pixel colour);
+    /// Renders background as a gradient from top_colour to bottom_colour
+    static void render_background(
+        int32_t width, 
+        int32_t height, 
+        Pixel* buffer, 
+        Pixel bottom_colour, 
+        Pixel top_colour);
     
+    static void render_background(
+        int32_t width,
+        int32_t height,
+        Pixel* buffer,
+        Pixel colour);
+
     void operator()(wl_display* display);
     void operator()(std::weak_ptr<mir::scene::Session> const& session);
 
     void stop();
 
+    enum WhichColour{
+        wallpaper_top,
+        wallpaper_bottom,
+        crash_background,
+        crash_text
+    };
+
 private:
     std::mutex mutable mutex;
 
-    // aubergine in BGRA
-    Pixel colour = {36, 12, 56, 255};
+    Pixel wallpaper_top_colour;
+    Pixel wallpaper_bottom_colour;
+    Pixel crash_background_colour;
+    Pixel crash_text_colour;
 
     struct Self;
     std::shared_ptr<Self> self;
+
+    void set_colour(std::string const& option, WhichColour which);
 };
 
 class TextRenderer
