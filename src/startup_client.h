@@ -119,10 +119,10 @@ public:
 private:
     std::mutex mutable mutex;
 
-    Pixel wallpaper_top_colour;
-    Pixel wallpaper_bottom_colour;
-    Pixel crash_background_colour;
-    Pixel crash_text_colour;
+    Pixel wallpaper_top_colour = {127, 127, 127, 255};
+    Pixel wallpaper_bottom_colour = {31, 31, 31, 255};
+    Pixel crash_background_colour = {36, 12, 56, 255};
+    Pixel crash_text_colour = {255, 255, 255, 255};
 
     struct Self;
     std::shared_ptr<Self> self;
