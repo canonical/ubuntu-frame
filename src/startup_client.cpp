@@ -12,18 +12,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Authored by: Grayson Guarino <graysonguarino@canonical.com>
  */
 
-#include "startup_client.h"
 #include "egfullscreenclient.h"
+#include "startup_client.h"
 
 #include "mir/log.h"
 
 #include <cstring>
 #include <codecvt>
 #include <sstream>
+#include <thread>
 
 #include <boost/throw_exception.hpp>
 #include <boost/filesystem.hpp>
