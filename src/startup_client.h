@@ -89,6 +89,7 @@ public:
     void set_wallpaper_bottom_colour(std::string const& option);
     void set_crash_background_colour(std::string const& option);
     void set_crash_text_colour(std::string const& option);
+    void set_log_location(std::string const& option);
 
     /// Renders background as a gradient from top_colour to bottom_colour
     static void render_background(
@@ -123,6 +124,8 @@ private:
     Pixel wallpaper_bottom_colour = {31, 31, 31, 255};
     Pixel crash_background_colour = {36, 12, 56, 255};
     Pixel crash_text_colour = {255, 255, 255, 255};
+
+    boost::filesystem::path log_path;
 
     struct Self;
     std::shared_ptr<Self> self;

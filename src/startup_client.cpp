@@ -38,11 +38,12 @@ public:
         Pixel wallpaper_top_colour,
         Pixel wallpaper_bottom_colour,
         Pixel crash_background_colour,
-        Pixel crash_text_colour);
+        Pixel crash_text_colour,
+        Path log_path);
 
     void draw_screen(SurfaceInfo& info) const override;
     
-    void render_text(int32_t width, int32_t height, Pixel* buffer, boost::filesystem::path const& log_path) const;
+    void render_text(int32_t width, int32_t height, Pixel* buffer) const;
 
     Pixel const wallpaper_top_colour;
     Pixel const wallpaper_bottom_colour;
@@ -51,7 +52,7 @@ public:
 
     mutable SurfaceInfo* current_surface_info;
     TextRenderer text_renderer;
-    Path const log_path;
+    const Path log_path;
 
 private:
     void draw_crash_reporter() const;
@@ -114,6 +115,20 @@ void StartupClient::set_crash_text_colour(std::string const& option)
     set_colour(option, StartupClient::WhichColour::crash_text);
 }
 
+void StartupClient::set_log_location(std::string const& option)
+{
+    auto const path = boost::filesystem::path(option);
+    if (boost::filesystem::exists(path))
+    {
+        log_path = path;
+    }
+    else
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Log file location (" + option + ") does not exist"));
+    }
+}
+
 void StartupClient::render_background(
         int32_t width, 
         int32_t height, 
@@ -153,7 +168,8 @@ void StartupClient::operator()(wl_display* display)
         wallpaper_top_colour, 
         wallpaper_bottom_colour, 
         crash_background_colour,
-        crash_text_colour);
+        crash_text_colour,
+        log_path);
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
         self = client;
@@ -175,14 +191,15 @@ StartupClient::Self::Self(
     Pixel wallpaper_top_colour,
     Pixel wallpaper_bottom_colour, 
     Pixel crash_background_colour, 
-    Pixel crash_text_colour)
+    Pixel crash_text_colour,
+    Path log_path)
     : FullscreenClient(display),
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
       crash_text_colour{crash_text_colour},
       text_renderer{TextRenderer()},
-      log_path{Path("/home/graysonguarino/Documents/log/log.txt")}
+      log_path{log_path}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);
@@ -312,7 +329,7 @@ void StartupClient::Self::draw_crash_reporter() const
     auto buffer = static_cast<Pixel*>(current_surface_info->content_area);
 
     render_background(width, height, buffer, crash_background_colour);
-    render_text(width, height, buffer, log_path);
+    render_text(width, height, buffer);
 
     wl_surface_attach(current_surface_info->surface, current_surface_info->buffer, 0, 0);
     wl_surface_set_buffer_scale(current_surface_info->surface, current_surface_info->output->scale_factor);
