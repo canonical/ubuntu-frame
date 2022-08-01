@@ -39,14 +39,6 @@ int main(int argc, char const* argv[])
 
     StartupClient startup_client;
 
-    // Add file discriptor to main loop to watch inotify
-    // "You can do register_fd_handler"
-    // You can get access to the_main_loop 
-
-    // Add something here to get run() and that will get the main loop, with which to run inotify on
-    // "You want to end up with a top-level function that takes a server reference and sets up the file watching on that"
-    // "...and then returns"
-
     runner.add_stop_callback([&] { startup_client.stop(); });
     
     return runner.run_with(
@@ -60,7 +52,7 @@ int main(int argc, char const* argv[])
                               "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
             CommandLineOption{[&](auto& option) { startup_client.set_crash_background_colour(option);},
                               "crash_background", "Colour of crash screen background RGB", "0x380c24"},
-            CommandLineOption{[&](auto& option) {startup_client.set_crash_text_colour(option);},
+            CommandLineOption{[&](auto& option) { startup_client.set_crash_text_colour(option);},
                               "crash_text",       "Colour of crash screen text RGB", "0xffffff"},
             CommandLineOption{[&](auto& option) { startup_client.set_log_location(option);},
                               "log_location",      "Location of the log file", "/home/graysonguarino/Documents/log/log.txt"},

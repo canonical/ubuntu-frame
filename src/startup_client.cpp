@@ -66,14 +66,17 @@ void StartupClient::set_colour(std::string const& option, WhichColour which)
 {
     uint32_t value;
     std::stringstream interpreter{option};
-    Pixel colour;
 
+    Pixel colour;
     if (interpreter >> std::hex >> value)
     {
-        colour.r = value & 0xFF;
-        colour.g = (value >> 8) & 0xFF;
-        colour.b = (value >> 16) & 0xFF;
-        colour.a = 0xFF;
+        colour = Pixel(value);
+        colour.a = 255;
+    }
+    else
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Invalid colour (" + option + ") given in program argument"));
     }
     
     switch (which)
@@ -209,23 +212,18 @@ StartupClient::Self::Self(
 void StartupClient::Self::render_text(
     int32_t width, 
     int32_t height,
-    Pixel* buffer, 
-    boost::filesystem::path const& log_path) const
+    Pixel* buffer) const
 {
-    std::string line;
-
     auto size = geom::Size{width, height};
-
-    // TODO - this aint it chief
     auto top_left = geom::Point{0, 0};
     auto const height_pixels = geom::Height(40);
     auto const y_kerning = height_pixels + (height_pixels / 5);
-    auto const colour = Pixel(255, 255, 255, 255); // TODO - Rewrite this to load a selectable colour
     
+    std::string line;
     auto stream = boost::filesystem::ifstream(log_path);
     while (getline(stream, line))
     {
-        text_renderer.render(buffer, size, line, top_left, height_pixels, colour);
+        text_renderer.render(buffer, size, line, top_left, height_pixels, crash_text_colour);
         auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
         top_left = new_top_left;
     }
