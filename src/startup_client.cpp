@@ -67,7 +67,7 @@ void StartupClient::set_colour(std::string const& option, WhichColour which)
         wallpaper_bottom_colour = colour;
         break;
     case crash_background:
-        wallpaper_bottom_colour = colour;
+        crash_background_colour = colour;
         break;
     case crash_text:
         crash_text_colour = colour;
