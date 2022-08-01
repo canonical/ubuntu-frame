@@ -171,7 +171,7 @@ public:
     FileObserver(Path file_path);
     ~FileObserver();
 
-    auto file_exists() -> bool;
+    auto file_updated() -> bool;
 
 private:
     const size_t BUF_LEN = sizeof(inotify_event) + NAME_MAX + 1;
