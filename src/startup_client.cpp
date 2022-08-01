@@ -30,17 +30,35 @@
 
 struct StartupClient::Self : egmde::FullscreenClient
 {
+public:
     using Path = boost::filesystem::path;
 
-    Self(wl_display* display, Pixel colour);
+    Self(
+        wl_display* display,
+        Pixel wallpaper_top_colour,
+        Pixel wallpaper_bottom_colour,
+        Pixel crash_background_colour,
+        Pixel crash_text_colour);
 
     void draw_screen(SurfaceInfo& info) const override;
     
     void render_text(int32_t width, int32_t height, Pixel* buffer, boost::filesystem::path const& log_path) const;
 
-    Pixel const colour;
+    Pixel const wallpaper_top_colour;
+    Pixel const wallpaper_bottom_colour;
+    Pixel const crash_background_colour;
+    Pixel const crash_text_colour;
+
+    mutable SurfaceInfo* current_surface_info;
     TextRenderer text_renderer;
     Path const log_path;
+
+private:
+    void draw_crash_reporter() const;
+    void run_file_observer();
+
+    std::thread file_observer_thread;
+    std::mutex mutable buffer_mutex;
 };
 
 void StartupClient::set_colour(std::string const& option, WhichColour which)
@@ -130,7 +148,12 @@ void StartupClient::render_background(int32_t width, int32_t height, Pixel* buff
 
 void StartupClient::operator()(wl_display* display)
 {
-    auto client = std::make_shared<Self>(display, wallpaper_top_colour);
+    auto client = std::make_shared<Self>(
+        display, 
+        wallpaper_top_colour, 
+        wallpaper_bottom_colour, 
+        crash_background_colour,
+        crash_text_colour);
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
         self = client;
@@ -147,14 +170,23 @@ void StartupClient::operator()(std::weak_ptr<mir::scene::Session> const& /*sessi
 {
 }
 
-StartupClient::Self::Self(wl_display* display, Pixel colour) :
-    FullscreenClient(display),
-    colour{colour},
-    text_renderer{TextRenderer()},
-    log_path{Path("/home/graysonguarino/Documents/log/log.txt")}
+StartupClient::Self::Self(
+    wl_display* display, 
+    Pixel wallpaper_top_colour,
+    Pixel wallpaper_bottom_colour, 
+    Pixel crash_background_colour, 
+    Pixel crash_text_colour)
+    : FullscreenClient(display),
+      wallpaper_top_colour{wallpaper_top_colour},
+      wallpaper_bottom_colour{wallpaper_bottom_colour},
+      crash_background_colour{crash_background_colour},
+      crash_text_colour{crash_text_colour},
+      text_renderer{TextRenderer()},
+      log_path{Path("/home/graysonguarino/Documents/log/log.txt")}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);
+    file_observer_thread = std::thread(&StartupClient::Self::run_file_observer, this);
 }
 
 void StartupClient::Self::render_text(
@@ -173,21 +205,20 @@ void StartupClient::Self::render_text(
     auto const y_kerning = height_pixels + (height_pixels / 5);
     auto const colour = Pixel(255, 255, 255, 255); // TODO - Rewrite this to load a selectable colour
     
-    auto file_observer = FileObserver(log_path);
-    if (file_observer.file_exists()) 
+    auto stream = boost::filesystem::ifstream(log_path);
+    while (getline(stream, line))
     {
-        auto stream = boost::filesystem::ifstream(log_path);
-        while (getline(stream, line))
-        {
-            text_renderer.render(buffer, size, line, top_left, height_pixels, colour);
-            auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
-            top_left = new_top_left;
-        }
+        text_renderer.render(buffer, size, line, top_left, height_pixels, colour);
+        auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
+        top_left = new_top_left;
     }
 }
 
 void StartupClient::Self::draw_screen(SurfaceInfo& info) const
 {
+    std::lock_guard lock{buffer_mutex};
+    current_surface_info = &info;
+
     bool const rotated = info.output->transform & WL_OUTPUT_TRANSFORM_90;
     auto const width = rotated ? info.output->height : info.output->width;
     auto const height = rotated ? info.output->width : info.output->height;
@@ -228,13 +259,79 @@ void StartupClient::Self::draw_screen(SurfaceInfo& info) const
     }
 
     auto buffer = static_cast<Pixel*>(info.content_area);
-    render_background(width, height, buffer, colour);
-
-    render_text(width, height, buffer, log_path);
+    render_background(width, height, buffer, wallpaper_top_colour, wallpaper_bottom_colour);
 
     wl_surface_attach(info.surface, info.buffer, 0, 0);
     wl_surface_set_buffer_scale(info.surface, info.output->scale_factor);
     wl_surface_commit(info.surface);
+}
+
+void StartupClient::Self::draw_crash_reporter() const
+{
+    std::lock_guard lock{buffer_mutex};
+
+    bool const rotated = current_surface_info->output->transform & WL_OUTPUT_TRANSFORM_90;
+    auto const width = rotated ? current_surface_info->output->height : current_surface_info->output->width;
+    auto const height = rotated ? current_surface_info->output->width : current_surface_info->output->height;
+
+    if (width <= 0 || height <= 0)
+        return;
+
+    auto const stride = 4*width;
+
+    if (!current_surface_info->surface)
+    {
+        current_surface_info->surface = wl_compositor_create_surface(compositor);
+    }
+
+    if (!current_surface_info->shell_surface)
+    {
+        current_surface_info->shell_surface = wl_shell_get_shell_surface(shell, current_surface_info->surface);
+        wl_shell_surface_set_fullscreen(
+            current_surface_info->shell_surface,
+            WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
+            0,
+            current_surface_info->output->output);
+    }
+
+    if (current_surface_info->buffer)
+    {
+        wl_buffer_destroy(current_surface_info->buffer);
+    }
+
+    {
+        auto const shm_pool = make_shm_pool(stride * height, &current_surface_info->content_area);
+
+        current_surface_info->buffer = wl_shm_pool_create_buffer(
+            shm_pool.get(),
+            0,
+            width, height, stride,
+            WL_SHM_FORMAT_ARGB8888);
+    }
+
+    auto buffer = static_cast<Pixel*>(current_surface_info->content_area);
+
+    render_background(width, height, buffer, crash_background_colour);
+    render_text(width, height, buffer, log_path);
+
+    wl_surface_attach(current_surface_info->surface, current_surface_info->buffer, 0, 0);
+    wl_surface_set_buffer_scale(current_surface_info->surface, current_surface_info->output->scale_factor);
+    wl_surface_commit(current_surface_info->surface);
+
+    wl_display_flush(display);
+}
+
+void StartupClient::Self::run_file_observer()
+{
+    auto file_observer = FileObserver(log_path);
+    
+    while (true)
+    {
+        if (file_observer.file_updated())
+        {
+            draw_crash_reporter();
+        }
+    }
 }
 
 void StartupClient::stop()
