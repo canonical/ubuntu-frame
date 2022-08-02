@@ -18,9 +18,6 @@ add_executable(frame
 
 # Check for boost
 find_package(Boost 1.48.0 COMPONENTS filesystem iostreams REQUIRED)
-include_directories (SYSTEM
-  ${Boost_INCLUDE_DIRS}
-)
 
 target_compile_definitions(frame PRIVATE MIR_LOG_COMPONENT="frame")
 
@@ -30,7 +27,7 @@ target_include_directories(frame
         ${MIRAL_INCLUDE_DIRS} 
     PRIVATE 
         ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(frame ${MIRAL_LDFLAGS} ${WAYLAND_CLIENT_LIBRARIES} ${APPARMOR_LIBRARIES} ${FREETYPE_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(frame ${MIRAL_LDFLAGS} ${WAYLAND_CLIENT_LDFLAGS} ${APPARMOR_LDFLAGS} ${FREETYPE_LDFLAGS} ${Boost_LIBRARIES})
 
 install(PROGRAMS ${CMAKE_BINARY_DIR}/frame
     DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
