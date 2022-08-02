@@ -625,9 +625,6 @@ auto TextRenderer::get_font_path() -> std::string
 FileObserver::FileObserver(Path file_path)
     : file_path{file_path}
 {
-    // Remove old log (if existant)
-    remove(file_path.c_str());
-
     fd = inotify_init();
     if (fd < 0)
     {
