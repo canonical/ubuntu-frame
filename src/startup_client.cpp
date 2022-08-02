@@ -655,8 +655,8 @@ auto FileObserver::file_updated() -> bool
     while (true)
     {
         if (buffer->len
-                && buffer->mask & IN_CREATE | IN_CLOSE_WRITE
-                && buffer->name == file_path.filename())
+            && buffer->mask & IN_CREATE | IN_CLOSE_WRITE
+            && buffer->name == file_path.filename())
         {
             return true;
         }
