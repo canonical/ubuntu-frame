@@ -56,6 +56,8 @@ int main(int argc, char const* argv[])
                               "crash_text",       "Colour of crash screen text RGB", "0xffffff"},
             CommandLineOption{[&](auto& option) { startup_client.set_log_location(option);},
                               "log_location",      "Location of the log file", "/home/graysonguarino/Documents/log/log.txt"},
+            CommandLineOption{[&](auto& option) { startup_client.set_sleep_time(option);},
+                              "sleep_time",      "Amount of time (in seconds) between checking for diagnostic file", "1"},
             StartupInternalClient{std::ref(startup_client)},
             set_window_management_policy<FrameWindowManagerPolicy>(),
             Keymap{}

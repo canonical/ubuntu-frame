@@ -19,6 +19,7 @@
 
 #include "mir/log.h"
 
+#include <chrono>
 #include <cstring>
 #include <codecvt>
 #include <sstream>
@@ -39,7 +40,8 @@ public:
         Pixel wallpaper_bottom_colour,
         Pixel crash_background_colour,
         Pixel crash_text_colour,
-        Path log_path);
+        Path log_path,
+        uint sleep_time);
 
     void draw_screen(SurfaceInfo& info) const override;
     
@@ -49,6 +51,8 @@ public:
     Pixel const wallpaper_bottom_colour;
     Pixel const crash_background_colour;
     Pixel const crash_text_colour;
+
+    uint sleep_time;
 
     mutable SurfaceInfo* current_surface_info;
     TextRenderer text_renderer;
@@ -132,6 +136,11 @@ void StartupClient::set_log_location(std::string const& option)
     }
 }
 
+void StartupClient::set_sleep_time(std::string const& option)
+{
+    sleep_time = std::stoi(option);
+}
+
 void StartupClient::render_background(
         int32_t width, 
         int32_t height, 
@@ -172,7 +181,8 @@ void StartupClient::operator()(wl_display* display)
         wallpaper_bottom_colour, 
         crash_background_colour,
         crash_text_colour,
-        log_path);
+        log_path,
+        sleep_time);
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
         self = client;
@@ -195,14 +205,16 @@ StartupClient::Self::Self(
     Pixel wallpaper_bottom_colour, 
     Pixel crash_background_colour, 
     Pixel crash_text_colour,
-    Path log_path)
+    Path log_path,
+    uint sleep_time)
     : FullscreenClient(display),
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
       crash_text_colour{crash_text_colour},
       text_renderer{TextRenderer()},
-      log_path{log_path}
+      log_path{log_path},
+      sleep_time{sleep_time}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);
@@ -342,6 +354,7 @@ void StartupClient::Self::run_file_observer()
     
     while (true)
     {
+        sleep(sleep_time);
         if (file_observer.file_updated())
         {
             draw_crash_reporter();
