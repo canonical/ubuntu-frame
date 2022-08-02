@@ -125,14 +125,14 @@ void StartupClient::set_crash_text_colour(std::string const& option)
 void StartupClient::set_log_location(std::string const& option)
 {
     auto const path = boost::filesystem::path(option);
-    if (boost::filesystem::exists(path))
+    if (boost::filesystem::exists(path.parent_path()))
     {
         log_path = path;
     }
     else
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Log file location (" + option + ") does not exist"));
+            "Log file directory (" + path.parent_path().string() + ") does not exist"));
     }
 }
 
