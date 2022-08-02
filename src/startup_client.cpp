@@ -637,7 +637,7 @@ FileObserver::FileObserver(Path file_path)
     wd = inotify_add_watch(
         fd,
         file_path.parent_path().c_str(),
-        IN_CREATE | IN_MODIFY
+        IN_CREATE | IN_CLOSE_WRITE
     );
 }
 
@@ -655,7 +655,7 @@ auto FileObserver::file_updated() -> bool
     while (true)
     {
         if (buffer->len
-                && buffer->mask & IN_CREATE | IN_MODIFY
+                && buffer->mask & IN_CREATE | IN_CLOSE_WRITE
                 && buffer->name == file_path.filename())
         {
             return true;
