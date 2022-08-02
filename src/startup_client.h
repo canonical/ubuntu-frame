@@ -55,30 +55,17 @@ struct Pixel
         }
     }
 
-    operator uint32_t() const
+    Pixel(uint32_t bgra)
+    : b(bgra & 0xFF), 
+      g((bgra >> 8) & 0xFF), 
+      r((bgra >> 16) & 0xFF), 
+      a((bgra >> 24) & 0xFF)
     {
-        return b + (g << 8) + (r << 16) + (a << 24);
     }
 
-    Pixel()
+    Pixel(uint8_t blue = 0, uint8_t green = 0, uint8_t red = 0, uint8_t alpha = 255) 
+    : b(blue), g(green), r(red), a(alpha)
     {
-        b = g = r = a = 0;
-    }
-
-    Pixel(uint32_t bgra_int)
-    {
-        b = bgra_int & 0xFF;
-        g = (bgra_int >> 8) & 0xFF;
-        r = (bgra_int >> 16) & 0xFF;
-        a = (bgra_int >> 24) & 0xFF;
-    }
-
-    Pixel(uint8_t blue, uint8_t green, uint8_t red, uint8_t alpha)
-    {
-        b = blue;
-        g = green;
-        r = red;
-        a = alpha;
     }
 };
 
