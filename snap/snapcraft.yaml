@@ -27,8 +27,6 @@ environment:
   __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
   # Setup XKB
   XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
-  # Define directory where log files should go
-  LOG_DIR: $SNAP/log
 
 layout:
   /usr/share/icons:
