@@ -106,7 +106,10 @@ parts:
       - libboost1.71-dev
       - libapparmor-dev
     stage-packages:
-      - libmiral5
+      - try:
+          - libmiral5
+      - else:
+          - libmiral4
       - libapparmor1
 
   platform:
