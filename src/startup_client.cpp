@@ -40,7 +40,7 @@ public:
         Pixel wallpaper_bottom_colour,
         Pixel crash_background_colour,
         Pixel crash_text_colour,
-        Path log_path,
+        Path diagnostic_path,
         uint sleep_time);
 
     void draw_screen(SurfaceInfo& info) const override;
@@ -56,7 +56,7 @@ public:
 
     mutable SurfaceInfo* current_surface_info;
     TextRenderer text_renderer;
-    const Path log_path;
+    const Path diagnostic_path;
 
 private:
     void draw_crash_reporter() const;
@@ -122,12 +122,12 @@ void StartupClient::set_crash_text_colour(std::string const& option)
     set_colour(option, StartupClient::WhichColour::crash_text);
 }
 
-void StartupClient::set_log_location(std::string const& option)
+void StartupClient::set_diagnostic_path(std::string const& option)
 {
     auto const path = boost::filesystem::path(option);
     if (boost::filesystem::exists(path.parent_path()))
     {
-        log_path = path;
+        diagnostic_path = path;
     }
     else
     {
@@ -181,7 +181,7 @@ void StartupClient::operator()(wl_display* display)
         wallpaper_bottom_colour, 
         crash_background_colour,
         crash_text_colour,
-        log_path,
+        diagnostic_path,
         sleep_time);
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
@@ -205,7 +205,7 @@ StartupClient::Self::Self(
     Pixel wallpaper_bottom_colour, 
     Pixel crash_background_colour, 
     Pixel crash_text_colour,
-    Path log_path,
+    Path diagnostic_path,
     uint sleep_time)
     : FullscreenClient(display),
       wallpaper_top_colour{wallpaper_top_colour},
@@ -213,7 +213,7 @@ StartupClient::Self::Self(
       crash_background_colour{crash_background_colour},
       crash_text_colour{crash_text_colour},
       text_renderer{TextRenderer()},
-      log_path{log_path},
+      diagnostic_path{diagnostic_path},
       sleep_time{sleep_time}
 {
     wl_display_roundtrip(display);
@@ -232,7 +232,7 @@ void StartupClient::Self::render_text(
     auto const y_kerning = height_pixels + (height_pixels / 5);
     
     std::string line;
-    auto stream = boost::filesystem::ifstream(log_path);
+    auto stream = boost::filesystem::ifstream(diagnostic_path);
     while (getline(stream, line))
     {
         text_renderer.render(buffer, size, line, top_left, height_pixels, crash_text_colour);

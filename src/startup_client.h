@@ -76,7 +76,7 @@ public:
     void set_wallpaper_bottom_colour(std::string const& option);
     void set_crash_background_colour(std::string const& option);
     void set_crash_text_colour(std::string const& option);
-    void set_log_location(std::string const& option);
+    void set_diagnostic_path(std::string const& option);
     void set_sleep_time(std::string const& option);
 
     /// Renders background as a gradient from top_colour to bottom_colour
@@ -115,7 +115,7 @@ private:
 
     uint sleep_time = 1;
 
-    boost::filesystem::path log_path;
+    boost::filesystem::path diagnostic_path;
 
     struct Self;
     std::shared_ptr<Self> self;
