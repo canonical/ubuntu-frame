@@ -164,11 +164,12 @@ public:
     FileObserver(Path file_path);
     ~FileObserver();
 
-    auto file_updated() -> bool;
+    auto file_updated(inotify_event &buffer) -> bool;
+    void wait_for_create(inotify_event &buffer);
+
+    static const size_t BUF_LEN = sizeof(inotify_event) + NAME_MAX + 1;
 
 private:
-    const size_t BUF_LEN = sizeof(inotify_event) + NAME_MAX + 1;
-
     const Path file_path;
 
     int fd;

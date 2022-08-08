@@ -350,15 +350,19 @@ void StartupClient::Self::draw_crash_reporter() const
 
 void StartupClient::Self::run_file_observer()
 {
-    auto file_observer = FileObserver(log_path);
+    auto file_observer = FileObserver(diagnostic_path);
+    inotify_event buffer[FileObserver::BUF_LEN];
     
+    file_observer.wait_for_create(*buffer);
+    draw_crash_reporter();
+
     while (true)
     {
-        sleep(sleep_time);
-        if (file_observer.file_updated())
+        if (file_observer.file_updated(*buffer))
         {
             draw_crash_reporter();
         }
+        sleep(sleep_time);
     }
 }
 
@@ -660,16 +664,26 @@ FileObserver::~FileObserver()
     close(fd);
 }
 
-auto FileObserver::file_updated() -> bool
+void FileObserver::wait_for_create(inotify_event &buffer)
 {
-    inotify_event buffer[BUF_LEN];
-    read(fd, buffer, BUF_LEN);
+    while (true)
+    {
+        read(fd, &buffer, BUF_LEN);
+        if (buffer.len)
+        {
+            return;
+        }
+    }
+}
+
+auto FileObserver::file_updated(inotify_event &buffer) -> bool
+{
+    read(fd, &buffer, BUF_LEN);
 
     while (true)
     {
-        if (buffer->len
-            && buffer->mask & IN_CREATE | IN_CLOSE_WRITE
-            && buffer->name == file_path.filename())
+        if (buffer.mask & IN_CREATE | IN_CLOSE_WRITE
+            && buffer.name == file_path.filename())
         {
             return true;
         }
