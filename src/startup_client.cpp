@@ -680,12 +680,11 @@ auto FileObserver::file_updated(inotify_event &buffer) -> bool
 {
     read(fd, &buffer, BUF_LEN);
 
-    while (true)
+    if (buffer.mask & IN_CREATE | IN_CLOSE_WRITE
+        && buffer.name == file_path.filename())
     {
-        if (buffer.mask & IN_CREATE | IN_CLOSE_WRITE
-            && buffer.name == file_path.filename())
-        {
-            return true;
-        }
+        return true;
     }
+    
+    return false;
 }
