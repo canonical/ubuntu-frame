@@ -69,6 +69,8 @@ struct Pixel
     }
 };
 
+static_assert(sizeof(Pixel) == 4);
+
 class StartupClient
 {
 public:
