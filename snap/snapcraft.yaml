@@ -146,6 +146,4 @@ parts:
       cd /snap/mesa-core20/current/egl/lib
       find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/{} \;
       rm -fr "$SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri"
-      for CRUFT in bug doc doc-base drirc.d glvnd libdrm lintian man pkgconfig; do
-        rm -rf "$SNAPCRAFT_PRIME/usr/share/$CRUFT"
-      done
+      rm -fr "$SNAPCRAFT_PRIME/usr/share/"{bug,doc,doc-base,drirc.d,glvnd,libdrm,lintian,man}
