@@ -35,9 +35,8 @@ layout:
     bind: $SNAP/graphics/libdrm
   /usr/share/drirc.d:
     bind: $SNAP/graphics/drirc.d
-  /etc/fonts:
-    bind: $SNAP/etc/fonts
-
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
 
 apps:
   ubuntu-frame:
@@ -112,13 +111,18 @@ parts:
       - libapparmor-dev
       - libfreetype6-dev
     stage-packages:
-      - libboost-filesystem1.71.0
-      - libboost-iostreams1.71.0
       - try:
           - libmiral5
       - else:
           - libmiral4
       - libapparmor1
+      - libboost-filesystem1.71.0
+      - libboost-iostreams1.71.0
+  
+  assets:
+    plugin: nil
+    stage-packages:
+    - fonts-ubuntu
 
   platform:
     plugin: nil
@@ -154,12 +158,4 @@ parts:
       cd /snap/mesa-core20/current/egl/lib
       find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/{} \;
       rm -fr "$SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri"
-      for CRUFT in bug doc doc-base drirc.d glvnd libdrm lintian man pkgconfig; do
-        rm -rf "$SNAPCRAFT_PRIME/usr/share/$CRUFT"
-      done
-
-  assets:
-    plugin: nil
-    stage-packages:
-    - fonts-ubuntu
       rm -fr "$SNAPCRAFT_PRIME/usr/share/"{bug,doc,doc-base,drirc.d,glvnd,libdrm,lintian,man}

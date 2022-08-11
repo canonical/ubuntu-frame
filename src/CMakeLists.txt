@@ -3,6 +3,7 @@ project(ubuntu-frame)
 include(FindPkgConfig)
 
 set(CMAKE_CXX_STANDARD 20)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 pkg_check_modules(MIRAL miral REQUIRED)
 pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client)
 pkg_check_modules(APPARMOR libapparmor REQUIRED)
