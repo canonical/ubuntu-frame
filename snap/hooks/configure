@@ -74,7 +74,22 @@ config_entry "vt"                 "4"                                   "Virtual
 config_entry "cursor"             "auto"                                "Mouse pointer to use (auto|null|software)"
 config_entry "env-hacks"          "MIR_MESA_KMS_DISABLE_MODESET_PROBE"  "As Frame HAS to run mesa-kms we can safely override the probe for KMS everywhere"
 config_entry "x11-window-title"   "Ubuntu Frame"                        "Default window title when run as Mir on X"
-config_entry "driver-quirks"      "skip:driver:nvidia"                  "Do not attempt to use Nvidia driver with gbm-kms"
+
+if ! grep -q "^driver-quirks=" "${config_temp}"; then
+  cat <<EOT >> "${config_temp}"
+
+# Mir's gbm-kms support isn't (yet) working with nvidia
+driver-quirks=skip:driver:nvidia
+# Mir's gbm-kms support isn't (yet) working with evdi
+driver-quirks=skip:driver:evdi
+EOT
+fi
+
+if [ -e /sys/kernel/security/apparmor/profiles ]; then
+  config_entry "authorise-without-apparmor" "false"                     "System has AppArmor, try to use it"
+else
+  config_entry "authorise-without-apparmor" "true"                      "System missing AppArmor, use (less secure) fallback authorisation logic"
+fi
 
 if ! diff "${config_temp}" "${config_file}" > /dev/null; then
   mv "${config_file}"  "${config_file}.save" || true

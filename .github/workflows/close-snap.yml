@@ -11,10 +11,9 @@ jobs:
     timeout-minutes: 5
 
     steps:
-    - name: Install Snapcraft
-      uses: samuelmeuli/action-snapcraft@v1
-
     - name: Close obsolete channels
-      env:
-        SNAPCRAFT_STORE_CREDENTIALS: ${SNAPCRAFT_TOKEN}
-      run: snapcraft close ubuntu-frame "edge/pr${{ github.event.number }}" || true
+      uses: canonical/actions/close-snap@release
+      continue-on-error: true
+      with:
+        channel: edge/pr${{ github.event.number }}
+        snapcraft-token: ${{ secrets.SNAPCRAFT_TOKEN }}

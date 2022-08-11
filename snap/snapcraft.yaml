@@ -114,7 +114,10 @@ parts:
     stage-packages:
       - libboost-filesystem1.71.0
       - libboost-iostreams1.71.0
-      - libmiral4
+      - try:
+          - libmiral5
+      - else:
+          - libmiral4
       - libapparmor1
 
   platform:
@@ -159,3 +162,4 @@ parts:
     plugin: nil
     stage-packages:
     - fonts-ubuntu
+      rm -fr "$SNAPCRAFT_PRIME/usr/share/"{bug,doc,doc-base,drirc.d,glvnd,libdrm,lintian,man}

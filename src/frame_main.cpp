@@ -59,6 +59,8 @@ int main(int argc, char const* argv[])
             CommandLineOption{[&](auto& option) { startup_client.set_sleep_time(option);},
                               "log-refresh-time", "Amount of time (in seconds) between checking for diagnostic file", "1"},
             StartupInternalClient{std::ref(startup_client)},
+            CommandLineOption{[&](bool option) { init_authorise_without_apparmor(option);},
+                              "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
             set_window_management_policy<FrameWindowManagerPolicy>(),
             Keymap{}
         });

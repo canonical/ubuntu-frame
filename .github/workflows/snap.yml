@@ -15,33 +15,19 @@ jobs:
     timeout-minutes: 30
 
     steps:
-    - name: Setup LXD
-      uses: whywaita/setup-lxd@v1
-
-    - name: Install Snapcraft
-      uses: samuelmeuli/action-snapcraft@v1
-
     - name: Check out code
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # needed for version determination
 
     - name: Patch PPA and version
       run: |
         sed -i 's@mir-team/release@mir-team/dev@' snap/snapcraft.yaml
         sed -i 's@rev-list --count@rev-parse --short@' snap/snapcraft.yaml
 
-    - name: Build and verify the snap
-      env:
-        SNAPCRAFT_BUILD_INFO: 1
-        SNAP_ENFORCE_RESQUASHFS: 0
-      run: |
-        /snap/bin/snapcraft --use-lxd
-
-        sudo snap install review-tools
-        /snap/bin/review-tools.snap-review --slots snap/local/slots.json *.snap
-
-    - name: Publish the snap
-      if: ${{ github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name }}
-      env:
-        SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
-      run: |
-        snapcraft upload *.snap --release "edge/pr${{ github.event.number }}"
+    - name: Build and publish the snap
+      uses: canonical/actions/build-snap@release
+      with:
+        snapcraft-token: ${{ secrets.SNAPCRAFT_TOKEN }}
+        publish: ${{ github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name }}
+        publish-channel: edge/pr${{ github.event.number }}
