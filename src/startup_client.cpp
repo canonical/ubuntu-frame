@@ -28,7 +28,6 @@
 #include <boost/throw_exception.hpp>
 #include <boost/filesystem.hpp>
 
-
 struct StartupClient::Self : egmde::FullscreenClient
 {
 public:
@@ -59,11 +58,13 @@ public:
     const Path diagnostic_path;
 
 private:
-    void draw_crash_reporter() const;
-    void run_file_observer();
+    void draw() const;
+    void draw_on_diag_update();
 
+    FileObserver file_observer;
     std::thread file_observer_thread;
     std::mutex mutable buffer_mutex;
+    std::atomic<bool> diag_exists = false;
 };
 
 void StartupClient::set_colour(std::string const& option, WhichColour which)
@@ -214,11 +215,13 @@ StartupClient::Self::Self(
       crash_text_colour{crash_text_colour},
       text_renderer{TextRenderer()},
       diagnostic_path{diagnostic_path},
-      sleep_time{sleep_time}
+      sleep_time{sleep_time},
+      file_observer{FileObserver(diagnostic_path)}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);
-    file_observer_thread = std::thread(&StartupClient::Self::run_file_observer, this);
+
+    file_observer_thread = std::thread(&StartupClient::Self::draw_on_diag_update, this);
 }
 
 void StartupClient::Self::render_text(
@@ -243,57 +246,11 @@ void StartupClient::Self::render_text(
 
 void StartupClient::Self::draw_screen(SurfaceInfo& info) const
 {
-    std::lock_guard lock{buffer_mutex};
     current_surface_info = &info;
-
-    bool const rotated = info.output->transform & WL_OUTPUT_TRANSFORM_90;
-    auto const width = rotated ? info.output->height : info.output->width;
-    auto const height = rotated ? info.output->width : info.output->height;
-
-    if (width <= 0 || height <= 0)
-        return;
-
-    auto const stride = 4*width;
-
-    if (!info.surface)
-    {
-        info.surface = wl_compositor_create_surface(compositor);
-    }
-
-    if (!info.shell_surface)
-    {
-        info.shell_surface = wl_shell_get_shell_surface(shell, info.surface);
-        wl_shell_surface_set_fullscreen(
-            info.shell_surface,
-            WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
-            0,
-            info.output->output);
-    }
-
-    if (info.buffer)
-    {
-        wl_buffer_destroy(info.buffer);
-    }
-
-    {
-        auto const shm_pool = make_shm_pool(stride * height, &info.content_area);
-
-        info.buffer = wl_shm_pool_create_buffer(
-            shm_pool.get(),
-            0,
-            width, height, stride,
-            WL_SHM_FORMAT_ARGB8888);
-    }
-
-    auto buffer = static_cast<Pixel*>(info.content_area);
-    render_background(width, height, buffer, wallpaper_top_colour, wallpaper_bottom_colour);
-
-    wl_surface_attach(info.surface, info.buffer, 0, 0);
-    wl_surface_set_buffer_scale(info.surface, info.output->scale_factor);
-    wl_surface_commit(info.surface);
+    draw();
 }
 
-void StartupClient::Self::draw_crash_reporter() const
+void StartupClient::Self::draw() const
 {
     std::lock_guard lock{buffer_mutex};
 
@@ -338,31 +295,43 @@ void StartupClient::Self::draw_crash_reporter() const
 
     auto buffer = static_cast<Pixel*>(current_surface_info->content_area);
 
-    render_background(width, height, buffer, crash_background_colour);
-    render_text(width, height, buffer);
+    if (diag_exists)
+    {
+        render_background(width, height, buffer, crash_background_colour);
+        render_text(width, height, buffer);
 
-    wl_surface_attach(current_surface_info->surface, current_surface_info->buffer, 0, 0);
-    wl_surface_set_buffer_scale(current_surface_info->surface, current_surface_info->output->scale_factor);
-    wl_surface_commit(current_surface_info->surface);
+        wl_surface_attach(current_surface_info->surface, current_surface_info->buffer, 0, 0);
+        wl_surface_set_buffer_scale(current_surface_info->surface, current_surface_info->output->scale_factor);
+        wl_surface_commit(current_surface_info->surface);
+        wl_display_flush(display);
+    }
+    else
+    {
+        render_background(width, height, buffer, wallpaper_bottom_colour, wallpaper_top_colour);
 
-    wl_display_flush(display);
+        wl_surface_attach(current_surface_info->surface, current_surface_info->buffer, 0, 0);
+        wl_surface_set_buffer_scale(current_surface_info->surface, current_surface_info->output->scale_factor);
+        wl_surface_commit(current_surface_info->surface);
+    }
 }
 
-void StartupClient::Self::run_file_observer()
+void StartupClient::Self::draw_on_diag_update()
 {
-    auto file_observer = FileObserver(diagnostic_path);
-    inotify_event buffer[FileObserver::BUF_LEN];
-    
-    file_observer.wait_for_create(*buffer);
-    draw_crash_reporter();
+    if (!diag_exists)
+    {
+        file_observer.wait_for_create();
+        diag_exists = true;
+        draw();
+    }
 
     while (true)
     {
-        if (file_observer.file_updated(*buffer))
+        if (file_observer.file_updated())
         {
-            draw_crash_reporter();
+            draw();
         }
-        sleep(sleep_time);
+        
+        std::this_thread::sleep_for(std::chrono::seconds(sleep_time));
     }
 }
 
@@ -664,24 +633,36 @@ FileObserver::~FileObserver()
     close(fd);
 }
 
-void FileObserver::wait_for_create(inotify_event &buffer)
+auto FileObserver::file_exists() -> bool
+{
+    read(fd, buffer, BUF_LEN);
+    if (buffer->len)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void FileObserver::wait_for_create()
 {
     while (true)
     {
-        read(fd, &buffer, BUF_LEN);
-        if (buffer.len)
+        if (file_exists())
         {
             return;
         }
     }
 }
 
-auto FileObserver::file_updated(inotify_event &buffer) -> bool
+auto FileObserver::file_updated() -> bool
 {
-    read(fd, &buffer, BUF_LEN);
+    read(fd, buffer, BUF_LEN);
 
-    if (buffer.mask & IN_CREATE | IN_CLOSE_WRITE
-        && buffer.name == file_path.filename())
+    if (buffer->mask & IN_CREATE | IN_CLOSE_WRITE
+        && buffer->name == file_path.filename())
     {
         return true;
     }
