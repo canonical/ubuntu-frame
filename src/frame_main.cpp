@@ -55,7 +55,7 @@ int main(int argc, char const* argv[])
             CommandLineOption{[&](auto& option) { startup_client.set_crash_text_colour(option);},
                               "crash-text",       "Colour of crash screen text RGB", "0xffffff"},
             CommandLineOption{[&] (auto& option) { startup_client.set_diagnostic_path(option);},
-                              "diagnostic-path",  "Path (including filename) of diagnostic file", "/home/graysonguarino/Documents/log/log.txt"},
+                              "diagnostic-path",  "Path (including filename) of diagnostic file", "/home/$USER/Documents/log/diagnostic.txt"},
             CommandLineOption{[&](auto& option) { startup_client.set_sleep_time(option);},
                               "log-refresh-time", "Amount of time (in seconds) between checking for diagnostic file", "1"},
             StartupInternalClient{std::ref(startup_client)},

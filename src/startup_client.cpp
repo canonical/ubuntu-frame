@@ -27,6 +27,7 @@
 
 #include <boost/throw_exception.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 struct StartupClient::Self : egmde::FullscreenClient
 {
@@ -125,7 +126,10 @@ void StartupClient::set_crash_text_colour(std::string const& option)
 
 void StartupClient::set_diagnostic_path(std::string const& option)
 {
-    auto const path = boost::filesystem::path(option);
+    auto path_string = option;
+    boost::replace_all(path_string, "$USER", getenv("USER"));
+
+    auto const path = boost::filesystem::path(path_string);
     if (boost::filesystem::exists(path.parent_path()))
     {
         diagnostic_path = path;
