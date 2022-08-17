@@ -65,13 +65,6 @@ public:
 
     void stop();
 
-    enum WhichColour{
-        wallpaper_top,
-        wallpaper_bottom,
-        crash_background,
-        crash_text
-    };
-
 private:
     std::mutex mutable mutex;
 
@@ -87,7 +80,7 @@ private:
     struct Self;
     std::shared_ptr<Self> self;
 
-    void set_colour(std::string const& option, WhichColour which);
+    void set_colour(std::string const& option, Colour* colour);
 };
 
 class TextRenderer

@@ -68,60 +68,44 @@ private:
     std::atomic<bool> diag_exists = false;
 };
 
-void StartupClient::set_colour(std::string const& option, WhichColour which)
+void StartupClient::set_colour(std::string const& option, Colour* colour)
 {
     uint32_t value;
     std::stringstream interpreter{option};
 
-    Pixel colour;
     if (interpreter >> std::hex >> value)
     {
-        colour = Pixel(value);
-        colour.a = 255;
+        colour[0] = value & 0xFF;
+        colour[1] = (value >> 8) & 0xFF;
+        colour[2] = (value >> 16) & 0xFF;
+        // alpha should always be 255 in this instance
+        colour[3] = 255;
     }
     else
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
             "Invalid colour (" + option + ") given in program argument"));
     }
-    
-    switch (which)
-    {
-    case wallpaper_top:
-        wallpaper_top_colour = colour;
-        break;
-    case wallpaper_bottom:
-        wallpaper_bottom_colour = colour;
-        break;
-    case crash_background:
-        crash_background_colour = colour;
-        break;
-    case crash_text:
-        crash_text_colour = colour;
-        break;
-    default:
-        break;
-    }
 }
 
 void StartupClient::set_wallpaper_top_colour(std::string const& option)
 {
-    set_colour(option, StartupClient::WhichColour::wallpaper_top);
+    set_colour(option, wallpaper_top_colour);
 }
 
 void StartupClient::set_wallpaper_bottom_colour(std::string const& option)
 {
-    set_colour(option, StartupClient::WhichColour::wallpaper_bottom);
+    set_colour(option, wallpaper_bottom_colour);
 }
 
 void StartupClient::set_crash_background_colour(std::string const& option)
 {
-    set_colour(option, StartupClient::WhichColour::crash_background);
+    set_colour(option, crash_background_colour);
 }
 
 void StartupClient::set_crash_text_colour(std::string const& option)
 {
-    set_colour(option, StartupClient::WhichColour::crash_text);
+    set_colour(option, crash_text_colour);
 }
 
 void StartupClient::set_diagnostic_path(std::string const& option)
