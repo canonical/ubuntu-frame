@@ -36,21 +36,21 @@ public:
 
     Self(
         wl_display* display,
-        Pixel wallpaper_top_colour,
-        Pixel wallpaper_bottom_colour,
-        Pixel crash_background_colour,
-        Pixel crash_text_colour,
+        Colour* wallpaper_top_colour,
+        Colour* wallpaper_bottom_colour,
+        Colour* crash_background_colour,
+        Colour* crash_text_colour,
         Path diagnostic_path,
         uint sleep_time);
 
     void draw_screen(SurfaceInfo& info) const override;
     
-    void render_text(int32_t width, int32_t height, Pixel* buffer) const;
+    void render_text(int32_t width, int32_t height, Colour* buffer) const;
 
-    Pixel const wallpaper_top_colour;
-    Pixel const wallpaper_bottom_colour;
-    Pixel const crash_background_colour;
-    Pixel const crash_text_colour;
+    Colour* const wallpaper_top_colour;
+    Colour* const wallpaper_bottom_colour;
+    Colour* const crash_background_colour;
+    Colour* const crash_text_colour;
 
     uint sleep_time;
 
@@ -149,31 +149,34 @@ void StartupClient::set_sleep_time(std::string const& option)
 void StartupClient::render_background(
         int32_t width, 
         int32_t height, 
-        Pixel* buffer, 
-        Pixel bottom_colour, 
-        Pixel top_colour)
+        Colour* buffer, 
+        Colour const* bottom_colour, 
+        Colour const* top_colour)
 {
-    for (int current_y = 0; current_y < height; current_y++)
+    Colour new_pixel[4];
+
+    for (auto current_y = 0; current_y < height; current_y++)
     {
         // Render gradient
-        Pixel new_pixel;
         for (auto i = 0; i < 3; i++)
         {
             new_pixel[i] = (current_y * bottom_colour[i] + (height - current_y) * top_colour[i]) / height;
         }
         new_pixel[3] = 0xFF;
 
-        // Copy new gradient Pixel to buffer
-        for (auto current_x = 0; current_x < width; current_x++)
+        // Copy new_pixel to buffer
+        auto const pixel_size = sizeof(new_pixel);
+        for (auto current_x = 0; current_x < pixel_size*width; current_x += pixel_size)
         {
-            memcpy(buffer + current_x, &new_pixel, sizeof(new_pixel));
+            memcpy(buffer + current_x, new_pixel, pixel_size);
         }
 
-        buffer += width;
+        // Move pointer to next pixel
+        buffer += 4*width;
     }
 }
 
-void StartupClient::render_background(int32_t width, int32_t height, Pixel* buffer, Pixel colour)
+void StartupClient::render_background(int32_t width, int32_t height, Colour* buffer, Colour const* colour)
 {
     render_background(width, height, buffer, colour, colour);
 }
@@ -206,10 +209,10 @@ void StartupClient::operator()(std::weak_ptr<mir::scene::Session> const& /*sessi
 
 StartupClient::Self::Self(
     wl_display* display, 
-    Pixel wallpaper_top_colour,
-    Pixel wallpaper_bottom_colour, 
-    Pixel crash_background_colour, 
-    Pixel crash_text_colour,
+    Colour* wallpaper_top_colour,
+    Colour* wallpaper_bottom_colour, 
+    Colour* crash_background_colour, 
+    Colour* crash_text_colour,
     Path diagnostic_path,
     uint sleep_time)
     : FullscreenClient(display),
@@ -231,11 +234,11 @@ StartupClient::Self::Self(
 void StartupClient::Self::render_text(
     int32_t width, 
     int32_t height,
-    Pixel* buffer) const
+    Colour* buffer) const
 {
     auto size = geom::Size{width, height};
     auto top_left = geom::Point{0, 0};
-    auto const height_pixels = geom::Height(40);
+    auto const height_pixels = geom::Height(200);
     auto const y_kerning = height_pixels + (height_pixels / 5);
     
     std::string line;
@@ -297,7 +300,7 @@ void StartupClient::Self::draw() const
             WL_SHM_FORMAT_ARGB8888);
     }
 
-    auto buffer = static_cast<Pixel*>(current_surface_info->content_area);
+    auto buffer = static_cast<Colour*>(current_surface_info->content_area);
 
     if (diag_exists)
     {
@@ -484,12 +487,12 @@ auto TextRenderer::convert_utf8_to_utf32(std::string const& text) -> std::u32str
 }
 
 void TextRenderer::render(
-    Pixel* buf,
+    Colour* buf,
     geom::Size buf_size,
     std::string const& text,
     geom::Point top_left,
     geom::Height height_pixels,
-    Pixel colour) const
+    Colour* colour) const
 {
     if (!area(buf_size) || height_pixels <= geom::Height{})
     {
@@ -567,11 +570,11 @@ void TextRenderer::rasterize_glyph(char32_t glyph) const
 }
 
 void TextRenderer::render_glyph(
-    Pixel* buf,
+    Colour* buffer,
     geom::Size buf_size,
     FT_Bitmap const* glyph,
     geom::Point top_left,
-    Pixel colour) const
+    Colour* colour) const
 {
     geom::X const buffer_left = std::max(top_left.x, geom::X{});
     geom::X const buffer_right = std::min(top_left.x + geom::DeltaX{glyph->width}, as_x(buf_size.width));
@@ -581,25 +584,31 @@ void TextRenderer::render_glyph(
 
     geom::Displacement const glyph_offset = as_displacement(top_left);
 
+    auto const colour_alpha = colour[3];
+    
+    auto buffer_pixels = reinterpret_cast<uint32_t*>(buffer);
+
     for (geom::Y buffer_y = buffer_top; buffer_y < buffer_bottom; buffer_y += geom::DeltaY{1})
     {
         geom::Y const glyph_y = buffer_y - glyph_offset.dy;
-        uint8_t* const glyph_row = glyph->buffer + (glyph_y.as_int() * glyph->pitch);
-        Pixel* const buffer_row = buf + (buffer_y.as_int() * buf_size.width.as_int());
+        Colour* const glyph_row = glyph->buffer + glyph_y.as_int() * glyph->pitch;
+        uint32_t* const buffer_row = buffer_pixels + buffer_y.as_int() * buf_size.width.as_int();
 
         for (geom::X buffer_x = buffer_left; buffer_x < buffer_right; buffer_x += geom::DeltaX{1})
         {
             geom::X const glyph_x = buffer_x - glyph_offset.dx;
-            uint8_t const glyph_alpha = ((int)glyph_row[glyph_x.as_int()] * colour.a) / 255;
-            Pixel* buffer_pixel = buffer_row + buffer_x.as_int();
+            unsigned char const glyph_alpha = (static_cast<Colour>(glyph_row[glyph_x.as_int()]) * colour_alpha) / 255;
+            auto* const buffer_pixels = reinterpret_cast<Colour*>(buffer_row + buffer_x.as_int());
             for (int i = 0; i < 3; i++)
             {
-                // Blend color with the previous buffer color based on the glyph's alpha
-                (*buffer_pixel)[i] = ((*buffer_pixel)[i] * (255 - glyph_alpha)) / 255 +
-                    (colour[i] * glyph_alpha) / 255;
+                // Blend colour with the previous buffer colour based on the glyph's alpha
+                buffer_pixels[i] =
+                    ((int)buffer_pixels[i] * (255 - glyph_alpha)) / 255 +
+                    ((int)colour[i] * glyph_alpha) / 255;
             }
         }
     }
+
 }
 
 auto TextRenderer::get_font_path() -> std::string

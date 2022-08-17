@@ -34,42 +34,7 @@
 struct wl_display;
 
 namespace geom = mir::geometry;
-
-struct Pixel
-{
-    uint8_t b;
-    uint8_t g;
-    uint8_t r;
-    uint8_t a;
-
-    // Allow for list-like accessing of members
-    auto& operator[](size_t i)
-    {
-        switch(i)
-        {
-        case 0: return b;
-        case 1: return g;
-        case 2: return r;
-        case 3: return a;
-        default: assert(false);
-        }
-    }
-
-    Pixel(uint32_t bgra)
-    : b(bgra & 0xFF), 
-      g((bgra >> 8) & 0xFF), 
-      r((bgra >> 16) & 0xFF), 
-      a((bgra >> 24) & 0xFF)
-    {
-    }
-
-    Pixel(uint8_t blue = 0, uint8_t green = 0, uint8_t red = 0, uint8_t alpha = 255) 
-    : b(blue), g(green), r(red), a(alpha)
-    {
-    }
-};
-
-static_assert(sizeof(Pixel) == 4);
+using Colour = unsigned char;
 
 class StartupClient
 {
@@ -85,15 +50,15 @@ public:
     static void render_background(
         int32_t width, 
         int32_t height, 
-        Pixel* buffer, 
-        Pixel bottom_colour, 
-        Pixel top_colour);
+        Colour* buffer, 
+        Colour const* bottom_colour, 
+        Colour const* top_colour);
     
     static void render_background(
         int32_t width,
         int32_t height,
-        Pixel* buffer,
-        Pixel colour);
+        Colour* buffer,
+        Colour const* colour);
 
     void operator()(wl_display* display);
     void operator()(std::weak_ptr<mir::scene::Session> const& session);
@@ -110,10 +75,10 @@ public:
 private:
     std::mutex mutable mutex;
 
-    Pixel wallpaper_top_colour = {127, 127, 127, 255};
-    Pixel wallpaper_bottom_colour = {31, 31, 31, 255};
-    Pixel crash_background_colour = {36, 12, 56, 255};
-    Pixel crash_text_colour = {255, 255, 255, 255};
+    Colour wallpaper_top_colour[4];
+    Colour wallpaper_bottom_colour[4];
+    Colour crash_background_colour[4];
+    Colour crash_text_colour[4];
 
     uint sleep_time = 1;
 
@@ -132,12 +97,12 @@ public:
     ~TextRenderer();
 
     void render(
-        Pixel* buffer,
+        Colour* buffer,
         geom::Size buffer_size,
         std::string const& text,
         geom::Point top_left,
         geom::Height height_pixels,
-        Pixel colour) const;
+        Colour* colour) const;
 
 private:
     FT_Library library;
@@ -148,11 +113,11 @@ private:
     void set_char_size(geom::Height height) const;
     void rasterize_glyph(char32_t glyph) const;
     void render_glyph(
-        Pixel* buf,
+        Colour* buffer,
         geom::Size buf_size,
         FT_Bitmap const* glyph,
         geom::Point top_left,
-        Pixel colour) const;
+        Colour* colour) const;
 
     static auto get_font_path() -> std::string;
     static auto convert_utf8_to_utf32(std::string const& text) -> std::u32string;
