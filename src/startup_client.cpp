@@ -41,6 +41,8 @@ public:
         Colour* crash_background_colour,
         Colour* crash_text_colour,
         Path diagnostic_path,
+        Path font_path,
+        uint font_size,
         uint sleep_time);
 
     void draw_screen(SurfaceInfo& info) const override;
@@ -62,8 +64,11 @@ private:
     void draw() const;
     void draw_on_diag_update();
 
+    uint font_size;
+
     FileObserver file_observer;
     std::thread file_observer_thread;
+
     std::mutex mutable buffer_mutex;
     std::atomic<bool> diag_exists = false;
 };
@@ -125,6 +130,36 @@ void StartupClient::set_diagnostic_path(std::string const& option)
     }
 }
 
+void StartupClient::set_font_path(std::string const& option)
+{
+    auto path_string = option;
+    boost::replace_all(path_string, "$USER", getenv("USER"));
+
+    auto const path = boost::filesystem::path(path_string);
+    if (boost::filesystem::exists(path.parent_path()))
+    {
+        font_path = path;
+    }
+    else
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Font directory (" + path.parent_path().string() + ") does not exist"));
+    }
+
+
+    if(boost::filesystem::exists(path))
+    {
+        puts("YAAY IT EXISTS");
+    } else {
+        puts("IT DONT EXIST");
+    }
+}
+
+void StartupClient::set_font_size(std::string const& option)
+{
+    font_size = std::stoi(option);
+}
+
 void StartupClient::set_sleep_time(std::string const& option)
 {
     sleep_time = std::stoi(option);
@@ -174,6 +209,8 @@ void StartupClient::operator()(wl_display* display)
         crash_background_colour,
         crash_text_colour,
         diagnostic_path,
+        font_path,
+        font_size,
         sleep_time);
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
@@ -198,14 +235,17 @@ StartupClient::Self::Self(
     Colour* crash_background_colour, 
     Colour* crash_text_colour,
     Path diagnostic_path,
+    Path font_path,
+    uint font_size,
     uint sleep_time)
     : FullscreenClient(display),
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
       crash_text_colour{crash_text_colour},
-      text_renderer{TextRenderer()},
+      text_renderer{TextRenderer(font_path)},
       diagnostic_path{diagnostic_path},
+      font_size{font_size},
       sleep_time{sleep_time},
       file_observer{FileObserver(diagnostic_path)}
 {
@@ -222,7 +262,7 @@ void StartupClient::Self::render_text(
 {
     auto size = geom::Size{width, height};
     auto top_left = geom::Point{0, 0};
-    auto const height_pixels = geom::Height(200);
+    auto const height_pixels = geom::Height(font_size);
     auto const y_kerning = height_pixels + (height_pixels / 5);
     
     std::string line;
@@ -342,27 +382,27 @@ inline auto area(geom::Size size) -> size_t
         : 0;
 }
 
-TextRenderer::TextRenderer()
+TextRenderer::TextRenderer(Path font_path)
+    : font_path{font_path}
 {
     if (auto const error = FT_Init_FreeType(&library))
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
             "Initializing freetype library failed with error " + std::to_string(error)));
     }
-        
-    auto const path = get_font_path();
-    if (auto const error = FT_New_Face(library, path.c_str(), 0, &face))
+    
+    if (auto const error = FT_New_Face(library, font_path.c_str(), 0, &face))
     {
         if (error == FT_Err_Unknown_File_Format)
         {
             BOOST_THROW_EXCEPTION(std::runtime_error(
-                "Font " + path + " has unsupported format"));
+                "Font " + font_path.string() + " has unsupported format"));
         }
             
         else
         {
             BOOST_THROW_EXCEPTION(std::runtime_error(
-                "Loading font from " + path + " failed with error " + std::to_string(error)));
+                "Loading font from " + font_path.string() + " failed with error " + std::to_string(error)));
         }
     }
 }
@@ -380,66 +420,6 @@ TextRenderer::~TextRenderer()
         mir::log_warning("Failed to uninitialize FreeType with error %d", error);
     }
     library = nullptr;
-}
-
-auto default_font() -> std::string
-{
-    struct FontPath
-    {
-        char const* filename;
-        std::vector<char const*> prefixes;
-    };
-
-    FontPath const font_paths[]{
-        FontPath{"Ubuntu-B.ttf", {
-            "ubuntu-font-family",   // Ubuntu < 18.04
-            "ubuntu",               // Ubuntu >= 18.04/Arch
-        }},
-        FontPath{"FreeSansBold.ttf", {
-            "freefont",             // Debian/Ubuntu
-            "gnu-free",             // Fedora/Arch
-        }},
-        FontPath{"DejaVuSans-Bold.ttf", {
-            "dejavu",               // Ubuntu (others?)
-            "",                     // Arch
-        }},
-        FontPath{"LiberationSans-Bold.ttf", {
-            "liberation-sans",      // Fedora
-            "liberation",           // Arch
-        }},
-    };
-
-    char const* const font_path_search_paths[]{
-        "/usr/share/fonts/truetype",    // Ubuntu/Debian
-        "/usr/share/fonts/TTF",         // Arch
-        "/usr/share/fonts",             // Fedora/Arch
-    };
-
-    std::vector<std::string> usable_search_paths;
-    for (auto const& path : font_path_search_paths)
-    {
-        if (boost::filesystem::exists(path))
-            usable_search_paths.push_back(path);
-    }
-
-    for (auto const& font : font_paths)
-    {
-        for (auto const& prefix : font.prefixes)
-        {
-            for (auto const& path : usable_search_paths)
-            {
-                auto const full_font_path = path + '/' + prefix + '/' + font.filename;
-                if (boost::filesystem::exists(full_font_path))
-                {
-                    return full_font_path;
-                }
-                    
-            }
-        }
-    }
-
-    mir::log_warning("Can't find a default font!");
-    return "";
 }
 
 auto TextRenderer::convert_utf8_to_utf32(std::string const& text) -> std::u32string
@@ -587,22 +567,12 @@ void TextRenderer::render_glyph(
             {
                 // Blend colour with the previous buffer colour based on the glyph's alpha
                 buffer_pixels[i] =
-                    ((int)buffer_pixels[i] * (255 - glyph_alpha)) / 255 +
-                    ((int)colour[i] * glyph_alpha) / 255;
+                    (buffer_pixels[i] * (255 - glyph_alpha)) / 255 +
+                    (colour[i] * glyph_alpha) / 255;
             }
         }
     }
 
-}
-
-auto TextRenderer::get_font_path() -> std::string
-{
-    auto const path = default_font();
-    if (path.empty())
-    {
-        BOOST_THROW_EXCEPTION(std::runtime_error("Failed to find a font"));
-    }
-    return path;
 }
 
 FileObserver::FileObserver(Path file_path)

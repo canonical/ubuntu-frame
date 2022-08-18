@@ -44,6 +44,8 @@ public:
     void set_crash_background_colour(std::string const& option);
     void set_crash_text_colour(std::string const& option);
     void set_diagnostic_path(std::string const& option);
+    void set_font_path(std::string const& option);
+    void set_font_size(std::string const& option);
     void set_sleep_time(std::string const& option);
 
     /// Renders background as a gradient from top_colour to bottom_colour
@@ -73,9 +75,11 @@ private:
     Colour crash_background_colour[4];
     Colour crash_text_colour[4];
 
-    uint sleep_time = 1;
+    uint font_size;
+    uint sleep_time;
 
     boost::filesystem::path diagnostic_path;
+    boost::filesystem::path font_path;
 
     struct Self;
     std::shared_ptr<Self> self;
@@ -86,7 +90,9 @@ private:
 class TextRenderer
 {
 public:
-    TextRenderer();
+    using Path = boost::filesystem::path;
+
+    TextRenderer(Path font_path);
     ~TextRenderer();
 
     void render(
@@ -98,6 +104,8 @@ public:
         Colour* colour) const;
 
 private:
+    Path font_path;
+
     FT_Library library;
     FT_Face face;
 
@@ -112,7 +120,6 @@ private:
         geom::Point top_left,
         Colour* colour) const;
 
-    static auto get_font_path() -> std::string;
     static auto convert_utf8_to_utf32(std::string const& text) -> std::u32string;
 };
 
