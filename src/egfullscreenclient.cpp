@@ -438,6 +438,9 @@ void egmde::FullscreenClient::run(wl_display* display)
             {shutdown_signal,            POLLIN, 0},
         };
 
+    #ifndef NAME_MAX
+    #define NAME_MAX 255
+    #endif
     static const size_t INOTIFY_BUF_LEN = sizeof(inotify_event) + NAME_MAX + 1;
     inotify_event inotify_buffer[INOTIFY_BUF_LEN];
 
