@@ -18,6 +18,7 @@
 
 #include "frame_authorization.h"
 
+#include <miral/version.h>
 #include <mir/log.h>
 #include <sys/apparmor.h>
 #include <cstring>
@@ -33,6 +34,10 @@ AuthModel const auth_model{{
     }},
     {"ubuntu-frame-vnc", {
         WaylandExtensions::zwlr_screencopy_manager_v1,
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 6, 0)
+        WaylandExtensions::zwlr_virtual_pointer_manager_v1,
+#endif
+        WaylandExtensions::zwp_virtual_keyboard_manager_v1,
     }},
     {"ubuntu-frame", {
         WaylandExtensions::zwlr_screencopy_manager_v1,
