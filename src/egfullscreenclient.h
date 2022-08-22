@@ -24,6 +24,10 @@
 
 #include <wayland-client.h>
 
+#include <boost/filesystem.hpp>
+
+#include <sys/inotify.h>
+
 #include <functional>
 #include <map>
 #include <memory>
@@ -35,7 +39,9 @@ namespace egmde
 class FullscreenClient
 {
 public:
-    explicit FullscreenClient(wl_display* display);
+    using Path = boost::filesystem::path;
+
+    explicit FullscreenClient(wl_display* display, Path diagnostic_path);
 
     virtual ~FullscreenClient();
 
@@ -122,7 +128,7 @@ public:
         wl_buffer* buffer = nullptr;
     };
 
-    virtual void draw_screen(SurfaceInfo& info) const = 0;
+    virtual void draw_screen(SurfaceInfo& info, bool draws_crash) const = 0;
 
 protected:
 
@@ -192,8 +198,13 @@ private:
 
     void on_output_gone(Output const*);
 
+    void on_draws_crash();
+
+    auto get_diagnostic_fd(Path diagnostic_path) -> int;
+
     mir::Fd const flush_signal;
     mir::Fd const shutdown_signal;
+    mir::Fd const diagnostic_signal;
 
     std::mutex mutable outputs_mutex;
     std::map<Output const*, SurfaceInfo> outputs;
@@ -219,6 +230,12 @@ private:
     std::unique_ptr<wl_registry, decltype(&wl_registry_destroy)> registry;
 
     std::unordered_map<uint32_t, std::unique_ptr<Output>> bound_outputs;
+
+    Path diagnostic_path;
+    int diagnostic_fd;
+    int diagnostic_wd;
+
+    bool draws_crash = false;
 };
 }
 

@@ -133,8 +133,29 @@ void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_ou
     output->on_done(*output);
 }
 
-egmde::FullscreenClient::FullscreenClient(wl_display* display) :
+auto egmde::FullscreenClient::get_diagnostic_fd(Path diagnostic_path) -> int
+{
+    diagnostic_fd = inotify_init();
+    
+    diagnostic_wd = inotify_add_watch(
+        diagnostic_fd,
+        diagnostic_path.parent_path().c_str(),
+        IN_CREATE | IN_CLOSE_WRITE
+    );
+
+    if (diagnostic_fd < 0)
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Initializing inotify failed with error " + std::to_string(diagnostic_fd)));
+    }
+
+    return diagnostic_fd;
+}
+
+egmde::FullscreenClient::FullscreenClient(wl_display* display, Path diagnostic_path) :
     flush_signal{::eventfd(0, EFD_SEMAPHORE)},
+    diagnostic_signal{get_diagnostic_fd(diagnostic_path)},
+    diagnostic_path{diagnostic_path},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     registry{nullptr, [](auto){}}
 {
@@ -168,7 +189,7 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
                 buffer = nullptr;
             }
 
-            draw_screen(p->second);
+            draw_screen(p->second, draws_crash);
         }
 
         auto i = begin(hidden_outputs);
@@ -179,7 +200,7 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
             if (!display_area.bounding_rectangle().overlaps(screen_rect))
             {
                 display_area.add(screen_rect);
-                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second);
+                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, draws_crash);
                 break;
             }
 
@@ -229,7 +250,7 @@ void egmde::FullscreenClient::on_output_gone(Output const* output)
             if (!display_area.bounding_rectangle().overlaps(screen_rect))
             {
                 display_area.add(screen_rect);
-                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second);
+                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, draws_crash);
                 break;
             }
 
@@ -256,11 +277,24 @@ void egmde::FullscreenClient::on_new_output(Output const* output)
         if (!display_area.bounding_rectangle().overlaps(screen_rect))
         {
             display_area.add(screen_rect);
-            draw_screen(outputs.insert({output, SurfaceInfo{output}}).first->second);
+            draw_screen(outputs.insert({output, SurfaceInfo{output}}).first->second, draws_crash);
         }
         else
         {
             hidden_outputs.emplace_back(output);
+        }
+    }
+    wl_display_flush(display);
+}
+
+void egmde::FullscreenClient::on_draws_crash()
+{
+    {
+        std::lock_guard<decltype(outputs_mutex)> lock{outputs_mutex};
+
+        for (auto& output : outputs)
+        {
+            draw_screen(output.second, draws_crash);
         }
     }
     wl_display_flush(display);
@@ -323,6 +357,8 @@ egmde::FullscreenClient::~FullscreenClient()
     }
     bound_outputs.clear();
     registry.reset();
+    (void)inotify_rm_watch(diagnostic_fd, diagnostic_wd);
+    (void)close(diagnostic_fd);
     wl_display_roundtrip(display);
 }
 
@@ -389,6 +425,7 @@ void egmde::FullscreenClient::run(wl_display* display)
     enum FdIndices {
         display_fd = 0,
         flush,
+        diagnostic,
         shutdown,
         indices
     };
@@ -397,8 +434,12 @@ void egmde::FullscreenClient::run(wl_display* display)
         {
             {wl_display_get_fd(display), POLLIN, 0},
             {flush_signal,               POLLIN, 0},
+            {diagnostic_signal,          POLLIN, 0},
             {shutdown_signal,            POLLIN, 0},
         };
+
+    static const size_t INOTIFY_BUF_LEN = sizeof(inotify_event) + NAME_MAX + 1;
+    inotify_event inotify_buffer[INOTIFY_BUF_LEN];
 
     while (!(fds[shutdown].revents & (POLLIN | POLLERR)))
     {
@@ -433,6 +474,17 @@ void egmde::FullscreenClient::run(wl_display* display)
             eventfd_t foo;
             eventfd_read(flush_signal, &foo);
             wl_display_flush(display);
+        }
+
+        if (fds[diagnostic].revents & (POLLIN | POLLERR))
+        {
+            read(fds[diagnostic].fd, inotify_buffer, INOTIFY_BUF_LEN);
+
+            if (inotify_buffer->len)
+            {
+                draws_crash = true;
+                on_draws_crash();
+            }
         }
     }
 }

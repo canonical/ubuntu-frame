@@ -45,7 +45,7 @@ public:
         uint font_size,
         uint sleep_time);
 
-    void draw_screen(SurfaceInfo& info) const override;
+    void draw_screen(SurfaceInfo& info, bool draws_crash) const override;
     
     void render_text(int32_t width, int32_t height, Colour* buffer) const;
 
@@ -56,18 +56,11 @@ public:
 
     uint sleep_time;
 
-    mutable SurfaceInfo* current_surface_info;
     TextRenderer text_renderer;
     const Path diagnostic_path;
 
 private:
-    void draw() const;
-    void draw_on_diag_update();
-
     uint font_size;
-
-    FileObserver file_observer;
-    std::thread file_observer_thread;
 
     std::mutex mutable buffer_mutex;
     std::atomic<bool> diag_exists = false;
@@ -144,14 +137,6 @@ void StartupClient::set_font_path(std::string const& option)
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
             "Font directory (" + path.parent_path().string() + ") does not exist"));
-    }
-
-
-    if(boost::filesystem::exists(path))
-    {
-        puts("YAAY IT EXISTS");
-    } else {
-        puts("IT DONT EXIST");
     }
 }
 
@@ -238,7 +223,7 @@ StartupClient::Self::Self(
     Path font_path,
     uint font_size,
     uint sleep_time)
-    : FullscreenClient(display),
+    : FullscreenClient(display, diagnostic_path),
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
@@ -246,13 +231,10 @@ StartupClient::Self::Self(
       text_renderer{TextRenderer(font_path)},
       diagnostic_path{diagnostic_path},
       font_size{font_size},
-      sleep_time{sleep_time},
-      file_observer{FileObserver(diagnostic_path)}
+      sleep_time{sleep_time}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);
-
-    file_observer_thread = std::thread(&StartupClient::Self::draw_on_diag_update, this);
 }
 
 void StartupClient::Self::render_text(
@@ -275,95 +257,64 @@ void StartupClient::Self::render_text(
     }
 }
 
-void StartupClient::Self::draw_screen(SurfaceInfo& info) const
-{
-    current_surface_info = &info;
-    draw();
-}
-
-void StartupClient::Self::draw() const
+void StartupClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) const
 {
     std::lock_guard lock{buffer_mutex};
 
-    bool const rotated = current_surface_info->output->transform & WL_OUTPUT_TRANSFORM_90;
-    auto const width = rotated ? current_surface_info->output->height : current_surface_info->output->width;
-    auto const height = rotated ? current_surface_info->output->width : current_surface_info->output->height;
+    bool const rotated = info.output->transform & WL_OUTPUT_TRANSFORM_90;
+    auto const width = rotated ? info.output->height : info.output->width;
+    auto const height = rotated ? info.output->width : info.output->height;
 
     if (width <= 0 || height <= 0)
         return;
 
     auto const stride = 4*width;
 
-    if (!current_surface_info->surface)
+    if (!info.surface)
     {
-        current_surface_info->surface = wl_compositor_create_surface(compositor);
+        info.surface = wl_compositor_create_surface(compositor);
     }
 
-    if (!current_surface_info->shell_surface)
+    if (!info.shell_surface)
     {
-        current_surface_info->shell_surface = wl_shell_get_shell_surface(shell, current_surface_info->surface);
+        info.shell_surface = wl_shell_get_shell_surface(shell, info.surface);
         wl_shell_surface_set_fullscreen(
-            current_surface_info->shell_surface,
+            info.shell_surface,
             WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
             0,
-            current_surface_info->output->output);
+            info.output->output);
     }
 
-    if (current_surface_info->buffer)
+    if (info.buffer)
     {
-        wl_buffer_destroy(current_surface_info->buffer);
+        wl_buffer_destroy(info.buffer);
     }
 
     {
-        auto const shm_pool = make_shm_pool(stride * height, &current_surface_info->content_area);
+        auto const shm_pool = make_shm_pool(stride * height, &info.content_area);
 
-        current_surface_info->buffer = wl_shm_pool_create_buffer(
+        info.buffer = wl_shm_pool_create_buffer(
             shm_pool.get(),
             0,
             width, height, stride,
             WL_SHM_FORMAT_ARGB8888);
     }
 
-    auto buffer = static_cast<Colour*>(current_surface_info->content_area);
+    auto buffer = static_cast<Colour*>(info.content_area);
 
-    if (diag_exists)
+    if (draws_crash)
     {
         render_background(width, height, buffer, crash_background_colour);
         render_text(width, height, buffer);
-
-        wl_surface_attach(current_surface_info->surface, current_surface_info->buffer, 0, 0);
-        wl_surface_set_buffer_scale(current_surface_info->surface, current_surface_info->output->scale_factor);
-        wl_surface_commit(current_surface_info->surface);
-        wl_display_flush(display);
     }
     else
     {
         render_background(width, height, buffer, wallpaper_bottom_colour, wallpaper_top_colour);
-
-        wl_surface_attach(current_surface_info->surface, current_surface_info->buffer, 0, 0);
-        wl_surface_set_buffer_scale(current_surface_info->surface, current_surface_info->output->scale_factor);
-        wl_surface_commit(current_surface_info->surface);
-    }
-}
-
-void StartupClient::Self::draw_on_diag_update()
-{
-    if (!diag_exists)
-    {
-        file_observer.wait_for_create();
-        diag_exists = true;
-        draw();
     }
 
-    while (true)
-    {
-        if (file_observer.file_updated())
-        {
-            draw();
-        }
-        
-        std::this_thread::sleep_for(std::chrono::seconds(sleep_time));
-    }
+    wl_surface_attach(info.surface, info.buffer, 0, 0);
+    wl_surface_set_buffer_scale(info.surface, info.output->scale_factor);
+    wl_surface_commit(info.surface);
 }
 
 void StartupClient::stop()
@@ -573,66 +524,4 @@ void TextRenderer::render_glyph(
         }
     }
 
-}
-
-FileObserver::FileObserver(Path file_path)
-    : file_path{file_path}
-{
-    fd = inotify_init();
-    if (fd < 0)
-    {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Initializing inotify failed with error " + std::to_string(fd)));
-    }
-
-    // Set watch on parent path as watching for file directly
-    // has some complicated behavior
-    wd = inotify_add_watch(
-        fd,
-        file_path.parent_path().c_str(),
-        IN_CREATE | IN_CLOSE_WRITE
-    );
-}
-
-FileObserver::~FileObserver()
-{
-    inotify_rm_watch(fd, wd);
-    close(fd);
-}
-
-auto FileObserver::file_exists() -> bool
-{
-    read(fd, buffer, BUF_LEN);
-    if (buffer->len)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-void FileObserver::wait_for_create()
-{
-    while (true)
-    {
-        if (file_exists())
-        {
-            return;
-        }
-    }
-}
-
-auto FileObserver::file_updated() -> bool
-{
-    read(fd, buffer, BUF_LEN);
-
-    if (buffer->mask & IN_CREATE | IN_CLOSE_WRITE
-        && buffer->name == file_path.filename())
-    {
-        return true;
-    }
-    
-    return false;
 }
