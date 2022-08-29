@@ -143,14 +143,14 @@ void StartupClient::set_font_path(std::string const& option)
     auto path_string = option;
 
     auto const path = boost::filesystem::path(path_string);
-    if (boost::filesystem::exists(path.parent_path()))
+    if (boost::filesystem::exists(path))
     {
         font_path = path;
     }
     else
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Font directory (" + path.parent_path().string() + ") does not exist"));
+            "Font directory (" + path.string() + ") does not exist"));
     }
 }
 
