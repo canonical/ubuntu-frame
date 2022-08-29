@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <string>
 
 #include <miral/application.h>
@@ -76,7 +77,7 @@ private:
     uint font_size;
     uint sleep_time;
 
-    boost::filesystem::path diagnostic_path;
+    std::optional<boost::filesystem::path> diagnostic_path;
     boost::filesystem::path font_path;
 
     struct Self;

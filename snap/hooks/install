@@ -1,6 +1,11 @@
 #!/bin/sh
 set -eux
 
+# Setup diagnostic
+mkdir -p $SNAP_DATA/diagnostic -m 777
+touch $SNAP_DATA/diagnostic/diagnostic
+chmod 666 $SNAP_DATA/diagnostic/diagnostic
+
 # we install with the daemon disabled, the configure hook
 # will start and enable it if appropriate
 snapctl stop --disable "$SNAP_INSTANCE_NAME.daemon"

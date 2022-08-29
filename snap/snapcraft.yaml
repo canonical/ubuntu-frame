@@ -27,6 +27,8 @@ environment:
   __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
   # Setup XKB
   XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
+  # Setup diagnostic
+  MIR_SERVER_DIAGNOSTIC_PATH: $SNAP_DATA/diagnostic/diagnostic
 
 layout:
   /usr/share/icons:
@@ -80,6 +82,13 @@ plugs:
     interface: content
     target: $SNAP/graphics
     default-provider: mesa-core20
+
+slots:
+  ubuntu-frame-diagnostic:
+    interface: content
+    content: writable-data
+    write: 
+      - $SNAP_DATA/diagnostic
 
 parts:
   recipe-version:

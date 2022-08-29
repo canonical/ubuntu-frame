@@ -133,32 +133,30 @@ void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_ou
     output->on_done(*output);
 }
 
-auto egmde::FullscreenClient::get_diagnostic_fd(Path diagnostic_path) -> int
-{
-    diagnostic_fd = inotify_init();
-    
-    diagnostic_wd = inotify_add_watch(
-        diagnostic_fd,
-        diagnostic_path.parent_path().c_str(),
-        IN_CREATE | IN_CLOSE_WRITE
-    );
-
-    if (diagnostic_fd < 0)
-    {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Initializing inotify failed with error " + std::to_string(diagnostic_fd)));
-    }
-
-    return diagnostic_fd;
-}
-
-egmde::FullscreenClient::FullscreenClient(wl_display* display, Path diagnostic_path) :
+egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path) :
     flush_signal{::eventfd(0, EFD_SEMAPHORE)},
-    diagnostic_signal{get_diagnostic_fd(diagnostic_path)},
+    diagnostic_signal{inotify_init()},
     diagnostic_path{diagnostic_path},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     registry{nullptr, [](auto){}}
 {
+    // Set up watch on diagnostic file
+    if (diagnostic_path.has_value())
+    {
+        diagnostic_wd = inotify_add_watch(
+            diagnostic_signal,
+            diagnostic_path->parent_path().c_str(),
+            IN_CREATE | IN_CLOSE_WRITE
+        );
+    }
+
+    // Check inotify initializaiton
+    if (diagnostic_signal < 0)
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Initializing inotify failed with error " + std::to_string(diagnostic_signal)));
+    }
+
     if (shutdown_signal == mir::Fd::invalid)
     {
         BOOST_THROW_EXCEPTION((std::system_error{errno, std::system_category(), "Failed to create shutdown notifier"}));
@@ -357,8 +355,13 @@ egmde::FullscreenClient::~FullscreenClient()
     }
     bound_outputs.clear();
     registry.reset();
-    (void)inotify_rm_watch(diagnostic_fd, diagnostic_wd);
-    (void)close(diagnostic_fd);
+
+    if (diagnostic_wd.has_value())
+    {
+        (void)inotify_rm_watch(diagnostic_signal, diagnostic_wd.value());
+    }
+    
+    (void)close(diagnostic_signal);
     wl_display_roundtrip(display);
 }
 

@@ -40,7 +40,7 @@ public:
         Colour* wallpaper_bottom_colour,
         Colour* crash_background_colour,
         Colour* crash_text_colour,
-        Path diagnostic_path,
+        std::optional<Path> diagnostic_path,
         Path font_path,
         uint font_size,
         uint sleep_time);
@@ -57,7 +57,7 @@ public:
     uint sleep_time;
 
     TextRenderer text_renderer;
-    const Path diagnostic_path;
+    const std::optional<Path> diagnostic_path;
 
 private:
     uint font_size;
@@ -108,25 +108,31 @@ void StartupClient::set_crash_text_colour(std::string const& option)
 
 void StartupClient::set_diagnostic_path(std::string const& option)
 {
-    auto path_string = option;
-    boost::replace_all(path_string, "$USER", getenv("USER"));
+    auto option_path = boost::filesystem::path(option);
 
-    auto const path = boost::filesystem::path(path_string);
-    if (boost::filesystem::exists(path.parent_path()))
+    // Used as default in snap
+    if (auto env = getenv("MIR_SERVER_DIAGNOSTIC_PATH"))
     {
-        diagnostic_path = path;
+        if (option == "")
+        {
+            diagnostic_path = boost::filesystem::path(env);
+            return;
+        }
+    }
+
+    if (boost::filesystem::exists(option_path.parent_path()))
+    {
+        diagnostic_path = option_path;
     }
     else
     {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Log file directory (" + path.parent_path().string() + ") does not exist"));
+        mir::log_info("No diagnostic file given. Crash reporting is disabled.");
     }
 }
 
 void StartupClient::set_font_path(std::string const& option)
 {
     auto path_string = option;
-    boost::replace_all(path_string, "$USER", getenv("USER"));
 
     auto const path = boost::filesystem::path(path_string);
     if (boost::filesystem::exists(path.parent_path()))
@@ -219,7 +225,7 @@ StartupClient::Self::Self(
     Colour* wallpaper_bottom_colour, 
     Colour* crash_background_colour, 
     Colour* crash_text_colour,
-    Path diagnostic_path,
+    std::optional<Path> diagnostic_path,
     Path font_path,
     uint font_size,
     uint sleep_time)
@@ -248,13 +254,18 @@ void StartupClient::Self::render_text(
     auto const y_kerning = height_pixels + (height_pixels / 5);
     
     std::string line;
-    auto stream = boost::filesystem::ifstream(diagnostic_path);
-    while (getline(stream, line))
+
+    if (diagnostic_path.has_value())
     {
-        text_renderer.render(buffer, size, line, top_left, height_pixels, crash_text_colour);
-        auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
-        top_left = new_top_left;
+        auto stream = boost::filesystem::ifstream(diagnostic_path.value());
+        while (getline(stream, line))
+        {
+            text_renderer.render(buffer, size, line, top_left, height_pixels, crash_text_colour);
+            auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
+            top_left = new_top_left;
+        }
     }
+    
 }
 
 void StartupClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) const

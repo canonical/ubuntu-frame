@@ -32,6 +32,7 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <unordered_map>
 
 namespace egmde
@@ -41,7 +42,7 @@ class FullscreenClient
 public:
     using Path = boost::filesystem::path;
 
-    explicit FullscreenClient(wl_display* display, Path diagnostic_path);
+    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path);
 
     virtual ~FullscreenClient();
 
@@ -200,8 +201,6 @@ private:
 
     void on_draws_crash();
 
-    auto get_diagnostic_fd(Path diagnostic_path) -> int;
-
     mir::Fd const flush_signal;
     mir::Fd const shutdown_signal;
     mir::Fd const diagnostic_signal;
@@ -231,9 +230,8 @@ private:
 
     std::unordered_map<uint32_t, std::unique_ptr<Output>> bound_outputs;
 
-    Path diagnostic_path;
-    int diagnostic_fd;
-    int diagnostic_wd;
+    std::optional<Path> diagnostic_path;
+    std::optional<int> diagnostic_wd;
 
     bool draws_crash = false;
 };
