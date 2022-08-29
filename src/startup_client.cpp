@@ -120,13 +120,21 @@ void StartupClient::set_diagnostic_path(std::string const& option)
         }
     }
 
-    if (boost::filesystem::exists(option_path.parent_path()))
+    if (option == "")
     {
+        mir::log_info("No diagnostic file given. Crash reporting is disabled.");
+        return;
+    }
+
+    if (boost::filesystem::exists(option_path))
+    {
+        puts("PATH EXISTS");
         diagnostic_path = option_path;
     }
     else
     {
-        mir::log_info("No diagnostic file given. Crash reporting is disabled.");
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Diagnotic path (" + option_path.string() + ") does not exist"));
     }
 }
 
