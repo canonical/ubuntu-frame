@@ -61,7 +61,7 @@ int main(int argc, char const* argv[])
             CommandLineOption{[&] (auto& option) { startup_client.set_font_size(option);},
                               "font-size",  "Size of font in pixels", "50"},
             CommandLineOption{[&](auto& option) { startup_client.set_diagnostic_sleep_time(option);},
-                              "diagnostic-wait-time", "Amount of time (in seconds) between checking for diagnostic file", "1"},
+                              "diagnostic-wait-time", "Amount of time (in seconds) between checking for diagnostic file", "0"},
             StartupInternalClient{std::ref(startup_client)},
             CommandLineOption{[&](bool option) { init_authorise_without_apparmor(option);},
                               "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
