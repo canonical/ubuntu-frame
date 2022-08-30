@@ -136,10 +136,10 @@ void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_ou
 
 egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_sleep_time) :
     flush_signal{::eventfd(0, EFD_SEMAPHORE)},
+    shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     diagnostic_signal{inotify_init()},
     diagnostic_path{diagnostic_path},
     diagnostic_sleep_time{diagnostic_sleep_time},
-    shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     registry{nullptr, [](auto){}}
 {
     // Set up watch on diagnostic file
