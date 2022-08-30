@@ -29,6 +29,7 @@
 #include <sys/inotify.h>
 
 #include <functional>
+#include <ctime>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -42,7 +43,7 @@ class FullscreenClient
 public:
     using Path = boost::filesystem::path;
 
-    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path);
+    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_sleep_time);
 
     virtual ~FullscreenClient();
 
@@ -234,6 +235,8 @@ private:
     std::optional<int> diagnostic_wd;
 
     bool draws_crash = false;
+    std::clock_t start_time;
+    uint diagnostic_sleep_time;
 };
 }
 

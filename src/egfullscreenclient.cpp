@@ -28,6 +28,7 @@
 #include <sys/poll.h>
 #include <cstdlib>
 
+#include <chrono>
 #include <cstring>
 #include <system_error>
 
@@ -133,10 +134,11 @@ void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_ou
     output->on_done(*output);
 }
 
-egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path) :
+egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_sleep_time) :
     flush_signal{::eventfd(0, EFD_SEMAPHORE)},
     diagnostic_signal{inotify_init()},
     diagnostic_path{diagnostic_path},
+    diagnostic_sleep_time{diagnostic_sleep_time},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     registry{nullptr, [](auto){}}
 {
@@ -156,6 +158,8 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
         BOOST_THROW_EXCEPTION(std::runtime_error(
             "Initializing inotify failed with error " + std::to_string(diagnostic_signal)));
     }
+
+    start_time = std::clock();
 
     if (shutdown_signal == mir::Fd::invalid)
     {
@@ -488,6 +492,15 @@ void egmde::FullscreenClient::run(wl_display* display)
 
             if (inotify_buffer->len)
             {
+                // TODO - Stop this wait from blocking. With improvements to Mir (see Mir #2543) this should be fixed.
+                // Wait for diagnostic_sleep_time to pass
+                auto current_time = std::clock();
+                auto remaining_time = diagnostic_sleep_time - ((start_time - current_time) / CLOCKS_PER_SEC);
+                if (remaining_time > 0)
+                {
+                    sleep(remaining_time);
+                }
+
                 draws_crash = true;
                 on_draws_crash();
             }

@@ -45,7 +45,7 @@ public:
     void set_diagnostic_path(std::string const& option);
     void set_font_path(std::string const& option);
     void set_font_size(std::string const& option);
-    void set_sleep_time(std::string const& option);
+    void set_diagnostic_sleep_time(std::string const& option);
 
     /// Renders background as a gradient from top_colour to bottom_colour
     static void render_background(
@@ -75,7 +75,7 @@ private:
     Colour crash_text_colour[4];
 
     uint font_size;
-    uint sleep_time;
+    uint diagnostic_sleep_time;
 
     std::optional<boost::filesystem::path> diagnostic_path;
     boost::filesystem::path font_path;
