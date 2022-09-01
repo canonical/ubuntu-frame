@@ -442,11 +442,7 @@ void egmde::FullscreenClient::run(wl_display* display)
             {shutdown_signal,            POLLIN, 0},
         };
 
-    #ifndef NAME_MAX
-    #define NAME_MAX 255
-    #endif
-    static const size_t INOTIFY_BUF_LEN = sizeof(inotify_event) + NAME_MAX + 1;
-    inotify_event inotify_buffer[INOTIFY_BUF_LEN];
+    inotify_event inotify_buffer[1];
 
     while (!(fds[shutdown].revents & (POLLIN | POLLERR)))
     {
@@ -485,10 +481,13 @@ void egmde::FullscreenClient::run(wl_display* display)
 
         if (fds[diagnostic].revents & (POLLIN | POLLERR))
         {
-            read(fds[diagnostic].fd, inotify_buffer, INOTIFY_BUF_LEN);
+            read(fds[diagnostic].fd, inotify_buffer, sizeof(inotify_event));
 
-            if (inotify_buffer->len)
+            if (inotify_buffer->len && inotify_buffer->mask == IN_CREATE | IN_CLOSE_WRITE)
             {
+                // Clear the buffer
+                inotify_buffer[0] = inotify_event();
+
                 draws_crash = true;
                 on_draws_crash();
             }
