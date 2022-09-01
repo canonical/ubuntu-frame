@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2021 Canonical Ltd.
+ * Copyright © 2016-2022 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
  * under the terms of the GNU General Public License version 2 or 3 as
@@ -20,7 +20,7 @@
 #include "frame_window_manager.h"
 #include "egwallpaper.h"
 
-#include <miral/command_line_option.h>
+#include <miral/configuration_option.h>
 #include <miral/display_configuration.h>
 #include <miral/internal_client.h>
 #include <miral/keymap.h>
@@ -45,12 +45,12 @@ int main(int argc, char const* argv[])
             wayland_extensions,
             display_config,
             display_config.layout_option(),
-            CommandLineOption{[&](auto& option) { wallpaper.top(option);},
-                              "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
-            CommandLineOption{[&](auto& option) { wallpaper.bottom(option);},
-                              "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
-            CommandLineOption{[&](bool option) { init_authorise_without_apparmor(option);},
-                              "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
+            ConfigurationOption{[&](auto& option) { wallpaper.top(option); },
+                "wallpaper-top", "Colour of wallpaper RGB", "0x7f7f7f"},
+            ConfigurationOption{[&](auto& option) { wallpaper.bottom(option); },
+                "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
+            ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option); },
+                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
             StartupInternalClient{std::ref(wallpaper)},
             set_window_management_policy<FrameWindowManagerPolicy>(),
             Keymap{}
