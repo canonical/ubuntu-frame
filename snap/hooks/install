@@ -2,9 +2,9 @@
 set -eux
 
 # Setup diagnostic
-mkdir -p $SNAP_DATA/diagnostic -m 777
-touch $SNAP_DATA/diagnostic/diagnostic
-chmod 666 $SNAP_DATA/diagnostic/diagnostic
+mkdir -p "$(dirname "$MIR_SERVER_DIAGNOSTIC_PATH")" -m 777
+touch "$MIR_SERVER_DIAGNOSTIC_PATH"
+chmod 666 "$MIR_SERVER_DIAGNOSTIC_PATH"
 
 # we install with the daemon disabled, the configure hook
 # will start and enable it if appropriate
