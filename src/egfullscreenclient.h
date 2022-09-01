@@ -43,7 +43,7 @@ class FullscreenClient
 public:
     using Path = boost::filesystem::path;
 
-    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_sleep_time);
+    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path);
 
     virtual ~FullscreenClient();
 
@@ -235,8 +235,6 @@ private:
     std::optional<int> diagnostic_wd;
 
     bool draws_crash = false;
-    std::clock_t start_time;
-    uint diagnostic_sleep_time;
 };
 }
 

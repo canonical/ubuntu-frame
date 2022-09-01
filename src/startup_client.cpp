@@ -42,8 +42,7 @@ public:
         Colour* crash_text_colour,
         std::optional<Path> diagnostic_path,
         Path font_path,
-        uint font_size,
-        uint diagnostic_sleep_time);
+        uint font_size);
 
     void draw_screen(SurfaceInfo& info, bool draws_crash) const override;
     
@@ -157,11 +156,6 @@ void StartupClient::set_font_size(std::string const& option)
     font_size = std::stoi(option);
 }
 
-void StartupClient::set_diagnostic_sleep_time(std::string const& option)
-{
-    diagnostic_sleep_time = std::stoi(option);
-}
-
 void StartupClient::render_background(
         int32_t width, 
         int32_t height, 
@@ -207,8 +201,7 @@ void StartupClient::operator()(wl_display* display)
         crash_text_colour,
         diagnostic_path,
         font_path,
-        font_size,
-        diagnostic_sleep_time);
+        font_size);
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
         self = client;
@@ -233,9 +226,8 @@ StartupClient::Self::Self(
     Colour* crash_text_colour,
     std::optional<Path> diagnostic_path,
     Path font_path,
-    uint font_size,
-    uint diagnostic_sleep_time)
-    : FullscreenClient(display, diagnostic_path, diagnostic_sleep_time),
+    uint font_size)
+    : FullscreenClient(display, diagnostic_path),
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
