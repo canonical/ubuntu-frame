@@ -141,6 +141,12 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     diagnostic_path{diagnostic_path},
     registry{nullptr, [](auto){}}
 {
+    // Check inotify initializaiton
+    if (diagnostic_signal < 0)
+    {
+        BOOST_THROW_EXCEPTION((std::system_error{errno, std::system_category(), "Failed to initialize inotify"}));
+    }
+
     // Set up watch on diagnostic file
     if (diagnostic_path.has_value())
     {
@@ -149,13 +155,6 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
             diagnostic_path->parent_path().c_str(),
             IN_CREATE | IN_CLOSE_WRITE
         );
-    }
-
-    // Check inotify initializaiton
-    if (diagnostic_signal < 0)
-    {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Initializing inotify failed with error " + std::to_string(diagnostic_signal)));
     }
 
     if (shutdown_signal == mir::Fd::invalid)
