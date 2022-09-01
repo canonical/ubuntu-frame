@@ -14,7 +14,7 @@ add_executable(frame
     frame_authorization.cpp frame_authorization.h
     frame_window_manager.cpp frame_window_manager.h
     egfullscreenclient.cpp egfullscreenclient.h
-    startup_client.cpp startup_client.h
+    background_client.cpp background_client.h
 )
 
 # Check for boost

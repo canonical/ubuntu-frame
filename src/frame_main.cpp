@@ -18,7 +18,7 @@
 
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
-#include "startup_client.h"
+#include "background_client.h"
 
 #include <miral/command_line_option.h>
 #include <miral/display_configuration.h>
@@ -37,30 +37,30 @@ int main(int argc, char const* argv[])
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
-    StartupClient startup_client;
+    BackgroundClient background_client;
 
-    runner.add_stop_callback([&] { startup_client.stop(); });
+    runner.add_stop_callback([&] { background_client.stop(); });
     
     return runner.run_with(
         {
             wayland_extensions,
             display_config,
             display_config.layout_option(),
-            CommandLineOption{[&](auto& option) { startup_client.set_wallpaper_top_colour(option);},
+            CommandLineOption{[&](auto& option) { background_client.set_wallpaper_top_colour(option);},
                               "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
-            CommandLineOption{[&](auto& option) { startup_client.set_wallpaper_bottom_colour(option);},
+            CommandLineOption{[&](auto& option) { background_client.set_wallpaper_bottom_colour(option);},
                               "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
-            CommandLineOption{[&](auto& option) { startup_client.set_crash_background_colour(option);},
+            CommandLineOption{[&](auto& option) { background_client.set_crash_background_colour(option);},
                               "crash-background", "Colour of crash screen background RGB", "0x380c24"},
-            CommandLineOption{[&](auto& option) { startup_client.set_crash_text_colour(option);},
+            CommandLineOption{[&](auto& option) { background_client.set_crash_text_colour(option);},
                               "crash-text",       "Colour of crash screen text RGB", "0xffffff"},
-            CommandLineOption{[&] (auto& option) { startup_client.set_diagnostic_path(option);},
+            CommandLineOption{[&] (auto& option) { background_client.set_diagnostic_path(option);},
                               "diagnostic-path",  "Path (including filename) of diagnostic file", ""},
-            CommandLineOption{[&] (auto& option) { startup_client.set_font_path(option);},
+            CommandLineOption{[&] (auto& option) { background_client.set_font_path(option);},
                               "font-path",  "Path (including filename) of font", "/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf"},
-            CommandLineOption{[&] (auto& option) { startup_client.set_font_size(option);},
+            CommandLineOption{[&] (auto& option) { background_client.set_font_size(option);},
                               "font-size",  "Size of font in pixels", "50"},
-            StartupInternalClient{std::ref(startup_client)},
+            StartupInternalClient{std::ref(background_client)},
             CommandLineOption{[&](bool option) { init_authorise_without_apparmor(option);},
                               "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
             set_window_management_policy<FrameWindowManagerPolicy>(),

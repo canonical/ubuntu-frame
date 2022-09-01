@@ -15,7 +15,7 @@
  */
 
 #include "egfullscreenclient.h"
-#include "startup_client.h"
+#include "background_client.h"
 
 #include "mir/log.h"
 
@@ -29,7 +29,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
-struct StartupClient::Self : egmde::FullscreenClient
+struct BackgroundClient::Self : egmde::FullscreenClient
 {
 public:
     using Path = boost::filesystem::path;
@@ -63,7 +63,7 @@ private:
     std::atomic<bool> diag_exists = false;
 };
 
-void StartupClient::set_colour(std::string const& option, Colour* colour)
+void BackgroundClient::set_colour(std::string const& option, Colour* colour)
 {
     uint32_t value;
     std::stringstream interpreter{option};
@@ -83,27 +83,27 @@ void StartupClient::set_colour(std::string const& option, Colour* colour)
     }
 }
 
-void StartupClient::set_wallpaper_top_colour(std::string const& option)
+void BackgroundClient::set_wallpaper_top_colour(std::string const& option)
 {
     set_colour(option, wallpaper_top_colour);
 }
 
-void StartupClient::set_wallpaper_bottom_colour(std::string const& option)
+void BackgroundClient::set_wallpaper_bottom_colour(std::string const& option)
 {
     set_colour(option, wallpaper_bottom_colour);
 }
 
-void StartupClient::set_crash_background_colour(std::string const& option)
+void BackgroundClient::set_crash_background_colour(std::string const& option)
 {
     set_colour(option, crash_background_colour);
 }
 
-void StartupClient::set_crash_text_colour(std::string const& option)
+void BackgroundClient::set_crash_text_colour(std::string const& option)
 {
     set_colour(option, crash_text_colour);
 }
 
-void StartupClient::set_diagnostic_path(std::string const& option)
+void BackgroundClient::set_diagnostic_path(std::string const& option)
 {
     auto option_path = boost::filesystem::path(option);
 
@@ -135,7 +135,7 @@ void StartupClient::set_diagnostic_path(std::string const& option)
     }
 }
 
-void StartupClient::set_font_path(std::string const& option)
+void BackgroundClient::set_font_path(std::string const& option)
 {
     auto path_string = option;
 
@@ -151,12 +151,12 @@ void StartupClient::set_font_path(std::string const& option)
     }
 }
 
-void StartupClient::set_font_size(std::string const& option)
+void BackgroundClient::set_font_size(std::string const& option)
 {
     font_size = std::stoi(option);
 }
 
-void StartupClient::render_background(
+void BackgroundClient::render_background(
         int32_t width, 
         int32_t height, 
         Colour* buffer, 
@@ -186,12 +186,12 @@ void StartupClient::render_background(
     }
 }
 
-void StartupClient::render_background(int32_t width, int32_t height, Colour* buffer, Colour const* colour)
+void BackgroundClient::render_background(int32_t width, int32_t height, Colour* buffer, Colour const* colour)
 {
     render_background(width, height, buffer, colour, colour);
 }
 
-void StartupClient::operator()(wl_display* display)
+void BackgroundClient::operator()(wl_display* display)
 {
     auto client = std::make_shared<Self>(
         display, 
@@ -214,11 +214,11 @@ void StartupClient::operator()(wl_display* display)
     client.reset();
 }
 
-void StartupClient::operator()(std::weak_ptr<mir::scene::Session> const& /*session*/)
+void BackgroundClient::operator()(std::weak_ptr<mir::scene::Session> const& /*session*/)
 {
 }
 
-StartupClient::Self::Self(
+BackgroundClient::Self::Self(
     wl_display* display, 
     Colour* wallpaper_top_colour,
     Colour* wallpaper_bottom_colour, 
@@ -240,7 +240,7 @@ StartupClient::Self::Self(
     wl_display_roundtrip(display);
 }
 
-void StartupClient::Self::render_text(
+void BackgroundClient::Self::render_text(
     int32_t width, 
     int32_t height,
     Colour* buffer) const
@@ -265,7 +265,7 @@ void StartupClient::Self::render_text(
     
 }
 
-void StartupClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) const
+void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) const
 {
     std::lock_guard lock{buffer_mutex};
 
@@ -325,7 +325,7 @@ void StartupClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) const
     wl_surface_commit(info.surface);
 }
 
-void StartupClient::stop()
+void BackgroundClient::stop()
 {
     if (auto ss = self.get())
     {

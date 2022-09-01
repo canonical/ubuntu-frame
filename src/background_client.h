@@ -14,8 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FRAME_CRASH_REPORTER
-#define FRAME_CRASH_REPORTER
+#ifndef FRAME_BACKGROUND_CLIENT
+#define FRAME_BACKGROUND_CLIENT
 
 #include <memory>
 #include <mutex>
@@ -35,7 +35,7 @@ struct wl_display;
 namespace geom = mir::geometry;
 using Colour = unsigned char;
 
-class StartupClient
+class BackgroundClient
 {
 public:
     void set_wallpaper_top_colour(std::string const& option);
@@ -120,4 +120,4 @@ private:
     static auto convert_utf8_to_utf32(std::string const& text) -> std::u32string;
 };
 
-#endif //FRAME_CRASH_REPORTER
+#endif //FRAME_BACKGROUND_CLIENT
