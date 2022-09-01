@@ -29,7 +29,6 @@
 #include <sys/inotify.h>
 
 #include <functional>
-#include <ctime>
 #include <map>
 #include <memory>
 #include <mutex>

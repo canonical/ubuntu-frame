@@ -13,9 +13,4 @@ then
   unset WAYLAND_DISPLAY
 fi
 
-if [ -z "${MIR_SERVER_DIAGNOSTIC_PATH}"]
-then
-  unset MIR_SERVER_DIAGNOSTIC_PATH
-fi
-
 exec "$@"
