@@ -18,7 +18,6 @@ architectures:
 
 environment:
   # Prep for Mir
-  MIR_CLIENT_PLATFORM_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/mir/client-platform
   MIR_SERVER_PLATFORM_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/mir/server-platform
   LIBINPUT_QUIRKS_DIR: ${SNAP}/usr/share/libinput
   # Setup EGL from the plugs
@@ -120,10 +119,7 @@ parts:
       - libapparmor-dev
       - libfreetype6-dev
     stage-packages:
-      - try:
-          - libmiral5
-      - else:
-          - libmiral4
+      - libmiral5
       - libapparmor1
       - libboost-filesystem1.71.0
       - libboost-iostreams1.71.0
