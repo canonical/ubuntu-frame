@@ -27,7 +27,7 @@ environment:
   # Setup XKB
   XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
   # Setup diagnostic
-  MIR_SERVER_DIAGNOSTIC_PATH: $SNAP_DATA/diagnostic/diagnostic
+  MIR_SERVER_DIAGNOSTIC_PATH: $SNAP_DATA/diagnostic/diagnostic.txt
 
 layout:
   /usr/share/icons:
