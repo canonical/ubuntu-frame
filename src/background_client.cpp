@@ -29,6 +29,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
+#include <miral/configuration_option.h>
+
 struct BackgroundClient::Self : egmde::FullscreenClient
 {
 public:
@@ -105,27 +107,15 @@ void BackgroundClient::set_crash_text_colour(std::string const& option)
 
 void BackgroundClient::set_diagnostic_path(std::string const& option)
 {
-    auto option_path = boost::filesystem::path(option);
-
-    // Used as default in snap
-    if (auto env = getenv("MIR_SERVER_DIAGNOSTIC_PATH"))
-    {
-        if (option == "")
-        {
-            diagnostic_path = boost::filesystem::path(env);
-            return;
-        }
-    }
-
-    if (option == "")
+    if (option.empty())
     {
         mir::log_info("No diagnostic file given. Crash reporting is disabled.");
         return;
     }
-
+    
+    auto option_path = boost::filesystem::path(option);
     if (boost::filesystem::exists(option_path))
     {
-        puts("PATH EXISTS");
         diagnostic_path = option_path;
     }
     else
