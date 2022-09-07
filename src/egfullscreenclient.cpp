@@ -152,7 +152,7 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     {
         diagnostic_wd = inotify_add_watch(
             diagnostic_signal,
-            diagnostic_path->parent_path().c_str(),
+            diagnostic_path->c_str(),
             IN_CREATE | IN_CLOSE_WRITE
         );
     }
@@ -441,7 +441,7 @@ void egmde::FullscreenClient::run(wl_display* display)
             {shutdown_signal,            POLLIN, 0},
         };
 
-    inotify_event inotify_buffer[1];
+    inotify_event* inotify_buffer;
 
     while (!(fds[shutdown].revents & (POLLIN | POLLERR)))
     {
@@ -484,14 +484,11 @@ void egmde::FullscreenClient::run(wl_display* display)
 
             if (inotify_buffer->len && inotify_buffer->mask == IN_CREATE | IN_CLOSE_WRITE)
             {
-                // Clear the buffer
-                inotify_buffer[0] = inotify_event();
-
                 draws_crash = true;
                 on_draws_crash();
             }
         }
-    }
+    }   
 }
 
 void egmde::FullscreenClient::stop()
