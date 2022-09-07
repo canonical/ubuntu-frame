@@ -79,7 +79,7 @@ private:
     boost::filesystem::path font_path;
 
     struct Self;
-    std::shared_ptr<Self> self;
+    std::weak_ptr<Self> self;
 
     void set_colour(std::string const& option, Colour* colour);
 };

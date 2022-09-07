@@ -317,7 +317,7 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
 
 void BackgroundClient::stop()
 {
-    if (auto ss = self.get())
+    if (auto ss = self.lock())
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
         ss->stop();
