@@ -3,6 +3,7 @@ set -eux
 
 # Setup diagnostic
 mkdir -p "$(dirname "$MIR_SERVER_DIAGNOSTIC_PATH")" -m 777
+if [ -e "$MIR_SERVER_DIAGNOSTIC_PATH" ]; then rm "$MIR_SERVER_DIAGNOSTIC_PATH"; fi
 touch "$MIR_SERVER_DIAGNOSTIC_PATH"
 chmod 666 "$MIR_SERVER_DIAGNOSTIC_PATH"
 
