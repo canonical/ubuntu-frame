@@ -300,7 +300,18 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
 
     auto buffer = static_cast<Colour*>(info.content_area);
 
-    if (draws_crash)
+    // Don't draw CrashReporter background if file is empty
+    int file_size;
+    if (diagnostic_path.has_value() && boost::filesystem::exists(diagnostic_path.value()))
+    {
+        file_size = boost::filesystem::file_size(diagnostic_path.value());
+    }
+    else
+    {
+        file_size = 0;
+    }
+
+    if (draws_crash && file_size)
     {
         render_background(width, height, buffer, crash_background_colour);
         render_text(width, height, buffer);
