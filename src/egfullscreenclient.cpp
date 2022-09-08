@@ -27,6 +27,7 @@
 #include <sys/mman.h>
 #include <sys/poll.h>
 #include <cstdlib>
+#include <climits>
 
 #include <chrono>
 #include <cstring>
@@ -152,8 +153,8 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     {
         diagnostic_wd = inotify_add_watch(
             diagnostic_signal,
-            diagnostic_path->c_str(),
-            IN_CLOSE_WRITE
+            diagnostic_path->parent_path().c_str(),
+            IN_CLOSE_WRITE | IN_CREATE | IN_DELETE
         );
     }
 
@@ -440,8 +441,8 @@ void egmde::FullscreenClient::run(wl_display* display)
             {diagnostic_signal,          POLLIN, 0},
             {shutdown_signal,            POLLIN, 0},
         };
-    
-    inotify_event* inotify_buffer;
+
+    char inotify_buffer[sizeof(inotify_event) + NAME_MAX + 1];
 
     while (!(fds[shutdown].revents & (POLLIN | POLLERR)))
     {
@@ -480,7 +481,9 @@ void egmde::FullscreenClient::run(wl_display* display)
 
         if (fds[diagnostic].revents & (POLLIN | POLLERR))
         {
-            read(fds[diagnostic].fd, inotify_buffer, sizeof(inotify_event));
+            read(fds[diagnostic].fd, inotify_buffer, sizeof(inotify_buffer));
+
+            auto ib = reinterpret_cast<inotify_event*>(inotify_buffer);
 
             if (inotify_buffer->mask == IN_CLOSE_WRITE)
             {
