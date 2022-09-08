@@ -44,7 +44,9 @@ public:
         Colour* crash_text_colour,
         std::optional<Path> diagnostic_path,
         Path font_path,
-        uint font_size);
+        uint font_size,
+        uint x_margin_percent,
+        uint y_margin_percent);
 
     void draw_screen(SurfaceInfo& info, bool draws_crash) const override;
     
@@ -60,6 +62,9 @@ public:
 
 private:
     uint font_size;
+
+    uint x_margin_percent;
+    uint y_margin_percent;
 
     std::mutex mutable buffer_mutex;
     std::atomic<bool> diag_exists = false;
@@ -146,6 +151,36 @@ void BackgroundClient::set_font_size(std::string const& option)
     font_size = std::stoi(option);
 }
 
+void BackgroundClient::set_x_margin(std::string const& option)
+{
+    auto x_margin = std::stoi(option);
+
+    if (x_margin <= 100 && x_margin >= 0)
+    {
+        x_margin_percent = x_margin;
+    }
+    else
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "x_margin should be >= 0 and <= 100"));
+    }
+}
+
+void BackgroundClient::set_y_margin(std::string const& option)
+{
+    auto y_margin = std::stoi(option);
+
+    if (y_margin <= 100 && y_margin >= 0)
+    {
+        y_margin_percent = y_margin;
+    }
+    else
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "y_margin should be >= 0 and <= 100"));
+    }
+}
+
 void BackgroundClient::render_background(
         int32_t width, 
         int32_t height, 
@@ -191,7 +226,9 @@ void BackgroundClient::operator()(wl_display* display)
         crash_text_colour,
         diagnostic_path,
         font_path,
-        font_size);
+        font_size,
+        x_margin_percent,
+        y_margin_percent);
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
         self = client;
@@ -216,7 +253,9 @@ BackgroundClient::Self::Self(
     Colour* crash_text_colour,
     std::optional<Path> diagnostic_path,
     Path font_path,
-    uint font_size)
+    uint font_size,
+    uint x_margin_percent,
+    uint y_margin_percent)
     : FullscreenClient(display, diagnostic_path),
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
@@ -224,7 +263,9 @@ BackgroundClient::Self::Self(
       crash_text_colour{crash_text_colour},
       text_renderer{TextRenderer(font_path)},
       diagnostic_path{diagnostic_path},
-      font_size{font_size}
+      font_size{font_size},
+      x_margin_percent{x_margin_percent},
+      y_margin_percent{y_margin_percent}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);
@@ -235,12 +276,14 @@ void BackgroundClient::Self::render_text(
     int32_t height,
     Colour* buffer) const
 {
-    auto size = geom::Size{width, height};
-    auto const x_margin = size.width.as_int() / 20;
-    auto const y_margin = size.height.as_int() / 20;
+    auto const x_margin = width * (x_margin_percent / 100.0);
+    auto const y_margin = height * (y_margin_percent / 100.0);
     auto top_left = geom::Point{x_margin, y_margin};
+    
     auto const height_pixels = geom::Height(font_size);
     auto const y_kerning = height_pixels + (height_pixels / 5);
+    
+    auto size = geom::Size{width, height};
     
     std::string line;
 
