@@ -114,14 +114,14 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     }
     
     auto option_path = boost::filesystem::path(option);
-    if (boost::filesystem::exists(option_path))
+    if (boost::filesystem::exists(option_path.parent_path()))
     {
         diagnostic_path = option_path;
     }
     else
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Diagnotic path (" + option_path.string() + ") does not exist"));
+            "Diagnostic path (" + option_path.parent_path().string() + ") does not exist"));
     }
 }
 

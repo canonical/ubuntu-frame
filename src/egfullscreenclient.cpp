@@ -485,9 +485,16 @@ void egmde::FullscreenClient::run(wl_display* display)
 
             auto ib = reinterpret_cast<inotify_event*>(inotify_buffer);
 
-            if (inotify_buffer->mask == IN_CLOSE_WRITE)
+            if (ib->mask & (IN_CLOSE_WRITE | IN_CREATE)
+                && ib->name == diagnostic_path.value_or("").filename().string())
             {
                 draws_crash = true;
+                on_draws_crash();
+            }
+            else if (ib->mask & IN_DELETE
+                && ib->name == diagnostic_path.value_or("").filename().string())
+            {
+                draws_crash = false;
                 on_draws_crash();
             }
         }
