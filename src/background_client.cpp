@@ -236,7 +236,9 @@ void BackgroundClient::Self::render_text(
     Colour* buffer) const
 {
     auto size = geom::Size{width, height};
-    auto top_left = geom::Point{0, 0};
+    auto const x_margin = size.width.as_int() / 20;
+    auto const y_margin = size.height.as_int() / 20;
+    auto top_left = geom::Point{x_margin, y_margin};
     auto const height_pixels = geom::Height(font_size);
     auto const y_kerning = height_pixels + (height_pixels / 5);
     
