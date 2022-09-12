@@ -43,7 +43,6 @@ public:
     void set_crash_background_colour(std::string const& option);
     void set_crash_text_colour(std::string const& option);
     void set_diagnostic_path(std::string const& option);
-    void set_font_path(std::string const& option);
     void set_font_size(std::string const& option);
     void set_x_margin(std::string const& option);
     void set_y_margin(std::string const& option);
@@ -81,7 +80,6 @@ private:
     uint y_margin_percent;
 
     std::optional<boost::filesystem::path> diagnostic_path;
-    boost::filesystem::path font_path;
 
     struct Self;
     std::weak_ptr<Self> self;
@@ -122,6 +120,7 @@ private:
         geom::Point top_left,
         Colour* colour) const;
 
+    static auto get_font_path() -> std::optional<Path>;
     static auto convert_utf8_to_utf32(std::string const& text) -> std::u32string;
 };
 

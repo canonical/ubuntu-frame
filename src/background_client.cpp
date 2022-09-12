@@ -31,6 +31,64 @@
 
 #include <miral/configuration_option.h>
 
+namespace
+{
+auto get_font_path() -> std::optional<boost::filesystem::path>
+{
+    struct FontPath
+    {
+        char const* filename;
+        std::vector<char const*> prefixes;
+    };
+
+    FontPath const font = FontPath{"Ubuntu-R.ttf", 
+                                {
+                                    "ubuntu-font-family",   // Ubuntu < 18.04
+                                    "ubuntu",               // Ubuntu >= 18.04/Arch
+                                }};
+
+    char const* const font_path_search_paths[]{
+        "/usr/share/fonts/truetype",    // Ubuntu/Debian
+        "/usr/share/fonts/TTF",         // Arch
+        "/usr/share/fonts",             // Fedora/Arch
+    };
+
+    std::vector<std::string> usable_search_paths;
+    for (auto const& path : font_path_search_paths)
+    {
+        if (boost::filesystem::exists(path))
+            usable_search_paths.push_back(path);
+    }
+
+    for (auto const& prefix : font.prefixes)
+    {
+        for (auto const& path : usable_search_paths)
+        {
+            auto const full_font_path = path + '/' + prefix + '/' + font.filename;
+            if (boost::filesystem::exists(full_font_path))
+            {
+                return boost::filesystem::path(full_font_path);
+            }
+        }
+    }
+
+    mir::log_info("Ubuntu font not found! Diagnostic screen will be disabled.");
+    return std::nullopt;
+}
+
+auto make_text_renderer() -> std::optional<TextRenderer>
+{
+    auto optional_path = get_font_path();
+
+    if (optional_path.has_value())
+    {
+        return std::make_optional<TextRenderer>(optional_path.value());
+    }
+
+    return std::nullopt;
+}
+} // namespace
+
 struct BackgroundClient::Self : egmde::FullscreenClient
 {
 public:
@@ -43,7 +101,6 @@ public:
         Colour* crash_background_colour,
         Colour* crash_text_colour,
         std::optional<Path> diagnostic_path,
-        Path font_path,
         uint font_size,
         uint x_margin_percent,
         uint y_margin_percent);
@@ -57,7 +114,7 @@ public:
     Colour* const crash_background_colour;
     Colour* const crash_text_colour;
 
-    TextRenderer text_renderer;
+    std::optional<TextRenderer> text_renderer;
     const std::optional<Path> diagnostic_path;
 
 private:
@@ -69,6 +126,46 @@ private:
     std::mutex mutable buffer_mutex;
     std::atomic<bool> diag_exists = false;
 };
+
+TextRenderer::TextRenderer(Path font_path)
+    : font_path{font_path}
+{
+    if (auto const error = FT_Init_FreeType(&library))
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Initializing freetype library failed with error " + std::to_string(error)));
+    }
+    
+    if (auto const error = FT_New_Face(library, font_path.c_str(), 0, &face))
+    {
+        if (error == FT_Err_Unknown_File_Format)
+        {
+            BOOST_THROW_EXCEPTION(std::runtime_error(
+                "Font " + font_path.string() + " has unsupported format"));
+        }
+            
+        else
+        {
+            BOOST_THROW_EXCEPTION(std::runtime_error(
+                "Loading font from " + font_path.string() + " failed with error " + std::to_string(error)));
+        }
+    }
+}
+
+TextRenderer::~TextRenderer()
+{
+    if (auto const error = FT_Done_Face(face))
+    {
+        mir::log_warning("Failed to uninitialize font face with error %d", error);
+    } 
+    face = nullptr;
+
+    if (auto const error = FT_Done_FreeType(library))
+    {
+        mir::log_warning("Failed to uninitialize FreeType with error %d", error);
+    }
+    library = nullptr;
+}
 
 void BackgroundClient::set_colour(std::string const& option, Colour* colour)
 {
@@ -127,22 +224,6 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
             "Diagnostic path (" + option_path.parent_path().string() + ") does not exist"));
-    }
-}
-
-void BackgroundClient::set_font_path(std::string const& option)
-{
-    auto path_string = option;
-
-    auto const path = boost::filesystem::path(path_string);
-    if (boost::filesystem::exists(path))
-    {
-        font_path = path;
-    }
-    else
-    {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Font directory (" + path.string() + ") does not exist"));
     }
 }
 
@@ -225,7 +306,6 @@ void BackgroundClient::operator()(wl_display* display)
         crash_background_colour,
         crash_text_colour,
         diagnostic_path,
-        font_path,
         font_size,
         x_margin_percent,
         y_margin_percent);
@@ -252,7 +332,6 @@ BackgroundClient::Self::Self(
     Colour* crash_background_colour, 
     Colour* crash_text_colour,
     std::optional<Path> diagnostic_path,
-    Path font_path,
     uint font_size,
     uint x_margin_percent,
     uint y_margin_percent)
@@ -261,7 +340,7 @@ BackgroundClient::Self::Self(
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
       crash_text_colour{crash_text_colour},
-      text_renderer{TextRenderer(font_path)},
+      text_renderer{make_text_renderer()},
       diagnostic_path{diagnostic_path},
       font_size{font_size},
       x_margin_percent{x_margin_percent},
@@ -287,17 +366,20 @@ void BackgroundClient::Self::render_text(
     
     std::string line;
 
-    if (diagnostic_path.has_value())
+    if (!text_renderer.has_value() || !diagnostic_path.has_value())
     {
-        auto stream = boost::filesystem::ifstream(diagnostic_path.value());
-        while (getline(stream, line))
-        {
-            text_renderer.render(buffer, size, line, top_left, height_pixels, crash_text_colour);
-            auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
-            top_left = new_top_left;
-        }
+        return;
     }
-    
+
+    auto& renderer = text_renderer.value();
+
+    auto stream = boost::filesystem::ifstream(diagnostic_path.value());
+    while (getline(stream, line))
+    {
+        renderer.render(buffer, size, line, top_left, height_pixels, crash_text_colour);
+        auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
+        top_left = new_top_left;
+    }
 }
 
 void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) const
@@ -345,18 +427,18 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
 
     auto buffer = static_cast<Colour*>(info.content_area);
 
-    // Don't draw CrashReporter background if file is empty
-    int file_size;
-    if (diagnostic_path.has_value() && boost::filesystem::exists(diagnostic_path.value()))
+    // Don't draw diagnostic background if file is empty or font not found
+    bool file_exists;
+    if (boost::filesystem::exists(diagnostic_path.value_or("")) && text_renderer.has_value())
     {
-        file_size = boost::filesystem::file_size(diagnostic_path.value());
+        file_exists = boost::filesystem::file_size(diagnostic_path.value());
     }
     else
     {
-        file_size = 0;
+        file_exists = false;
     }
 
-    if (draws_crash && file_size)
+    if (draws_crash && file_exists)
     {
         render_background(width, height, buffer, crash_background_colour);
         render_text(width, height, buffer);
@@ -385,46 +467,6 @@ inline auto area(geom::Size size) -> size_t
     return (size.width > geom::Width{} && size.height > geom::Height{})
         ? size.width.as_int() * size.height.as_int()
         : 0;
-}
-
-TextRenderer::TextRenderer(Path font_path)
-    : font_path{font_path}
-{
-    if (auto const error = FT_Init_FreeType(&library))
-    {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Initializing freetype library failed with error " + std::to_string(error)));
-    }
-    
-    if (auto const error = FT_New_Face(library, font_path.c_str(), 0, &face))
-    {
-        if (error == FT_Err_Unknown_File_Format)
-        {
-            BOOST_THROW_EXCEPTION(std::runtime_error(
-                "Font " + font_path.string() + " has unsupported format"));
-        }
-            
-        else
-        {
-            BOOST_THROW_EXCEPTION(std::runtime_error(
-                "Loading font from " + font_path.string() + " failed with error " + std::to_string(error)));
-        }
-    }
-}
-
-TextRenderer::~TextRenderer()
-{
-    if (auto const error = FT_Done_Face(face))
-    {
-        mir::log_warning("Failed to uninitialize font face with error %d", error);
-    } 
-    face = nullptr;
-
-    if (auto const error = FT_Done_FreeType(library))
-    {
-        mir::log_warning("Failed to uninitialize FreeType with error %d", error);
-    }
-    library = nullptr;
 }
 
 auto TextRenderer::convert_utf8_to_utf32(std::string const& text) -> std::u32string
@@ -577,5 +619,4 @@ void TextRenderer::render_glyph(
             }
         }
     }
-
 }
