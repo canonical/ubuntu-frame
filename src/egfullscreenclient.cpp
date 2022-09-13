@@ -286,7 +286,7 @@ void egmde::FullscreenClient::on_new_output(Output const* output)
     wl_display_flush(display);
 }
 
-void egmde::FullscreenClient::on_draws_crash()
+void egmde::FullscreenClient::draw()
 {
     {
         std::lock_guard<decltype(outputs_mutex)> lock{outputs_mutex};
@@ -489,13 +489,13 @@ void egmde::FullscreenClient::run(wl_display* display)
                 && ib->name == diagnostic_path.value_or("").filename().string())
             {
                 draws_crash = true;
-                on_draws_crash();
+                draw();
             }
             else if (ib->mask & IN_DELETE
                 && ib->name == diagnostic_path.value_or("").filename().string())
             {
                 draws_crash = false;
-                on_draws_crash();
+                draw();
             }
         }
     }

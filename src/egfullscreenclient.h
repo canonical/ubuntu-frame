@@ -199,7 +199,7 @@ private:
 
     void on_output_gone(Output const*);
 
-    void on_draws_crash();
+    void draw();
 
     mir::Fd const flush_signal;
     mir::Fd const shutdown_signal;
