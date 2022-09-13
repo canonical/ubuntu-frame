@@ -69,10 +69,10 @@ public:
 private:
     std::mutex mutable mutex;
 
-    Colour wallpaper_top_colour;
-    Colour wallpaper_bottom_colour;
-    Colour crash_background_colour;
-    Colour crash_text_colour;
+    Colour wallpaper_top_colour = {127, 127, 127, 255};
+    Colour wallpaper_bottom_colour = {31, 31, 31, 255};
+    Colour crash_background_colour = {36, 12, 56, 255};
+    Colour crash_text_colour = {255, 255, 255, 255};
 
     uint font_size;
     
