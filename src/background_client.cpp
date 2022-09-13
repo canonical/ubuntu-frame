@@ -33,59 +33,18 @@
 
 namespace
 {
-auto get_font_path() -> std::optional<boost::filesystem::path>
+auto get_font_path() -> boost::filesystem::path
 {
-    struct FontPath
+    static auto const ubuntu_font = "/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf";
+    if (auto const snap = getenv("SNAP"))
     {
-        char const* filename;
-        std::vector<char const*> prefixes;
-    };
-
-    FontPath const font = FontPath{"Ubuntu-R.ttf", 
-                                {
-                                    "ubuntu-font-family",   // Ubuntu < 18.04
-                                    "ubuntu",               // Ubuntu >= 18.04/Arch
-                                }};
-
-    char const* const font_path_search_paths[]{
-        "/usr/share/fonts/truetype",    // Ubuntu/Debian
-        "/usr/share/fonts/TTF",         // Arch
-        "/usr/share/fonts",             // Fedora/Arch
-    };
-
-    std::vector<std::string> usable_search_paths;
-    for (auto const& path : font_path_search_paths)
-    {
-        if (boost::filesystem::exists(path))
-            usable_search_paths.push_back(path);
+        return strcat(snap, ubuntu_font);
     }
-
-    for (auto const& prefix : font.prefixes)
+    if (auto const font_override= getenv("FRAME_FONT_OVERRIDE"))
     {
-        for (auto const& path : usable_search_paths)
-        {
-            auto const full_font_path = path + '/' + prefix + '/' + font.filename;
-            if (boost::filesystem::exists(full_font_path))
-            {
-                return boost::filesystem::path(full_font_path);
-            }
-        }
+        return font_override;
     }
-
-    mir::log_info("Ubuntu font not found! Diagnostic screen will be disabled.");
-    return std::nullopt;
-}
-
-auto make_text_renderer() -> std::optional<TextRenderer>
-{
-    auto optional_path = get_font_path();
-
-    if (optional_path.has_value())
-    {
-        return std::make_optional<TextRenderer>(optional_path.value());
-    }
-
-    return std::nullopt;
+    return ubuntu_font;
 }
 } // namespace
 
@@ -114,7 +73,7 @@ public:
     Colour* const crash_background_colour;
     Colour* const crash_text_colour;
 
-    std::optional<TextRenderer> text_renderer;
+    TextRenderer text_renderer;
     const std::optional<Path> diagnostic_path;
 
 private:
@@ -339,7 +298,7 @@ BackgroundClient::Self::Self(
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
       crash_text_colour{crash_text_colour},
-      text_renderer{make_text_renderer()},
+      text_renderer{TextRenderer(get_font_path())},
       diagnostic_path{diagnostic_path},
       font_size{font_size},
       x_margin_percent{x_margin_percent},
@@ -365,17 +324,15 @@ void BackgroundClient::Self::render_text(
     
     std::string line;
 
-    if (!text_renderer.has_value() || !diagnostic_path.has_value())
+    if (!diagnostic_path.has_value())
     {
         return;
     }
 
-    auto& renderer = text_renderer.value();
-
     auto stream = boost::filesystem::ifstream(diagnostic_path.value());
     while (getline(stream, line))
     {
-        renderer.render(buffer, size, line, top_left, height_pixels, crash_text_colour);
+        text_renderer.render(buffer, size, line, top_left, height_pixels, crash_text_colour);
         auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
         top_left = new_top_left;
     }
@@ -428,7 +385,7 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
 
     // Don't draw diagnostic background if file is empty or font not found
     bool file_exists;
-    if (boost::filesystem::exists(diagnostic_path.value_or("")) && text_renderer.has_value())
+    if (boost::filesystem::exists(diagnostic_path.value_or("")))
     {
         file_exists = boost::filesystem::file_size(diagnostic_path.value());
     }
