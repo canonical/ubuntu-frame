@@ -104,8 +104,8 @@ TextRenderer::TextRenderer(Path font_path)
             
         else
         {
-            BOOST_THROW_EXCEPTION(std::runtime_error(
-                "Loading font from " + font_path.string() + " failed with error " + std::to_string(error)));
+            auto const error_str = "Loading font from " + font_path.string() + " failed with error " + std::to_string(error);
+            mir::fatal_error(error_str.c_str());
         }
     }
 }
