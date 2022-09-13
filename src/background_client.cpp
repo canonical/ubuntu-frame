@@ -124,7 +124,6 @@ private:
     uint y_margin_percent;
 
     std::mutex mutable buffer_mutex;
-    std::atomic<bool> diag_exists = false;
 };
 
 TextRenderer::TextRenderer(Path font_path)
