@@ -55,10 +55,10 @@ public:
 
     Self(
         wl_display* display,
-        Colour* wallpaper_top_colour,
-        Colour* wallpaper_bottom_colour,
-        Colour* crash_background_colour,
-        Colour* crash_text_colour,
+        Colour const& wallpaper_top_colour,
+        Colour const& wallpaper_bottom_colour,
+        Colour const& crash_background_colour,
+        Colour const& crash_text_colour,
         std::optional<Path> diagnostic_path,
         uint font_size,
         uint x_margin_percent,
@@ -66,12 +66,12 @@ public:
 
     void draw_screen(SurfaceInfo& info, bool draws_crash) const override;
     
-    void render_text(int32_t width, int32_t height, Colour* buffer) const;
+    void render_text(int32_t width, int32_t height, unsigned char* buffer) const;
 
-    Colour* const wallpaper_top_colour;
-    Colour* const wallpaper_bottom_colour;
-    Colour* const crash_background_colour;
-    Colour* const crash_text_colour;
+    Colour const& wallpaper_top_colour;
+    Colour const& wallpaper_bottom_colour;
+    Colour const& crash_background_colour;
+    Colour const& crash_text_colour;
 
     TextRenderer text_renderer;
     const std::optional<Path> diagnostic_path;
@@ -125,7 +125,7 @@ TextRenderer::~TextRenderer()
     library = nullptr;
 }
 
-void BackgroundClient::set_colour(std::string const& option, Colour* colour)
+void BackgroundClient::set_colour(std::string const& option, Colour& colour)
 {
     uint32_t value;
     std::stringstream interpreter{option};
@@ -221,13 +221,13 @@ void BackgroundClient::set_y_margin(std::string const& option)
 }
 
 void BackgroundClient::render_background(
-        int32_t width, 
-        int32_t height, 
-        Colour* buffer, 
-        Colour const* bottom_colour, 
-        Colour const* top_colour)
+    int32_t width,
+    int32_t height,
+    unsigned char* buffer,
+    Colour const& bottom_colour,
+    Colour const& top_colour)
 {
-    Colour new_pixel[4];
+    Colour new_pixel;
 
     for (auto current_y = 0; current_y < height; current_y++)
     {
@@ -250,7 +250,7 @@ void BackgroundClient::render_background(
     }
 }
 
-void BackgroundClient::render_background(int32_t width, int32_t height, Colour* buffer, Colour const* colour)
+void BackgroundClient::render_background(int32_t width, int32_t height, unsigned char* buffer, Colour const& colour)
 {
     render_background(width, height, buffer, colour, colour);
 }
@@ -284,11 +284,11 @@ void BackgroundClient::operator()(std::weak_ptr<mir::scene::Session> const& /*se
 }
 
 BackgroundClient::Self::Self(
-    wl_display* display, 
-    Colour* wallpaper_top_colour,
-    Colour* wallpaper_bottom_colour, 
-    Colour* crash_background_colour, 
-    Colour* crash_text_colour,
+    wl_display* display,
+    Colour const& wallpaper_top_colour,
+    Colour const& wallpaper_bottom_colour,
+    Colour const& crash_background_colour,
+    Colour const& crash_text_colour,
     std::optional<Path> diagnostic_path,
     uint font_size,
     uint x_margin_percent,
@@ -309,9 +309,9 @@ BackgroundClient::Self::Self(
 }
 
 void BackgroundClient::Self::render_text(
-    int32_t width, 
+    int32_t width,
     int32_t height,
-    Colour* buffer) const
+    unsigned char* buffer) const
 {
     auto const x_margin = width * (x_margin_percent / 100.0);
     auto const y_margin = height * (y_margin_percent / 100.0);
@@ -381,7 +381,7 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
             WL_SHM_FORMAT_ARGB8888);
     }
 
-    auto buffer = static_cast<Colour*>(info.content_area);
+    auto buffer = static_cast<unsigned char*>(info.content_area);
 
     // Don't draw diagnostic background if file is empty or font not found
     bool file_exists;
@@ -454,12 +454,12 @@ auto TextRenderer::convert_utf8_to_utf32(std::string const& text) -> std::u32str
 }
 
 void TextRenderer::render(
-    Colour* buf,
+    unsigned char* buf,
     geom::Size buf_size,
     std::string const& text,
     geom::Point top_left,
     geom::Height height_pixels,
-    Colour* colour) const
+    Colour const& colour) const
 {
     if (!area(buf_size) || height_pixels <= geom::Height{})
     {
@@ -537,11 +537,11 @@ void TextRenderer::rasterize_glyph(char32_t glyph) const
 }
 
 void TextRenderer::render_glyph(
-    Colour* buffer,
+    unsigned char* buffer,
     geom::Size buf_size,
     FT_Bitmap const* glyph,
     geom::Point top_left,
-    Colour* colour) const
+    Colour const& colour) const
 {
     geom::X const buffer_left = std::max(top_left.x, geom::X{});
     geom::X const buffer_right = std::min(top_left.x + geom::DeltaX{glyph->width}, as_x(buf_size.width));
@@ -558,14 +558,14 @@ void TextRenderer::render_glyph(
     for (geom::Y buffer_y = buffer_top; buffer_y < buffer_bottom; buffer_y += geom::DeltaY{1})
     {
         geom::Y const glyph_y = buffer_y - glyph_offset.dy;
-        Colour* const glyph_row = glyph->buffer + glyph_y.as_int() * glyph->pitch;
+        unsigned char const* const glyph_row = glyph->buffer + glyph_y.as_int() * glyph->pitch;
         uint32_t* const buffer_row = buffer_pixels + buffer_y.as_int() * buf_size.width.as_int();
 
         for (geom::X buffer_x = buffer_left; buffer_x < buffer_right; buffer_x += geom::DeltaX{1})
         {
             geom::X const glyph_x = buffer_x - glyph_offset.dx;
-            unsigned char const glyph_alpha = (static_cast<Colour>(glyph_row[glyph_x.as_int()]) * colour_alpha) / 255;
-            auto* const buffer_pixels = reinterpret_cast<Colour*>(buffer_row + buffer_x.as_int());
+            unsigned char const glyph_alpha = (static_cast<unsigned char>(glyph_row[glyph_x.as_int()]) * colour_alpha) / 255;
+            auto* const buffer_pixels = reinterpret_cast<unsigned char*>(buffer_row + buffer_x.as_int());
             for (int i = 0; i < 3; i++)
             {
                 // Blend colour with the previous buffer colour based on the glyph's alpha

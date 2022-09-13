@@ -33,7 +33,7 @@
 struct wl_display;
 
 namespace geom = mir::geometry;
-using Colour = unsigned char;
+using Colour = unsigned char[4];
 
 class BackgroundClient
 {
@@ -49,17 +49,17 @@ public:
 
     /// Renders background as a gradient from top_colour to bottom_colour
     static void render_background(
-        int32_t width, 
-        int32_t height, 
-        Colour* buffer, 
-        Colour const* bottom_colour, 
-        Colour const* top_colour);
+        int32_t width,
+        int32_t height,
+        unsigned char* buffer,
+        Colour const& bottom_colour,
+        Colour const& top_colour);
     
     static void render_background(
         int32_t width,
         int32_t height,
-        Colour* buffer,
-        Colour const* colour);
+        unsigned char* buffer,
+        Colour const& colour);
 
     void operator()(wl_display* display);
     void operator()(std::weak_ptr<mir::scene::Session> const& session);
@@ -69,10 +69,10 @@ public:
 private:
     std::mutex mutable mutex;
 
-    Colour wallpaper_top_colour[4];
-    Colour wallpaper_bottom_colour[4];
-    Colour crash_background_colour[4];
-    Colour crash_text_colour[4];
+    Colour wallpaper_top_colour;
+    Colour wallpaper_bottom_colour;
+    Colour crash_background_colour;
+    Colour crash_text_colour;
 
     uint font_size;
     
@@ -84,7 +84,7 @@ private:
     struct Self;
     std::weak_ptr<Self> self;
 
-    void set_colour(std::string const& option, Colour* colour);
+    void set_colour(std::string const& option, Colour& colour);
 };
 
 class TextRenderer
@@ -96,12 +96,12 @@ public:
     ~TextRenderer();
 
     void render(
-        Colour* buffer,
-        geom::Size buffer_size,
+        unsigned char* buf,
+        geom::Size buf_size,
         std::string const& text,
         geom::Point top_left,
         geom::Height height_pixels,
-        Colour* colour) const;
+        Colour const& colour) const;
 
 private:
     Path font_path;
@@ -114,11 +114,11 @@ private:
     void set_char_size(geom::Height height) const;
     void rasterize_glyph(char32_t glyph) const;
     void render_glyph(
-        Colour* buffer,
+        unsigned char* buffer,
         geom::Size buf_size,
         FT_Bitmap const* glyph,
         geom::Point top_left,
-        Colour* colour) const;
+        Colour const& colour) const;
 
     static auto get_font_path() -> std::optional<Path>;
     static auto convert_utf8_to_utf32(std::string const& text) -> std::u32string;
