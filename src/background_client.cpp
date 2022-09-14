@@ -394,8 +394,9 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
         file_exists = false;
     }
 
-    if (draws_crash && file_exists)
+    if (draws_crash || file_exists)
     {
+        draws_crash = true;
         render_background(width, height, buffer, crash_background_colour);
         render_text(width, height, buffer);
     }
