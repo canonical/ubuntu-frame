@@ -29,7 +29,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
-#include <miral/configuration_option.h>
+#include <mir/fatal.h>
 
 namespace
 {
