@@ -155,6 +155,8 @@ parts:
   grim:
     plugin: nil
     stage-packages: [grim]
+    prime:
+      - -usr/share/fonts/truetype/dejavu
 
   cleanup:
     after: [ubuntu-frame, platform, icons, scripts]
