@@ -74,10 +74,10 @@ private:
     Colour crash_background_colour = {36, 12, 56, 255};
     Colour crash_text_colour = {255, 255, 255, 255};
 
-    uint font_size;
+    uint font_size = 50;
     
-    uint x_margin_percent;
-    uint y_margin_percent;
+    uint x_margin_percent = 5;
+    uint y_margin_percent = 5;
 
     std::optional<boost::filesystem::path> diagnostic_path;
 
