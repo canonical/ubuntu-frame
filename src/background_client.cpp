@@ -327,11 +327,7 @@ void BackgroundClient::Self::render_text(
     while (getline(stream, line))
     {
         auto const line_width = text_renderer.get_line_width(line, height_pixels);
-        if (line_width > longest_line_width)
-        {
-            longest_line_width = line_width;
-        }
-
+        longest_line_width = std::max(line_width, longest_line_width);
         number_of_lines++;
     }
 
