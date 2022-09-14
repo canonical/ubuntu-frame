@@ -49,15 +49,15 @@ public:
 
     /// Renders background as a gradient from top_colour to bottom_colour
     static void render_background(
-        int32_t width,
-        int32_t height,
+        geom::Width width,
+        geom::Height height,
         unsigned char* buffer,
         Colour const& bottom_colour,
         Colour const& top_colour);
     
     static void render_background(
-        int32_t width,
-        int32_t height,
+        geom::Width width,
+        geom::Height height,
         unsigned char* buffer,
         Colour const& colour);
 
@@ -76,6 +76,7 @@ private:
 
     uint font_size = 50;
     
+    // TODO - use margins to determine font size
     uint x_margin_percent = 5;
     uint y_margin_percent = 5;
 
@@ -102,6 +103,8 @@ public:
         geom::Point top_left,
         geom::Height height_pixels,
         Colour const& colour) const;
+
+    auto get_line_width(std::string const& line, geom::Height height_pixels) const -> mir::geometry::Width;
 
 private:
     Path font_path;

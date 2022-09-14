@@ -66,7 +66,7 @@ public:
 
     void draw_screen(SurfaceInfo& info, bool draws_crash) const override;
     
-    void render_text(int32_t width, int32_t height, unsigned char* buffer) const;
+    void render_text(geom::Width width, geom::Height height, unsigned char* buffer) const;
 
     Colour const& wallpaper_top_colour;
     Colour const& wallpaper_bottom_colour;
@@ -221,36 +221,36 @@ void BackgroundClient::set_y_margin(std::string const& option)
 }
 
 void BackgroundClient::render_background(
-    int32_t width,
-    int32_t height,
+    geom::Width width,
+    geom::Height height,
     unsigned char* buffer,
     Colour const& bottom_colour,
     Colour const& top_colour)
 {
     Colour new_pixel;
 
-    for (auto current_y = 0; current_y < height; current_y++)
+    for (auto current_y = geom::Height{}; current_y < height; current_y += geom::DeltaY{1})
     {
         // Render gradient
         for (auto i = 0; i < 3; i++)
         {
-            new_pixel[i] = (current_y * bottom_colour[i] + (height - current_y) * top_colour[i]) / height;
+            new_pixel[i] = ((current_y.as_int() * bottom_colour[i] + (height.as_int() - current_y.as_int()) * top_colour[i]) / height.as_int());
         }
         new_pixel[3] = 0xFF;
 
         // Copy new_pixel to buffer
         auto const pixel_size = sizeof(new_pixel);
-        for (auto current_x = 0; current_x < pixel_size*width; current_x += pixel_size)
+        for (auto current_x = geom::Width{}; current_x < pixel_size*width; current_x += geom::DeltaX{pixel_size})
         {
-            memcpy(buffer + current_x, new_pixel, pixel_size);
+            memcpy(buffer + current_x.as_int(), new_pixel, pixel_size);
         }
 
         // Move pointer to next pixel
-        buffer += 4*width;
+        buffer += 4*width.as_int();
     }
 }
 
-void BackgroundClient::render_background(int32_t width, int32_t height, unsigned char* buffer, Colour const& colour)
+void BackgroundClient::render_background(geom::Width width, geom::Height height, unsigned char* buffer, Colour const& colour)
 {
     render_background(width, height, buffer, colour, colour);
 }
@@ -309,33 +309,49 @@ BackgroundClient::Self::Self(
 }
 
 void BackgroundClient::Self::render_text(
-    int32_t width,
-    int32_t height,
+    geom::Width width,
+    geom::Height height,
     unsigned char* buffer) const
-{
-    auto const x_margin = width * (x_margin_percent / 100.0);
-    auto const y_margin = height * (y_margin_percent / 100.0);
-    auto top_left = geom::Point{x_margin, y_margin};
-    
+{    
     auto const height_pixels = geom::Height(font_size);
-    auto const y_kerning = height_pixels + (height_pixels / 5);
+    auto const line_height = height_pixels + (height_pixels / 5);
     
     auto size = geom::Size{width, height};
     
+    auto stream = boost::filesystem::ifstream(diagnostic_path.value());
+
+    auto number_of_lines = 0;
+    auto longest_line_width = geom::Width{};
     std::string line;
 
-    if (!diagnostic_path.has_value())
+    while (getline(stream, line))
     {
-        return;
+        auto const line_width = text_renderer.get_line_width(line, height_pixels);
+        if (line_width > longest_line_width)
+        {
+            longest_line_width = line_width;
+        }
+
+        number_of_lines++;
     }
 
-    auto stream = boost::filesystem::ifstream(diagnostic_path.value());
+    auto const x_offset = (width - longest_line_width) / 2;
+    auto const y_offset = (height - number_of_lines * line_height) / 2;
+
+    auto top_left = geom::Point{x_offset.as_int(), y_offset.as_int()};
+
+    // Go back to top of stream
+    stream.clear();
+    stream.seekg(0, std::ios::beg);
+
     while (getline(stream, line))
     {
         text_renderer.render(buffer, size, line, top_left, height_pixels, crash_text_colour);
-        auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + y_kerning.as_value()};
+        auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + line_height.as_value()};
         top_left = new_top_left;
     }
+
+    stream.close();
 }
 
 void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) const
@@ -343,10 +359,10 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
     std::lock_guard lock{buffer_mutex};
 
     bool const rotated = info.output->transform & WL_OUTPUT_TRANSFORM_90;
-    auto const width = rotated ? info.output->height : info.output->width;
-    auto const height = rotated ? info.output->width : info.output->height;
+    auto const width = rotated ? geom::Width{info.output->height} : geom::Width{info.output->width};
+    auto const height = rotated ? geom::Height{info.output->width} : geom::Height{info.output->height};
 
-    if (width <= 0 || height <= 0)
+    if (width <= geom::Width{} || height <= geom::Height{})
         return;
 
     auto const stride = 4*width;
@@ -372,12 +388,12 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
     }
 
     {
-        auto const shm_pool = make_shm_pool(stride * height, &info.content_area);
+        auto const shm_pool = make_shm_pool(stride.as_int() * height.as_int(), &info.content_area);
 
         info.buffer = wl_shm_pool_create_buffer(
             shm_pool.get(),
             0,
-            width, height, stride,
+            width.as_int(), height.as_int(), stride.as_int(),
             WL_SHM_FORMAT_ARGB8888);
     }
 
@@ -576,4 +592,20 @@ void TextRenderer::render_glyph(
             }
         }
     }
+}
+
+auto TextRenderer::get_line_width(std::string const& line, geom::Height height_pixels) const -> geom::Width
+{
+    set_char_size(height_pixels);
+
+    auto line_width = geom::Width{};
+    for (auto const& character : line)
+        {
+            rasterize_glyph(character);
+
+            auto const glyph = face->glyph;
+            line_width = line_width + geom::DeltaX{glyph->advance.x >> 6};
+        }
+
+    return line_width;
 }
