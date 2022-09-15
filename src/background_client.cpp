@@ -60,13 +60,12 @@ public:
         Colour const& crash_background_colour,
         Colour const& crash_text_colour,
         std::optional<Path> diagnostic_path,
-        uint font_size,
         uint x_margin_percent,
         uint y_margin_percent);
 
     void draw_screen(SurfaceInfo& info, bool draws_crash) const override;
     
-    void render_text(geom::Width width, geom::Height height, unsigned char* buffer) const;
+    void render_text(uint32_t width, uint32_t height, unsigned char* buffer) const;
 
     Colour const& wallpaper_top_colour;
     Colour const& wallpaper_bottom_colour;
@@ -77,8 +76,6 @@ public:
     const std::optional<Path> diagnostic_path;
 
 private:
-    uint font_size;
-
     uint x_margin_percent;
     uint y_margin_percent;
 
@@ -185,11 +182,6 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     }
 }
 
-void BackgroundClient::set_font_size(std::string const& option)
-{
-    font_size = std::stoi(option);
-}
-
 void BackgroundClient::set_x_margin(std::string const& option)
 {
     auto x_margin = std::stoi(option);
@@ -221,36 +213,36 @@ void BackgroundClient::set_y_margin(std::string const& option)
 }
 
 void BackgroundClient::render_background(
-    geom::Width width,
-    geom::Height height,
+    uint32_t width,
+    uint32_t height,
     unsigned char* buffer,
     Colour const& bottom_colour,
     Colour const& top_colour)
 {
     Colour new_pixel;
 
-    for (auto current_y = geom::Height{}; current_y < height; current_y += geom::DeltaY{1})
+    for (auto current_y = 0; current_y < height; current_y++)
     {
         // Render gradient
         for (auto i = 0; i < 3; i++)
         {
-            new_pixel[i] = ((current_y.as_int() * bottom_colour[i] + (height.as_int() - current_y.as_int()) * top_colour[i]) / height.as_int());
+            new_pixel[i] = ((current_y * bottom_colour[i] + (height - current_y) * top_colour[i]) / height);
         }
         new_pixel[3] = 0xFF;
 
         // Copy new_pixel to buffer
         auto const pixel_size = sizeof(new_pixel);
-        for (auto current_x = geom::Width{}; current_x < pixel_size*width; current_x += geom::DeltaX{pixel_size})
+        for (auto current_x = 0; current_x < pixel_size*width; current_x += pixel_size)
         {
-            memcpy(buffer + current_x.as_int(), new_pixel, pixel_size);
+            memcpy(buffer + current_x, new_pixel, pixel_size);
         }
 
         // Move pointer to next pixel
-        buffer += 4*width.as_int();
+        buffer += 4*width;
     }
 }
 
-void BackgroundClient::render_background(geom::Width width, geom::Height height, unsigned char* buffer, Colour const& colour)
+void BackgroundClient::render_background(uint32_t width, uint32_t height, unsigned char* buffer, Colour const& colour)
 {
     render_background(width, height, buffer, colour, colour);
 }
@@ -264,7 +256,6 @@ void BackgroundClient::operator()(wl_display* display)
         crash_background_colour,
         crash_text_colour,
         diagnostic_path,
-        font_size,
         x_margin_percent,
         y_margin_percent);
     {
@@ -290,7 +281,6 @@ BackgroundClient::Self::Self(
     Colour const& crash_background_colour,
     Colour const& crash_text_colour,
     std::optional<Path> diagnostic_path,
-    uint font_size,
     uint x_margin_percent,
     uint y_margin_percent)
     : FullscreenClient(display, diagnostic_path),
@@ -300,7 +290,6 @@ BackgroundClient::Self::Self(
       crash_text_colour{crash_text_colour},
       text_renderer{TextRenderer(get_font_path())},
       diagnostic_path{diagnostic_path},
-      font_size{font_size},
       x_margin_percent{x_margin_percent},
       y_margin_percent{y_margin_percent}
 {
@@ -309,41 +298,37 @@ BackgroundClient::Self::Self(
 }
 
 void BackgroundClient::Self::render_text(
-    geom::Width width,
-    geom::Height height,
+    uint32_t width,
+    uint32_t height,
     unsigned char* buffer) const
-{    
-    auto const height_pixels = geom::Height(font_size);
-    auto const line_height = height_pixels + (height_pixels / 5);
-    
+{   
     auto size = geom::Size{width, height};
     
     auto stream = boost::filesystem::ifstream(diagnostic_path.value());
 
-    auto number_of_lines = 0;
-    auto longest_line_width = geom::Width{};
+    auto const x_margin = width * (x_margin_percent / 100.0);
+    auto const y_margin = height * (y_margin_percent / 100.0);
+
+    auto const x_diff = width - x_margin;
+    auto const y_diff = height - y_margin;
+    
+    auto const max_font_height_by_width = text_renderer.get_max_font_height_by_width(stream, x_diff);
+    auto const max_font_height_by_height = text_renderer.get_max_font_height_by_height(stream, y_diff);
+
+    auto const height_pixels = std::min(max_font_height_by_width, max_font_height_by_height);
+    auto const line_height = height_pixels + (height_pixels / text_renderer.y_kerning);
+
+    auto const num_lines = text_renderer.get_num_lines(stream);
+
+    auto const x_offset = (width - text_renderer.get_max_line_width(stream, height_pixels)) / 2;
+    auto const y_offset = (height - (num_lines * line_height)) / 2;
+    auto top_left = geom::Point{x_offset, y_offset};
+
     std::string line;
-
     while (getline(stream, line))
     {
-        auto const line_width = text_renderer.get_line_width(line, height_pixels);
-        longest_line_width = std::max(line_width, longest_line_width);
-        number_of_lines++;
-    }
-
-    auto const x_offset = (width - longest_line_width) / 2;
-    auto const y_offset = (height - number_of_lines * line_height) / 2;
-
-    auto top_left = geom::Point{x_offset.as_int(), y_offset.as_int()};
-
-    // Go back to top of stream
-    stream.clear();
-    stream.seekg(0, std::ios::beg);
-
-    while (getline(stream, line))
-    {
-        text_renderer.render(buffer, size, line, top_left, height_pixels, crash_text_colour);
-        auto const new_top_left = geom::Point{top_left.x, top_left.y.as_value() + line_height.as_value()};
+        text_renderer.render(buffer, size, line, top_left, geom::Height{height_pixels}, crash_text_colour);
+        auto const new_top_left = geom::Point{top_left.x, top_left.y.as_int() + line_height};
         top_left = new_top_left;
     }
 
@@ -355,10 +340,10 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
     std::lock_guard lock{buffer_mutex};
 
     bool const rotated = info.output->transform & WL_OUTPUT_TRANSFORM_90;
-    auto const width = rotated ? geom::Width{info.output->height} : geom::Width{info.output->width};
-    auto const height = rotated ? geom::Height{info.output->width} : geom::Height{info.output->height};
+    auto const width = rotated ? info.output->height : info.output->width;
+    auto const height = rotated ? info.output->width : info.output->height;
 
-    if (width <= geom::Width{} || height <= geom::Height{})
+    if (width <= 0 || height <= 0)
         return;
 
     auto const stride = 4*width;
@@ -384,12 +369,12 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
     }
 
     {
-        auto const shm_pool = make_shm_pool(stride.as_int() * height.as_int(), &info.content_area);
+        auto const shm_pool = make_shm_pool(stride * height, &info.content_area);
 
         info.buffer = wl_shm_pool_create_buffer(
             shm_pool.get(),
             0,
-            width.as_int(), height.as_int(), stride.as_int(),
+            width, height, stride,
             WL_SHM_FORMAT_ARGB8888);
     }
 
@@ -489,7 +474,7 @@ void TextRenderer::render(
 
     try
     {
-        set_char_size(height_pixels);
+        set_char_size(height_pixels.as_int());
     }
     catch (std::runtime_error const& error)
     {
@@ -523,9 +508,9 @@ void TextRenderer::render(
     }
 }
 
-void TextRenderer::set_char_size(geom::Height height) const
+void TextRenderer::set_char_size(uint32_t height) const
 {
-    if (auto const error = FT_Set_Pixel_Sizes(face, 0, height.as_int()))
+    if (auto const error = FT_Set_Pixel_Sizes(face, 0, height))
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
             "Setting char size failed with error " + std::to_string(error)));
@@ -590,18 +575,82 @@ void TextRenderer::render_glyph(
     }
 }
 
-auto TextRenderer::get_line_width(std::string const& line, geom::Height height_pixels) const -> geom::Width
+auto TextRenderer::get_num_lines(boost::filesystem::ifstream &stream) const -> uint32_t
+{
+    auto num_lines = 0;
+
+    std::string line;
+    while(getline(stream, line))
+    {
+        num_lines++;
+    }
+
+    // Go back to top of stream
+    stream.clear();
+    stream.seekg(0, std::ios::beg);
+
+    return num_lines;
+}
+
+auto TextRenderer::get_line_width(std::string const& line, uint32_t height_pixels) const -> uint32_t
 {
     set_char_size(height_pixels);
 
-    auto line_width = geom::Width{};
+    auto line_width = 0;
     for (auto const& character : line)
-        {
-            rasterize_glyph(character);
-
-            auto const glyph = face->glyph;
-            line_width = line_width + geom::DeltaX{glyph->advance.x >> 6};
-        }
+    {
+        rasterize_glyph(character);
+        auto const glyph = face->glyph;
+        line_width = line_width + (glyph->advance.x >> 6);
+    }
 
     return line_width;
+}
+
+auto TextRenderer::get_max_line_width(boost::filesystem::ifstream &stream, uint32_t height_pixels) const -> uint32_t
+{
+    uint32_t max_line_width = 0;
+
+    std::string line;
+    while (getline(stream, line))
+    {
+        max_line_width = std::max(get_line_width(line, height_pixels), max_line_width);
+    }
+
+    // Go back to top of stream
+    stream.clear();
+    stream.seekg(0, std::ios::beg);
+
+    return max_line_width;
+}
+
+auto TextRenderer::get_max_font_height_by_width(boost::filesystem::ifstream &stream, uint32_t max_width) const -> uint32_t
+{
+    auto estimate_font_height = 50;
+    auto const width_from_estimate = get_max_line_width(stream, estimate_font_height);
+
+    auto const final_font_height = estimate_font_height * (static_cast<double>(max_width) / width_from_estimate);
+    return final_font_height;
+}
+
+auto TextRenderer::get_max_font_height_by_height(boost::filesystem::ifstream &stream, uint32_t max_height) const -> uint32_t
+{
+    auto num_lines = get_num_lines(stream);
+    auto estimate_font_height = 50;
+    auto const height_from_estimate = get_total_height(num_lines, estimate_font_height);
+
+    auto const final_font_height = estimate_font_height * (static_cast<double>(max_height) / height_from_estimate);
+    return final_font_height;
+}
+
+auto TextRenderer::get_total_height(uint32_t num_lines, uint32_t height_pixels) const -> uint32_t
+{
+    set_char_size(height_pixels);
+
+    // Using "A" as a dummy character
+    rasterize_glyph('B');
+    auto const glyph = face->glyph;
+
+    auto const total_height = (height_pixels + (height_pixels / y_kerning)) * num_lines;
+    return total_height;
 }

@@ -56,8 +56,6 @@ int main(int argc, char const* argv[])
                                "diagnostic-text",       "Colour of diagnostic screen text RGB", "0xffffff"},
             ConfigurationOption{[&] (auto& option) { background_client.set_diagnostic_path(option);},
                                "diagnostic-path",  "Path (including filename) of diagnostic file", ""},
-            ConfigurationOption{[&] (auto& option) { background_client.set_font_size(option);},
-                               "diagnostic-font-size", "Size of font in pixels", "50"},
             ConfigurationOption{[&] (auto& option) { background_client.set_x_margin(option);},
                                "diagnostic-x-margin",     "Size of x-axis margin (in percentage of display width) for diagnostic", "5"},
             ConfigurationOption{[&] (auto& option) { background_client.set_y_margin(option);},

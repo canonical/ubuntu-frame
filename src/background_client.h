@@ -43,21 +43,20 @@ public:
     void set_crash_background_colour(std::string const& option);
     void set_crash_text_colour(std::string const& option);
     void set_diagnostic_path(std::string const& option);
-    void set_font_size(std::string const& option);
     void set_x_margin(std::string const& option);
     void set_y_margin(std::string const& option);
 
     /// Renders background as a gradient from top_colour to bottom_colour
     static void render_background(
-        geom::Width width,
-        geom::Height height,
+        uint32_t width,
+        uint32_t height,
         unsigned char* buffer,
         Colour const& bottom_colour,
         Colour const& top_colour);
     
     static void render_background(
-        geom::Width width,
-        geom::Height height,
+        uint32_t width,
+        uint32_t height,
         unsigned char* buffer,
         Colour const& colour);
 
@@ -73,10 +72,7 @@ private:
     Colour wallpaper_bottom_colour = {31, 31, 31, 255};
     Colour crash_background_colour = {36, 12, 56, 255};
     Colour crash_text_colour = {255, 255, 255, 255};
-
-    uint font_size = 50;
     
-    // TODO - use margins to determine font size
     uint x_margin_percent = 5;
     uint y_margin_percent = 5;
 
@@ -104,7 +100,13 @@ public:
         geom::Height height_pixels,
         Colour const& colour) const;
 
-    auto get_line_width(std::string const& line, geom::Height height_pixels) const -> mir::geometry::Width;
+    auto get_num_lines(boost::filesystem::ifstream &stream) const -> uint32_t;
+
+    auto get_max_font_height_by_width(boost::filesystem::ifstream &stream, uint32_t max_width) const -> uint32_t;
+    auto get_max_font_height_by_height(boost::filesystem::ifstream &stream, uint32_t max_height) const -> uint32_t;
+    auto get_max_line_width(boost::filesystem::ifstream &stream, uint32_t height_pixels) const -> uint32_t;
+
+    uint const y_kerning = 5;
 
 private:
     Path font_path;
@@ -114,7 +116,7 @@ private:
 
     std::mutex mutable mutex;
     
-    void set_char_size(geom::Height height) const;
+    void set_char_size(uint32_t height) const;
     void rasterize_glyph(char32_t glyph) const;
     void render_glyph(
         unsigned char* buffer,
@@ -125,6 +127,9 @@ private:
 
     static auto get_font_path() -> std::optional<Path>;
     static auto convert_utf8_to_utf32(std::string const& text) -> std::u32string;
+
+    auto get_line_width(std::string const& line, uint32_t height_pixels) const -> uint32_t;
+    auto get_total_height(uint32_t num_lines, uint32_t height_pixels) const -> uint32_t;
 };
 
 #endif //FRAME_BACKGROUND_CLIENT
