@@ -645,12 +645,5 @@ auto TextRenderer::get_max_font_height_by_height(boost::filesystem::ifstream &st
 
 auto TextRenderer::get_total_height(uint32_t num_lines, uint32_t height_pixels) const -> uint32_t
 {
-    set_char_size(height_pixels);
-
-    // Using "A" as a dummy character
-    rasterize_glyph('B');
-    auto const glyph = face->glyph;
-
-    auto const total_height = (height_pixels + (height_pixels / y_kerning)) * num_lines;
-    return total_height;
+    return (height_pixels + (height_pixels / y_kerning)) * num_lines;
 }
