@@ -18,7 +18,7 @@
 
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
-#include "egwallpaper.h"
+#include "background_client.h"
 
 #include <miral/configuration_option.h>
 #include <miral/display_configuration.h>
@@ -37,21 +37,28 @@ int main(int argc, char const* argv[])
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
-    egmde::Wallpaper wallpaper;
-    runner.add_stop_callback([&] { wallpaper.stop(); });
+    BackgroundClient background_client;
 
+    runner.add_stop_callback([&] { background_client.stop(); });
+    
     return runner.run_with(
         {
             wayland_extensions,
             display_config,
             display_config.layout_option(),
-            ConfigurationOption{[&](auto& option) { wallpaper.top(option); },
-                "wallpaper-top", "Colour of wallpaper RGB", "0x7f7f7f"},
-            ConfigurationOption{[&](auto& option) { wallpaper.bottom(option); },
-                "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
-            ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option); },
-                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
-            StartupInternalClient{std::ref(wallpaper)},
+            ConfigurationOption{[&](auto& option) { background_client.set_wallpaper_top_colour(option);},
+                               "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
+            ConfigurationOption{[&](auto& option) { background_client.set_wallpaper_bottom_colour(option);},
+                               "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
+            ConfigurationOption{[&](auto& option) { background_client.set_crash_background_colour(option);},
+                               "diagnostic-background", "Colour of diagnostic screen background RGB", "0x380c24"},
+            ConfigurationOption{[&](auto& option) { background_client.set_crash_text_colour(option);},
+                               "diagnostic-text",       "Colour of diagnostic screen text RGB", "0xffffff"},
+            ConfigurationOption{[&] (auto& option) { background_client.set_diagnostic_path(option);},
+                               "diagnostic-path",  "Path (including filename) of diagnostic file", ""},
+            StartupInternalClient{std::ref(background_client)},
+            ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
+                               "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
             set_window_management_policy<FrameWindowManagerPolicy>(),
             Keymap{}
         });

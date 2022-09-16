@@ -26,6 +26,8 @@ environment:
   __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
   # Setup XKB
   XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
+  # Setup diagnostic
+  MIR_SERVER_DIAGNOSTIC_PATH: $SNAP_COMMON/diagnostic/diagnostic.txt
 
 layout:
   /usr/share/icons:
@@ -34,6 +36,8 @@ layout:
     bind: $SNAP/graphics/libdrm
   /usr/share/drirc.d:
     bind: $SNAP/graphics/drirc.d
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
 
 apps:
   ubuntu-frame:
@@ -78,6 +82,13 @@ plugs:
     target: $SNAP/graphics
     default-provider: mesa-core20
 
+slots:
+  ubuntu-frame-diagnostic:
+    interface: content
+    content: writable-data
+    write: 
+      - $SNAP_COMMON/diagnostic
+
 parts:
   recipe-version:
     plugin: nil
@@ -103,10 +114,22 @@ parts:
       - libmiral-dev
       - libwayland-dev
       - libboost1.71-dev
+      - libboost-filesystem-dev
+      - libboost-iostreams-dev
       - libapparmor-dev
+      - libfreetype6-dev
     stage-packages:
       - libmiral5
       - libapparmor1
+      - libboost-filesystem1.71.0
+      - libboost-iostreams1.71.0
+  
+  assets:
+    plugin: nil
+    stage-packages:
+    - fonts-ubuntu
+    prime:
+    - usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf
 
   platform:
     plugin: nil
@@ -132,6 +155,8 @@ parts:
   grim:
     plugin: nil
     stage-packages: [grim]
+    prime:
+      - -usr/share/fonts/truetype/dejavu
 
   cleanup:
     after: [ubuntu-frame, platform, icons, scripts]
