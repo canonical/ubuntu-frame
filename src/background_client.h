@@ -43,8 +43,6 @@ public:
     void set_crash_background_colour(std::string const& option);
     void set_crash_text_colour(std::string const& option);
     void set_diagnostic_path(std::string const& option);
-    void set_x_margin(std::string const& option);
-    void set_y_margin(std::string const& option);
 
     /// Renders background as a gradient from top_colour to bottom_colour
     static void render_background(
