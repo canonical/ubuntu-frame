@@ -40,7 +40,7 @@ auto get_font_path() -> Path
     static auto const ubuntu_font = "/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf";
     if (auto const snap = getenv("SNAP"))
     {
-        return strcat(snap, ubuntu_font);
+        return Path(snap).append(ubuntu_font);
     }
     if (auto const font_override= getenv("FRAME_FONT_OVERRIDE"))
     {
