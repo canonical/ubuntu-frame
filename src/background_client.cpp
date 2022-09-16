@@ -42,10 +42,7 @@ auto get_font_path() -> Path
     {
         return Path(snap).append(ubuntu_font);
     }
-    if (auto const font_override= getenv("FRAME_FONT_OVERRIDE"))
-    {
-        return font_override;
-    }
+
     return ubuntu_font;
 }
 } // namespace
