@@ -31,9 +31,11 @@
 
 #include <mir/fatal.h>
 
+using Path = boost::filesystem::path;
+
 namespace
 {
-auto get_font_path() -> boost::filesystem::path
+auto get_font_path() -> Path
 {
     static auto const ubuntu_font = "/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf";
     if (auto const snap = getenv("SNAP"))
@@ -51,8 +53,6 @@ auto get_font_path() -> boost::filesystem::path
 struct BackgroundClient::Self : egmde::FullscreenClient
 {
 public:
-    using Path = boost::filesystem::path;
-
     Self(
         wl_display* display,
         Colour const& wallpaper_top_colour,
@@ -170,7 +170,7 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
         return;
     }
     
-    auto option_path = boost::filesystem::path(option);
+    auto option_path = Path(option);
     if (boost::filesystem::exists(option_path.parent_path()))
     {
         diagnostic_path = option_path;
