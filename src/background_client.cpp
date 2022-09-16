@@ -27,7 +27,6 @@
 
 #include <boost/throw_exception.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/algorithm/string/replace.hpp>
 
 #include <mir/fatal.h>
 
@@ -166,7 +165,7 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     }
     
     auto option_path = Path(option);
-    if (boost::filesystem::exists(option_path.parent_path()))
+    if (exists(option_path.parent_path()))
     {
         diagnostic_path = option_path;
     }
@@ -197,9 +196,9 @@ void BackgroundClient::render_background(
 
         // Copy new_pixel to buffer
         auto const pixel_size = sizeof(new_pixel);
-        for (auto current_x = 0; current_x < pixel_size*width; current_x += pixel_size)
+        for (auto current_x = buffer; current_x != buffer + pixel_size * width; current_x += pixel_size)
         {
-            memcpy(buffer + current_x, new_pixel, pixel_size);
+            memcpy(current_x, new_pixel, pixel_size);
         }
 
         // Move pointer to next pixel
