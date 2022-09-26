@@ -43,6 +43,7 @@ public:
     void set_crash_background_colour(std::string const& option);
     void set_crash_text_colour(std::string const& option);
     void set_diagnostic_path(std::string const& option);
+    void set_diagnostic_delay(std::string const& option);
 
     /// Renders background as a gradient from top_colour to bottom_colour
     static void render_background(
@@ -73,6 +74,8 @@ private:
     
     uint x_margin_percent = 5;
     uint y_margin_percent = 5;
+
+    uint diagnostic_delay = 0;
 
     std::optional<boost::filesystem::path> diagnostic_path;
 

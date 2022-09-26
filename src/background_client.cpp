@@ -55,7 +55,8 @@ public:
         Colour const& wallpaper_bottom_colour,
         Colour const& crash_background_colour,
         Colour const& crash_text_colour,
-        std::optional<Path> diagnostic_path);
+        std::optional<Path> diagnostic_path,
+        uint diagnostic_delay);
 
     void draw_screen(SurfaceInfo& info, bool draws_crash) const override;
     
@@ -72,6 +73,9 @@ public:
 private:
     const uint x_margin_percent = 5;
     const uint y_margin_percent = 5;
+
+    const uint diagnostic_delay;
+    bool diagnostic_delay_expired = false;
 
     std::mutex mutable buffer_mutex;
 };
@@ -176,6 +180,21 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     }
 }
 
+void BackgroundClient::set_diagnostic_delay(std::string const& option)
+{
+    auto delay = std::stoi(option);
+
+    if (delay >= 0)
+    {
+        diagnostic_delay = delay;
+    }
+    else
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Diagnostic delay time (" + option + ") must not be negative"));
+    }
+}
+
 void BackgroundClient::render_background(
     uint32_t width,
     uint32_t height,
@@ -219,7 +238,8 @@ void BackgroundClient::operator()(wl_display* display)
         wallpaper_bottom_colour, 
         crash_background_colour,
         crash_text_colour,
-        diagnostic_path);
+        diagnostic_path,
+        diagnostic_delay);
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
         self = client;
@@ -242,17 +262,24 @@ BackgroundClient::Self::Self(
     Colour const& wallpaper_bottom_colour,
     Colour const& crash_background_colour,
     Colour const& crash_text_colour,
-    std::optional<Path> diagnostic_path)
+    std::optional<Path> diagnostic_path,
+    uint diagnostic_delay)
     : FullscreenClient(display, diagnostic_path),
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
       crash_text_colour{crash_text_colour},
       text_renderer{TextRenderer(get_font_path())},
-      diagnostic_path{diagnostic_path}
+      diagnostic_path{diagnostic_path},
+      diagnostic_delay{diagnostic_delay}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);
+
+    if (diagnostic_delay == 0)
+    {
+        diagnostic_delay_expired = true;
+    }
 }
 
 void BackgroundClient::Self::render_text(
@@ -349,7 +376,7 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
         file_exists = false;
     }
 
-    if (draws_crash || file_exists)
+    if ((draws_crash || file_exists) && diagnostic_delay_expired)
     {
         draws_crash = true;
         render_background(width, height, buffer, crash_background_colour);
