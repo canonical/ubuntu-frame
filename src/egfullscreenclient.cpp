@@ -28,6 +28,7 @@
 #include <sys/eventfd.h>
 #include <sys/mman.h>
 #include <sys/poll.h>
+#include <sys/timerfd.h>
 #include <cstdlib>
 #include <climits>
 
@@ -146,6 +147,8 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     weak_runner{weak_runner},
     registry{nullptr, [](auto){}}
 {
+    set_diagnostic_delay_alarm();
+
     // Check inotify initializaiton
     if (diagnostic_signal < 0)
     {
@@ -160,6 +163,8 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
             diagnostic_path->parent_path().c_str(),
             IN_CLOSE_WRITE | IN_CREATE | IN_DELETE
         );
+
+        diagnostic_exists = true;
     }
 
     if (shutdown_signal == mir::Fd::invalid)
@@ -179,6 +184,53 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     wl_registry_add_listener(registry.get(), &registry_listener, this);
 }
 
+void egmde::FullscreenClient::notify_diagnostic_delay_expired()
+{
+    diagnostic_timer_handle.reset();
+    diagnostic_delay_expired = true;
+    draw();
+}
+
+void egmde::FullscreenClient::set_diagnostic_delay_alarm()
+{
+    if (diagnostic_delay == 0)
+    {
+        diagnostic_delay_expired = true;
+    }
+    else
+    {
+        auto const timer_fd = timerfd_create(CLOCK_REALTIME, 0);
+
+        if (timer_fd == -1)
+        {
+            BOOST_THROW_EXCEPTION(std::runtime_error(
+                "Initializing diagnostic delay timer failed"));
+        }
+
+        auto const spec = itimerspec
+        {
+            { 0, 0 },               // Timer interval
+            { diagnostic_delay, 0 } // Initial expiration
+        };
+
+        if (timerfd_settime(timer_fd, 0, &spec, NULL) == -1)
+        {
+            BOOST_THROW_EXCEPTION(std::runtime_error(
+                "Setting diagnostic delay timer failed"));
+        }
+
+        if (auto const runner = weak_runner.lock())
+        {
+            diagnostic_timer_handle = runner->register_fd_handler(mir::Fd{timer_fd}, [this](int){ notify_diagnostic_delay_expired(); });
+        }
+    }
+}
+
+auto inline egmde::FullscreenClient::should_draw_crash() -> bool
+{
+    return diagnostic_delay_expired && diagnostic_exists;
+}
+
 void egmde::FullscreenClient::on_output_changed(Output const* output)
 {
     {
@@ -192,7 +244,7 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
                 buffer = nullptr;
             }
 
-            draw_screen(p->second, draws_crash);
+            draw_screen(p->second, should_draw_crash());
         }
 
         auto i = begin(hidden_outputs);
@@ -203,7 +255,7 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
             if (!display_area.bounding_rectangle().overlaps(screen_rect))
             {
                 display_area.add(screen_rect);
-                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, draws_crash);
+                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
                 break;
             }
 
@@ -253,7 +305,7 @@ void egmde::FullscreenClient::on_output_gone(Output const* output)
             if (!display_area.bounding_rectangle().overlaps(screen_rect))
             {
                 display_area.add(screen_rect);
-                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, draws_crash);
+                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
                 break;
             }
 
@@ -280,7 +332,7 @@ void egmde::FullscreenClient::on_new_output(Output const* output)
         if (!display_area.bounding_rectangle().overlaps(screen_rect))
         {
             display_area.add(screen_rect);
-            draw_screen(outputs.insert({output, SurfaceInfo{output}}).first->second, draws_crash);
+            draw_screen(outputs.insert({output, SurfaceInfo{output}}).first->second, should_draw_crash());
         }
         else
         {
@@ -297,7 +349,7 @@ void egmde::FullscreenClient::draw()
 
         for (auto& output : outputs)
         {
-            draw_screen(output.second, draws_crash);
+            draw_screen(output.second, should_draw_crash());
         }
     }
     wl_display_flush(display);
@@ -492,13 +544,13 @@ void egmde::FullscreenClient::run(wl_display* display)
             if (ib->mask & (IN_CLOSE_WRITE | IN_CREATE)
                 && ib->name == diagnostic_path.value_or("").filename().string())
             {
-                draws_crash = true;
+                diagnostic_exists = true;
                 draw();
             }
             else if (ib->mask & IN_DELETE
                 && ib->name == diagnostic_path.value_or("").filename().string())
             {
-                draws_crash = false;
+                diagnostic_exists = false;
                 draw();
             }
         }

@@ -231,6 +231,11 @@ private:
     void seat_capabilities(wl_seat* seat, uint32_t capabilities);
     void seat_name(wl_seat* seat, const char* name);
 
+    void set_diagnostic_delay_alarm();
+    void notify_diagnostic_delay_expired();
+
+    auto inline should_draw_crash() -> bool;
+
     std::unique_ptr<wl_registry, decltype(&wl_registry_destroy)> registry;
 
     std::unordered_map<uint32_t, std::unique_ptr<Output>> bound_outputs;
@@ -238,10 +243,12 @@ private:
     std::optional<Path> diagnostic_path;
     std::optional<int> diagnostic_wd;
     uint diagnostic_delay;
+    std::unique_ptr<miral::FdHandle> diagnostic_timer_handle;
 
     std::weak_ptr<miral::MirRunner> weak_runner;
 
-    bool draws_crash = false;
+    bool diagnostic_delay_expired = false;
+    bool diagnostic_exists = false;
 };
 }
 
