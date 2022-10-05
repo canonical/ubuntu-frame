@@ -35,9 +35,12 @@ struct wl_display;
 namespace geom = mir::geometry;
 using Colour = unsigned char[4];
 
+namespace miral { class MirRunner; }
+
 class BackgroundClient
 {
 public:
+    void add_runner(std::shared_ptr<miral::MirRunner> runner) { weak_runner = runner; }
     void set_wallpaper_top_colour(std::string const& option);
     void set_wallpaper_bottom_colour(std::string const& option);
     void set_crash_background_colour(std::string const& option);
@@ -65,6 +68,8 @@ public:
     void stop();
 
 private:
+    std::weak_ptr<miral::MirRunner> weak_runner;
+
     std::mutex mutable mutex;
 
     Colour wallpaper_top_colour = {127, 127, 127, 255};

@@ -35,6 +35,11 @@
 #include <optional>
 #include <unordered_map>
 
+namespace miral { 
+    class MirRunner; 
+    class FdHandle; 
+}
+
 namespace egmde
 {
 class FullscreenClient
@@ -42,7 +47,7 @@ class FullscreenClient
 public:
     using Path = boost::filesystem::path;
 
-    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path);
+    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, std::weak_ptr<miral::MirRunner> weak_runner);
 
     virtual ~FullscreenClient();
 
@@ -232,6 +237,9 @@ private:
 
     std::optional<Path> diagnostic_path;
     std::optional<int> diagnostic_wd;
+    uint diagnostic_delay;
+
+    std::weak_ptr<miral::MirRunner> weak_runner;
 
     bool draws_crash = false;
 };

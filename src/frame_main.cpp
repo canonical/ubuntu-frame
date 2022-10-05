@@ -31,17 +31,18 @@
 int main(int argc, char const* argv[])
 {
     using namespace miral;
-    MirRunner runner{argc, argv};
+    std::shared_ptr<MirRunner> runner = std::make_shared<MirRunner>(argc, argv);
 
-    DisplayConfiguration display_config{runner};
+    DisplayConfiguration display_config{*runner};
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
     BackgroundClient background_client;
+    background_client.add_runner(runner);
 
-    runner.add_stop_callback([&] { background_client.stop(); });
+    runner->add_stop_callback([&] { background_client.stop(); });
     
-    return runner.run_with(
+    return runner->run_with(
         {
             wayland_extensions,
             display_config,

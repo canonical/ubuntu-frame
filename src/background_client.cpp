@@ -51,6 +51,7 @@ struct BackgroundClient::Self : egmde::FullscreenClient
 public:
     Self(
         wl_display* display,
+        std::weak_ptr<miral::MirRunner> weak_runner,
         Colour const& wallpaper_top_colour,
         Colour const& wallpaper_bottom_colour,
         Colour const& crash_background_colour,
@@ -71,6 +72,8 @@ public:
     const std::optional<Path> diagnostic_path;
 
 private:
+    std::weak_ptr<miral::MirRunner> weak_runner;
+
     const uint x_margin_percent = 5;
     const uint y_margin_percent = 5;
 
@@ -232,6 +235,7 @@ void BackgroundClient::operator()(wl_display* display)
 {
     auto client = std::make_shared<Self>(
         display, 
+        weak_runner,
         wallpaper_top_colour, 
         wallpaper_bottom_colour, 
         crash_background_colour,
@@ -256,28 +260,24 @@ void BackgroundClient::operator()(std::weak_ptr<mir::scene::Session> const& /*se
 
 BackgroundClient::Self::Self(
     wl_display* display,
+    std::weak_ptr<miral::MirRunner> weak_runner,
     Colour const& wallpaper_top_colour,
     Colour const& wallpaper_bottom_colour,
     Colour const& crash_background_colour,
     Colour const& crash_text_colour,
     std::optional<Path> diagnostic_path,
     uint diagnostic_delay)
-    : FullscreenClient(display, diagnostic_path),
+    : FullscreenClient(display, diagnostic_path, diagnostic_delay, weak_runner),
+      weak_runner{weak_runner},
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
       crash_text_colour{crash_text_colour},
       text_renderer{TextRenderer(get_font_path())},
-      diagnostic_path{diagnostic_path},
-      diagnostic_delay{diagnostic_delay}
+      diagnostic_path{diagnostic_path}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);
-
-    if (diagnostic_delay == 0)
-    {
-        diagnostic_delay_expired = true;
-    }
 }
 
 void BackgroundClient::Self::render_text(

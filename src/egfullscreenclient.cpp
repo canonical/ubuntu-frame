@@ -20,6 +20,8 @@
 
 #include <wayland-client.h>
 
+#include <miral/runner.h>
+
 #include <boost/throw_exception.hpp>
 
 #include <fcntl.h>
@@ -135,11 +137,13 @@ void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_ou
     output->on_done(*output);
 }
 
-egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path) :
+egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, std::weak_ptr<miral::MirRunner> weak_runner) :
     flush_signal{::eventfd(0, EFD_SEMAPHORE)},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     diagnostic_signal{inotify_init()},
     diagnostic_path{diagnostic_path},
+    diagnostic_delay{diagnostic_delay},
+    weak_runner{weak_runner},
     registry{nullptr, [](auto){}}
 {
     // Check inotify initializaiton
