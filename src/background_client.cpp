@@ -77,9 +77,6 @@ private:
     const uint x_margin_percent = 5;
     const uint y_margin_percent = 5;
 
-    const uint diagnostic_delay;
-    bool diagnostic_delay_expired = false;
-
     std::mutex mutable buffer_mutex;
 };
 

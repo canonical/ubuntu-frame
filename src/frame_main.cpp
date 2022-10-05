@@ -16,9 +16,9 @@
  * Authored by: Alan Griffiths <alan@octopull.co.uk>
  */
 
+#include "background_client.h"
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
-#include "background_client.h"
 
 #include <miral/configuration_option.h>
 #include <miral/display_configuration.h>
