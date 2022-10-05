@@ -180,10 +180,8 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     }
 }
 
-void BackgroundClient::set_diagnostic_delay(std::string const& option)
+void BackgroundClient::set_diagnostic_delay(int delay)
 {
-    auto delay = std::stoi(option);
-
     if (delay >= 0)
     {
         diagnostic_delay = delay;
@@ -191,7 +189,7 @@ void BackgroundClient::set_diagnostic_delay(std::string const& option)
     else
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Diagnostic delay time (" + option + ") must not be negative"));
+            "Diagnostic delay time (" + std::to_string(delay) + ") must not be negative"));
     }
 }
 
