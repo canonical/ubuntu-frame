@@ -138,13 +138,13 @@ void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_ou
     output->on_done(*output);
 }
 
-egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, std::weak_ptr<miral::MirRunner> weak_runner) :
+egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, miral::MirRunner* runner) :
     flush_signal{::eventfd(0, EFD_SEMAPHORE)},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     diagnostic_signal{inotify_init()},
     diagnostic_path{diagnostic_path},
     diagnostic_delay{diagnostic_delay},
-    weak_runner{weak_runner},
+    runner{runner},
     registry{nullptr, [](auto){}}
 {
     set_diagnostic_delay_alarm();
@@ -219,7 +219,7 @@ void egmde::FullscreenClient::set_diagnostic_delay_alarm()
                 "Setting diagnostic delay timer failed"));
         }
 
-        if (auto const runner = weak_runner.lock())
+        if (runner)
         {
             diagnostic_timer_handle = runner->register_fd_handler(mir::Fd{timer_fd}, [this](int){ notify_diagnostic_delay_expired(); });
         }

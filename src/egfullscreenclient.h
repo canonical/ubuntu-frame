@@ -47,7 +47,7 @@ class FullscreenClient
 public:
     using Path = boost::filesystem::path;
 
-    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, std::weak_ptr<miral::MirRunner> weak_runner);
+    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, miral::MirRunner* runner);
 
     virtual ~FullscreenClient();
 
@@ -245,7 +245,7 @@ private:
     uint diagnostic_delay;
     std::unique_ptr<miral::FdHandle> diagnostic_timer_handle;
 
-    std::weak_ptr<miral::MirRunner> weak_runner;
+    miral::MirRunner* const runner;
 
     bool diagnostic_delay_expired = false;
     bool diagnostic_exists = false;

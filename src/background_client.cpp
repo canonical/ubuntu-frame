@@ -46,12 +46,17 @@ auto get_font_path() -> Path
 }
 } // namespace
 
+BackgroundClient::BackgroundClient(miral::MirRunner* runner)
+: runner{runner}
+{
+}
+
 struct BackgroundClient::Self : egmde::FullscreenClient
 {
 public:
     Self(
         wl_display* display,
-        std::weak_ptr<miral::MirRunner> weak_runner,
+        miral::MirRunner* runner,
         Colour const& wallpaper_top_colour,
         Colour const& wallpaper_bottom_colour,
         Colour const& crash_background_colour,
@@ -72,7 +77,7 @@ public:
     const std::optional<Path> diagnostic_path;
 
 private:
-    std::weak_ptr<miral::MirRunner> weak_runner;
+    miral::MirRunner* const runner;
 
     const uint x_margin_percent = 5;
     const uint y_margin_percent = 5;
@@ -232,7 +237,7 @@ void BackgroundClient::operator()(wl_display* display)
 {
     auto client = std::make_shared<Self>(
         display, 
-        weak_runner,
+        runner,
         wallpaper_top_colour, 
         wallpaper_bottom_colour, 
         crash_background_colour,
@@ -257,15 +262,15 @@ void BackgroundClient::operator()(std::weak_ptr<mir::scene::Session> const& /*se
 
 BackgroundClient::Self::Self(
     wl_display* display,
-    std::weak_ptr<miral::MirRunner> weak_runner,
+    miral::MirRunner* runner,
     Colour const& wallpaper_top_colour,
     Colour const& wallpaper_bottom_colour,
     Colour const& crash_background_colour,
     Colour const& crash_text_colour,
     std::optional<Path> diagnostic_path,
     uint diagnostic_delay)
-    : FullscreenClient(display, diagnostic_path, diagnostic_delay, weak_runner),
-      weak_runner{weak_runner},
+    : FullscreenClient(display, diagnostic_path, diagnostic_delay, runner),
+      runner{runner},
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},

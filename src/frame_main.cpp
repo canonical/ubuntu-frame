@@ -31,14 +31,13 @@
 int main(int argc, char const* argv[])
 {
     using namespace miral;
-    std::shared_ptr<MirRunner> runner = std::make_shared<MirRunner>(argc, argv);
+    MirRunner* const runner = new MirRunner(argc, argv);
 
     DisplayConfiguration display_config{*runner};
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
-    BackgroundClient background_client;
-    background_client.add_runner(runner);
+    BackgroundClient background_client(runner);
 
     runner->add_stop_callback([&] { background_client.stop(); });
     
