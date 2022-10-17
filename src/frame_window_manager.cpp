@@ -90,6 +90,11 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
         WindowInfo window_info{};
         if (override_state(specification, window_info))
         {
+            if (!specification.output_id().is_set() && output_count > 0)
+            {
+                // Place new windows round-robin on all available outputs
+                specification.output_id() = window_count++ % output_count + 1;
+            }
             specification.state() = mir_window_state_maximized;
             tools.place_and_size_for_state(specification, window_info);
             specification.state() = mir_window_state_fullscreen;
@@ -186,4 +191,16 @@ void FrameWindowManagerPolicy::advise_application_zone_delete(Zone const& applic
 {
     WindowManagementPolicy::advise_application_zone_delete(application_zone);
     application_zones_have_changed = true;
+}
+
+void FrameWindowManagerPolicy::advise_output_create(miral::Output const &output)
+{
+    WindowManagementPolicy::advise_output_create(output);
+    output_count++;
+}
+
+void FrameWindowManagerPolicy::advise_output_delete(miral::Output const &output)
+{
+    WindowManagementPolicy::advise_output_delete(output);
+    output_count--;
 }

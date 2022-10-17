@@ -44,9 +44,14 @@ public:
     void advise_application_zone_create(miral::Zone const& application_zone) override;
     void advise_application_zone_update(miral::Zone const& updated, miral::Zone const& original) override;
     void advise_application_zone_delete(miral::Zone const& application_zone) override;
+    void advise_output_create(miral::Output const &output) override;
+    void advise_output_delete(miral::Output const &output) override;
 
 private:
     bool application_zones_have_changed = false;
+    int output_count = 0;
+    // This only used for modulo, so wrap-around is desired
+    unsigned short window_count = 0;
 };
 
 #endif /* MIRAL_X11_KIOSK_WINDOW_MANAGER_H */
