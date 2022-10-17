@@ -16,8 +16,8 @@
  * Authored By: Alan Griffiths <alan@octopull.co.uk>
  */
 
-#ifndef MIRAL_X11_KIOSK_WINDOW_MANAGER_H
-#define MIRAL_X11_KIOSK_WINDOW_MANAGER_H
+#ifndef FRAME_WINDOW_MANAGER_H
+#define FRAME_WINDOW_MANAGER_H
 
 #include <miral/minimal_window_manager.h>
 
@@ -54,4 +54,4 @@ private:
     unsigned short window_count = 0;
 };
 
-#endif /* MIRAL_X11_KIOSK_WINDOW_MANAGER_H */
+#endif /* FRAME_WINDOW_MANAGER_H */
