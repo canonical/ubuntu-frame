@@ -93,7 +93,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
             if (!specification.output_id().is_set() && output_count > 0)
             {
                 // Place new windows round-robin on all available outputs
-                specification.output_id() = window_count++ % output_count + 1;
+                specification.output_id() = (window_count++ % output_count) + 1;
             }
             specification.state() = mir_window_state_maximized;
             tools.place_and_size_for_state(specification, window_info);
