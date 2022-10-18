@@ -23,6 +23,8 @@
 
 #include <mir_toolkit/events/enums.h>
 
+#include <vector>
+
 using namespace mir::geometry;
 
 class FrameWindowManagerPolicy : public miral::MinimalWindowManager
@@ -49,7 +51,7 @@ public:
 
 private:
     bool application_zones_have_changed = false;
-    int output_count = 0;
+    std::vector<int> outputs = {};
     // This only used for modulo, so wrap-around is desired
     unsigned short window_count = 0;
 };

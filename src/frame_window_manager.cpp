@@ -19,12 +19,15 @@
 #include "frame_window_manager.h"
 
 #include <miral/application_info.h>
+#include <miral/output.h>
 #include <miral/toolkit_event.h>
 #include <miral/window_info.h>
 #include <miral/window_manager_tools.h>
 
 #include <linux/input.h>
 #include <unistd.h>
+
+#include <algorithm>
 
 namespace ms = mir::scene;
 using namespace miral;
@@ -90,10 +93,10 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
         WindowInfo window_info{};
         if (override_state(specification, window_info))
         {
-            if (!specification.output_id().is_set() && output_count > 0)
+            if (!specification.output_id().is_set() && outputs.size() > 0)
             {
                 // Place new windows round-robin on all available outputs
-                specification.output_id() = (window_count++ % output_count) + 1;
+                specification.output_id() = outputs[window_count++ % outputs.size()];
             }
             specification.state() = mir_window_state_maximized;
             tools.place_and_size_for_state(specification, window_info);
@@ -196,11 +199,11 @@ void FrameWindowManagerPolicy::advise_application_zone_delete(Zone const& applic
 void FrameWindowManagerPolicy::advise_output_create(miral::Output const &output)
 {
     WindowManagementPolicy::advise_output_create(output);
-    output_count++;
+    outputs.emplace_back(output.id());
 }
 
 void FrameWindowManagerPolicy::advise_output_delete(miral::Output const &output)
 {
     WindowManagementPolicy::advise_output_delete(output);
-    output_count--;
+    outputs.erase(std::remove(outputs.begin(), outputs.end(), output.id()), outputs.end());
 }
