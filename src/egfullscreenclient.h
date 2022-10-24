@@ -22,6 +22,8 @@
 #include <mir/fd.h>
 #include <mir/geometry/rectangles.h>
 
+#include <miral/version.h>
+
 #include <wayland-client.h>
 
 #include <boost/filesystem.hpp>
@@ -243,7 +245,10 @@ private:
     std::optional<Path> diagnostic_path;
     std::optional<int> diagnostic_wd;
     uint diagnostic_delay;
+
+    #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
     std::unique_ptr<miral::FdHandle> diagnostic_timer_handle;
+    #endif
 
     miral::MirRunner* const runner;
 

@@ -21,6 +21,7 @@
 #include <wayland-client.h>
 
 #include <miral/runner.h>
+#include <mir/log.h>
 
 #include <boost/throw_exception.hpp>
 
@@ -186,13 +187,16 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
 
 void egmde::FullscreenClient::notify_diagnostic_delay_expired()
 {
+    #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
     diagnostic_timer_handle.reset();
     diagnostic_delay_expired = true;
     draw();
+    #endif
 }
 
 void egmde::FullscreenClient::set_diagnostic_delay_alarm()
 {
+    #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
     if (diagnostic_delay == 0)
     {
         diagnostic_delay_expired = true;
@@ -223,7 +227,17 @@ void egmde::FullscreenClient::set_diagnostic_delay_alarm()
         {
             diagnostic_timer_handle = runner->register_fd_handler(mir::Fd{timer_fd}, [this](int){ notify_diagnostic_delay_expired(); });
         }
+        else
+        {
+            BOOST_THROW_EXCEPTION(std::runtime_error(
+                "MirRunner expired before creation of diagnostic delay alarm."));
+        }
     }
+
+    #else
+    mir::log_info("Diagnostic delay only works on Mir >= 3.7.0. This feature will be disabled.");
+    diagnostic_delay_expired = true;
+    #endif
 }
 
 auto inline egmde::FullscreenClient::should_draw_crash() -> bool
