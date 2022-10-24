@@ -189,9 +189,10 @@ void egmde::FullscreenClient::notify_diagnostic_delay_expired()
 {
     #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
     diagnostic_timer_handle.reset();
+    #endif
+
     diagnostic_delay_expired = true;
     draw();
-    #endif
 }
 
 void egmde::FullscreenClient::set_diagnostic_delay_alarm()
@@ -199,7 +200,7 @@ void egmde::FullscreenClient::set_diagnostic_delay_alarm()
     #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
     if (diagnostic_delay == 0)
     {
-        diagnostic_delay_expired = true;
+        notify_diagnostic_delay_expired();
     }
     else
     {
@@ -236,7 +237,7 @@ void egmde::FullscreenClient::set_diagnostic_delay_alarm()
 
     #else
     mir::log_info("Diagnostic delay only works on Mir >= 3.7.0. This feature will be disabled.");
-    diagnostic_delay_expired = true;
+    notify_diagnostic_delay_expired();
     #endif
 }
 
