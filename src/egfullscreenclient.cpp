@@ -148,8 +148,6 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     runner{runner},
     registry{nullptr, [](auto){}}
 {
-    set_diagnostic_delay_alarm();
-
     // Check inotify initializaiton
     if (diagnostic_signal < 0)
     {
@@ -183,6 +181,8 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     };
 
     wl_registry_add_listener(registry.get(), &registry_listener, this);
+
+    set_diagnostic_delay_alarm();
 }
 
 void egmde::FullscreenClient::notify_diagnostic_delay_expired()
