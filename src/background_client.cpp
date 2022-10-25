@@ -173,7 +173,7 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     {
         auto const relative_path = boost::filesystem::current_path().append(option);
 
-        if (exists(relative_path))
+        if (exists(relative_path.parent_path()))
         {
             diagnostic_path = relative_path;
             return;
