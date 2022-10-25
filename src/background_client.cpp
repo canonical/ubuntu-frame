@@ -180,7 +180,7 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
         }
 
         BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Diagnostic path (" + option_path.parent_path().string() + ") does not exist"));
+            "Diagnostic path (" + relative_path.parent_path().string() + ") does not exist"));
     }
 }
 
