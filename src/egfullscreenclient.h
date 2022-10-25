@@ -22,6 +22,8 @@
 #include <mir/fd.h>
 #include <mir/geometry/rectangles.h>
 
+#include <miral/version.h>
+
 #include <wayland-client.h>
 
 #include <boost/filesystem.hpp>
@@ -35,6 +37,11 @@
 #include <optional>
 #include <unordered_map>
 
+namespace miral { 
+    class MirRunner; 
+    class FdHandle; 
+}
+
 namespace egmde
 {
 class FullscreenClient
@@ -42,7 +49,7 @@ class FullscreenClient
 public:
     using Path = boost::filesystem::path;
 
-    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path);
+    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, miral::MirRunner* runner);
 
     virtual ~FullscreenClient();
 
@@ -226,14 +233,27 @@ private:
     void seat_capabilities(wl_seat* seat, uint32_t capabilities);
     void seat_name(wl_seat* seat, const char* name);
 
+    void set_diagnostic_delay_alarm();
+    void notify_diagnostic_delay_expired();
+
+    auto inline should_draw_crash() -> bool;
+
     std::unique_ptr<wl_registry, decltype(&wl_registry_destroy)> registry;
 
     std::unordered_map<uint32_t, std::unique_ptr<Output>> bound_outputs;
 
     std::optional<Path> diagnostic_path;
     std::optional<int> diagnostic_wd;
+    uint diagnostic_delay;
 
-    bool draws_crash = false;
+    #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
+    std::unique_ptr<miral::FdHandle> diagnostic_timer_handle;
+    #endif
+
+    miral::MirRunner* const runner;
+
+    bool diagnostic_delay_expired = false;
+    bool diagnostic_exists = false;
 };
 }
 

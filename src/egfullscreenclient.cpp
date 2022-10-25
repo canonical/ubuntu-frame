@@ -20,12 +20,16 @@
 
 #include <wayland-client.h>
 
+#include <miral/runner.h>
+#include <mir/log.h>
+
 #include <boost/throw_exception.hpp>
 
 #include <fcntl.h>
 #include <sys/eventfd.h>
 #include <sys/mman.h>
 #include <sys/poll.h>
+#include <sys/timerfd.h>
 #include <cstdlib>
 #include <climits>
 
@@ -135,11 +139,13 @@ void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_ou
     output->on_done(*output);
 }
 
-egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path) :
+egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, miral::MirRunner* runner) :
     flush_signal{::eventfd(0, EFD_SEMAPHORE)},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     diagnostic_signal{inotify_init()},
     diagnostic_path{diagnostic_path},
+    diagnostic_delay{diagnostic_delay},
+    runner{runner},
     registry{nullptr, [](auto){}}
 {
     // Check inotify initializaiton
@@ -156,6 +162,8 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
             diagnostic_path->parent_path().c_str(),
             IN_CLOSE_WRITE | IN_CREATE | IN_DELETE
         );
+
+        diagnostic_exists = true;
     }
 
     if (shutdown_signal == mir::Fd::invalid)
@@ -173,6 +181,69 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     };
 
     wl_registry_add_listener(registry.get(), &registry_listener, this);
+
+    set_diagnostic_delay_alarm();
+}
+
+void egmde::FullscreenClient::notify_diagnostic_delay_expired()
+{
+    #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
+    diagnostic_timer_handle.reset();
+    #endif
+
+    diagnostic_delay_expired = true;
+    draw();
+}
+
+void egmde::FullscreenClient::set_diagnostic_delay_alarm()
+{
+    #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
+    if (diagnostic_delay == 0)
+    {
+        notify_diagnostic_delay_expired();
+    }
+    else
+    {
+        auto const timer_fd = timerfd_create(CLOCK_REALTIME, 0);
+
+        if (timer_fd == -1)
+        {
+            BOOST_THROW_EXCEPTION(std::runtime_error(
+                "Initializing diagnostic delay timer failed"));
+        }
+
+        auto const spec = itimerspec
+        {
+            { 0, 0 },               // Timer interval
+            { diagnostic_delay, 0 } // Initial expiration
+        };
+
+        if (timerfd_settime(timer_fd, 0, &spec, NULL) == -1)
+        {
+            BOOST_THROW_EXCEPTION(std::runtime_error(
+                "Setting diagnostic delay timer failed"));
+        }
+
+        if (runner)
+        {
+            diagnostic_timer_handle = runner->register_fd_handler(mir::Fd{timer_fd}, [this](int){ notify_diagnostic_delay_expired(); });
+        }
+        else
+        {
+            BOOST_THROW_EXCEPTION(std::runtime_error(
+                "MirRunner expired before creation of diagnostic delay alarm."));
+        }
+    }
+
+    #else
+    mir::log_info("Diagnostic delay only works on Mir >= 3.7.0. This feature will be disabled.");
+    notify_diagnostic_delay_expired();
+    #endif
+}
+
+auto inline egmde::FullscreenClient::should_draw_crash() -> bool
+{
+    return diagnostic_delay_expired && diagnostic_exists;
 }
 
 void egmde::FullscreenClient::on_output_changed(Output const* output)
@@ -188,7 +259,7 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
                 buffer = nullptr;
             }
 
-            draw_screen(p->second, draws_crash);
+            draw_screen(p->second, should_draw_crash());
         }
 
         auto i = begin(hidden_outputs);
@@ -199,7 +270,7 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
             if (!display_area.bounding_rectangle().overlaps(screen_rect))
             {
                 display_area.add(screen_rect);
-                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, draws_crash);
+                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
                 break;
             }
 
@@ -249,7 +320,7 @@ void egmde::FullscreenClient::on_output_gone(Output const* output)
             if (!display_area.bounding_rectangle().overlaps(screen_rect))
             {
                 display_area.add(screen_rect);
-                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, draws_crash);
+                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
                 break;
             }
 
@@ -276,7 +347,7 @@ void egmde::FullscreenClient::on_new_output(Output const* output)
         if (!display_area.bounding_rectangle().overlaps(screen_rect))
         {
             display_area.add(screen_rect);
-            draw_screen(outputs.insert({output, SurfaceInfo{output}}).first->second, draws_crash);
+            draw_screen(outputs.insert({output, SurfaceInfo{output}}).first->second, should_draw_crash());
         }
         else
         {
@@ -293,7 +364,7 @@ void egmde::FullscreenClient::draw()
 
         for (auto& output : outputs)
         {
-            draw_screen(output.second, draws_crash);
+            draw_screen(output.second, should_draw_crash());
         }
     }
     wl_display_flush(display);
@@ -488,13 +559,13 @@ void egmde::FullscreenClient::run(wl_display* display)
             if (ib->mask & (IN_CLOSE_WRITE | IN_CREATE)
                 && ib->name == diagnostic_path.value_or("").filename().string())
             {
-                draws_crash = true;
+                diagnostic_exists = true;
                 draw();
             }
             else if (ib->mask & IN_DELETE
                 && ib->name == diagnostic_path.value_or("").filename().string())
             {
-                draws_crash = false;
+                diagnostic_exists = false;
                 draw();
             }
         }

@@ -16,9 +16,9 @@
  * Authored by: Alan Griffiths <alan@octopull.co.uk>
  */
 
+#include "background_client.h"
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
-#include "background_client.h"
 
 #include <miral/configuration_option.h>
 #include <miral/display_configuration.h>
@@ -37,7 +37,7 @@ int main(int argc, char const* argv[])
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
-    BackgroundClient background_client;
+    BackgroundClient background_client(&runner);
 
     runner.add_stop_callback([&] { background_client.stop(); });
     
@@ -56,6 +56,8 @@ int main(int argc, char const* argv[])
                                "diagnostic-text",       "Colour of diagnostic screen text RGB", "0xffffff"},
             ConfigurationOption{[&] (auto& option) { background_client.set_diagnostic_path(option);},
                                "diagnostic-path",  "Path (including filename) of diagnostic file", ""},
+            ConfigurationOption{[&] (int option) { background_client.set_diagnostic_delay(option);},
+                                "diagnostic-delay", "Delay time (in seconds) before displaying diagnostic screen", 0},
             StartupInternalClient{std::ref(background_client)},
             ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
                                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },

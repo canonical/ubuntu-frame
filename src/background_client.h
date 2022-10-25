@@ -35,14 +35,19 @@ struct wl_display;
 namespace geom = mir::geometry;
 using Colour = unsigned char[4];
 
+namespace miral { class MirRunner; }
+
 class BackgroundClient
 {
 public:
+    BackgroundClient(miral::MirRunner* runner);
+
     void set_wallpaper_top_colour(std::string const& option);
     void set_wallpaper_bottom_colour(std::string const& option);
     void set_crash_background_colour(std::string const& option);
     void set_crash_text_colour(std::string const& option);
     void set_diagnostic_path(std::string const& option);
+    void set_diagnostic_delay(int option);
 
     /// Renders background as a gradient from top_colour to bottom_colour
     static void render_background(
@@ -64,6 +69,8 @@ public:
     void stop();
 
 private:
+    miral::MirRunner* const runner;
+
     std::mutex mutable mutex;
 
     Colour wallpaper_top_colour = {127, 127, 127, 255};
@@ -73,6 +80,8 @@ private:
     
     uint x_margin_percent = 5;
     uint y_margin_percent = 5;
+
+    uint diagnostic_delay = 0;
 
     std::optional<boost::filesystem::path> diagnostic_path;
 

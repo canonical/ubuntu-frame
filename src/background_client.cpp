@@ -46,16 +46,23 @@ auto get_font_path() -> Path
 }
 } // namespace
 
+BackgroundClient::BackgroundClient(miral::MirRunner* runner)
+: runner{runner}
+{
+}
+
 struct BackgroundClient::Self : egmde::FullscreenClient
 {
 public:
     Self(
         wl_display* display,
+        miral::MirRunner* runner,
         Colour const& wallpaper_top_colour,
         Colour const& wallpaper_bottom_colour,
         Colour const& crash_background_colour,
         Colour const& crash_text_colour,
-        std::optional<Path> diagnostic_path);
+        std::optional<Path> diagnostic_path,
+        uint diagnostic_delay);
 
     void draw_screen(SurfaceInfo& info, bool draws_crash) const override;
     
@@ -70,6 +77,8 @@ public:
     const std::optional<Path> diagnostic_path;
 
 private:
+    miral::MirRunner* const runner;
+
     const uint x_margin_percent = 5;
     const uint y_margin_percent = 5;
 
@@ -176,6 +185,19 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     }
 }
 
+void BackgroundClient::set_diagnostic_delay(int delay)
+{
+    if (delay >= 0)
+    {
+        diagnostic_delay = delay;
+    }
+    else
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Diagnostic delay time (" + std::to_string(delay) + ") must not be negative"));
+    }
+}
+
 void BackgroundClient::render_background(
     uint32_t width,
     uint32_t height,
@@ -215,11 +237,13 @@ void BackgroundClient::operator()(wl_display* display)
 {
     auto client = std::make_shared<Self>(
         display, 
+        runner,
         wallpaper_top_colour, 
         wallpaper_bottom_colour, 
         crash_background_colour,
         crash_text_colour,
-        diagnostic_path);
+        diagnostic_path,
+        diagnostic_delay);
     {
         std::lock_guard<decltype(mutex)> lock{mutex};
         self = client;
@@ -238,12 +262,15 @@ void BackgroundClient::operator()(std::weak_ptr<mir::scene::Session> const& /*se
 
 BackgroundClient::Self::Self(
     wl_display* display,
+    miral::MirRunner* runner,
     Colour const& wallpaper_top_colour,
     Colour const& wallpaper_bottom_colour,
     Colour const& crash_background_colour,
     Colour const& crash_text_colour,
-    std::optional<Path> diagnostic_path)
-    : FullscreenClient(display, diagnostic_path),
+    std::optional<Path> diagnostic_path,
+    uint diagnostic_delay)
+    : FullscreenClient(display, diagnostic_path, diagnostic_delay, runner),
+      runner{runner},
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
@@ -349,9 +376,8 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
         file_exists = false;
     }
 
-    if (draws_crash || file_exists)
+    if (draws_crash && file_exists)
     {
-        draws_crash = true;
         render_background(width, height, buffer, crash_background_colour);
         render_text(width, height, buffer);
     }
