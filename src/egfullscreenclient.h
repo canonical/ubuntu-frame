@@ -260,7 +260,7 @@ private:
     miral::MirRunner* const runner;
     WindowManagerObserver* const window_manager_observer;
 
-    bool diagnostic_delay_expired = false;
+    bool diagnostic_wants_to_draw = false;
     bool diagnostic_exists = false;
 };
 }

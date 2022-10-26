@@ -191,11 +191,19 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
 
 void egmde::FullscreenClient::notify_diagnostic_delay_expired()
 {
+    diagnostic_wants_to_draw = true;
+
     #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
+    if (window_manager_observer->get_currently_open_windows() > 0)
+    {
+        // Don't draw diagnostic if at least one window left open
+        diagnostic_wants_to_draw = false;
+    }
+
+    // Handle is dropped even if expired since closing a window will restart the delay
     diagnostic_timer_handle.reset();
     #endif
 
-    diagnostic_delay_expired = true;
     draw();
 }
 
@@ -247,7 +255,7 @@ void egmde::FullscreenClient::set_diagnostic_delay_alarm()
 
 auto inline egmde::FullscreenClient::should_draw_crash() -> bool
 {
-    return diagnostic_delay_expired && diagnostic_exists;
+    return diagnostic_wants_to_draw && diagnostic_exists;
 }
 
 void egmde::FullscreenClient::on_output_changed(Output const* output)
