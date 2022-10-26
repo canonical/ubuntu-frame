@@ -79,6 +79,73 @@ bool override_state(WindowSpecification& spec, WindowInfo const& window_info)
 }
 }
 
+auto WindowCount::increment_opened() -> unsigned short
+{
+    return total_opened++;
+}
+
+auto WindowCount::increment_closed() -> unsigned short
+{
+    return total_closed++;
+}
+
+auto WindowCount::currently_open() const -> unsigned short
+{
+    return total_opened - total_closed;
+}
+
+WindowManagerObserver::WindowManagerObserver()
+{
+}
+
+void WindowManagerObserver::add_window_opened_callback(std::function<void()> const& callback)
+{
+    window_opened_callbacks.push_back(callback);
+}
+
+void WindowManagerObserver::add_window_closed_callback(std::function<void()> const& callback)
+{
+    window_closed_callbacks.push_back(callback);
+}
+
+void WindowManagerObserver::set_weak_window_count(std::shared_ptr<WindowCount> window_count)
+{
+    weak_window_count = window_count;
+}
+
+auto WindowManagerObserver::get_currently_open_windows() const -> unsigned int
+{
+    if (auto const window_count = weak_window_count.lock())
+    {
+        return window_count->currently_open();
+    }
+
+    return 0;
+}
+
+void WindowManagerObserver::process_window_opened_callbacks() const
+{
+    for (auto const& callback : window_opened_callbacks)
+    {
+        callback();
+    }
+}
+
+void WindowManagerObserver::process_window_closed_callbacks() const
+{
+    for (auto const& callback : window_closed_callbacks)
+    {
+        callback();
+    }
+}
+
+FrameWindowManagerPolicy::FrameWindowManagerPolicy(WindowManagerTools const& tools, WindowManagerObserver& window_manager_observer)
+    : MinimalWindowManager{tools},
+      window_manager_observer{window_manager_observer}
+{
+    window_manager_observer.set_weak_window_count(window_count);
+}
+
 bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* event)
 {
     return false;
@@ -87,6 +154,8 @@ bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* eve
 auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info, WindowSpecification const& request)
 -> WindowSpecification
 {
+    window_manager_observer.process_window_opened_callbacks();
+
     WindowSpecification specification = MinimalWindowManager::place_new_window(app_info, request);
 
     {
@@ -96,7 +165,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
             if (!specification.output_id().is_set() && outputs.size() > 0)
             {
                 // Place new windows round-robin on all available outputs
-                specification.output_id() = outputs[window_count++ % outputs.size()];
+                specification.output_id() = outputs[window_count->increment_opened() % outputs.size()];
             }
             specification.state() = mir_window_state_maximized;
             tools.place_and_size_for_state(specification, window_info);
@@ -113,6 +182,12 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
     }
 
     return specification;
+}
+
+void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& /*window_info*/)
+{
+    window_count->increment_closed();
+    window_manager_observer.process_window_closed_callbacks();
 }
 
 void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, WindowSpecification const& modifications)

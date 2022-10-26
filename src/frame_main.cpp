@@ -39,6 +39,9 @@ int main(int argc, char const* argv[])
 
     BackgroundClient background_client(&runner);
 
+    WindowManagerObserver window_manager_observer{};
+    background_client.set_window_manager_observer(&window_manager_observer);
+
     runner.add_stop_callback([&] { background_client.stop(); });
     
     return runner.run_with(
@@ -61,7 +64,7 @@ int main(int argc, char const* argv[])
             StartupInternalClient{std::ref(background_client)},
             ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
                                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
-            set_window_management_policy<FrameWindowManagerPolicy>(),
+            set_window_management_policy<FrameWindowManagerPolicy>(window_manager_observer),
             Keymap{}
         });
 }

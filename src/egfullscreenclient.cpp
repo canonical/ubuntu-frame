@@ -17,6 +17,7 @@
  */
 
 #include "egfullscreenclient.h"
+#include "frame_window_manager.h"
 
 #include <wayland-client.h>
 
@@ -139,13 +140,14 @@ void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_ou
     output->on_done(*output);
 }
 
-egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, miral::MirRunner* runner) :
+egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, miral::MirRunner* runner, WindowManagerObserver* window_manager_observer) :
     flush_signal{::eventfd(0, EFD_SEMAPHORE)},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     diagnostic_signal{inotify_init()},
     diagnostic_path{diagnostic_path},
     diagnostic_delay{diagnostic_delay},
     runner{runner},
+    window_manager_observer{window_manager_observer},
     registry{nullptr, [](auto){}}
 {
     // Check inotify initializaiton
@@ -183,6 +185,8 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     wl_registry_add_listener(registry.get(), &registry_listener, this);
 
     set_diagnostic_delay_alarm();
+    window_manager_observer->add_window_opened_callback([this]() { diagnostic_wants_to_draw = false; draw(); });
+    window_manager_observer->add_window_closed_callback([this]() { set_diagnostic_delay_alarm(); });
 }
 
 void egmde::FullscreenClient::notify_diagnostic_delay_expired()

@@ -37,11 +37,14 @@ using Colour = unsigned char[4];
 
 namespace miral { class MirRunner; }
 
+class WindowManagerObserver;
+
 class BackgroundClient
 {
 public:
     BackgroundClient(miral::MirRunner* runner);
 
+    void set_window_manager_observer(WindowManagerObserver* window_manager_observer);
     void set_wallpaper_top_colour(std::string const& option);
     void set_wallpaper_bottom_colour(std::string const& option);
     void set_crash_background_colour(std::string const& option);
@@ -70,6 +73,7 @@ public:
 
 private:
     miral::MirRunner* const runner;
+    WindowManagerObserver* window_manager_observer;
 
     std::mutex mutable mutex;
 
