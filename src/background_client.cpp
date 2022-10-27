@@ -379,17 +379,7 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
 
     auto buffer = static_cast<unsigned char*>(info.content_area);
 
-    // Don't draw diagnostic background if file is empty or font not found
-    bool file_exists;
-    if (boost::filesystem::exists(diagnostic_path.value_or("")))
-    {
-        file_exists = boost::filesystem::file_size(diagnostic_path.value());
-    }
-    else
-    {
-        file_exists = false;
-    }
-
+    bool file_exists = boost::filesystem::is_regular_file(diagnostic_path.value_or(""));
     if (draws_crash && file_exists)
     {
         render_background(width, height, buffer, crash_background_colour);
