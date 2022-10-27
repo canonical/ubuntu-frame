@@ -165,7 +165,8 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     }
     
     auto option_path = Path(option);
-    if (boost::filesystem::is_regular_file(option_path))
+    // Check if file's parent dir exists, then check that the file is not a directory
+    if (exists(option_path.parent_path()) && !boost::filesystem::is_directory(option_path))
     {
         diagnostic_path = option_path;
     }
@@ -173,7 +174,7 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     {
         auto const relative_path = boost::filesystem::current_path().append(option);
 
-        if (boost::filesystem::is_regular_file(relative_path))
+        if (exists(relative_path.parent_path()) && !boost::filesystem::is_directory(relative_path))
         {
             diagnostic_path = relative_path;
             return;
