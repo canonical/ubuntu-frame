@@ -32,15 +32,13 @@ int main(int argc, char const* argv[])
 {
     using namespace miral;
     MirRunner runner{argc, argv};
+    WindowManagerObserver window_manager_observer{};
 
     DisplayConfiguration display_config{runner};
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
-    BackgroundClient background_client(&runner);
-
-    WindowManagerObserver window_manager_observer{};
-    background_client.set_window_manager_observer(&window_manager_observer);
+    BackgroundClient background_client(&runner, &window_manager_observer);
 
     runner.add_stop_callback([&] { background_client.stop(); });
     

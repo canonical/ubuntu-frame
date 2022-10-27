@@ -46,8 +46,9 @@ auto get_font_path() -> Path
 }
 } // namespace
 
-BackgroundClient::BackgroundClient(miral::MirRunner* runner)
-: runner{runner}
+BackgroundClient::BackgroundClient(miral::MirRunner* runner, WindowManagerObserver* window_manager_observer)
+: runner{runner},
+  window_manager_observer{window_manager_observer}
 {
 }
 
@@ -124,11 +125,6 @@ TextRenderer::~TextRenderer()
         mir::log_warning("Failed to uninitialize FreeType with error %d", error);
     }
     library = nullptr;
-}
-
-void BackgroundClient::set_window_manager_observer(WindowManagerObserver* window_manager_observer)
-{
-    this->window_manager_observer = window_manager_observer;
 }
 
 void BackgroundClient::set_colour(std::string const& option, Colour& colour)
