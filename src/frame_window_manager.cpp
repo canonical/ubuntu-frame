@@ -154,8 +154,6 @@ bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* eve
 auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info, WindowSpecification const& request)
 -> WindowSpecification
 {
-    window_manager_observer.process_window_opened_callbacks();
-
     WindowSpecification specification = MinimalWindowManager::place_new_window(app_info, request);
 
     {
@@ -179,6 +177,10 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
     if (pid_of(app_info.application()) == getpid())
     {
         specification.depth_layer() = mir_depth_layer_background;
+    }
+    else
+    {
+        window_manager_observer.process_window_opened_callbacks();
     }
 
     return specification;
