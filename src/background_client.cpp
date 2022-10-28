@@ -175,16 +175,14 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
         return;
     }
     
-    auto option_path = Path(option);
-    if (exists(option_path.parent_path()))
-    {
-        diagnostic_path = option_path;
-    }
-    else
+    auto path = boost::filesystem::canonical(option);
+    if (boost::filesystem::is_directory(path))
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Diagnostic path (" + option_path.parent_path().string() + ") does not exist"));
+            "Target of diagnostic path (" + path.string() + ") is a directory when it should be a file"));
     }
+
+    diagnostic_path = path;
 }
 
 void BackgroundClient::set_diagnostic_delay(int delay)
