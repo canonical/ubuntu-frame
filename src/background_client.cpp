@@ -46,8 +46,9 @@ auto get_font_path() -> Path
 }
 } // namespace
 
-BackgroundClient::BackgroundClient(miral::MirRunner* runner)
-: runner{runner}
+BackgroundClient::BackgroundClient(miral::MirRunner* runner, WindowManagerObserver* window_manager_observer)
+: runner{runner},
+  window_manager_observer{window_manager_observer}
 {
 }
 
@@ -57,6 +58,7 @@ public:
     Self(
         wl_display* display,
         miral::MirRunner* runner,
+        WindowManagerObserver* window_manager_observer,
         Colour const& wallpaper_top_colour,
         Colour const& wallpaper_bottom_colour,
         Colour const& crash_background_colour,
@@ -238,6 +240,7 @@ void BackgroundClient::operator()(wl_display* display)
     auto client = std::make_shared<Self>(
         display, 
         runner,
+        window_manager_observer,
         wallpaper_top_colour, 
         wallpaper_bottom_colour, 
         crash_background_colour,
@@ -263,13 +266,14 @@ void BackgroundClient::operator()(std::weak_ptr<mir::scene::Session> const& /*se
 BackgroundClient::Self::Self(
     wl_display* display,
     miral::MirRunner* runner,
+    WindowManagerObserver* window_manager_observer,
     Colour const& wallpaper_top_colour,
     Colour const& wallpaper_bottom_colour,
     Colour const& crash_background_colour,
     Colour const& crash_text_colour,
     std::optional<Path> diagnostic_path,
     uint diagnostic_delay)
-    : FullscreenClient(display, diagnostic_path, diagnostic_delay, runner),
+    : FullscreenClient(display, diagnostic_path, diagnostic_delay, runner, window_manager_observer),
       runner{runner},
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},

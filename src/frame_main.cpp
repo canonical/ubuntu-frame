@@ -32,12 +32,13 @@ int main(int argc, char const* argv[])
 {
     using namespace miral;
     MirRunner runner{argc, argv};
+    WindowManagerObserver window_manager_observer{};
 
     DisplayConfiguration display_config{runner};
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
-    BackgroundClient background_client(&runner);
+    BackgroundClient background_client(&runner, &window_manager_observer);
 
     runner.add_stop_callback([&] { background_client.stop(); });
     
@@ -61,7 +62,7 @@ int main(int argc, char const* argv[])
             StartupInternalClient{std::ref(background_client)},
             ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
                                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
-            set_window_management_policy<FrameWindowManagerPolicy>(),
+            set_window_management_policy<FrameWindowManagerPolicy>(window_manager_observer),
             Keymap{}
         });
 }

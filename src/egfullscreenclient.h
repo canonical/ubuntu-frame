@@ -42,6 +42,8 @@ namespace miral {
     class FdHandle; 
 }
 
+class WindowManagerObserver;
+
 namespace egmde
 {
 class FullscreenClient
@@ -49,7 +51,12 @@ class FullscreenClient
 public:
     using Path = boost::filesystem::path;
 
-    explicit FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, miral::MirRunner* runner);
+    explicit FullscreenClient(
+        wl_display* display, 
+        std::optional<Path> diagnostic_path,
+        uint diagnostic_delay,
+        miral::MirRunner* runner,
+        WindowManagerObserver* window_manager_observer);
 
     virtual ~FullscreenClient();
 
@@ -251,8 +258,9 @@ private:
     #endif
 
     miral::MirRunner* const runner;
+    WindowManagerObserver* const window_manager_observer;
 
-    bool diagnostic_delay_expired = false;
+    bool diagnostic_wants_to_draw = false;
     bool diagnostic_exists = false;
 };
 }
