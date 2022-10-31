@@ -195,6 +195,12 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
             "Parent of diagnostic path is not a directory." + formatted_path_error));
     }
 
+    if (!exists(path.parent_path()))
+    {
+        BOOST_THROW_EXCEPTION(std::runtime_error(
+            "Parent of diagnostic path does not exist." + formatted_path_error));
+    }
+
     diagnostic_path = path;
 }
 
