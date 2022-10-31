@@ -176,16 +176,23 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
     }
     
     auto const path = boost::filesystem::absolute(option);
+
+    auto formatted_path_error = "\n Inputted path: " + option;
+    if (path.string() != option)
+    {
+        formatted_path_error.append("\n Resolved path: " + path.string());
+    }
+
     if (boost::filesystem::is_directory(path))
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Target of diagnostic path (" + path.string() + ") is a directory when it should be a file"));
+            "Target of diagnostic path is a directory when it should be a file." + formatted_path_error));
     }
     
     if (boost::filesystem::is_regular_file(path.parent_path()))
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Parent of diagnostic path (" + path.parent_path().string() + ") is not a directory"));
+            "Parent of diagnostic path is not a directory." + formatted_path_error));
     }
 
     diagnostic_path = path;
