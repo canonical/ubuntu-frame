@@ -193,7 +193,6 @@ void egmde::FullscreenClient::notify_diagnostic_delay_expired()
 {
     diagnostic_wants_to_draw = true;
 
-    #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
     if (window_manager_observer->get_currently_open_windows() > 0)
     {
         // Don't draw diagnostic if at least one window left open
@@ -202,14 +201,12 @@ void egmde::FullscreenClient::notify_diagnostic_delay_expired()
 
     // Handle is dropped even if expired since closing a window will restart the delay
     diagnostic_timer_handle.reset();
-    #endif
 
     draw();
 }
 
 void egmde::FullscreenClient::set_diagnostic_delay_alarm()
 {
-    #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 7, 0)
     if (diagnostic_delay == 0)
     {
         notify_diagnostic_delay_expired();
@@ -246,11 +243,6 @@ void egmde::FullscreenClient::set_diagnostic_delay_alarm()
                 "MirRunner expired before creation of diagnostic delay alarm."));
         }
     }
-
-    #else
-    mir::log_info("Diagnostic delay only works on Mir >= 3.7.0. This feature will be disabled.");
-    notify_diagnostic_delay_expired();
-    #endif
 }
 
 auto inline egmde::FullscreenClient::should_draw_crash() -> bool
