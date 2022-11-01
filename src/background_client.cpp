@@ -183,7 +183,7 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
         formatted_path_error.append("\n Resolved path: " + path.string());
     }
 
-    if (boost::filesystem::is_directory(path))
+    if (!boost::filesystem::is_regular_file(path))
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
             "Target of diagnostic path is a directory when it should be a file." + formatted_path_error));
