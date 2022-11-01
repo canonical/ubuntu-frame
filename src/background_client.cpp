@@ -189,13 +189,13 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
             "Parent of diagnostic path does not exist." + formatted_path_error));
     }
 
-    if (boost::filesystem::is_regular_file(path.parent_path()))
+    if (is_regular_file(path.parent_path()))
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
             "Parent of diagnostic path is not a directory." + formatted_path_error));
     }
 
-    if (!boost::filesystem::is_regular_file(path))
+    if (!is_regular_file(path))
     {
         BOOST_THROW_EXCEPTION(std::runtime_error(
             "Target of diagnostic path is a directory when it should be a file." + formatted_path_error));
