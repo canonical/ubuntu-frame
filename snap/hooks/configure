@@ -74,6 +74,7 @@ config_entry "vt"                 "4"                                   "Virtual
 config_entry "cursor"             "auto"                                "Mouse pointer to use (auto|null|software)"
 config_entry "env-hacks"          "MIR_MESA_KMS_DISABLE_MODESET_PROBE"  "As Frame HAS to run mesa-kms we can safely override the probe for KMS everywhere"
 config_entry "x11-window-title"   "Ubuntu Frame"                        "Default window title when run as Mir on X"
+config_entry "diagnostic-delay"   "5"                                   "Default delay before showing diagnostic screen"
 
 if [ -e /sys/kernel/security/apparmor/profiles ]; then
   config_entry "authorise-without-apparmor" "false"                     "System has AppArmor, try to use it"
