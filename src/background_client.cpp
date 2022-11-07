@@ -58,11 +58,23 @@ struct TextRenderer::DiagnosticText
 
 auto TextRenderer::DiagnosticText::from(Path const& path) -> DiagnosticText
 {
+    static const int max_lines = 150;
+    static const int max_line_length = 250;
+
+
     fs::ifstream in{path};
     std::vector<std::string> lines;
     std::string line;
-    while (getline(in, line))
+    for (int line_count = 0; getline(in, line); ++line_count)
     {
+        if (line_count > max_lines)
+            break;
+
+        if (line.size() > max_line_length)
+        {
+            line.erase(max_line_length);
+        }
+
         lines.push_back(std::move(line));
     }
 
