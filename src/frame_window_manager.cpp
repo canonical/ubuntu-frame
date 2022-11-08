@@ -84,7 +84,7 @@ auto is_application(WindowInfo const& window_info)
     {
     case mir_depth_layer_application:
     case mir_depth_layer_always_on_top:
-        return window_info.state() == mir_window_state_attached;
+        return window_info.state() != mir_window_state_attached;
 
     default:;
         return false;
@@ -200,9 +200,8 @@ void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& window_inf
     if (is_application(window_info))
     {
         window_count->increment_closed();
+        window_manager_observer.process_window_closed_callbacks();
     }
-
-    window_manager_observer.process_window_closed_callbacks();
 }
 
 void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, WindowSpecification const& modifications)
