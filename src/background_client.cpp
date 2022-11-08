@@ -30,7 +30,8 @@
 
 #include <mir/fatal.h>
 
-using Path = boost::filesystem::path;
+namespace fs = boost::filesystem;
+using Path = fs::path;
 
 namespace
 {
@@ -45,6 +46,40 @@ auto get_font_path() -> Path
     return ubuntu_font;
 }
 } // namespace
+
+struct TextRenderer::DiagnosticText
+{
+    auto static from(Path const& path) -> DiagnosticText;
+
+    explicit DiagnosticText(std::vector<std::string> && lines) : lines{std::move(lines)} {}
+
+    std::vector<std::string> const lines;
+};
+
+auto TextRenderer::DiagnosticText::from(Path const& path) -> DiagnosticText
+{
+    static const int max_lines = 150;
+    static const int max_line_length = 250;
+
+
+    fs::ifstream in{path};
+    std::vector<std::string> lines;
+    std::string line;
+    for (int line_count = 0; getline(in, line); ++line_count)
+    {
+        if (line_count > max_lines)
+            break;
+
+        if (line.size() > max_line_length)
+        {
+            line.erase(max_line_length);
+        }
+
+        lines.push_back(std::move(line));
+    }
+
+    return DiagnosticText{std::move(lines)};
+}
 
 BackgroundClient::BackgroundClient(miral::MirRunner* runner, WindowManagerObserver* window_manager_observer)
 : runner{runner},
@@ -175,7 +210,7 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
         return;
     }
     
-    auto const path = boost::filesystem::absolute(option);
+    auto const path = fs::absolute(option);
 
     auto formatted_path_error = "\n Inputted path: " + option;
     if (path.string() != option)
@@ -309,8 +344,8 @@ void BackgroundClient::Self::render_text(
     unsigned char* buffer) const
 {   
     auto size = geom::Size{width, height};
-    
-    auto stream = boost::filesystem::ifstream(diagnostic_path.value());
+
+    auto const diagnostic = TextRenderer::DiagnosticText::from(diagnostic_path.value());
 
     auto const x_margin = width * (x_margin_percent / 100.0);
     auto const y_margin = height * (y_margin_percent / 100.0);
@@ -318,27 +353,24 @@ void BackgroundClient::Self::render_text(
     auto const x_diff = width - x_margin;
     auto const y_diff = height - y_margin;
     
-    auto const max_font_height_by_width = text_renderer.get_max_font_height_by_width(stream, x_diff);
-    auto const max_font_height_by_height = text_renderer.get_max_font_height_by_height(stream, y_diff);
+    auto const max_font_height_by_width = text_renderer.get_max_font_height_by_width(diagnostic, x_diff);
+    auto const max_font_height_by_height = text_renderer.get_max_font_height_by_height(diagnostic, y_diff);
 
     auto const height_pixels = std::min(max_font_height_by_width, max_font_height_by_height);
     auto const line_height = height_pixels + (height_pixels / text_renderer.y_kerning);
 
-    auto const num_lines = text_renderer.get_num_lines(stream);
+    auto const num_lines = diagnostic.lines.size();
 
-    auto const x_offset = (width - text_renderer.get_max_line_width(stream, height_pixels)) / 2;
+    auto const x_offset = (width - text_renderer.get_max_line_width(diagnostic, height_pixels)) / 2;
     auto const y_offset = (height - (num_lines * line_height)) / 2;
     auto top_left = geom::Point{x_offset, y_offset};
 
-    std::string line;
-    while (getline(stream, line))
+    for (auto const& line : diagnostic.lines)
     {
         text_renderer.render(buffer, size, line, top_left, geom::Height{height_pixels}, crash_text_colour);
         auto const new_top_left = geom::Point{top_left.x, top_left.y.as_int() + line_height};
         top_left = new_top_left;
     }
-
-    stream.close();
 }
 
 void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) const
@@ -388,9 +420,9 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
 
     // Don't draw diagnostic background if file is empty or font not found
     bool file_exists;
-    if (boost::filesystem::exists(diagnostic_path.value_or("")))
+    if (fs::exists(diagnostic_path.value_or("")))
     {
-        file_exists = boost::filesystem::file_size(diagnostic_path.value());
+        file_exists = fs::file_size(diagnostic_path.value());
     }
     else
     {
@@ -580,23 +612,6 @@ void TextRenderer::render_glyph(
     }
 }
 
-auto TextRenderer::get_num_lines(boost::filesystem::ifstream &stream) const -> uint32_t
-{
-    auto num_lines = 0;
-
-    std::string line;
-    while(getline(stream, line))
-    {
-        num_lines++;
-    }
-
-    // Go back to top of stream
-    stream.clear();
-    stream.seekg(0, std::ios::beg);
-
-    return num_lines;
-}
-
 auto TextRenderer::get_line_width(std::string const& line, uint32_t height_pixels) const -> uint32_t
 {
     set_char_size(height_pixels);
@@ -612,35 +627,30 @@ auto TextRenderer::get_line_width(std::string const& line, uint32_t height_pixel
     return line_width;
 }
 
-auto TextRenderer::get_max_line_width(boost::filesystem::ifstream &stream, uint32_t height_pixels) const -> uint32_t
+auto TextRenderer::get_max_line_width(DiagnosticText const& diagnostic, uint32_t height_pixels) const -> uint32_t
 {
     uint32_t max_line_width = 0;
 
-    std::string line;
-    while (getline(stream, line))
+    for (auto const& line : diagnostic.lines)
     {
         max_line_width = std::max(get_line_width(line, height_pixels), max_line_width);
     }
 
-    // Go back to top of stream
-    stream.clear();
-    stream.seekg(0, std::ios::beg);
-
     return max_line_width;
 }
 
-auto TextRenderer::get_max_font_height_by_width(boost::filesystem::ifstream &stream, uint32_t max_width) const -> uint32_t
+auto TextRenderer::get_max_font_height_by_width(DiagnosticText const& diagnostic, uint32_t max_width) const -> uint32_t
 {
     auto estimate_font_height = 50;
-    auto const width_from_estimate = get_max_line_width(stream, estimate_font_height);
+    auto const width_from_estimate = get_max_line_width(diagnostic, estimate_font_height);
 
     auto const final_font_height = estimate_font_height * (static_cast<double>(max_width) / width_from_estimate);
     return final_font_height;
 }
 
-auto TextRenderer::get_max_font_height_by_height(boost::filesystem::ifstream &stream, uint32_t max_height) const -> uint32_t
+auto TextRenderer::get_max_font_height_by_height(DiagnosticText const& diagnostic, uint32_t max_height) const -> uint32_t
 {
-    auto num_lines = get_num_lines(stream);
+    auto num_lines = diagnostic.lines.size();
     auto estimate_font_height = 50;
     auto const height_from_estimate = get_total_height(num_lines, estimate_font_height);
 

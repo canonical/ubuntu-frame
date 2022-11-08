@@ -110,11 +110,11 @@ public:
         geom::Height height_pixels,
         Colour const& colour) const;
 
-    auto get_num_lines(boost::filesystem::ifstream &stream) const -> uint32_t;
+    struct DiagnosticText;
 
-    auto get_max_font_height_by_width(boost::filesystem::ifstream &stream, uint32_t max_width) const -> uint32_t;
-    auto get_max_font_height_by_height(boost::filesystem::ifstream &stream, uint32_t max_height) const -> uint32_t;
-    auto get_max_line_width(boost::filesystem::ifstream &stream, uint32_t height_pixels) const -> uint32_t;
+    auto get_max_font_height_by_width(DiagnosticText const& diagnostic, uint32_t max_width) const -> uint32_t;
+    auto get_max_font_height_by_height(DiagnosticText const& diagnostic, uint32_t max_height) const -> uint32_t;
+    auto get_max_line_width(DiagnosticText const& diagnostic, uint32_t height_pixels) const -> uint32_t;
 
     uint const y_kerning = 5;
 
