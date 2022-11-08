@@ -86,7 +86,7 @@ auto is_application(WindowInfo const& window_info)
     case mir_depth_layer_always_on_top:
         return window_info.state() != mir_window_state_attached;
 
-    default:;
+    default:
         return false;
     }
 }
