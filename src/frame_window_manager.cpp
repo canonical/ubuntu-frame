@@ -77,6 +77,19 @@ bool override_state(WindowSpecification& spec, WindowInfo const& window_info)
 
     return true;
 }
+
+auto is_application(WindowInfo const& window_info)
+{
+    switch (window_info.depth_layer())
+    {
+    case mir_depth_layer_application:
+    case mir_depth_layer_always_on_top:
+        return window_info.state() == mir_window_state_attached;
+
+    default:;
+        return false;
+    }
+}
 }
 
 auto WindowCount::increment_opened() -> unsigned short
@@ -163,7 +176,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
             if (!specification.output_id().is_set() && outputs.size() > 0)
             {
                 // Place new windows round-robin on all available outputs
-                specification.output_id() = outputs[window_count->increment_opened() % outputs.size()];
+                specification.output_id() = outputs[window_count->currently_open() % outputs.size()];
             }
             specification.state() = mir_window_state_maximized;
             tools.place_and_size_for_state(specification, window_info);
@@ -178,17 +191,17 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
     {
         specification.depth_layer() = mir_depth_layer_background;
     }
-    else
-    {
-        window_manager_observer.process_window_opened_callbacks();
-    }
 
     return specification;
 }
 
-void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& /*window_info*/)
+void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& window_info)
 {
-    window_count->increment_closed();
+    if (is_application(window_info))
+    {
+        window_count->increment_closed();
+    }
+
     window_manager_observer.process_window_closed_callbacks();
 }
 
@@ -283,4 +296,14 @@ void FrameWindowManagerPolicy::advise_output_delete(miral::Output const &output)
 {
     WindowManagementPolicy::advise_output_delete(output);
     outputs.erase(std::remove(outputs.begin(), outputs.end(), output.id()), outputs.end());
+}
+
+void FrameWindowManagerPolicy::advise_new_window(WindowInfo const& window_info)
+{
+    WindowManagementPolicy::advise_new_window(window_info);
+    if (is_application(window_info))
+    {
+        window_manager_observer.process_window_opened_callbacks();
+        window_count->increment_opened();
+    }
 }

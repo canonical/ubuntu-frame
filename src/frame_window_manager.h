@@ -87,6 +87,9 @@ public:
         Rectangle const& new_placement) -> Rectangle override;
 
     void advise_delete_window(miral::WindowInfo const& /*window_info*/) override;
+
+    void advise_new_window(miral::WindowInfo const& window_info) override;
+
     void advise_begin() override;
     void advise_end() override;
     void advise_application_zone_create(miral::Zone const& application_zone) override;
