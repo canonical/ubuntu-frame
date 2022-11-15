@@ -85,8 +85,7 @@ plugs:
 slots:
   ubuntu-frame-diagnostic:
     interface: content
-    content: writable-data
-    write: 
+    write:
       - $SNAP_COMMON/diagnostic
 
 parts:
