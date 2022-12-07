@@ -437,7 +437,6 @@ egmde::FullscreenClient::~FullscreenClient()
         (void)inotify_rm_watch(diagnostic_signal, diagnostic_wd.value());
     }
     
-    (void)close(diagnostic_signal);
     wl_display_roundtrip(display);
 }
 
