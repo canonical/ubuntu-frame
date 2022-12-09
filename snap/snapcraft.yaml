@@ -31,7 +31,7 @@ layout:
   /usr/share/fonts:
     bind: $SNAP/usr/share/fonts
   /usr/share/libdrm:  # Needed by mesa-core22 on AMD GPUs
-    symlink: $SNAP_COMMON/graphics/usr/share/libdrm
+    bind: $SNAP_COMMON/graphics/usr/share/libdrm
   /usr/share/drirc.d:  # Used by mesa-core22 for app specific workarounds
     symlink: $SNAP_COMMON/graphics/usr/share/drirc.d
 
