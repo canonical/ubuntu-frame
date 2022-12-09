@@ -3,7 +3,7 @@ adopt-info: ubuntu-frame
 summary: The foundation for many embedded graphical display implementations
 description: ubuntu-frame is a simple fullscreen shell (based on Wayland) used for kiosks, industrial displays, digital signage, smart mirrors, etc.
 confinement: strict
-base: core20
+base: core22
 license: GPL-3.0
 compression: lzo
 package-repositories:
@@ -20,10 +20,6 @@ environment:
   # Prep for Mir
   MIR_SERVER_PLATFORM_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/mir/server-platform
   LIBINPUT_QUIRKS_DIR: ${SNAP}/usr/share/libinput
-  # Setup EGL from the plugs
-  LD_LIBRARY_PATH:    $SNAP/graphics/lib
-  LIBGL_DRIVERS_PATH: $SNAP/graphics/dri
-  __EGL_VENDOR_LIBRARY_DIRS: $SNAP/graphics/glvnd/egl_vendor.d
   # Setup XKB
   XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
   # Setup diagnostic
@@ -32,16 +28,19 @@ environment:
 layout:
   /usr/share/icons:
     bind: $SNAP/usr/share/icons
-  /usr/share/libdrm:  # Needed by mesa-core20 on ARM GPUs
-    bind: $SNAP/graphics/libdrm
-  /usr/share/drirc.d:
-    bind: $SNAP/graphics/drirc.d
   /usr/share/fonts:
     bind: $SNAP/usr/share/fonts
+  /usr/share/libdrm:  # Needed by mesa-core22 on AMD GPUs
+    symlink: $SNAP_COMMON/graphics/usr/share/libdrm
+  /usr/share/drirc.d:  # Used by mesa-core22 for app specific workarounds
+    symlink: $SNAP_COMMON/graphics/usr/share/drirc.d
 
 apps:
   ubuntu-frame:
-    command-chain: [bin/run-user, bin/run-frame]
+    command-chain:
+    - bin/setup-graphics
+    - bin/run-user
+    - bin/run-frame
     command: usr/local/bin/frame
     plugs:
       - opengl                # for compositing
@@ -53,7 +52,10 @@ apps:
       - wayland
 
   daemon:
-    command-chain: [bin/run-daemon, bin/run-frame]
+    command-chain:
+    - bin/setup-graphics
+    - bin/run-daemon
+    - bin/run-frame
     command: usr/local/bin/frame
     daemon: simple
     restart-delay: 3s
@@ -77,10 +79,10 @@ apps:
       - wayland
 
 plugs:
-  graphics-core20:
+  graphics-core22:
     interface: content
     target: $SNAP/graphics
-    default-provider: mesa-core20
+    default-provider: mesa-core22
 
 slots:
   ubuntu-frame-diagnostic:
@@ -90,30 +92,19 @@ slots:
       - $SNAP_COMMON/diagnostic
 
 parts:
-  recipe-version:
-    plugin: nil
-    source: .
-    source-type: git
-    override-build: |
-      git rev-list --count HEAD > $SNAPCRAFT_PART_INSTALL/recipe-version
-    prime:
-      - -recipe-version
-
   ubuntu-frame:
-    after: [recipe-version]
     override-pull: |
-      snapcraftctl pull
+      craftctl default
       mir_version=`LANG=C apt-cache policy mir-graphics-drivers-desktop | sed -rne 's/^\s+Candidate:\s+([^-]*)-.+$/\1/p'`
-      recipe_version=`cat $SNAPCRAFT_STAGE/recipe-version`
-      snapcraftctl set-version $recipe_version-mir$mir_version
-      if echo $mir_version | grep -e '+dev' -e '~rc' -q; then snapcraftctl set-grade devel; else snapcraftctl set-grade stable; fi
+      recipe_version=`git -C ${CRAFT_PROJECT_DIR} rev-list --count HEAD`
+      craftctl set version=$recipe_version-mir$mir_version
+      if echo $mir_version | grep -e '+dev' -e '~rc' -q; then craftctl set grade=devel; else craftctl set grade=stable; fi
     plugin: cmake
     source: src
     build-packages:
       - pkg-config
       - libmiral-dev
       - libwayland-dev
-      - libboost1.71-dev
       - libboost-filesystem-dev
       - libboost-iostreams-dev
       - libapparmor-dev
@@ -121,8 +112,8 @@ parts:
     stage-packages:
       - libmiral5
       - libapparmor1
-      - libboost-filesystem1.71.0
-      - libboost-iostreams1.71.0
+      - libboost-filesystem1.74.0
+      - libboost-iostreams1.74.0
   
   assets:
     plugin: nil
@@ -137,7 +128,7 @@ parts:
       - mir-platform-graphics-gbm-kms
       - mir-platform-graphics-x
     prime:
-      - usr/lib/${SNAPCRAFT_ARCH_TRIPLET}
+      - usr/lib/${CRAFT_ARCH_TRIPLET}
       - usr/share/libinput
 
   icons:
@@ -163,14 +154,13 @@ parts:
   cleanup:
     after: [ubuntu-frame, platform, icons, scripts]
     plugin: nil
-    build-snaps: [ mesa-core20 ]
+    build-snaps: [ mesa-core22 ]
     override-prime: |
       set -eux
-      cd /snap/mesa-core20/current/egl/lib
-      find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/{} \;
-      rm -fr "$SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri"
-      rm -fr "$SNAPCRAFT_PRIME/usr/share/"{bug,doc,doc-base,drirc.d,glvnd,libdrm,lintian,man}
-      
+      cd /snap/mesa-core22-test/current/usr/
+      find . -type f,l -exec rm -f $CRAFT_PRIME/usr/{} \;
+      rm -fr "$CRAFT_PRIME/usr/share/"{bug,doc,doc-base,drirc.d,glvnd,libdrm,lintian,man}
+
       # Back compatibility fix until MirAL 3.8 is released
       miral_version=`LANG=C apt-cache policy libmiral-dev | sed -rne 's/^\s+Candidate:\s+([0-9]*\.[0-9])\..+$/\1/p'`
       if [ ${miral_version%.*} -eq 3 ] && [ ${miral_version#*.} -lt 8 ]
