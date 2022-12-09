@@ -79,7 +79,7 @@ plugs:
   graphics-core22:
     interface: content
     target: $SNAP/graphics
-    default-provider: mesa-core22
+    default-provider: mesa-core22-test
 
 slots:
   ubuntu-frame-diagnostic:
@@ -153,7 +153,7 @@ parts:
   cleanup:
     after: [ubuntu-frame, icons, scripts]
     plugin: nil
-    build-snaps: [ mesa-core22 ]
+    build-snaps: [ mesa-core22-test/edge ]
     override-prime: |
       set -eux
       cd /snap/mesa-core22-test/current/usr/
