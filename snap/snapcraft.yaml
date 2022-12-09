@@ -6,9 +6,6 @@ confinement: strict
 base: core24
 license: GPL-3.0
 compression: lzo
-package-repositories:
-  - type: apt
-    ppa: mir-team/release
 
 platforms:
   amd64:
@@ -116,10 +113,20 @@ slots:
       - $SNAP_COMMON/diagnostic
 
 parts:
+  mir:
+    plugin: nil
+    stage-snaps:
+      - mir-libs/24/edge
+    prime:
+      - -*.h
+      - -*.pc
+      - -share
+
   ubuntu-frame:
-    override-pull: |
+    after: [mir]
+    override-build: |
       craftctl default
-      mir_version=`LANG=C apt-cache policy mir-graphics-drivers-desktop | sed -rne 's/^\s+Candidate:\s+([^-]*)-.+$/\1/p'`
+      mir_version=$( sed -rne 's/^version:\s+([^-]*)-.+$/\1/p' ${SNAPCRAFT_STAGE}/meta.mir-libs/snap.yaml )
       # work around https://github.com/diddlesnaps/snapcraft-multiarch-action/issues/22
       git config --global --add safe.directory ${CRAFT_PROJECT_DIR}
       recipe_version=`git -C ${CRAFT_PROJECT_DIR} rev-list --count HEAD`
@@ -131,22 +138,17 @@ parts:
     source: src
     build-packages:
       - pkg-config
-      - libmiral-dev
-      - libmircommon-dev
       - libwayland-dev
       - libboost-iostreams-dev
       - libapparmor-dev
       - libfreetype6-dev
+      - libxkbcommon-dev
     stage-packages:
       - libboost-iostreams1.74.0
-      # Stage libmiral<n> indirectly as we cannot (since core22) do `try:/else:`
-      - libmiral-dev
       - xkb-data
-    prime:
-      # Do not prime the `-dev` part of libmiral-dev, we don't need it (just the libmiral<n> dependency)
-      - -usr/include
-      - -usr/lib/*/pkgconfig
-      - -usr/lib/*/libmir*.so
+
+    build-environment:
+    - LD_LIBRARY_PATH: ${CRAFT_STAGE}/usr/lib/${CRAFT_ARCH_TRIPLET}
 
   assets:
     plugin: nil
@@ -155,17 +157,6 @@ parts:
     prime:
     - usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf
     - usr/share/fonts/truetype/ubuntu/Ubuntu[wdth,wght].ttf
-
-  platform:
-    plugin: nil
-    stage-packages:
-      - mir-platform-graphics-gbm-kms
-      - mir-platform-graphics-atomic-kms
-      - mir-platform-graphics-x
-      - mir-platform-graphics-eglstream-kms
-    prime:
-      - usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
-      - usr/share/libinput
 
   icons:
     plugin: nil
@@ -191,7 +182,6 @@ parts:
     after:
       - ubuntu-frame
       - assets
-      - platform
       - icons
       - scripts
       - grim
