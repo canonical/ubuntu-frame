@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+ARCH_TRIPLET="$(arch)-linux-gnu"
+
+for base in $(find "$SNAP/graphics" -maxdepth 1 -name "${usr}*")
+do
+  LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}${base}/lib/:${base}/lib/${ARCH_TRIPLET}
+  LIBGL_DRIVERS_PATH=${LIBGL_DRIVERS_PATH:+$LIBGL_DRIVERS_PATH:}${base}/lib/${ARCH_TRIPLET}/dri/
+  LIBVA_DRIVERS_PATH=${LIBVA_DRIVERS_PATH:+$LIBVA_DRIVERS_PATH:}${base}/lib/${ARCH_TRIPLET}/dri/
+  __EGL_VENDOR_LIBRARY_DIRS=${__EGL_VENDOR_LIBRARY_DIRS:+$__EGL_VENDOR_LIBRARY_DIRS:}${base}/share/glvnd/egl_vendor.d
+done
+
+export LD_LIBRARY_PATH
+export LIBGL_DRIVERS_PATH
+export LIBVA_DRIVERS_PATH
+export __EGL_VENDOR_LIBRARY_DIRS
+
+exec $@
