@@ -92,7 +92,7 @@ parts:
   mir:
     plugin: nil
     stage-snaps:
-      - mir-libs
+      - mir-libs/edge/base-core22
     prime:
       - -*.h
       - -*.pc
