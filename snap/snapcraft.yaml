@@ -66,6 +66,7 @@ apps:
       - opengl
     slots:
       - wayland
+    post-stop-command: bin/daemon-post-stop
 
   screenshot:
     command-chain: [bin/anon-shm-preload, bin/run-client]
