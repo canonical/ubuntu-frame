@@ -100,7 +100,7 @@ parts:
   mir:
     plugin: nil
     stage-snaps:
-      - mir-core20
+      - mir-core20/latest/edge/pr2798
     prime:
       - -*.h
       - -*.pc
