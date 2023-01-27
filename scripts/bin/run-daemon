@@ -1,4 +1,10 @@
 #!/bin/sh
 set -eux
 
+display_file="$SNAP_DATA/frame.display"
+if [ -z "$(snapctl get display)" ]
+then
+  initialise-display-config&
+fi
+
 exec nohup "$@"

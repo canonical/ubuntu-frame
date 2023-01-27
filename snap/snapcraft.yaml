@@ -147,6 +147,8 @@ parts:
   scripts:
     plugin: dump
     source: scripts
+    stage-packages:
+      - inotify-tools
 
   anon-shm-preload:
     source: https://github.com/MirServer/anon-shm-preload.git
@@ -168,3 +170,12 @@ parts:
       find . -type f,l -exec rm -f $SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/{} \;
       rm -fr "$SNAPCRAFT_PRIME/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/dri"
       rm -fr "$SNAPCRAFT_PRIME/usr/share/"{bug,doc,doc-base,drirc.d,glvnd,libdrm,lintian,man}
+      
+      # Back compatibility fix until MirAL 3.8 is released
+      miral_version=`LANG=C apt-cache policy libmiral-dev | sed -rne 's/^\s+Candidate:\s+([0-9]*\.[0-9])\..+$/\1/p'`
+      if [ ${miral_version%.*} -eq 3 ] && [ ${miral_version#*.} -lt 8 ]
+      then
+        touch $SNAPCRAFT_PRIME/miral-lt-3.8
+      else
+        rm -f $SNAPCRAFT_PRIME/miral-lt-3.8
+      fi
