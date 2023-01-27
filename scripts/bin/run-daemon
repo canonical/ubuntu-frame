@@ -2,7 +2,7 @@
 set -eux
 
 display_file="$SNAP_DATA/frame.display"
-if [ -z "$(snapctl get display)" ] && ! [ -e "${display_file}" ]
+if [ -z "$(snapctl get display)" ]
 then
   initialise-display-config&
 fi
