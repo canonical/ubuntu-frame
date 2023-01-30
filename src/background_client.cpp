@@ -17,6 +17,7 @@
 #include "egfullscreenclient.h"
 #include "background_client.h"
 
+#include "mir/abnormal_exit.h"
 #include "mir/log.h"
 
 #include <chrono>
@@ -177,7 +178,7 @@ void BackgroundClient::set_colour(std::string const& option, Colour& colour)
     }
     else
     {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
+        throw(mir::AbnormalExit(
             "Invalid colour (" + option + ") given in program argument"));
     }
 }
@@ -220,19 +221,19 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
 
     if (!exists(path.parent_path()))
     {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
+        throw(mir::AbnormalExit(
             "Parent of diagnostic path does not exist." + formatted_path_error));
     }
 
     if (!is_directory(path.parent_path()))
     {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
+        throw(mir::AbnormalExit(
             "Parent of diagnostic path is not a directory." + formatted_path_error));
     }
 
     if (!is_regular_file(path) && exists(path))
     {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
+        throw(mir::AbnormalExit(
             "Target of diagnostic path is not a file." + formatted_path_error));
     }
 
@@ -247,7 +248,7 @@ void BackgroundClient::set_diagnostic_delay(int delay)
     }
     else
     {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
+        throw(mir::AbnormalExit(
             "Diagnostic delay time (" + std::to_string(delay) + ") must not be negative"));
     }
 }
