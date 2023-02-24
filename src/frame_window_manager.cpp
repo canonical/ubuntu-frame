@@ -21,6 +21,7 @@
 #include <miral/application_info.h>
 #include <miral/output.h>
 #include <miral/toolkit_event.h>
+#include <miral/version.h>
 #include <miral/window_info.h>
 #include <miral/window_manager_tools.h>
 
@@ -152,6 +153,8 @@ void WindowManagerObserver::process_window_closed_callbacks() const
     }
 }
 
+std::string const FrameWindowManagerPolicy::surface_title = "surface-title";
+
 FrameWindowManagerPolicy::FrameWindowManagerPolicy(WindowManagerTools const& tools, WindowManagerObserver& window_manager_observer)
     : MinimalWindowManager{tools},
       window_manager_observer{window_manager_observer}
@@ -173,11 +176,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
         WindowInfo window_info{};
         if (override_state(specification, window_info))
         {
-            if (!specification.output_id().is_set() && outputs.size() > 0)
-            {
-                // Place new windows round-robin on all available outputs
-                specification.output_id() = outputs[window_count->currently_open() % outputs.size()];
-            }
+            assign_to_output(specification, specification.name());
             specification.state() = mir_window_state_maximized;
             tools.place_and_size_for_state(specification, window_info);
             specification.state() = mir_window_state_fullscreen;
@@ -195,6 +194,24 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
     return specification;
 }
 
+void FrameWindowManagerPolicy::assign_to_output(
+    WindowSpecification& specification, mir::optional_value<std::string> const& title)
+{
+    for (auto const& a2o : app_name_to_output_id)
+    {
+        if (a2o.first == title)
+        {
+            specification.output_id() = a2o.second;
+        }
+    }
+
+    if (!specification.output_id().is_set() && outputs.size() > 0)
+    {
+        // Place new windows round-robin on all available outputs
+        specification.output_id() = outputs[window_count->currently_open() % outputs.size()];
+    }
+}
+
 void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& window_info)
 {
     if (is_application(window_info))
@@ -210,6 +227,8 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 
     if (override_state(specification, window_info))
     {
+        assign_to_output(specification, window_info.name());
+
         specification.state() = mir_window_state_maximized;
         tools.place_and_size_for_state(specification, window_info);
         specification.state() = mir_window_state_fullscreen;
@@ -289,12 +308,37 @@ void FrameWindowManagerPolicy::advise_output_create(miral::Output const &output)
 {
     WindowManagementPolicy::advise_output_create(output);
     outputs.emplace_back(output.id());
+
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 8, 0)
+    auto const output_id = output.id();
+
+    app_name_to_output_id.erase(
+        std::remove_if(
+            begin(app_name_to_output_id),
+            end(app_name_to_output_id),
+            [output_id](auto const& e) { return e.second == output_id; }),
+        end(app_name_to_output_id));
+
+    if (auto const attr = output.attribute(surface_title))
+        app_name_to_output_id.emplace_back(attr.value(), output_id);
+#endif
 }
 
 void FrameWindowManagerPolicy::advise_output_delete(miral::Output const &output)
 {
     WindowManagementPolicy::advise_output_delete(output);
     outputs.erase(std::remove(outputs.begin(), outputs.end(), output.id()), outputs.end());
+
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 8, 0)
+    auto const output_id = output.id();
+
+    app_name_to_output_id.erase(
+        std::remove_if(
+            begin(app_name_to_output_id),
+            end(app_name_to_output_id),
+            [output_id](auto const& e) { return e.second == output_id; }),
+        end(app_name_to_output_id));
+#endif
 }
 
 void FrameWindowManagerPolicy::advise_new_window(WindowInfo const& window_info)
@@ -305,4 +349,23 @@ void FrameWindowManagerPolicy::advise_new_window(WindowInfo const& window_info)
         window_manager_observer.process_window_opened_callbacks();
         window_count->increment_opened();
     }
+}
+
+void FrameWindowManagerPolicy::advise_output_update(Output const& updated, Output const& original)
+{
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 8, 0)
+    auto const output_id = updated.id();
+
+    app_name_to_output_id.erase(
+        std::remove_if(
+            begin(app_name_to_output_id),
+            end(app_name_to_output_id),
+            [output_id](auto const& e) { return e.second == output_id; }),
+        end(app_name_to_output_id));
+
+    if (auto const attr = updated.attribute(surface_title))
+        app_name_to_output_id.emplace_back(attr.value(), output_id);
+#else
+    (void)updated, (void)original;
+#endif
 }
