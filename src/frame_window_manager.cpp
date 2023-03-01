@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2022 Canonical Ltd.
+ * Copyright © Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 or 3 as
@@ -12,11 +12,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Authored By: Alan Griffiths <alan@octopull.co.uk>
  */
 
 #include "frame_window_manager.h"
+
+#include "snap_name_of.h"
 
 #include <miral/application_info.h>
 #include <miral/output.h>
@@ -154,6 +154,7 @@ void WindowManagerObserver::process_window_closed_callbacks() const
 }
 
 std::string const FrameWindowManagerPolicy::surface_title = "surface-title";
+std::string const FrameWindowManagerPolicy::snap_name = "snap-name";
 
 FrameWindowManagerPolicy::FrameWindowManagerPolicy(WindowManagerTools const& tools, WindowManagerObserver& window_manager_observer)
     : MinimalWindowManager{tools},
@@ -176,7 +177,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
         WindowInfo window_info{};
         if (override_state(specification, window_info))
         {
-            assign_to_output(specification, specification.name());
+            assign_to_output(specification, specification.name(), snap_instance_name_of(app_info.application()));
             specification.state() = mir_window_state_maximized;
             tools.place_and_size_for_state(specification, window_info);
             specification.state() = mir_window_state_fullscreen;
@@ -195,15 +196,12 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 }
 
 void FrameWindowManagerPolicy::assign_to_output(
-    WindowSpecification& specification, mir::optional_value<std::string> const& title)
+    WindowSpecification& specification,
+    mir::optional_value<std::string> const& title,
+    std::string_view snap_name)
 {
-    for (auto const& a2o : app_name_to_output_id)
-    {
-        if (a2o.first == title)
-        {
-            specification.output_id() = a2o.second;
-        }
-    }
+    placement_mapping.set_output_for_surface(specification, title);
+    placement_mapping.set_output_for_snap(specification, snap_name);
 
     if (!specification.output_id().is_set() && outputs.size() > 0)
     {
@@ -227,7 +225,7 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 
     if (override_state(specification, window_info))
     {
-        assign_to_output(specification, window_info.name());
+        assign_to_output(specification, window_info.name(), snap_instance_name_of(window_info.window().application()));
 
         specification.state() = mir_window_state_maximized;
         tools.place_and_size_for_state(specification, window_info);
@@ -309,36 +307,15 @@ void FrameWindowManagerPolicy::advise_output_create(miral::Output const &output)
     WindowManagementPolicy::advise_output_create(output);
     outputs.emplace_back(output.id());
 
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 8, 0)
-    auto const output_id = output.id();
-
-    app_name_to_output_id.erase(
-        std::remove_if(
-            begin(app_name_to_output_id),
-            end(app_name_to_output_id),
-            [output_id](auto const& e) { return e.second == output_id; }),
-        end(app_name_to_output_id));
-
-    if (auto const attr = output.attribute(surface_title))
-        app_name_to_output_id.emplace_back(attr.value(), output_id);
-#endif
+    placement_mapping.update(output);
 }
 
-void FrameWindowManagerPolicy::advise_output_delete(miral::Output const &output)
+void FrameWindowManagerPolicy::advise_output_delete(miral::Output const& output)
 {
     WindowManagementPolicy::advise_output_delete(output);
     outputs.erase(std::remove(outputs.begin(), outputs.end(), output.id()), outputs.end());
 
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 8, 0)
-    auto const output_id = output.id();
-
-    app_name_to_output_id.erase(
-        std::remove_if(
-            begin(app_name_to_output_id),
-            end(app_name_to_output_id),
-            [output_id](auto const& e) { return e.second == output_id; }),
-        end(app_name_to_output_id));
-#endif
+    placement_mapping.clear(output);
 }
 
 void FrameWindowManagerPolicy::advise_new_window(WindowInfo const& window_info)
@@ -353,19 +330,82 @@ void FrameWindowManagerPolicy::advise_new_window(WindowInfo const& window_info)
 
 void FrameWindowManagerPolicy::advise_output_update(Output const& updated, Output const& original)
 {
+    placement_mapping.update(updated);
+    (void)original;
+}
+
+void FrameWindowManagerPolicy::PlacementMapping::update(Output const& output)
+{
 #if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 8, 0)
-    auto const output_id = updated.id();
+    auto const output_id = output.id();
 
-    app_name_to_output_id.erase(
+    surface_title_to_output_id.erase(
         std::remove_if(
-            begin(app_name_to_output_id),
-            end(app_name_to_output_id),
+            begin(surface_title_to_output_id),
+            end(surface_title_to_output_id),
             [output_id](auto const& e) { return e.second == output_id; }),
-        end(app_name_to_output_id));
+        end(surface_title_to_output_id));
 
-    if (auto const attr = updated.attribute(surface_title))
-        app_name_to_output_id.emplace_back(attr.value(), output_id);
+    if (auto const attr = output.attribute(surface_title))
+        surface_title_to_output_id.emplace_back(attr.value(), output_id);
+
+    snap_name_to_output_id.erase(
+        std::remove_if(
+            begin(snap_name_to_output_id),
+            end(snap_name_to_output_id),
+            [output_id](auto const& e) { return e.second == output_id; }),
+        end(snap_name_to_output_id));
+
+    if (auto const attr = output.attribute(snap_name))
+        snap_name_to_output_id.emplace_back(attr.value(), output_id);
 #else
-    (void)updated, (void)original;
+    (void)output;
 #endif
+}
+
+void FrameWindowManagerPolicy::PlacementMapping::clear(Output const& output)
+{
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 8, 0)
+    auto const output_id = output.id();
+
+    surface_title_to_output_id.erase(
+        std::remove_if(
+            begin(surface_title_to_output_id),
+            end(surface_title_to_output_id),
+            [output_id](auto const& e) { return e.second == output_id; }),
+        end(surface_title_to_output_id));
+
+    snap_name_to_output_id.erase(
+        std::remove_if(
+            begin(snap_name_to_output_id),
+            end(snap_name_to_output_id),
+            [output_id](auto const& e) { return e.second == output_id; }),
+        end(snap_name_to_output_id));
+#endif
+}
+
+void FrameWindowManagerPolicy::PlacementMapping::set_output_for_surface(
+    WindowSpecification& specification,
+    mir::optional_value<std::string> const& title) const
+{
+    for (auto const& t2o : surface_title_to_output_id)
+    {
+        if (t2o.first == title)
+        {
+            specification.output_id() = t2o.second;
+        }
+    }
+}
+
+void FrameWindowManagerPolicy::PlacementMapping::set_output_for_snap(
+    WindowSpecification& specification,
+    std::string_view name) const
+{
+    for (auto const& s2o : snap_name_to_output_id)
+    {
+        if (s2o.first == name)
+        {
+            specification.output_id() = s2o.second;
+        }
+    }
 }

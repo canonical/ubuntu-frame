@@ -23,6 +23,7 @@
 
 #include <memory>
 #include <vector>
+#include <optional>
 
 using namespace mir::geometry;
 
@@ -74,6 +75,7 @@ public:
     using miral::MinimalWindowManager::MinimalWindowManager;
 
     static std::string const surface_title;
+    static std::string const snap_name;
 
     FrameWindowManagerPolicy(miral::WindowManagerTools const& tools, WindowManagerObserver& window_manager_observer);
 
@@ -106,10 +108,24 @@ private:
 
     bool application_zones_have_changed = false;
     std::vector<int> outputs = {};
-    std::vector<std::pair<std::string, int>> app_name_to_output_id;
+
+    class PlacementMapping
+    {
+    public:
+        void update(miral::Output const& output);
+        void clear(miral::Output const& output);
+
+        void set_output_for_surface(miral::WindowSpecification& specification, mir::optional_value<std::string> const& title) const;
+        void set_output_for_snap(miral::WindowSpecification& specification, std::string_view name) const;
+
+    private:
+        std::vector<std::pair<std::string, int>> surface_title_to_output_id;
+        std::vector<std::pair<std::string, int>> snap_name_to_output_id;
+    } placement_mapping;
 
     void assign_to_output(
-        miral::WindowSpecification& specification, mir::optional_value<std::string> const& title);
+        miral::WindowSpecification& specification, mir::optional_value<std::string> const& title,
+        std::string_view snap_name);
 };
 
 #endif /* FRAME_WINDOW_MANAGER_H */
