@@ -126,6 +126,10 @@ private:
     void assign_to_output(
         miral::WindowSpecification& specification, mir::optional_value<std::string> const& title,
         std::string_view snap_name);
+
+    void apply_bespoke_fullscreen_placement(
+        miral::WindowSpecification& specification,
+        miral::WindowInfo const& window_info) const;
 };
 
 #endif /* FRAME_WINDOW_MANAGER_H */

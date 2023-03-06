@@ -178,9 +178,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
         if (override_state(specification, window_info))
         {
             assign_to_output(specification, specification.name(), snap_instance_name_of(app_info.application()));
-            specification.state() = mir_window_state_maximized;
-            tools.place_and_size_for_state(specification, window_info);
-            specification.state() = mir_window_state_fullscreen;
+            apply_bespoke_fullscreen_placement(specification, window_info);
         }
     }
 
@@ -221,12 +219,18 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
     {
         assign_to_output(specification, window_info.name(), snap_instance_name_of(window_info.window().application()));
 
-        specification.state() = mir_window_state_maximized;
-        tools.place_and_size_for_state(specification, window_info);
-        specification.state() = mir_window_state_fullscreen;
+        apply_bespoke_fullscreen_placement(specification, window_info);
     }
 
     MinimalWindowManager::handle_modify_window(window_info, specification);
+}
+
+void FrameWindowManagerPolicy::apply_bespoke_fullscreen_placement(
+    WindowSpecification& specification, WindowInfo const& window_info) const
+{
+    specification.state() = mir_window_state_maximized;
+    tools.place_and_size_for_state(specification, window_info);
+    specification.state() = mir_window_state_fullscreen;
 }
 
 auto FrameWindowManagerPolicy::confirm_placement_on_display(
@@ -270,9 +274,7 @@ void FrameWindowManagerPolicy::advise_end()
                        if (override_state(specification, info))
                        {
                            assign_to_output(specification, info.name(), snap_instance_name_of(info.window().application()));
-                           specification.state() = mir_window_state_maximized;
-                           tools.place_and_size_for_state(specification, info);
-                           specification.state() = mir_window_state_fullscreen;
+                           apply_bespoke_fullscreen_placement(specification, info);
                            tools.modify_window(info, specification);
                        }
                    }
