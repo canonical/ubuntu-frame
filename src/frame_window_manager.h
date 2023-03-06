@@ -107,6 +107,7 @@ private:
     std::shared_ptr<WindowCount> window_count = std::make_shared<WindowCount>();
 
     bool application_zones_have_changed = false;
+    bool display_layout_has_changed = false;
     std::vector<int> outputs = {};
 
     class PlacementMapping

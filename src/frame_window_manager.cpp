@@ -258,6 +258,35 @@ void FrameWindowManagerPolicy::advise_begin()
 void FrameWindowManagerPolicy::advise_end()
 {
     WindowManagementPolicy::advise_end();
+
+    if (display_layout_has_changed)
+    {
+        tools.for_each_application([this](auto& app)
+            {
+               for (auto& window : app.windows())
+               {
+                   if (window)
+                   {
+                       auto& info = tools.info_for(window);
+                       WindowSpecification specification;
+
+                       // specification.state() needs to be set to something for override_state() to trigger
+                       specification.state() = mir_window_state_unknown;
+
+                       if (override_state(specification, info))
+                       {
+                           assign_to_output(specification, info.name(), snap_instance_name_of(info.window().application()));
+                           specification.state() = mir_window_state_maximized;
+                           tools.place_and_size_for_state(specification, info);
+                           specification.state() = mir_window_state_fullscreen;
+                           tools.modify_window(info, specification);
+                       }
+                   }
+               }
+            });
+        display_layout_has_changed = false;
+    }
+
     if (application_zones_have_changed)
     {
         tools.for_each_application([this](auto& app)
@@ -308,6 +337,7 @@ void FrameWindowManagerPolicy::advise_output_create(miral::Output const &output)
     outputs.emplace_back(output.id());
 
     placement_mapping.update(output);
+    display_layout_has_changed = true;
 }
 
 void FrameWindowManagerPolicy::advise_output_delete(miral::Output const& output)
@@ -316,6 +346,7 @@ void FrameWindowManagerPolicy::advise_output_delete(miral::Output const& output)
     outputs.erase(std::remove(outputs.begin(), outputs.end(), output.id()), outputs.end());
 
     placement_mapping.clear(output);
+    display_layout_has_changed = true;
 }
 
 void FrameWindowManagerPolicy::advise_new_window(WindowInfo const& window_info)
@@ -328,10 +359,10 @@ void FrameWindowManagerPolicy::advise_new_window(WindowInfo const& window_info)
     }
 }
 
-void FrameWindowManagerPolicy::advise_output_update(Output const& updated, Output const& original)
+void FrameWindowManagerPolicy::advise_output_update(Output const& updated, Output const& /*original*/)
 {
     placement_mapping.update(updated);
-    (void)original;
+    display_layout_has_changed = true;
 }
 
 void FrameWindowManagerPolicy::PlacementMapping::update(Output const& output)
