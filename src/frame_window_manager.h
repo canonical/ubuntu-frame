@@ -108,7 +108,6 @@ private:
 
     bool application_zones_have_changed = false;
     bool display_layout_has_changed = false;
-    std::vector<int> outputs = {};
 
     class PlacementMapping
     {

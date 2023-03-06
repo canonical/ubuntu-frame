@@ -202,12 +202,6 @@ void FrameWindowManagerPolicy::assign_to_output(
 {
     placement_mapping.set_output_for_surface(specification, title);
     placement_mapping.set_output_for_snap(specification, snap_name);
-
-    if (!specification.output_id().is_set() && outputs.size() > 0)
-    {
-        // Place new windows round-robin on all available outputs
-        specification.output_id() = outputs[window_count->currently_open() % outputs.size()];
-    }
 }
 
 void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& window_info)
@@ -334,7 +328,6 @@ void FrameWindowManagerPolicy::advise_application_zone_delete(Zone const& applic
 void FrameWindowManagerPolicy::advise_output_create(miral::Output const &output)
 {
     WindowManagementPolicy::advise_output_create(output);
-    outputs.emplace_back(output.id());
 
     placement_mapping.update(output);
     display_layout_has_changed = true;
@@ -343,7 +336,6 @@ void FrameWindowManagerPolicy::advise_output_create(miral::Output const &output)
 void FrameWindowManagerPolicy::advise_output_delete(miral::Output const& output)
 {
     WindowManagementPolicy::advise_output_delete(output);
-    outputs.erase(std::remove(outputs.begin(), outputs.end(), output.id()), outputs.end());
 
     placement_mapping.clear(output);
     display_layout_has_changed = true;
