@@ -18,6 +18,7 @@
 
 #include "snap_name_of.h"
 
+#include <mir/log.h>
 #include <miral/application_info.h>
 #include <miral/output.h>
 #include <miral/toolkit_event.h>
@@ -177,7 +178,16 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
         WindowInfo window_info{};
         if (override_state(specification, window_info))
         {
-            assign_to_output(specification, specification.name(), snap_instance_name_of(app_info.application()));
+            auto const snap_instance_name = snap_instance_name_of(app_info.application());
+
+            if (specification.name())
+            {
+                mir::log_info("[snap \"%s\"] New surface with title=\"%s\"",
+                              snap_instance_name.c_str(),
+                              specification.name().value().c_str());
+            }
+
+            assign_to_output(specification, specification.name(), snap_instance_name);
             apply_bespoke_fullscreen_placement(specification, window_info);
         }
     }
@@ -217,7 +227,16 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 
     if (override_state(specification, window_info))
     {
-        assign_to_output(specification, window_info.name(), snap_instance_name_of(window_info.window().application()));
+        auto const snap_instance_name = snap_instance_name_of(window_info.window().application());
+
+        if (specification.name())
+        {
+            mir::log_info("[snap \"%s\"] Surface retitled to \"%s\" (was `\"%s\")",
+                          snap_instance_name.c_str(),
+                          specification.name().value().c_str(),
+                          window_info.name().c_str());
+        }
+        assign_to_output(specification, window_info.name(), snap_instance_name);
 
         apply_bespoke_fullscreen_placement(specification, window_info);
     }
