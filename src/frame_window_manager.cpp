@@ -449,6 +449,7 @@ void FrameWindowManagerPolicy::PlacementMapping::set_output_for_surface(
         if (t2o.first == title)
         {
             specification.output_id() = t2o.second;
+            break;
         }
     }
 }
@@ -462,6 +463,7 @@ void FrameWindowManagerPolicy::PlacementMapping::set_output_for_snap(
         if (s2o.first == name)
         {
             specification.output_id() = s2o.second;
+            break;
         }
     }
 }
