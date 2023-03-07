@@ -178,9 +178,17 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 
             if (specification.name())
             {
-                mir::log_info("[snap \"%s\"] New surface with title=\"%s\"",
-                              snap_instance_name.c_str(),
-                              specification.name().value().c_str());
+                if (!snap_instance_name.empty())
+                {
+                    mir::log_info("New surface for snap=\"%s\" with title=\"%s\"",
+                                  snap_instance_name.c_str(),
+                                  specification.name().value().c_str());
+                }
+                else
+                {
+                    mir::log_info("New surface with title=\"%s\"",
+                                  specification.name().value().c_str());
+                }
             }
 
             assign_to_output(specification, specification.name(), snap_instance_name);
@@ -227,10 +235,21 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 
         if (specification.name())
         {
-            mir::log_info("[snap \"%s\"] Surface retitled to \"%s\" (was `\"%s\")",
-                          snap_instance_name.c_str(),
-                          specification.name().value().c_str(),
-                          window_info.name().c_str());
+            if (!snap_instance_name.empty())
+            {
+                mir::log_info(
+                    "Surface for snap=\"%s\" retitled to \"%s\" (was \"%s\")",
+                    snap_instance_name.c_str(),
+                    specification.name().value().c_str(),
+                    window_info.name().c_str());
+            }
+            else
+            {
+                mir::log_info(
+                    "Surface retitled to \"%s\" (was \"%s\")",
+                    specification.name().value().c_str(),
+                    window_info.name().c_str());
+            }
         }
         assign_to_output(specification, window_info.name(), snap_instance_name);
 
