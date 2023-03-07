@@ -37,14 +37,8 @@ using namespace miral::toolkit;
 
 namespace
 {
-bool override_state(WindowSpecification& spec, WindowInfo const& window_info)
+bool needs_bespoke_fullscreen_placement(WindowSpecification& spec, WindowInfo const& window_info)
 {
-    // Only override state change if the state is being changed
-    if (!spec.state().is_set())
-    {
-        return false;
-    }
-
     // Only override behavior of windows of type normal and freestyle
     switch (spec.type().is_set() ? spec.type().value() : window_info.type())
     {
@@ -63,14 +57,16 @@ bool override_state(WindowSpecification& spec, WindowInfo const& window_info)
     }
 
     // Only override behavior if the new state is something other than minimized, hidden or attached
-    switch (spec.state().value())
+    if (spec.state().is_set())
     {
-    case mir_window_state_minimized:
-    case mir_window_state_hidden:
-    case mir_window_state_attached:
-        return false;
+        switch (spec.state().value())
+        {
+        case mir_window_state_minimized:
+        case mir_window_state_hidden:
+        case mir_window_state_attached:return false;
 
-    default:;
+        default:;
+        }
     }
 
     spec.state() = mir_window_state_fullscreen;
@@ -176,7 +172,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 
     {
         WindowInfo window_info{};
-        if (override_state(specification, window_info))
+        if (needs_bespoke_fullscreen_placement(specification, window_info))
         {
             auto const snap_instance_name = snap_instance_name_of(app_info.application());
 
@@ -225,7 +221,7 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 {
     WindowSpecification specification = modifications;
 
-    if (override_state(specification, window_info))
+    if (needs_bespoke_fullscreen_placement(specification, window_info))
     {
         auto const snap_instance_name = snap_instance_name_of(window_info.window().application());
 
@@ -287,10 +283,7 @@ void FrameWindowManagerPolicy::advise_end()
                        auto& info = tools.info_for(window);
                        WindowSpecification specification;
 
-                       // specification.state() needs to be set to something for override_state() to trigger
-                       specification.state() = mir_window_state_unknown;
-
-                       if (override_state(specification, info))
+                       if (needs_bespoke_fullscreen_placement(specification, info))
                        {
                            assign_to_output(specification, info.name(), snap_instance_name_of(info.window().application()));
                            apply_bespoke_fullscreen_placement(specification, info);
