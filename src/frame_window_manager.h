@@ -1,5 +1,5 @@
 /*
- * Copyright © 2016-2022 Canonical Ltd.
+ * Copyright © Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 or 3 as
@@ -12,8 +12,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * Authored By: Alan Griffiths <alan@octopull.co.uk>
  */
 
 #ifndef FRAME_WINDOW_MANAGER_H
@@ -25,6 +23,7 @@
 
 #include <memory>
 #include <vector>
+#include <optional>
 
 using namespace mir::geometry;
 
@@ -75,6 +74,9 @@ class FrameWindowManagerPolicy : public miral::MinimalWindowManager
 public:
     using miral::MinimalWindowManager::MinimalWindowManager;
 
+    static std::string const surface_title;
+    static std::string const snap_name;
+
     FrameWindowManagerPolicy(miral::WindowManagerTools const& tools, WindowManagerObserver& window_manager_observer);
 
     auto place_new_window(miral::ApplicationInfo const& app_info, miral::WindowSpecification const& request)
@@ -98,12 +100,36 @@ public:
     void advise_output_create(miral::Output const &output) override;
     void advise_output_delete(miral::Output const &output) override;
 
+    void advise_output_update(miral::Output const& updated, miral::Output const& original) override;
+
 private:
     WindowManagerObserver const& window_manager_observer;
     std::shared_ptr<WindowCount> window_count = std::make_shared<WindowCount>();
 
     bool application_zones_have_changed = false;
-    std::vector<int> outputs = {};
+    bool display_layout_has_changed = false;
+
+    class PlacementMapping
+    {
+    public:
+        void update(miral::Output const& output);
+        void clear(miral::Output const& output);
+
+        void set_output_for_surface(miral::WindowSpecification& specification, mir::optional_value<std::string> const& title) const;
+        void set_output_for_snap(miral::WindowSpecification& specification, std::string_view name) const;
+
+    private:
+        std::vector<std::pair<std::string, int>> surface_title_to_output_id;
+        std::vector<std::pair<std::string, int>> snap_name_to_output_id;
+    } placement_mapping;
+
+    void assign_to_output(
+        miral::WindowSpecification& specification, mir::optional_value<std::string> const& title,
+        std::string_view snap_name);
+
+    void apply_bespoke_fullscreen_placement(
+        miral::WindowSpecification& specification,
+        miral::WindowInfo const& window_info) const;
 };
 
 #endif /* FRAME_WINDOW_MANAGER_H */
