@@ -38,9 +38,9 @@ layout:
 apps:
   ubuntu-frame:
     command-chain:
-    - bin/setup-graphics
     - bin/run-user
     - bin/run-frame
+    - bin/graphics-core22-wrapper
     command: usr/local/bin/frame
     plugs:
       - opengl                # for compositing
@@ -53,9 +53,9 @@ apps:
 
   daemon:
     command-chain:
-    - bin/setup-graphics
     - bin/run-daemon
     - bin/run-frame
+    - bin/graphics-core22-wrapper
     command: usr/local/bin/frame
     daemon: simple
     restart-delay: 3s
@@ -70,7 +70,10 @@ apps:
       - wayland
 
   screenshot:
-    command-chain: [bin/anon-shm-preload, bin/run-client]
+    command-chain:
+    - bin/anon-shm-preload
+    - bin/run-client
+    - bin/graphics-core22-wrapper
     command: bin/screenshot
     plugs:
       - opengl
@@ -152,15 +155,19 @@ parts:
     prime:
       - -usr/share/fonts/truetype/dejavu
 
-  cleanup:
-    after: [ubuntu-frame, platform, icons, scripts]
-    plugin: nil
-    build-snaps: [ mesa-core22 ]
+  graphics-core22:
+    after:
+      - ubuntu-frame
+      - assets
+      - platform
+      - icons
+      - scripts
+      - grim
+    source: https://github.com/MirServer/graphics-core22.git
+    plugin: dump
     override-prime: |
-      set -eux
-      cd /snap/mesa-core22-test/current/usr/
-      find . -type f,l -exec rm -f $CRAFT_PRIME/usr/{} \;
-      rm -fr "$CRAFT_PRIME/usr/share/"{bug,doc,doc-base,drirc.d,glvnd,libdrm,lintian,man}
+      craftctl default
+      ${CRAFT_PART_SRC}/bin/graphics-core22-cleanup mesa-core22
 
       # Back compatibility fix until MirAL 3.8 is released
       miral_version=`LANG=C apt-cache policy libmiral-dev | sed -rne 's/^\s+Candidate:\s+([0-9]*\.[0-9])\..+$/\1/p'`
@@ -170,3 +177,5 @@ parts:
       else
         rm -f $SNAPCRAFT_PRIME/miral-lt-3.8
       fi
+    prime:
+      - bin/graphics-core22-wrapper
