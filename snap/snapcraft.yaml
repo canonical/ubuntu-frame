@@ -168,6 +168,7 @@ parts:
     override-prime: |
       craftctl default
       ${CRAFT_PART_SRC}/bin/graphics-core22-cleanup mesa-core22
+      rm -rf ${CRAFT_PRIME}/usr/{doc,man,lintian,pkgconfig,X11}
 
       # Back compatibility fix until MirAL 3.8 is released
       miral_version=`LANG=C apt-cache policy libmiral-dev | sed -rne 's/^\s+Candidate:\s+([0-9]*\.[0-9])\..+$/\1/p'`
