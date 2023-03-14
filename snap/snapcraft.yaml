@@ -85,7 +85,7 @@ plugs:
   graphics-core22:
     interface: content
     target: $SNAP/graphics
-    default-provider: mesa-core22
+    default-provider: mesa-core22/edge
 
 slots:
   ubuntu-frame-diagnostic:
