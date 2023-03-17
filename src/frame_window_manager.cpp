@@ -56,17 +56,14 @@ bool needs_bespoke_fullscreen_placement(WindowSpecification& spec, WindowInfo co
         return false;
     }
 
-    // Only override behavior if the new state is something other than minimized, hidden or attached
-    if (spec.state().is_set())
+    // Only override behavior if the (new) state is something other than minimized, hidden or attached
+    switch (spec.state().is_set() ? spec.state().value() : window_info.state())
     {
-        switch (spec.state().value())
-        {
-        case mir_window_state_minimized:
-        case mir_window_state_hidden:
-        case mir_window_state_attached:return false;
+    case mir_window_state_minimized:
+    case mir_window_state_hidden:
+    case mir_window_state_attached:return false;
 
-        default:;
-        }
+    default:;
     }
 
     spec.state() = mir_window_state_fullscreen;
