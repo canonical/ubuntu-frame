@@ -31,7 +31,7 @@ layout:
   /usr/share/fonts:
     bind: $SNAP/usr/share/fonts
   /usr/share/drirc.d:  # Used by mesa-core22 for app specific workarounds
-    symlink: $SNAP_COMMON/graphics/usr/share/drirc.d
+    symlink: $SNAP_COMMON/graphics/drirc.d
 
 apps:
   ubuntu-frame:
