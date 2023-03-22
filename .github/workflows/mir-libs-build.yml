@@ -1,0 +1,30 @@
+name: Refresh `mir-libs-build`
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  MirLibs:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 5
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+      with:
+        # so that we know what to cherry-pick from
+        fetch-depth: 2
+
+    - name: Update `mir-libs-build`
+      env:
+        GIT_COMMITTER_NAME: "Mir CI Bot"
+        GIT_COMMITTER_EMAIL: "mir-ci-bot@canonical.com"
+      run: |
+        # bring mir-libs changes in
+        git fetch origin mir-libs-build
+        git cherry-pick HEAD..origin/mir-libs-build
+
+        git push --force origin HEAD:mir-libs-build
