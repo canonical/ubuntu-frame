@@ -115,6 +115,7 @@ parts:
       - libapparmor1
       - libboost-filesystem1.74.0
       - libboost-iostreams1.74.0
+      - libfreetype6
   
   assets:
     plugin: nil
