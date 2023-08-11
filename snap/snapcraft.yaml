@@ -152,6 +152,13 @@ parts:
     prime:
       - -usr/share/fonts/truetype/dejavu
 
+  chvt:
+    plugin: nil
+    stage-packages:
+      - kbd
+    prime:
+      - bin/chvt
+
   graphics-core22:
     after:
       - ubuntu-frame
