@@ -111,7 +111,7 @@ parts:
       - libapparmor-dev
       - libfreetype6-dev
     stage-packages:
-      - libmiral5
+      - libmiral6
       - libboost-filesystem1.74.0
       - libboost-iostreams1.74.0
   
