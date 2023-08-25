@@ -36,10 +36,8 @@ int main(int argc, char const* argv[])
     WindowManagerObserver window_manager_observer{};
 
     DisplayConfiguration display_config{runner};
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 8, 0)
     display_config.add_output_attribute(FrameWindowManagerPolicy::surface_title);
     display_config.add_output_attribute(FrameWindowManagerPolicy::snap_name);
-#endif
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
