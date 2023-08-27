@@ -389,7 +389,6 @@ void FrameWindowManagerPolicy::advise_output_update(Output const& updated, Outpu
 
 void FrameWindowManagerPolicy::PlacementMapping::update(Output const& output)
 {
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 8, 0)
     auto const output_id = output.id();
 
     surface_title_to_output_id.erase(
@@ -411,14 +410,10 @@ void FrameWindowManagerPolicy::PlacementMapping::update(Output const& output)
 
     if (auto const attr = output.attribute(snap_name))
         snap_name_to_output_id.emplace_back(attr.value(), output_id);
-#else
-    (void)output;
-#endif
 }
 
 void FrameWindowManagerPolicy::PlacementMapping::clear(Output const& output)
 {
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(3, 8, 0)
     auto const output_id = output.id();
 
     surface_title_to_output_id.erase(
@@ -434,7 +429,6 @@ void FrameWindowManagerPolicy::PlacementMapping::clear(Output const& output)
             end(snap_name_to_output_id),
             [output_id](auto const& e) { return e.second == output_id; }),
         end(snap_name_to_output_id));
-#endif
 }
 
 void FrameWindowManagerPolicy::PlacementMapping::set_output_for_surface(
