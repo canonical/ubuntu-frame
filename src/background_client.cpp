@@ -618,7 +618,7 @@ auto TextRenderer::get_line_width(std::string const& line, uint32_t height_pixel
     set_char_size(height_pixels);
 
     auto line_width = 0;
-    for (auto const& character : line)
+    for (auto const& character : convert_utf8_to_utf32(line))
     {
         rasterize_glyph(character);
         auto const glyph = face->glyph;
