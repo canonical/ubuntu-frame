@@ -213,7 +213,7 @@ private:
 
     void draw();
 
-    mir::Fd const flush_signal;
+    mir::Fd const draw_signal;
     mir::Fd const shutdown_signal;
     mir::Fd const diagnostic_signal;
 

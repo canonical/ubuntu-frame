@@ -24,7 +24,6 @@
 #include <cstring>
 #include <codecvt>
 #include <sstream>
-#include <thread>
 
 #include <boost/throw_exception.hpp>
 #include <boost/filesystem.hpp>
