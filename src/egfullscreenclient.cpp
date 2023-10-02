@@ -141,7 +141,7 @@ void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_ou
 }
 
 egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, miral::MirRunner* runner, WindowManagerObserver* window_manager_observer) :
-    flush_signal{::eventfd(0, EFD_SEMAPHORE)},
+    draw_signal{::eventfd(0, EFD_SEMAPHORE)},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     diagnostic_signal{inotify_init()},
     diagnostic_path{diagnostic_path},
@@ -363,15 +363,7 @@ void egmde::FullscreenClient::on_new_output(Output const* output)
 
 void egmde::FullscreenClient::draw()
 {
-    {
-        std::lock_guard<decltype(outputs_mutex)> lock{outputs_mutex};
-
-        for (auto& output : outputs)
-        {
-            draw_screen(output.second, should_draw_crash());
-        }
-    }
-    wl_display_flush(display);
+    eventfd_write(draw_signal, 1);
 }
 
 auto egmde::FullscreenClient::make_shm_pool(size_t size, void** data) const
@@ -502,7 +494,7 @@ void egmde::FullscreenClient::run(wl_display* display)
 {
     enum FdIndices {
         display_fd = 0,
-        flush,
+        draw,
         diagnostic,
         shutdown,
         indices
@@ -511,7 +503,7 @@ void egmde::FullscreenClient::run(wl_display* display)
     pollfd fds[indices] =
         {
             {wl_display_get_fd(display), POLLIN, 0},
-            {flush_signal,               POLLIN, 0},
+            {draw_signal,                POLLIN, 0},
             {diagnostic_signal,          POLLIN, 0},
             {shutdown_signal,            POLLIN, 0},
         };
@@ -546,11 +538,13 @@ void egmde::FullscreenClient::run(wl_display* display)
             wl_display_cancel_read(display);
         }
 
-        if (fds[flush].revents & (POLLIN | POLLERR))
+        bool redraw = false;
+
+        if (fds[draw].revents & (POLLIN | POLLERR))
         {
             eventfd_t foo;
-            eventfd_read(flush_signal, &foo);
-            wl_display_flush(display);
+            eventfd_read(draw_signal, &foo);
+            redraw = true;
         }
 
         if (fds[diagnostic].revents & (POLLIN | POLLERR))
@@ -563,14 +557,27 @@ void egmde::FullscreenClient::run(wl_display* display)
                 && ib->name == diagnostic_path.value_or("").filename().string())
             {
                 diagnostic_exists = true;
-                draw();
+                redraw = true;
             }
             else if (ib->mask & IN_DELETE
                 && ib->name == diagnostic_path.value_or("").filename().string())
             {
                 diagnostic_exists = false;
-                draw();
+                redraw = true;
             }
+        }
+
+        if (redraw)
+        {
+            {
+                std::lock_guard<decltype(outputs_mutex)> lock{outputs_mutex};
+
+                for (auto& output : outputs)
+                {
+                    draw_screen(output.second, should_draw_crash());
+                }
+            }
+            wl_display_flush(display);
         }
     }
 }
