@@ -19,6 +19,7 @@
 #include <mir/log.h>
 #include <sys/apparmor.h>
 
+#include <algorithm>
 #include <cstring>
 #include <fstream>
 
