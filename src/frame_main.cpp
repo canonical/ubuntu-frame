@@ -50,6 +50,8 @@ int main(int argc, char const* argv[])
             wayland_extensions,
             display_config,
             display_config.layout_option(),
+            ConfigurationOption{[&](bool option) { background_client.set_wallpaper_enabled(option); },
+                               "wallpaper", "Specifies whether or not the wallpaper is enabled", true},
             ConfigurationOption{[&](auto& option) { background_client.set_wallpaper_top_colour(option);},
                                "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
             ConfigurationOption{[&](auto& option) { background_client.set_wallpaper_bottom_colour(option);},
