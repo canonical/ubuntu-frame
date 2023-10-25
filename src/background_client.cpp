@@ -94,6 +94,7 @@ public:
         wl_display* display,
         miral::MirRunner* runner,
         WindowManagerObserver* window_manager_observer,
+        bool wallpaper_enabled,
         Colour const& wallpaper_top_colour,
         Colour const& wallpaper_bottom_colour,
         Colour const& crash_background_colour,
@@ -105,6 +106,7 @@ public:
     
     void render_text(uint32_t width, uint32_t height, unsigned char* buffer) const;
 
+    bool const wallpaper_enabled;
     Colour const& wallpaper_top_colour;
     Colour const& wallpaper_bottom_colour;
     Colour const& crash_background_colour;
@@ -180,6 +182,11 @@ void BackgroundClient::set_colour(std::string const& option, Colour& colour)
         throw(mir::AbnormalExit(
             "Invalid colour (" + option + ") given in program argument"));
     }
+}
+
+void BackgroundClient::set_wallpaper_enabled(bool option)
+{
+    wallpaper_enabled = option;
 }
 
 void BackgroundClient::set_wallpaper_top_colour(std::string const& option)
@@ -293,6 +300,7 @@ void BackgroundClient::operator()(wl_display* display)
         display, 
         runner,
         window_manager_observer,
+        wallpaper_enabled,
         wallpaper_top_colour, 
         wallpaper_bottom_colour, 
         crash_background_colour,
@@ -319,6 +327,7 @@ BackgroundClient::Self::Self(
     wl_display* display,
     miral::MirRunner* runner,
     WindowManagerObserver* window_manager_observer,
+    bool wallpaper_enabled,
     Colour const& wallpaper_top_colour,
     Colour const& wallpaper_bottom_colour,
     Colour const& crash_background_colour,
@@ -327,6 +336,7 @@ BackgroundClient::Self::Self(
     uint diagnostic_delay)
     : FullscreenClient(display, diagnostic_path, diagnostic_delay, runner, window_manager_observer),
       runner{runner},
+      wallpaper_enabled{wallpaper_enabled},
       wallpaper_top_colour{wallpaper_top_colour},
       wallpaper_bottom_colour{wallpaper_bottom_colour},
       crash_background_colour{crash_background_colour},
@@ -377,6 +387,14 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
 {
     std::lock_guard lock{buffer_mutex};
 
+    // Don't draw diagnostic background if file is empty or font not found
+    bool const have_diagnostic = diagnostic_path && fs::exists(diagnostic_path.value()) && fs::file_size(diagnostic_path.value());
+    bool const should_show_diagnostic = draws_crash && have_diagnostic;
+    if (!wallpaper_enabled && !should_show_diagnostic)
+    {
+        return;
+    }
+
     bool const rotated = info.output->transform & WL_OUTPUT_TRANSFORM_90;
     auto const width = rotated ? info.output->height : info.output->width;
     auto const height = rotated ? info.output->width : info.output->height;
@@ -418,18 +436,7 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
 
     auto buffer = static_cast<unsigned char*>(info.content_area);
 
-    // Don't draw diagnostic background if file is empty or font not found
-    bool file_exists;
-    if (fs::exists(diagnostic_path.value_or("")))
-    {
-        file_exists = fs::file_size(diagnostic_path.value());
-    }
-    else
-    {
-        file_exists = false;
-    }
-
-    if (draws_crash && file_exists)
+    if (should_show_diagnostic)
     {
         render_background(width, height, buffer, crash_background_colour);
         render_text(width, height, buffer);

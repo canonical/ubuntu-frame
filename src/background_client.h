@@ -44,6 +44,7 @@ class BackgroundClient
 public:
     BackgroundClient(miral::MirRunner* runner, WindowManagerObserver* window_manager_observer);
 
+    void set_wallpaper_enabled(bool option);
     void set_wallpaper_top_colour(std::string const& option);
     void set_wallpaper_bottom_colour(std::string const& option);
     void set_crash_background_colour(std::string const& option);
@@ -76,6 +77,7 @@ private:
 
     std::mutex mutable mutex;
 
+    bool wallpaper_enabled = true;
     Colour wallpaper_top_colour = {127, 127, 127, 255};
     Colour wallpaper_bottom_colour = {31, 31, 31, 255};
     Colour crash_background_colour = {36, 12, 56, 255};
