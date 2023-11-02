@@ -84,6 +84,10 @@ plugs:
     interface: content
     target: $SNAP/graphics
     default-provider: mesa-core22
+  frame-systemd:
+    interface: system-files
+    write:
+    - /etc/systemd/system
 
 slots:
   ubuntu-frame-diagnostic:
