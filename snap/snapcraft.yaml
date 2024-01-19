@@ -18,7 +18,7 @@ architectures:
 
 environment:
   # Prep for Mir
-  MIR_SERVER_PLATFORM_PATH: ${SNAP}/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/mir/server-platform
+  MIR_SERVER_PLATFORM_PATH: ${SNAP}/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}/mir/server-platform
   LIBINPUT_QUIRKS_DIR: ${SNAP}/usr/share/libinput
   # Setup XKB
   XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
@@ -131,7 +131,7 @@ parts:
       - mir-platform-graphics-x
       - mir-platform-graphics-eglstream-kms
     prime:
-      - usr/lib/${CRAFT_ARCH_TRIPLET}
+      - usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
       - usr/share/libinput
 
   icons:
@@ -173,9 +173,9 @@ parts:
       miral_version=`LANG=C apt-cache policy libmiral-dev | sed -rne 's/^\s+Candidate:\s+([0-9]*\.[0-9])\..+$/\1/p'`
       if [ ${miral_version%.*} -eq 3 ] && [ ${miral_version#*.} -lt 8 ]
       then
-        touch $SNAPCRAFT_PRIME/miral-lt-3.8
+        touch ${CRAFT_PRIME}/miral-lt-3.8
       else
-        rm -f $SNAPCRAFT_PRIME/miral-lt-3.8
+        rm -f ${CRAFT_PRIME}/miral-lt-3.8
       fi
     prime:
       - bin/graphics-core22-wrapper
