@@ -22,7 +22,6 @@ EOT
     mv "${display_file}"  "${display_file}.save" || true
     mv "${display_temp}" "${display_file}"
     chmod a+r "${display_file}"
-    ! [ -e "${SNAP}/miral-lt-3.8" ] || ((config_changes+=1))
   else
     rm "${display_temp}"
   fi
