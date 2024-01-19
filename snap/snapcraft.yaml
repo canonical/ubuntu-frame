@@ -113,10 +113,16 @@ parts:
       - libapparmor-dev
       - libfreetype6-dev
     stage-packages:
-      - libmiral6
       - libboost-filesystem1.74.0
       - libboost-iostreams1.74.0
-  
+      # Stage libmiral<n> indirectly as we cannot (since core22) do `try:/else:`
+      - libmiral-dev
+    prime:
+      # Do not prime the `-dev` part of libmiral-dev, we don't need it (just the libmiral<n> dependency)
+      - -usr/include
+      - -usr/lib/*/pkgconfig
+      - -usr/lib/*/libmir*.so
+
   assets:
     plugin: nil
     stage-packages:
