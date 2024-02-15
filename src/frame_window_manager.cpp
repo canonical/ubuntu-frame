@@ -215,6 +215,7 @@ void FrameWindowManagerPolicy::assign_to_output(
 
 void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& window_info)
 {
+    MinimalWindowManager::advise_delete_window(window_info);
     if (is_application(window_info))
     {
         window_count->increment_closed();
@@ -373,7 +374,7 @@ void FrameWindowManagerPolicy::advise_output_delete(miral::Output const& output)
 
 void FrameWindowManagerPolicy::advise_new_window(WindowInfo const& window_info)
 {
-    WindowManagementPolicy::advise_new_window(window_info);
+    MinimalWindowManager::advise_new_window(window_info);
     if (is_application(window_info))
     {
         window_manager_observer.process_window_opened_callbacks();
