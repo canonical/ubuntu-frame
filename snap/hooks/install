@@ -17,3 +17,6 @@ then
   else snapctl set daemon=true
   fi
 fi
+
+
+mkdir -p $SNAP_DATA/ext-config

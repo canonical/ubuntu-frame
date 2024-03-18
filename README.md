@@ -18,6 +18,10 @@ The configuration options are described in detail in [the Ubuntu Frame reference
 
 As an alternative, you can connect a snap to the ubuntu-frame-config slot and write a value for display configuration option to a file named `frame.display.new`. Any config written by ubuntu-frame will be available in this slot under `frame.display.copy`.
 
+Steps to get it to work:
+sudo snap start salto-ubuntu-frame
+sudo snap connect $your-plug-snap:ubuntu-frame-config salto-ubuntu-frame:ubuntu-frame-config
+
 ## Development
 
 Developers working with Ubuntu Frame may find the following useful:

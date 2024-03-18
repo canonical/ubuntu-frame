@@ -1,4 +1,4 @@
-name: ubuntu-frame
+name: salto-ubuntu-frame
 adopt-info: ubuntu-frame
 summary: The foundation for many embedded graphical display implementations
 description: ubuntu-frame is a simple fullscreen shell (based on Wayland) used for kiosks, industrial displays, digital signage, smart mirrors, etc.

@@ -21,6 +21,11 @@ wait_for()
 
 display_settings_file=$SNAP_DATA/ext-config/frame.display.new
 
+while ! snapctl is-connected ubuntu-frame-config
+do
+    sleep 1
+done
+
 while [ 1 ]
 do
     wait_for "${display_settings_file}"

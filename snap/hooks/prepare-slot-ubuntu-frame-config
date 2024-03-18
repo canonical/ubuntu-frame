@@ -1,0 +1,10 @@
+#!/bin/bash
+
+display_file="$SNAP_DATA/frame.display"
+
+if [ -f "$display_file" ]; then
+    echo "Copying ${display_file} to ${SNAP_DATA}/ext-config/frame.display.copy"
+    cp "${display_file}" "${SNAP_DATA}/ext-config/frame.display.copy"
+else
+    echo "Display config file does not exist: $display_file"
+fi
