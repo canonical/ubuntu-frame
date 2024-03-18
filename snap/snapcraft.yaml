@@ -66,6 +66,13 @@ apps:
       - opengl
     slots:
       - wayland
+  
+  conf-wait:
+    command: bin/listen-display-config
+    daemon: simple
+    restart-delay: 5s
+    slots:
+      - ubuntu-frame-config
 
   screenshot:
     command-chain:
@@ -91,6 +98,11 @@ slots:
     content: diagnostic-text
     write: 
       - $SNAP_COMMON/diagnostic
+  ubuntu-frame-config:
+    interface: content
+    content: config-files
+    write:
+      - $SNAP_DATA/ext-config
 
 parts:
   ubuntu-frame:

@@ -1,0 +1,32 @@
+#!/bin/sh
+set -eux
+
+wait_for()
+{
+  echo "Waiting for $1 to exist"
+  until
+    until
+      inotifywait --event create "$(dirname "$1")"&
+      inotify_pid=$!
+      [ -e "$1" ] || sleep 2 && [ -e "$1" ]
+    do
+      wait "${inotify_pid}"
+    done
+    kill "${inotify_pid}"
+    [ -O "$1" ]
+  do
+    sleep 1
+  done
+}
+
+display_settings_file=$SNAP_DATA/ext-config/frame.display.new
+
+while [ 1 ]
+do
+    wait_for "${display_settings_file}"
+
+    echo "Overwriting display settings"
+    snapctl set display="$(cat "${display_settings_file}")"
+
+    rm $display_settings_file
+done
