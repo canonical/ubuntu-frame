@@ -59,7 +59,6 @@ int main(int argc, char const* argv[])
             ConfigurationOption{[&](auto& option) { background_client.set_crash_background_colour(option);},
                                "diagnostic-background", "Colour of diagnostic screen background RGB", "0x380c24"},
             ConfigurationOption{[&](auto& option) { background_client.set_crash_text_colour(option);},
-
                                "diagnostic-text",       "Colour of diagnostic screen text RGB", "0xffffff"},
             ConfigurationOption{[&] (auto& option) { background_client.set_diagnostic_path(option);},
                                "diagnostic-path",  "Path (including filename) of diagnostic file", ""},

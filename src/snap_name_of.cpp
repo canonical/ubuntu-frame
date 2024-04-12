@@ -43,7 +43,7 @@ auto snap_name_of(miral::Application const& app, bool fallback_without_apparmor,
 
         // EINVAL is what is returned when AppArmor isn't setup
         // ENOPROTOOPT is what is returned when AppArmor doesn't have some Ubuntu patches (yet)
-        if (((errno == EINVAL)|| errno == ENOPROTOOPT) && fallback_without_apparmor)
+        if (((errno == EINVAL) || errno == ENOPROTOOPT) && fallback_without_apparmor)
         {
             mir::log_info("Fall back (without AppArmor): Identify client via /proc/%%d/cmdline");
 
