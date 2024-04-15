@@ -17,6 +17,7 @@
 #ifndef FRAME_BACKGROUND_CLIENT
 #define FRAME_BACKGROUND_CLIENT
 
+#include <filesystem>
 #include <memory>
 #include <mutex>
 #include <optional>
@@ -24,8 +25,6 @@
 
 #include <miral/application.h>
 #include <mir/geometry/rectangles.h>
-
-#include <boost/filesystem.hpp>
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -85,7 +84,7 @@ private:
     
     uint diagnostic_delay = 0;
 
-    std::optional<boost::filesystem::path> diagnostic_path;
+    std::optional<std::filesystem::path> diagnostic_path;
 
     struct Self;
     std::weak_ptr<Self> self;
@@ -96,7 +95,7 @@ private:
 class TextRenderer
 {
 public:
-    using Path = boost::filesystem::path;
+    using Path = std::filesystem::path;
 
     TextRenderer(Path font_path);
     ~TextRenderer();
