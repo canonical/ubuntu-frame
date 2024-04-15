@@ -3,7 +3,7 @@ adopt-info: ubuntu-frame
 summary: The foundation for many embedded graphical display implementations
 description: ubuntu-frame is a simple fullscreen shell (based on Wayland) used for kiosks, industrial displays, digital signage, smart mirrors, etc.
 confinement: strict
-base: core22
+base: core24
 license: GPL-3.0
 compression: lzo
 package-repositories:
@@ -30,7 +30,7 @@ layout:
     bind: $SNAP/usr/share/icons
   /usr/share/fonts:
     bind: $SNAP/usr/share/fonts
-  /usr/share/drirc.d:  # Used by mesa-core22 for app specific workarounds
+  /usr/share/drirc.d:  # Used by mesa-core24 for app specific workarounds
     symlink: $SNAP_COMMON/graphics/drirc.d
 
 apps:
@@ -38,7 +38,7 @@ apps:
     command-chain:
     - bin/run-user
     - bin/run-frame
-    - bin/graphics-core22-wrapper
+    - bin/graphics-core24-wrapper
     command: usr/local/bin/frame
     plugs:
       - opengl                # for compositing
@@ -53,7 +53,7 @@ apps:
     command-chain:
     - bin/run-daemon
     - bin/run-frame
-    - bin/graphics-core22-wrapper
+    - bin/graphics-core24-wrapper
     command: usr/local/bin/frame
     daemon: simple
     restart-delay: 3s
@@ -71,7 +71,7 @@ apps:
     command-chain:
     - bin/anon-shm-preload
     - bin/run-client
-    - bin/graphics-core22-wrapper
+    - bin/graphics-core24-wrapper
     command: bin/screenshot
     plugs:
       - opengl
@@ -80,10 +80,10 @@ apps:
       - wayland
 
 plugs:
-  graphics-core22:
+  graphics-core24:
     interface: content
     target: $SNAP/graphics
-    default-provider: mesa-core22
+    default-provider: mesa-core24
 
 slots:
   ubuntu-frame-diagnostic:
@@ -158,7 +158,7 @@ parts:
     prime:
       - -usr/share/fonts/truetype/dejavu
 
-  graphics-core22:
+  graphics-core:
     after:
       - ubuntu-frame
       - assets
@@ -166,12 +166,12 @@ parts:
       - icons
       - scripts
       - grim
-    source: https://github.com/MirServer/graphics-core22.git
+    source: https://github.com/canonical/graphics-core.git
     plugin: dump
     override-prime: |
       craftctl default
-      ${CRAFT_PART_SRC}/bin/graphics-core22-cleanup mesa-core22
+      ${CRAFT_PART_SRC}/bin/graphics-core24-cleanup mesa-core24
       rm -rf ${CRAFT_PRIME}/usr/{doc,man,lintian,pkgconfig,X11}
 
     prime:
-      - bin/graphics-core22-wrapper
+      - bin/graphics-core24-wrapper
