@@ -83,7 +83,7 @@ plugs:
   gpu-2404:
     interface: content
     target: $SNAP/gpu-2404
-    default-provider: mesa-2404
+    # default-provider: mesa-2404
 
 slots:
   ubuntu-frame-diagnostic:

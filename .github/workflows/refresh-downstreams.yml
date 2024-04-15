@@ -3,7 +3,7 @@ name: Refresh downstreams
 on:
   push:
     branches:
-    - main
+    - core24
 
 jobs:
   Refresh:
@@ -15,8 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         ref:
-        - mir-libs-build
-        - core24
+        - mir-libs-build-core24
 
     steps:
     - name: Check out code
