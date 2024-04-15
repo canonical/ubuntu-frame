@@ -18,6 +18,7 @@ jobs:
         - amd64
         - armhf
         - arm64
+      fail-fast: false
 
     steps:
     - name: Check out code
