@@ -10,11 +10,11 @@ package-repositories:
   - type: apt
     ppa: mir-team/release
 
-architectures:
-  - build-on: amd64
-  - build-on: arm64
-  - build-on: armhf
-  - build-on: riscv64
+platforms:
+  amd64:
+  arm64:
+  armhf:
+  riscv64:
 
 environment:
   # Prep for Mir
