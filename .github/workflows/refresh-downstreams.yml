@@ -1,4 +1,4 @@
-name: Refresh `mir-libs-build`
+name: Refresh downstreams
 
 on:
   push:
@@ -6,25 +6,32 @@ on:
     - main
 
 jobs:
-  MirLibs:
+  Refresh:
     runs-on: ubuntu-latest
 
     timeout-minutes: 5
 
+    strategy:
+      fail-fast: false
+      matrix:
+        ref:
+        - mir-libs-build
+        - core24
+
     steps:
     - name: Check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         # so that we know what to cherry-pick from
         fetch-depth: 2
 
-    - name: Update `mir-libs-build`
+    - name: Update `${{ matrix.ref }}`
       env:
         GIT_COMMITTER_NAME: "Mir CI Bot"
         GIT_COMMITTER_EMAIL: "mir-ci-bot@canonical.com"
       run: |
         # bring mir-libs changes in
-        git fetch origin mir-libs-build
-        git cherry-pick HEAD..origin/mir-libs-build
+        git fetch origin ${{ matrix.ref }}
+        git cherry-pick HEAD..origin/${{ matrix.ref }}
 
-        git push --force origin HEAD:mir-libs-build
+        git push --force origin HEAD:${{ matrix.ref }}
