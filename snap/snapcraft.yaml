@@ -108,12 +108,10 @@ parts:
       - pkg-config
       - libmiral-dev
       - libwayland-dev
-      - libboost-filesystem-dev
       - libboost-iostreams-dev
       - libapparmor-dev
       - libfreetype6-dev
     stage-packages:
-      - libboost-filesystem1.74.0
       - libboost-iostreams1.74.0
       # Stage libmiral<n> indirectly as we cannot (since core22) do `try:/else:`
       - libmiral-dev

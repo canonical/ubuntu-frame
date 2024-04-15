@@ -23,14 +23,15 @@
 #include <chrono>
 #include <cstring>
 #include <codecvt>
+#include <filesystem>
+#include <fstream>
 #include <sstream>
 
 #include <boost/throw_exception.hpp>
-#include <boost/filesystem.hpp>
 
 #include <mir/fatal.h>
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 using Path = fs::path;
 
 namespace
@@ -62,7 +63,7 @@ auto TextRenderer::DiagnosticText::from(Path const& path) -> DiagnosticText
     static const int max_line_length = 250;
 
 
-    fs::ifstream in{path};
+    std::ifstream in{path};
     std::vector<std::string> lines;
     std::string line;
     for (int line_count = 0; getline(in, line); ++line_count)

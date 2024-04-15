@@ -19,7 +19,7 @@ add_executable(frame
 )
 
 # Check for boost
-find_package(Boost 1.48.0 COMPONENTS filesystem iostreams REQUIRED)
+find_package(Boost 1.48.0 COMPONENTS iostreams REQUIRED)
 
 target_compile_definitions(frame PRIVATE MIR_LOG_COMPONENT="frame")
 

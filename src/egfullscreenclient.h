@@ -24,10 +24,9 @@
 
 #include <wayland-client.h>
 
-#include <boost/filesystem.hpp>
-
 #include <sys/inotify.h>
 
+#include <filesystem>
 #include <functional>
 #include <map>
 #include <memory>
@@ -47,7 +46,7 @@ namespace egmde
 class FullscreenClient
 {
 public:
-    using Path = boost::filesystem::path;
+    using Path = std::filesystem::path;
 
     explicit FullscreenClient(
         wl_display* display, 
