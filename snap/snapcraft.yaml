@@ -30,15 +30,15 @@ layout:
     bind: $SNAP/usr/share/icons
   /usr/share/fonts:
     bind: $SNAP/usr/share/fonts
-  /usr/share/drirc.d:  # Used by mesa-core24 for app specific workarounds
-    symlink: $SNAP_COMMON/graphics/drirc.d
+  /usr/share/drirc.d:  # Used by mesa-2404 for app specific workarounds
+    symlink: $SNAP_COMMON/gpu-2404/drirc.d
 
 apps:
   ubuntu-frame:
     command-chain:
     - bin/run-user
     - bin/run-frame
-    - bin/graphics-core24-wrapper
+    - bin/gpu-2404-wrapper
     command: usr/local/bin/frame
     plugs:
       - opengl                # for compositing
@@ -53,7 +53,7 @@ apps:
     command-chain:
     - bin/run-daemon
     - bin/run-frame
-    - bin/graphics-core24-wrapper
+    - bin/gpu-2404-wrapper
     command: usr/local/bin/frame
     daemon: simple
     restart-delay: 3s
@@ -71,7 +71,7 @@ apps:
     command-chain:
     - bin/anon-shm-preload
     - bin/run-client
-    - bin/graphics-core24-wrapper
+    - bin/gpu-2404-wrapper
     command: bin/screenshot
     plugs:
       - opengl
@@ -80,10 +80,10 @@ apps:
       - wayland
 
 plugs:
-  graphics-core24:
+  gpu-2404:
     interface: content
-    target: $SNAP/graphics
-    default-provider: mesa-core24
+    target: $SNAP/gpu-2404
+    default-provider: mesa-2404
 
 slots:
   ubuntu-frame-diagnostic:
@@ -158,7 +158,7 @@ parts:
     prime:
       - -usr/share/fonts/truetype/dejavu
 
-  graphics-core:
+  gpu-snap:
     after:
       - ubuntu-frame
       - assets
@@ -166,12 +166,12 @@ parts:
       - icons
       - scripts
       - grim
-    source: https://github.com/canonical/graphics-core.git
+    source: https://github.com/canonical/gpu-snap.git
     plugin: dump
     override-prime: |
       craftctl default
-      ${CRAFT_PART_SRC}/bin/graphics-core24-cleanup mesa-core24
+      ${CRAFT_PART_SRC}/bin/gpu-2404-cleanup mesa-2404
       rm -rf ${CRAFT_PRIME}/usr/{doc,man,lintian,pkgconfig,X11}
 
     prime:
-      - bin/graphics-core24-wrapper
+      - bin/gpu-2404-wrapper
