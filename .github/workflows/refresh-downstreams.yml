@@ -16,7 +16,6 @@ jobs:
       matrix:
         ref:
         - mir-libs-build
-        - core24
 
     steps:
     - name: Check out code
