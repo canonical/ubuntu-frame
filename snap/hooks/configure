@@ -72,9 +72,9 @@ EOT
 fi
 
 
-if [ -f "$SNAP/graphics/mir-quirks" ]
+if [ -f "$SNAP/gpu-2404/mir-quirks" ]
 then
-  cat "$SNAP/graphics/mir-quirks" >> "${config_temp}"
+  cat "$SNAP/gpu-2404/mir-quirks" >> "${config_temp}"
 fi
 
 # Fill in defaults for any options not already supplied
