@@ -358,8 +358,8 @@ void BackgroundClient::Self::render_text(
 
     auto const diagnostic = TextRenderer::DiagnosticText::from(diagnostic_path.value());
 
-    auto const x_margin = width * (x_margin_percent / 100.0);
-    auto const y_margin = height * (y_margin_percent / 100.0);
+    auto const x_margin = uint32_t(width * (x_margin_percent / 100.0));
+    auto const y_margin = uint32_t(height * (y_margin_percent / 100.0));
 
     auto const x_diff = width - x_margin;
     auto const y_diff = height - y_margin;
