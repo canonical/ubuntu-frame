@@ -266,12 +266,12 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
             draw_screen(p->second, should_draw_crash());
         }
 
-        check_for_exposed_output();
+        check_for_exposed_outputs();
     }
     wl_display_flush(display);
 }
 
-void egmde::FullscreenClient::check_for_exposed_output()
+void egmde::FullscreenClient::check_for_exposed_outputs()
 {
     auto i = begin(hidden_outputs);
     while (i != end(hidden_outputs))
@@ -282,15 +282,13 @@ void egmde::FullscreenClient::check_for_exposed_output()
         {
             display_area.add(screen_rect);
             draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
+            hidden_outputs.erase(i);
             break;
         }
-
-        ++i;
-    }
-
-    if (i != end(hidden_outputs))
-    {
-        hidden_outputs.erase(i);
+        else
+        {
+            ++i;
+        }
     }
 }
 
@@ -321,7 +319,7 @@ void egmde::FullscreenClient::on_output_gone(Output const* output)
             display_area.remove({{output->x, output->y}, {output->width, output->height}});
         }
 
-        check_for_exposed_output();
+        check_for_exposed_outputs();
     }
     wl_display_flush(display);
 }
