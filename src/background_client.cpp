@@ -269,7 +269,7 @@ void BackgroundClient::render_background(
 {
     Colour new_pixel;
 
-    for (auto current_y = 0; current_y < height; current_y++)
+    for (uint32_t current_y = 0; current_y < height; current_y++)
     {
         // Render gradient
         for (auto i = 0; i < 3; i++)
