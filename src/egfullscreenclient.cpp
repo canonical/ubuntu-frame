@@ -266,27 +266,32 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
             draw_screen(p->second, should_draw_crash());
         }
 
-        auto i = begin(hidden_outputs);
-        while (i != end(hidden_outputs))
-        {
-            mir::geometry::Rectangle const screen_rect{{(*i)->x, (*i)->y}, {(*i)->width, (*i)->height}};
-
-            if (!display_area.bounding_rectangle().overlaps(screen_rect))
-            {
-                display_area.add(screen_rect);
-                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
-                break;
-            }
-
-            ++i;
-        }
-
-        if (i != end(hidden_outputs))
-        {
-            hidden_outputs.erase(i);
-        }
+        check_for_exposed_output();
     }
     wl_display_flush(display);
+}
+
+void egmde::FullscreenClient::check_for_exposed_output()
+{
+    auto i = begin(hidden_outputs);
+    while (i != end(hidden_outputs))
+    {
+        Rectangle const screen_rect{{(*i)->x, (*i)->y}, {(*i)->width, (*i)->height}};
+
+        if (!display_area.bounding_rectangle().overlaps(screen_rect))
+        {
+            display_area.add(screen_rect);
+            draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
+            break;
+        }
+
+        ++i;
+    }
+
+    if (i != end(hidden_outputs))
+    {
+        hidden_outputs.erase(i);
+    }
 }
 
 void egmde::FullscreenClient::on_output_gone(Output const* output)
@@ -316,25 +321,7 @@ void egmde::FullscreenClient::on_output_gone(Output const* output)
             display_area.remove({{output->x, output->y}, {output->width, output->height}});
         }
 
-        i = begin(hidden_outputs);
-        while (i != end(hidden_outputs))
-        {
-            mir::geometry::Rectangle const screen_rect{{(*i)->x, (*i)->y}, {(*i)->width, (*i)->height}};
-
-            if (!display_area.bounding_rectangle().overlaps(screen_rect))
-            {
-                display_area.add(screen_rect);
-                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
-                break;
-            }
-
-            ++i;
-        }
-
-        if (i != end(hidden_outputs))
-        {
-            hidden_outputs.erase(i);
-        }
+        check_for_exposed_output();
     }
     wl_display_flush(display);
 }

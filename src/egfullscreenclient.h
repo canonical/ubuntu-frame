@@ -256,6 +256,8 @@ private:
 
     bool diagnostic_wants_to_draw = false;
     bool diagnostic_exists = false;
+
+    void check_for_exposed_output();
 };
 }
 
