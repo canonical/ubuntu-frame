@@ -652,7 +652,7 @@ auto TextRenderer::get_max_font_height_by_width(DiagnosticText const& diagnostic
     auto estimate_font_height = 50;
     auto const width_from_estimate = get_max_line_width(diagnostic, estimate_font_height);
 
-    auto const final_font_height = estimate_font_height * (static_cast<double>(max_width) / width_from_estimate);
+    auto const final_font_height = uint32_t(estimate_font_height * (static_cast<double>(max_width) / width_from_estimate));
     return final_font_height;
 }
 
@@ -662,7 +662,7 @@ auto TextRenderer::get_max_font_height_by_height(DiagnosticText const& diagnosti
     auto estimate_font_height = 50;
     auto const height_from_estimate = get_total_height(num_lines, estimate_font_height);
 
-    auto const final_font_height = estimate_font_height * (static_cast<double>(max_height) / height_from_estimate);
+    auto const final_font_height = uint32_t(estimate_font_height * (static_cast<double>(max_height) / height_from_estimate));
     return final_font_height;
 }
 
