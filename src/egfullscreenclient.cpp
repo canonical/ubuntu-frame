@@ -144,11 +144,11 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     draw_signal{::eventfd(0, EFD_SEMAPHORE)},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     diagnostic_signal{inotify_init()},
+    registry{nullptr, [](auto){}},
     diagnostic_path{diagnostic_path},
     diagnostic_delay{diagnostic_delay},
     runner{runner},
-    window_manager_observer{window_manager_observer},
-    registry{nullptr, [](auto){}}
+    window_manager_observer{window_manager_observer}
 {
     // Check inotify initializaiton
     if (diagnostic_signal < 0)
