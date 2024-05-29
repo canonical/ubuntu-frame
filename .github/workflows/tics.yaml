@@ -1,0 +1,44 @@
+name: TICS
+
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo add-apt-repository --yes ppa:mir-team/dev
+        sudo apt install --yes \
+          build-essential \
+          libapparmor-dev \
+          libboost-iostreams-dev \
+          libfreetype6-dev \
+          libmiral-dev \
+          libwayland-dev \
+          ninja-build \
+          pkg-config
+
+    - name: Build
+      run: |
+        cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -GNinja src
+        cmake --build build
+
+    - name: Run TICS analysis
+      env:
+        TICSAUTHTOKEN: ${{ secrets.TICSAUTHTOKEN }}
+      run: |
+        . <(curl --silent --show-error "https://canonical.tiobe.com/tiobeweb/TICS/api/public/v1/fapi/installtics/Script?cfg=default&platform=linux&url=https://canonical.tiobe.com/tiobeweb/TICS/")
+        TICSQServer -project ubuntu-frame -tmpdir /tmp/tics -branchdir .
+
+    - name: Store TICS processing data
+      uses: actions/upload-artifact@v4
+      with:
+        name: TICS-data
+        path: /tmp/tics/ticstmpdir
