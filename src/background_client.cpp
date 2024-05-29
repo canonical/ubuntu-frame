@@ -269,7 +269,7 @@ void BackgroundClient::render_background(
 {
     Colour new_pixel;
 
-    for (auto current_y = 0; current_y < height; current_y++)
+    for (uint32_t current_y = 0; current_y < height; current_y++)
     {
         // Render gradient
         for (auto i = 0; i < 3; i++)
@@ -358,8 +358,8 @@ void BackgroundClient::Self::render_text(
 
     auto const diagnostic = TextRenderer::DiagnosticText::from(diagnostic_path.value());
 
-    auto const x_margin = width * (x_margin_percent / 100.0);
-    auto const y_margin = height * (y_margin_percent / 100.0);
+    auto const x_margin = uint32_t(width * (x_margin_percent / 100.0));
+    auto const y_margin = uint32_t(height * (y_margin_percent / 100.0));
 
     auto const x_diff = width - x_margin;
     auto const y_diff = height - y_margin;
@@ -652,7 +652,7 @@ auto TextRenderer::get_max_font_height_by_width(DiagnosticText const& diagnostic
     auto estimate_font_height = 50;
     auto const width_from_estimate = get_max_line_width(diagnostic, estimate_font_height);
 
-    auto const final_font_height = estimate_font_height * (static_cast<double>(max_width) / width_from_estimate);
+    auto const final_font_height = uint32_t(estimate_font_height * (static_cast<double>(max_width) / width_from_estimate));
     return final_font_height;
 }
 
@@ -662,7 +662,7 @@ auto TextRenderer::get_max_font_height_by_height(DiagnosticText const& diagnosti
     auto estimate_font_height = 50;
     auto const height_from_estimate = get_total_height(num_lines, estimate_font_height);
 
-    auto const final_font_height = estimate_font_height * (static_cast<double>(max_height) / height_from_estimate);
+    auto const final_font_height = uint32_t(estimate_font_height * (static_cast<double>(max_height) / height_from_estimate));
     return final_font_height;
 }
 

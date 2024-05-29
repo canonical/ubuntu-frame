@@ -212,6 +212,8 @@ private:
 
     void draw();
 
+    void check_for_exposed_outputs();
+
     mir::Fd const draw_signal;
     mir::Fd const shutdown_signal;
     mir::Fd const diagnostic_signal;

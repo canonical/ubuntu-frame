@@ -144,11 +144,11 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     draw_signal{::eventfd(0, EFD_SEMAPHORE)},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     diagnostic_signal{inotify_init()},
+    registry{nullptr, [](auto){}},
     diagnostic_path{diagnostic_path},
     diagnostic_delay{diagnostic_delay},
     runner{runner},
-    window_manager_observer{window_manager_observer},
-    registry{nullptr, [](auto){}}
+    window_manager_observer{window_manager_observer}
 {
     // Check inotify initializaiton
     if (diagnostic_signal < 0)
@@ -266,27 +266,30 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
             draw_screen(p->second, should_draw_crash());
         }
 
-        auto i = begin(hidden_outputs);
-        while (i != end(hidden_outputs))
-        {
-            mir::geometry::Rectangle const screen_rect{{(*i)->x, (*i)->y}, {(*i)->width, (*i)->height}};
-
-            if (!display_area.bounding_rectangle().overlaps(screen_rect))
-            {
-                display_area.add(screen_rect);
-                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
-                break;
-            }
-
-            ++i;
-        }
-
-        if (i != end(hidden_outputs))
-        {
-            hidden_outputs.erase(i);
-        }
+        check_for_exposed_outputs();
     }
     wl_display_flush(display);
+}
+
+void egmde::FullscreenClient::check_for_exposed_outputs()
+{
+    auto i = begin(hidden_outputs);
+    while (i != end(hidden_outputs))
+    {
+        Rectangle const screen_rect{{(*i)->x, (*i)->y}, {(*i)->width, (*i)->height}};
+
+        if (!display_area.bounding_rectangle().overlaps(screen_rect))
+        {
+            display_area.add(screen_rect);
+            draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
+            hidden_outputs.erase(i);
+            break;
+        }
+        else
+        {
+            ++i;
+        }
+    }
 }
 
 void egmde::FullscreenClient::on_output_gone(Output const* output)
@@ -316,25 +319,7 @@ void egmde::FullscreenClient::on_output_gone(Output const* output)
             display_area.remove({{output->x, output->y}, {output->width, output->height}});
         }
 
-        i = begin(hidden_outputs);
-        while (i != end(hidden_outputs))
-        {
-            mir::geometry::Rectangle const screen_rect{{(*i)->x, (*i)->y}, {(*i)->width, (*i)->height}};
-
-            if (!display_area.bounding_rectangle().overlaps(screen_rect))
-            {
-                display_area.add(screen_rect);
-                draw_screen(outputs.insert({*i, SurfaceInfo{*i}}).first->second, should_draw_crash());
-                break;
-            }
-
-            ++i;
-        }
-
-        if (i != end(hidden_outputs))
-        {
-            hidden_outputs.erase(i);
-        }
+        check_for_exposed_outputs();
     }
     wl_display_flush(display);
 }
