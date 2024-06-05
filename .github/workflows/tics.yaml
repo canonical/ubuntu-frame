@@ -31,14 +31,10 @@ jobs:
         cmake --build build
 
     - name: Run TICS analysis
-      env:
-        TICSAUTHTOKEN: ${{ secrets.TICSAUTHTOKEN }}
-      run: |
-        . <(curl --silent --show-error "https://canonical.tiobe.com/tiobeweb/TICS/api/public/v1/fapi/installtics/Script?cfg=default&platform=linux&url=https://canonical.tiobe.com/tiobeweb/TICS/")
-        TICSQServer -project ubuntu-frame -tmpdir /tmp/tics -branchdir .
-
-    - name: Store TICS processing data
-      uses: actions/upload-artifact@v4
+      uses: tiobe/tics-github-action@v3
       with:
-        name: TICS-data
-        path: /tmp/tics/ticstmpdir
+        mode: qserver
+        project: ubuntu-frame
+        viewerUrl: https://canonical.tiobe.com/tiobeweb/TICS/api/cfg?name=default
+        ticsAuthToken: ${{ secrets.TICSAUTHTOKEN }}
+        installTics: true
