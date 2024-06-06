@@ -25,11 +25,6 @@ jobs:
           ninja-build \
           pkg-config
 
-    - name: Build
-      run: |
-        cmake -Bbuild -DCMAKE_BUILD_TYPE=Debug -GNinja src
-        cmake --build build
-
     - name: Run TICS analysis
       uses: tiobe/tics-github-action@v3
       with:
