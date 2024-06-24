@@ -54,7 +54,7 @@ apps:
 
   launcher:
     command-chain:
-      - bin/run-client
+      - bin/run-client-wait
       - bin/gpu-2404-wrapper
     command: ubuntu_frame_launcher
     daemon: simple

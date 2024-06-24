@@ -1,0 +1,39 @@
+#!/bin/sh
+set -e
+
+if ! command -v inotifywait > /dev/null
+then
+    echo "ERROR: inotifywait could not be found, ubuntu-frame expects:"
+    echo " . . :     stage-packages:"
+    echo " . . :        - inotify-tools"
+    exit 1
+fi
+
+wait_for()
+{
+  until
+    until
+      inotifywait --event create "$(dirname "$1")"&
+      inotify_pid=$!
+      [ -e "$1" ] || sleep 2 && [ -e "$1" ]
+    do
+      wait "${inotify_pid}"
+    done
+    kill "${inotify_pid}"
+    [ -O "$1" ]
+  do
+    sleep 1
+  done
+}
+
+real_xdg_runtime_dir=$(dirname "${XDG_RUNTIME_DIR}")
+export WAYLAND_DISPLAY="${real_xdg_runtime_dir}/${WAYLAND_DISPLAY:-wayland-0}"
+
+# On core systems may need to wait for real XDG_RUNTIME_DIR
+wait_for "${real_xdg_runtime_dir}"
+wait_for "${WAYLAND_DISPLAY}"
+
+mkdir -p "$XDG_RUNTIME_DIR" -m 700
+unset DISPLAY
+
+exec "$@"
