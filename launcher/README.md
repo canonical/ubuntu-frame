@@ -7,14 +7,15 @@ flutter pub get
 ```
 
 ## Development
-1 . Run `miral-shell`:
+1 . Run `ubuntu-frame`:
 
 ```sh
-WAYLAND_DISPLAY=wayland-98 miral-shell --add-wayland-extensions zwlr_layer_shell_v1:zwlr_foreign_toplevel_manager_v1  
+WAYLAND_DISPLAY=wayland-98 ubuntu-frame --add-wayland-extensions zwlr_layer_shell_v1:zwlr_foreign_toplevel_manager_v1  
 ```
 
-2. Run `ubuntu-frame-launcher`:
+2. Run `launcher`:
 
 ```sh
+cd launcher
 WAYLAND_DISPLAY=wayland-98 flutter run
 ```
