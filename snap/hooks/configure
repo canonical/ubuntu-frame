@@ -110,3 +110,14 @@ if [ "$(snapctl get daemon)" = "true" ]; then
 else
   snapctl stop --disable "$SNAP_INSTANCE_NAME.daemon" 2>&1 || true
 fi
+
+# (Re)start the launcher
+if [ "$(snapctl get launcher)" = "true" ]; then
+  if snapctl services "$SNAP_INSTANCE_NAME.launcher" | grep -q inactive; then
+    snapctl start --enable "$SNAP_INSTANCE_NAME.launcher" 2>&1 || true
+  elif [ "$config_changes" -gt 0 ]; then
+    snapctl restart "$SNAP_INSTANCE_NAME.launcher" || true
+  fi
+else
+  snapctl stop --disable "$SNAP_INSTANCE_NAME.launcher" 2>&1 || true
+fi

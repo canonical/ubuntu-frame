@@ -46,8 +46,27 @@ apps:
       - x11                   # to run on a host X11 server
       - network-bind          # to run via X-forwarding (e.g. development in a container/VM)
       - hardware-observe      # libinput likes to scan udev
+      - desktop-launch
     slots:
+      - wayslot
+    environment:
+      XDG_DATA_DIRS: $SNAP/usr/share:/var/lib/snapd/desktop
+
+  launcher:
+    command-chain:
+      - bin/run-client
+      - bin/gpu-2404-wrapper
+    command: ubuntu_frame_launcher
+    daemon: simple
+    restart-delay: 3s
+    restart-condition: always
+    install-mode: disable
+    plugs:
+      - opengl
+      - desktop-launch
       - wayland
+    environment:
+      XDG_DATA_DIRS: $SNAP/usr/share:/var/lib/snapd/desktop
 
   daemon:
     command-chain:
@@ -65,7 +84,7 @@ apps:
       - hardware-observe      # libinput likes to scan udev
       - opengl
     slots:
-      - wayland
+      - wayslot
 
   screenshot:
     command-chain:
@@ -75,8 +94,6 @@ apps:
     command: bin/screenshot
     plugs:
       - opengl
-    slots:
-      # Should be a plug but one snap can't have both the wayland slot and plug. This works.
       - wayland
 
 plugs:
@@ -91,6 +108,8 @@ slots:
     content: diagnostic-text
     write: 
       - $SNAP_COMMON/diagnostic
+  wayslot:
+    interface: wayland
 
 parts:
   ubuntu-frame:
@@ -168,6 +187,7 @@ parts:
       - icons
       - scripts
       - grim
+      - launcher
     source: https://github.com/canonical/gpu-snap.git
     plugin: dump
     override-prime: |
@@ -177,3 +197,15 @@ parts:
 
     prime:
       - bin/gpu-2404-wrapper
+
+  launcher:
+    source: launcher
+    plugin: flutter
+    flutter-target: lib/main.dart
+    build-packages:
+      - curl
+      - libgtk-layer-shell-dev
+      - libgtk-3-dev
+    stage-packages:
+      - libgtk-3-0t64
+      - libgtk-layer-shell0

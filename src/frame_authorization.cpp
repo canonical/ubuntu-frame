@@ -35,6 +35,8 @@ AuthModel const auth_model{{
     }},
     {"ubuntu-frame", {
         WaylandExtensions::zwlr_screencopy_manager_v1,
+        WaylandExtensions::zwlr_layer_shell_v1,
+        WaylandExtensions::zwlr_foreign_toplevel_manager_v1
     }},
 }};
 
