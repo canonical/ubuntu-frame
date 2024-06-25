@@ -6,13 +6,19 @@ The foundation for many embedded graphical display implementations. `ubuntu-fram
 
 The application you choose (or provide) gets a fullscreen window (or windows) and input from touch, keyboard and mouse without needing to deal with the specific hardware.
 
+## Connections
+```sh
+snap connect ubuntu-frame:desktop-launch
+```
+
 ## Configuration
 
-There are three snap configuration options:
+There are four snap configuration options:
 
 * `daemon=[true|false]` enables the daemon (defaults to false on classic systems)
 * `config=<options for the shell>`
 * `display=<options for display layout>`
+* `launcher=[true|false]`
 
 The configuration options are described in detail in [the Ubuntu Frame reference](https://mir-server.io/docs/reference).
 
