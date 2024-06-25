@@ -1,20 +1,12 @@
 #!/bin/sh
 set -e
 
-if ! snapctl is-connected desktop-launch ;
-then
-    echo "WARNING: desktop-launch interface is not connected"
-fi
-
-if ! snapctl is-connected opengl ;
-then
-    echo "WARNING: opengl interface is not connected"
-fi
-
-if ! snapctl is-connected wayland ;
-then
-    echo "WARNING: wayland interface is not connected"
-fi
+for PLUG in desktop-launch opengl wayland; do
+  if ! snapctl is-connected ${PLUG}
+  then
+    echo "WARNING: ${PLUG} interface not connected"
+  fi
+done
 
 if ! command -v inotifywait > /dev/null
 then
