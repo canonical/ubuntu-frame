@@ -209,3 +209,9 @@ parts:
     stage-packages:
       - libgtk-3-0t64
       - libgtk-layer-shell0
+    override-build: |
+      if [[ "${CRAFT_ARCH_BUILD_FOR}" != @(amd64|arm64) ]]; then
+        install --mode 755 --no-target-directory ubuntu_frame_launcher.fake ${CRAFT_PART_INSTALL}/ubuntu_frame_launcher
+      else
+        craftctl default
+      fi
