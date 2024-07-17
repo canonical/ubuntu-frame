@@ -80,6 +80,7 @@ apps:
       # XDG config
       XDG_CONFIG_HOME: $SNAP_DATA
       HOME: $SNAP_DATA
+      XDG_DATA_DIRS: $SNAP/usr/share:/var/lib/snapd/desktop
     plugs:
       - hardware-observe      # libinput likes to scan udev
       - opengl
