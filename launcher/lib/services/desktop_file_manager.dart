@@ -52,6 +52,7 @@ class DesktopFileManager {
   }
 
   Future<DesktopFile> resolveId(String id) async {
+    _logger.info("Resolving desktop file for id: $id");
     if (_idToApp.containsKey(id)) {
       return _idToApp[id]!;
     }
@@ -61,10 +62,12 @@ class DesktopFileManager {
       final app = await _loadFromPath(f, false);
       if (app != null) {
         _idToApp[id] = app;
+        _logger.info("Found desktop file for id: $id");
         return app;
       }
     }
 
+    _logger.warning("Creating null desktop file for id: $id");
     final nullFile = NullDesktopFile(id);
     _idToApp[id] = nullFile;
     return nullFile;
@@ -78,9 +81,12 @@ class DesktopFileManager {
         continue;
       }
 
+      _logger.info("Loading desktop file directory: ${dir.path}");
       await for (final f in dir.list()) {
+        _logger.info("Loading desktop file: ${f.path}");
         final app = await _loadFromPath(f, true);
         if (app != null) {
+          _logger.info("Loaded desktop file: ${app.id}");
           desktopFiles.add(app);
           _idToApp[app.id] = app;
         }
@@ -117,6 +123,8 @@ class DesktopFileManager {
       if (desktopEnvironmentList != null) {
         for (final env in desktopEnvironmentList) {
           if (_desktopEnvironmentList.contains(env)) {
+            _logger.info(
+                "Desktop file is valid in the provided environment: $env");
             return desktopFile;
           }
         }
@@ -125,6 +133,7 @@ class DesktopFileManager {
       }
     }
 
+    _logger.info("Desktop file is valued: ${desktopFile.id}");
     return desktopFile;
   }
 }

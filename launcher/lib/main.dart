@@ -30,8 +30,8 @@ void main() async {
     print('${record.level.name}: ${record.time}: ${record.message}');
   });
 
-  final log = Logger("main");
-  log.info("Ubuntu Frame launcher is starting");
+  final logger = Logger("main");
+  logger.info("Ubuntu Frame launcher is starting");
 
   final getIt = GetIt.instance;
 

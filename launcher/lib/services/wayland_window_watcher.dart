@@ -128,7 +128,8 @@ class WlrForeignToplevelHandleV1 extends WaylandObject implements WindowHandle {
       return;
     }
 
-    var payload = WaylandWriteBuffer();
+    _logger.info("Activating window, handle_id=$id, id=$appId");
+    final payload = WaylandWriteBuffer();
     payload.writeUint(seat!.id);
     client.sendRequest(id, _activateRequest, payload.data);
   }
@@ -221,6 +222,7 @@ class WaylandWindowWatcherService extends WindowWatcherService {
   late WaylandRegistry registry;
   WlrForeignTopLevelManager? foreignTopLevelManager;
   WaylandSeat? seat;
+  final _logger = Logger("WaylandWindowWatcherService");
 
   WaylandWindowWatcherService() {
     connect();
@@ -256,21 +258,27 @@ class WaylandWindowWatcherService extends WindowWatcherService {
   }
 
   void _onWindowRemoved(WlrForeignToplevelHandleV1 handle) {
+    _logger.info("Window closed: ${handle.id}");
     controller.add(WindowEvent(WindowEventType.removed, handle));
   }
 
   void _onWindowCreated(WlrForeignToplevelHandleV1 handle) {
+    _logger.info("Window opened: ${handle.id}");
     controller.add(WindowEvent(WindowEventType.created, handle));
   }
 
   void _onWindowState(WlrForeignToplevelHandleV1 handle, List<int> state) {
     const applicationFocused = 2;
     if (state.contains(applicationFocused)) {
+      _logger
+          .info("Focused window, handle_id=${handle.id}, id=${handle.appId}");
       controller.add(WindowEvent(WindowEventType.focused, handle));
     }
   }
 
   void _onWindowAppId(WlrForeignToplevelHandleV1 handle, String appId) {
+    _logger
+        .info("Received app id for window, handle_id=${handle.id}, id=$appId");
     controller.add(WindowEvent(WindowEventType.appId, handle, appId));
   }
 }

@@ -83,6 +83,7 @@ apps:
     plugs:
       - hardware-observe      # libinput likes to scan udev
       - opengl
+      - desktop-launch
     slots:
       - wayslot
 

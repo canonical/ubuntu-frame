@@ -81,11 +81,4 @@ class ApplicationController {
 
     return result;
   }
-
-  static DesktopFile? findDesktopFile(
-      List<DesktopFile> list, DesktopFile file) {
-    return list
-        .cast<DesktopFile?>()
-        .firstWhere((other) => other!.id == file.id, orElse: () => null);
-  }
 }
