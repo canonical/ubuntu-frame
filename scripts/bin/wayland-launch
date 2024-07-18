@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-for PLUG in desktop-launch opengl wayland; do
+for PLUG in desktop-launch opengl wayplug; do
   if ! snapctl is-connected ${PLUG}
   then
     echo "WARNING: ${PLUG} interface not connected"
