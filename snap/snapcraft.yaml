@@ -48,7 +48,7 @@ apps:
       - hardware-observe      # libinput likes to scan udev
       - desktop-launch
     slots:
-      - wayslot
+      - wayland
     environment:
       XDG_DATA_DIRS: $SNAP/usr/share:/var/lib/snapd/desktop
 
@@ -64,7 +64,7 @@ apps:
     plugs:
       - opengl
       - desktop-launch
-      - wayland
+      - wayplug
     environment:
       XDG_DATA_DIRS: $SNAP/usr/share:/var/lib/snapd/desktop
 
@@ -86,7 +86,7 @@ apps:
       - opengl
       - desktop-launch
     slots:
-      - wayslot
+      - wayland
 
   screenshot:
     command-chain:
@@ -96,13 +96,15 @@ apps:
     command: bin/screenshot
     plugs:
       - opengl
-      - wayland
+      - wayplug
 
 plugs:
   gpu-2404:
     interface: content
     target: $SNAP/gpu-2404
     default-provider: mesa-2404
+  wayplug:
+    interface: wayland
 
 slots:
   ubuntu-frame-diagnostic:
@@ -110,8 +112,6 @@ slots:
     content: diagnostic-text
     write: 
       - $SNAP_COMMON/diagnostic
-  wayslot:
-    interface: wayland
 
 parts:
   ubuntu-frame:
