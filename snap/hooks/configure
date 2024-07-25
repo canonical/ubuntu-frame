@@ -114,7 +114,7 @@ fi
 # Start or stop the launcher
 if [ "$(snapctl get launcher)" = "true" ]; then
   ARCH=$(uname -m)
-  if [[ "$ARCH" != @(x86_64*|i*86|arm64) ]]; then
+  if [[ "$ARCH" != @(x86_64*|i*86|aarch64) ]]; then
     echo "Cannot enable the launcher on $ARCH system"
     exit 1
   fi
