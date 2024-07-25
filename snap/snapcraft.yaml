@@ -202,10 +202,14 @@ parts:
 
   launcher:
     source: launcher
-    plugin: flutter
-    flutter-target: lib/main.dart
+    plugin: nil
     build-packages:
+      - clang
       - curl
+      - git
+      - cmake
+      - ninja-build
+      - unzip
       - libgtk-layer-shell-dev
       - libgtk-3-dev
     stage-packages:
@@ -215,5 +219,10 @@ parts:
       if [[ "${CRAFT_ARCH_BUILD_FOR}" != @(amd64|arm64) ]]; then
         install --mode 755 --no-target-directory ubuntu_frame_launcher.fake ${CRAFT_PART_INSTALL}/ubuntu_frame_launcher
       else
-        craftctl default
+        git clone -b 3.19.6 https://github.com/flutter/flutter.git ${CRAFT_PART_BUILD}/flutter-distro
+        export PATH=${CRAFT_PART_BUILD}/flutter-distro/bin:$PATH
+        flutter config --no-enable-{web,ios,android,fuchsia,windows-desktop,macos-desktop}
+        flutter pub get
+        flutter build linux --release --verbose --target lib/main.dart
+        cp -r build/linux/*/release/bundle/* ${CRAFT_PART_INSTALL}
       fi
