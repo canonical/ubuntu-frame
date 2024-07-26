@@ -110,3 +110,24 @@ if [ "$(snapctl get daemon)" = "true" ]; then
 else
   snapctl stop --disable "$SNAP_INSTANCE_NAME.daemon" 2>&1 || true
 fi
+
+# Start or stop the launcher
+if [ "$(snapctl get launcher)" = "true" ]; then
+  ARCH=$(uname -m)
+  if [[ "$ARCH" != @(x86_64*|i*86|aarch64) ]]; then
+    echo "Cannot enable the launcher on $ARCH system"
+    exit 1
+  fi
+
+  if ! snapctl is-connected desktop-launch; then
+    echo "Please connect the "desktop-launch" interface:"
+    echo "  sudo snap connect $SNAP_INTERFACE_NAME:desktop-launch"
+    exit 2
+  fi
+
+  if snapctl services "$SNAP_INSTANCE_NAME.launcher" | grep -q inactive; then
+    snapctl start --enable "$SNAP_INSTANCE_NAME.launcher" 2>&1 || true
+  fi
+else
+  snapctl stop --disable "$SNAP_INSTANCE_NAME.launcher" 2>&1 || true
+fi
