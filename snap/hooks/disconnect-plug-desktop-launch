@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eux
+
+# Disable the launcher to avoid subsequent configure issues
+snapctl stop --disable $SNAP_INSTANCE_NAME.launcher
+snapctl set launcher=false
