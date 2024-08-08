@@ -15,8 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         ref:
-        - mir-libs-build
-        - core24
+        - 22/mir-libs-build
 
     steps:
     - name: Check out code
