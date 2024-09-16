@@ -34,6 +34,8 @@
 #include <optional>
 #include <unordered_map>
 
+#include <sys/poll.h>
+
 namespace miral { 
     class MirRunner; 
     class FdHandle; 
@@ -203,6 +205,8 @@ protected:
         int32_t id,
         wl_fixed_t orientation);
 
+    void flush_display();
+
 private:
     void on_new_output(Output const*);
 
@@ -258,6 +262,16 @@ private:
 
     bool diagnostic_wants_to_draw = false;
     bool diagnostic_exists = false;
+
+    enum FdIndices {
+        display_fd = 0,
+        draw_fd,
+        diagnostic,
+        shutdown,
+        indices
+    };
+
+    pollfd fds[indices];
 };
 }
 
