@@ -346,7 +346,7 @@ void egmde::FullscreenClient::on_new_output(Output const* output)
     wl_display_flush(display);
 }
 
-void egmde::FullscreenClient::draw()
+void egmde::FullscreenClient::draw() const
 {
     eventfd_write(draw_signal, 1);
 }

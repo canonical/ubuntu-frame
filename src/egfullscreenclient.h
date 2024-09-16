@@ -210,7 +210,7 @@ private:
 
     void on_output_gone(Output const*);
 
-    void draw();
+    void draw() const;
 
     void check_for_exposed_outputs();
 
