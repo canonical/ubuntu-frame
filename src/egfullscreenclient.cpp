@@ -253,7 +253,7 @@ auto inline egmde::FullscreenClient::should_draw_crash() -> bool
 void egmde::FullscreenClient::on_output_changed(Output const* output)
 {
     {
-        std::lock_guard<decltype(outputs_mutex)> lock{outputs_mutex};
+        std::lock_guard const lock{outputs_mutex};
         auto const p = outputs.find(output);
         if (p != end(outputs))
         {
@@ -295,7 +295,7 @@ void egmde::FullscreenClient::check_for_exposed_outputs()
 void egmde::FullscreenClient::on_output_gone(Output const* output)
 {
     {
-        std::lock_guard<decltype(outputs_mutex)> lock{outputs_mutex};
+        std::lock_guard const lock{outputs_mutex};
 
         outputs.erase(output);
 
@@ -327,7 +327,7 @@ void egmde::FullscreenClient::on_output_gone(Output const* output)
 void egmde::FullscreenClient::on_new_output(Output const* output)
 {
     {
-        std::lock_guard<decltype(outputs_mutex)> lock{outputs_mutex};
+        std::lock_guard const lock{outputs_mutex};
 
         mir::geometry::Rectangle const screen_rect{
                 {output->x,    output->y},
@@ -403,7 +403,7 @@ auto egmde::FullscreenClient::make_shm_pool(size_t size, void** data) const
 egmde::FullscreenClient::~FullscreenClient()
 {
     {
-        std::lock_guard<decltype(outputs_mutex)> lock{outputs_mutex};
+        std::lock_guard const lock{outputs_mutex};
         outputs.clear();
     }
     bound_outputs.clear();
@@ -555,7 +555,7 @@ void egmde::FullscreenClient::run(wl_display* display)
         if (redraw)
         {
             {
-                std::lock_guard<decltype(outputs_mutex)> lock{outputs_mutex};
+                std::lock_guard const lock{outputs_mutex};
 
                 for (auto& output : outputs)
                 {
