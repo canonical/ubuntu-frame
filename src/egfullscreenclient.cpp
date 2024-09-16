@@ -50,7 +50,7 @@ void egmde::FullscreenClient::Output::geometry(
     const char */*model*/,
     int32_t transform)
 {
-    auto output = static_cast<Output*>(data);
+    auto const output = static_cast<Output*>(data);
 
     output->x = x;
     output->y = y;
@@ -69,7 +69,7 @@ void egmde::FullscreenClient::Output::mode(
     if (!(WL_OUTPUT_MODE_CURRENT & flags))
         return;
 
-    auto output = static_cast<Output*>(data);
+    auto const output = static_cast<Output*>(data);
 
     output->width = width;
     output->height = height;
@@ -77,7 +77,7 @@ void egmde::FullscreenClient::Output::mode(
 
 void egmde::FullscreenClient::Output::scale(void* data, wl_output* /*wl_output*/, int32_t factor)
 {
-    auto output = static_cast<Output*>(data);
+    auto const output = static_cast<Output*>(data);
 
     output->scale_factor = factor;
 }
@@ -136,7 +136,7 @@ void egmde::FullscreenClient::SurfaceInfo::clear_window()
 
 void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_output*/)
 {
-    auto output = static_cast<Output*>(data);
+    auto const output = static_cast<Output*>(data);
     output->on_done(*output);
 }
 
