@@ -71,7 +71,7 @@ void egmde::FullscreenClient::Output::mode(
 
     auto output = static_cast<Output*>(data);
 
-    output->width = width,
+    output->width = width;
     output->height = height;
 }
 
@@ -88,7 +88,7 @@ egmde::FullscreenClient::Output::Output(
     std::function<void(Output const&)> on_change)
     : output{output},
       on_done{[this, on_constructed = std::move(on_constructed), on_change=std::move(on_change)]
-      (Output const& o) mutable { on_constructed(o), on_done = std::move(on_change); }}
+      (Output const& o) mutable { on_constructed(o); on_done = std::move(on_change); }}
 {
     wl_output_add_listener(output, &output_listener, this);
 }
