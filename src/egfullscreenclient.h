@@ -210,7 +210,7 @@ private:
 
     void on_output_gone(Output const*);
 
-    void draw();
+    void draw() const;
 
     void check_for_exposed_outputs();
 
@@ -234,7 +234,7 @@ private:
 
     void remove_global(
         struct wl_registry* registry,
-        uint32_t name);
+        uint32_t id);
 
     void seat_capabilities(wl_seat* seat, uint32_t capabilities);
     void seat_name(wl_seat* seat, const char* name);
