@@ -29,7 +29,6 @@
 #include <fcntl.h>
 #include <sys/eventfd.h>
 #include <sys/mman.h>
-#include <sys/poll.h>
 #include <sys/timerfd.h>
 #include <cstdlib>
 #include <climits>
@@ -150,6 +149,11 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     runner{runner},
     window_manager_observer{window_manager_observer}
 {
+    fds[display_fd] = {wl_display_get_fd(display), POLLIN, 0};
+    fds[draw_fd]    = {draw_signal,                POLLIN, 0};
+    fds[diagnostic] = {diagnostic_signal,          POLLIN, 0};
+    fds[shutdown]   = {shutdown_signal,            POLLIN, 0};
+
     // Check inotify initializaiton
     if (diagnostic_signal < 0)
     {
@@ -268,7 +272,7 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
 
         check_for_exposed_outputs();
     }
-    wl_display_flush(display);
+    flush_display();
 }
 
 void egmde::FullscreenClient::check_for_exposed_outputs()
@@ -321,7 +325,7 @@ void egmde::FullscreenClient::on_output_gone(Output const* output)
 
         check_for_exposed_outputs();
     }
-    wl_display_flush(display);
+    flush_display();
 }
 
 void egmde::FullscreenClient::on_new_output(Output const* output)
@@ -343,7 +347,7 @@ void egmde::FullscreenClient::on_new_output(Output const* output)
             hidden_outputs.emplace_back(output);
         }
     }
-    wl_display_flush(display);
+    flush_display();
 }
 
 void egmde::FullscreenClient::draw() const
@@ -477,22 +481,6 @@ void egmde::FullscreenClient::remove_global(
 
 void egmde::FullscreenClient::run(wl_display* display)
 {
-    enum FdIndices {
-        display_fd = 0,
-        draw,
-        diagnostic,
-        shutdown,
-        indices
-    };
-
-    pollfd fds[indices] =
-        {
-            {wl_display_get_fd(display), POLLIN, 0},
-            {draw_signal,                POLLIN, 0},
-            {diagnostic_signal,          POLLIN, 0},
-            {shutdown_signal,            POLLIN, 0},
-        };
-
     char inotify_buffer[sizeof(inotify_event) + NAME_MAX + 1];
 
     while (!(fds[shutdown].revents & (POLLIN | POLLERR)))
@@ -511,6 +499,11 @@ void egmde::FullscreenClient::run(wl_display* display)
             BOOST_THROW_EXCEPTION((std::system_error{errno, std::system_category(), "Failed to wait for event"}));
         }
 
+        if (fds[display_fd].revents & POLLOUT)
+        {
+            flush_display();
+        }
+
         if (fds[display_fd].revents & (POLLIN | POLLERR))
         {
             if (wl_display_read_events(display))
@@ -525,7 +518,7 @@ void egmde::FullscreenClient::run(wl_display* display)
 
         bool redraw = false;
 
-        if (fds[draw].revents & (POLLIN | POLLERR))
+        if (fds[draw_fd].revents & (POLLIN | POLLERR))
         {
             eventfd_t foo;
             eventfd_read(draw_signal, &foo);
@@ -562,7 +555,7 @@ void egmde::FullscreenClient::run(wl_display* display)
                     draw_screen(output.second, should_draw_crash());
                 }
             }
-            wl_display_flush(display);
+            flush_display();
         }
     }
 }
@@ -713,6 +706,29 @@ void egmde::FullscreenClient::touch_orientation(
     int32_t /*id*/,
     wl_fixed_t /*orientation*/)
 {
+}
+
+void egmde::FullscreenClient::flush_display()
+{
+    if (wl_display_flush(display) < 0)
+    {
+        // wl_display_flush may fail with errno == EAGAIN if the write buffer is full
+        if (errno == EAGAIN)
+        {
+            // In this case, we should also wake if the display_fd is writable, so we can
+            // finish flushing.
+            fds[display_fd].events |= POLLOUT;
+        }
+        else
+        {
+            BOOST_THROW_EXCEPTION((std::system_error{errno, std::system_category(), "Failed to flush Wayland events"}));
+        }
+    }
+    else
+    {
+        // We've fully flushed our pending events to the server; we don't need to wake-on-writable
+        fds[display_fd].events &= ~POLLOUT;
+    }
 }
 
 void egmde::FullscreenClient::seat_capabilities(wl_seat* seat, uint32_t capabilities)
