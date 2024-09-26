@@ -25,6 +25,11 @@ jobs:
           ninja-build \
           pkg-config
 
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        cache: true
+
     - name: Run TICS analysis
       uses: tiobe/tics-github-action@v3
       with:
