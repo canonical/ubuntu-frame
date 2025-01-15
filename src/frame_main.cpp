@@ -64,7 +64,7 @@ int main(int argc, char const* argv[])
                                "diagnostic-path",  "Path (including filename) of diagnostic file", ""},
             ConfigurationOption{[&] (int option) { background_client.set_diagnostic_delay(option);},
                                 "diagnostic-delay", "Delay time (in seconds) before displaying diagnostic screen", 0},
-            StartupInternalClient{std::ref(background_client)},
+            // StartupInternalClient{std::ref(background_client)},
             ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
                                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
             set_window_management_policy<FrameWindowManagerPolicy>(window_manager_observer),
