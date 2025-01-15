@@ -131,6 +131,7 @@ public:
         ~SurfaceInfo();
 
         void clear_window();
+        void reset_buffer();
 
         // Screen description
         Output const* output;
@@ -140,6 +141,7 @@ public:
         wl_surface* surface = nullptr;
         wl_shell_surface* shell_surface = nullptr;
         wl_buffer* buffer = nullptr;
+        size_t buffer_size = 0;
     };
 
     virtual void draw_screen(SurfaceInfo& info, bool draws_crash) const = 0;
