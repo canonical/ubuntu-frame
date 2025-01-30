@@ -13,7 +13,7 @@ dependencies:
   ini: ^2.1.0
   path: ^1.8.3
   xdg_directories: ^1.0.4
-  xdg_icons: ^0.0.5
+  xdg_icons: ^0.1.0
   wayland:
     git:
       url: https://github.com/robert-ancell/wayland.dart
