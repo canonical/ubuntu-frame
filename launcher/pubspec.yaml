@@ -17,7 +17,7 @@ dependencies:
   wayland:
     git:
       url: https://github.com/robert-ancell/wayland.dart
-  get_it: ^7.6.4
+  get_it: ^8.0.0
   logging: ^1.2.0
   flutter_svg: ^2.0.10+1
 
