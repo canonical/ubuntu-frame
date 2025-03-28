@@ -157,6 +157,7 @@ parts:
     plugin: nil
     stage-packages:
       - mir-platform-graphics-gbm-kms
+      - mir-platform-graphics-atomic-kms
       - mir-platform-graphics-x
       - mir-platform-graphics-eglstream-kms
     prime:
