@@ -24,6 +24,7 @@ environment:
   XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
   # Setup diagnostic
   MIR_SERVER_DIAGNOSTIC_PATH: $SNAP_COMMON/diagnostic/diagnostic.txt
+  XDG_CURRENT_DESKTOP: UbuntuFrame:Mir
 
 layout:
   /usr/share/icons:
@@ -76,6 +77,7 @@ apps:
     command: usr/local/bin/frame
     daemon: simple
     restart-delay: 3s
+    install-mode: disable
     environment:
       # XDG config
       XDG_CONFIG_HOME: $SNAP_DATA

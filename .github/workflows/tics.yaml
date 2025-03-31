@@ -1,9 +1,13 @@
 name: TICS
 
 on:
-  push:
-    branches:
-    - main
+#  push:
+#    branches:
+#    - main
+  schedule:
+  # 5:04 on a Wednesday
+  - cron: 5 4 * * 3
+  workflow_dispatch:
 
 jobs:
   CI:
@@ -24,6 +28,11 @@ jobs:
           libwayland-dev \
           ninja-build \
           pkg-config
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        cache: true
 
     - name: Run TICS analysis
       uses: tiobe/tics-github-action@v3

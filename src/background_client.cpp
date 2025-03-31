@@ -420,11 +420,12 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
             info.output->output);
     }
 
-    if (info.buffer)
+    if (info.buffer && info.buffer_size != stride * height)
     {
-        wl_buffer_destroy(info.buffer);
+        info.reset_buffer();
     }
 
+    if (!info.buffer)
     {
         auto const shm_pool = make_shm_pool(stride * height, &info.content_area);
 
@@ -433,6 +434,7 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
             0,
             width, height, stride,
             WL_SHM_FORMAT_ARGB8888);
+        info.buffer_size = stride * height;
     }
 
     auto buffer = static_cast<unsigned char*>(info.content_area);

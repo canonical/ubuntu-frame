@@ -20,7 +20,7 @@ There are four snap configuration options:
 * `display=<options for display layout>`
 * `launcher=[true|false]`
 
-The configuration options are described in detail in [the Ubuntu Frame reference](https://mir-server.io/docs/reference).
+The configuration options are described in detail in [the Ubuntu Frame reference](https://mir-server.io/docs/ubuntu-frame-configuration-options).
 
 ## Development
 

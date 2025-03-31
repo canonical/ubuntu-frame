@@ -118,8 +118,7 @@ egmde::FullscreenClient::SurfaceInfo::~SurfaceInfo()
 
 void egmde::FullscreenClient::SurfaceInfo::clear_window()
 {
-    if (buffer)
-        wl_buffer_destroy(buffer);
+    reset_buffer();
 
     if (shell_surface)
         wl_shell_surface_destroy(shell_surface);
@@ -128,9 +127,20 @@ void egmde::FullscreenClient::SurfaceInfo::clear_window()
         wl_surface_destroy(surface);
 
 
-    buffer = nullptr;
     shell_surface = nullptr;
     surface = nullptr;
+}
+
+void egmde::FullscreenClient::SurfaceInfo::reset_buffer()
+{
+    if (buffer)
+    {
+        wl_buffer_destroy(buffer);
+        if (munmap(content_area, buffer_size))
+            mir::log_error("munmap() failed in %s: %s", __PRETTY_FUNCTION__, strerror(errno));
+        buffer = nullptr;
+        buffer_size = 0;
+    }
 }
 
 void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_output*/)
@@ -261,12 +271,6 @@ void egmde::FullscreenClient::on_output_changed(Output const* output)
         auto const p = outputs.find(output);
         if (p != end(outputs))
         {
-            if (auto& buffer = p->second.buffer)
-            {
-                wl_buffer_destroy(buffer);
-                buffer = nullptr;
-            }
-
             draw_screen(p->second, should_draw_crash());
         }
 
@@ -397,10 +401,9 @@ auto egmde::FullscreenClient::make_shm_pool(size_t size, void** data) const
 
     return {
         wl_shm_create_pool(shm, fd, size),
-        [size](auto* shm)
+        [](auto* shm)
         {
             wl_shm_pool_destroy(shm);
-            munmap(shm, size);
         }};
 }
 
