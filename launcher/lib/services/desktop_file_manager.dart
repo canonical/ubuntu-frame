@@ -103,12 +103,16 @@ class DesktopFileManager {
       return null;
     }
 
-    if (!f.path.endsWith('.desktop')) {
+    const String desktopFileSuffix = '.desktop';
+    if (!f.path.endsWith(desktopFileSuffix)) {
       return null;
     }
 
-    final desktopFile = ApplicationFileDesktopFile(
-        f.path, Uri.parse(f.path).path.split("/").last);
+    String applicationId = Uri.parse(f.path).path.split("/").last;
+    applicationId = applicationId.substring(
+        0, applicationId.length - desktopFileSuffix.length);
+
+    final desktopFile = ApplicationFileDesktopFile(f.path, applicationId);
     if (!await desktopFile.load()) {
       _logger.shout("Unable to load desktop file: ${f.path}");
       return null;

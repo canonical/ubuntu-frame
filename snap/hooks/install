@@ -4,10 +4,6 @@ set -eux
 # Setup diagnostic
 mkdir -p "$(dirname "$MIR_SERVER_DIAGNOSTIC_PATH")" -m 777
 
-# we install with the daemon disabled, the configure hook
-# will start and enable it if appropriate
-snapctl stop --disable "$SNAP_INSTANCE_NAME.daemon"
-
 daemon=$(snapctl get daemon)
 if [ "$daemon" = "" ]
 then
@@ -16,4 +12,10 @@ then
   then snapctl set daemon=false
   else snapctl set daemon=true
   fi
+fi
+
+launcher=$(snapctl get launcher)
+if [ "$launcher" = "" ]
+then
+  snapctl set launcher=false
 fi
