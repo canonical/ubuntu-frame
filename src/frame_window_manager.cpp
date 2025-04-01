@@ -210,6 +210,7 @@ void FrameWindowManagerPolicy::handle_layout(
         snap_instance_name))
     {
         apply_fullscreen(specification);
+        apply_bespoke_fullscreen_placement(specification, window_info);
     }
 }
 
