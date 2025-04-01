@@ -23,6 +23,7 @@
 #include <memory>
 #include <mir/geometry/point.h>
 #include <mir/geometry/size.h>
+#include <miral/window_specification.h>
 
 namespace YAML
 {
@@ -50,6 +51,12 @@ class LayoutMetadata
 public:
     explicit LayoutMetadata(std::vector<LayoutApplicationPlacementStrategy> const& applications);
     static std::shared_ptr<LayoutMetadata> from_yaml(YAML::Node const& layout_node);
+
+    /// Try to assign the window to a positition and size based on its title and snap name.
+    /// \returns true if successfully assigned, otherwise false
+    bool try_layout(miral::WindowSpecification& specification,
+        mir::optional_value<std::string> const& title,
+        std::string_view snap_name) const;
 
     std::vector<LayoutApplicationPlacementStrategy> const applications;
 

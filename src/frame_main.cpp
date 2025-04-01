@@ -73,7 +73,7 @@ int main(int argc, char const* argv[])
             StartupInternalClient{std::ref(background_client)},
             ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
                                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
-            set_window_management_policy<FrameWindowManagerPolicy>(window_manager_observer),
+            set_window_management_policy<FrameWindowManagerPolicy>(window_manager_observer, display_config),
             Keymap{}
         });
 }

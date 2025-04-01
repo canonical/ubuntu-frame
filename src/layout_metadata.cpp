@@ -73,7 +73,25 @@ std::shared_ptr<LayoutMetadata> LayoutMetadata::from_yaml(YAML::Node const& layo
         }
     }
 
- return std::make_shared<LayoutMetadata>(applications);
+    return std::make_shared<LayoutMetadata>(applications);
+}
+
+bool LayoutMetadata::try_layout(miral::WindowSpecification& specification,
+    mir::optional_value<std::string> const& title,
+    std::string_view snap_name) const
+{
+    for (auto const& app : applications)
+    {
+        if (app.snap_name == snap_name || app.surface_title == title)
+        {
+            specification.state() = mir_window_state_restored;
+            specification.top_left() = app.position;
+            specification.size() = app.size;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 LayoutApplicationPlacementStrategy::LayoutApplicationPlacementStrategy(

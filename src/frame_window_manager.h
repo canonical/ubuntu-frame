@@ -18,7 +18,7 @@
 #define FRAME_WINDOW_MANAGER_H
 
 #include <miral/minimal_window_manager.h>
-
+#include <miral/display_configuration.h>
 #include <mir_toolkit/events/enums.h>
 
 #include <memory>
@@ -77,7 +77,10 @@ public:
     static std::string const surface_title;
     static std::string const snap_name;
 
-    FrameWindowManagerPolicy(miral::WindowManagerTools const& tools, WindowManagerObserver& window_manager_observer);
+    FrameWindowManagerPolicy(
+        miral::WindowManagerTools const& tools,
+        WindowManagerObserver& window_manager_observer,
+        miral::DisplayConfiguration const& display_config);
 
     auto place_new_window(miral::ApplicationInfo const& app_info, miral::WindowSpecification const& request)
     -> miral::WindowSpecification override;
@@ -105,6 +108,7 @@ public:
 private:
     WindowManagerObserver const& window_manager_observer;
     std::shared_ptr<WindowCount> window_count = std::make_shared<WindowCount>();
+    miral::DisplayConfiguration display_config;
 
     bool application_zones_have_changed = false;
     bool display_layout_has_changed = false;
@@ -115,16 +119,24 @@ private:
         void update(miral::Output const& output);
         void clear(miral::Output const& output);
 
-        void set_output_for_surface(miral::WindowSpecification& specification, mir::optional_value<std::string> const& title) const;
-        void set_output_for_snap(miral::WindowSpecification& specification, std::string_view name) const;
+        bool set_output_for_surface(miral::WindowSpecification& specification, mir::optional_value<std::string> const& title) const;
+        bool set_output_for_snap(miral::WindowSpecification& specification, std::string_view name) const;
 
     private:
         std::vector<std::pair<std::string, int>> surface_title_to_output_id;
         std::vector<std::pair<std::string, int>> snap_name_to_output_id;
     } placement_mapping;
 
-    void assign_to_output(
-        miral::WindowSpecification& specification, mir::optional_value<std::string> const& title,
+    void handle_layout(
+        miral::WindowSpecification& spec,
+        miral::Application const& application_info,
+        miral::WindowInfo const& info);
+
+    /// Try to assign the window to an output given its title and snap name.
+    /// \returns true if successfully assigned, otherwise false
+    bool assign_to_output(
+        miral::WindowSpecification& specification,
+        mir::optional_value<std::string> const& title,
         std::string_view snap_name);
 
     void apply_bespoke_fullscreen_placement(
