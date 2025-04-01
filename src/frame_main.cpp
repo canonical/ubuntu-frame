@@ -48,7 +48,7 @@ int main(int argc, char const* argv[])
 
     display_config.set_layout_userdata_builder([](std::string const&, YAML::Node const& value) -> std::shared_ptr<void>
     {
-        return LayoutMetadata::from_yaml(value);
+        return std::make_shared<LayoutMetadata>(value);
     });
     
     return runner.run_with(

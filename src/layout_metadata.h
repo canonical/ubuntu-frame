@@ -30,27 +30,10 @@ namespace YAML
 class Node;
 }
 
-class LayoutApplicationPlacementStrategy
-{
-public:
-    LayoutApplicationPlacementStrategy(
-        std::optional<std::string> const& snap_name,
-        std::optional<std::string> const& surface_title,
-        mir::geometry::Point const& position,
-        mir::geometry::Size const& size);
-    static std::optional<LayoutApplicationPlacementStrategy> from_yaml(YAML::Node const& node);
-
-    std::optional<std::string> const snap_name;
-    std::optional<std::string> const surface_title;
-    mir::geometry::Point const position;
-    mir::geometry::Size const size;
-};
-
 class LayoutMetadata
 {
 public:
-    explicit LayoutMetadata(std::vector<LayoutApplicationPlacementStrategy> const& applications);
-    static std::shared_ptr<LayoutMetadata> from_yaml(YAML::Node const& layout_node);
+    explicit LayoutMetadata(YAML::Node const& layout_node);
 
     /// Try to assign the window to a positition and size based on its title and snap name.
     /// \returns true if successfully assigned, otherwise false
@@ -58,7 +41,24 @@ public:
         mir::optional_value<std::string> const& title,
         std::string_view snap_name) const;
 
-    std::vector<LayoutApplicationPlacementStrategy> const applications;
+private:
+    class LayoutApplicationPlacementStrategy
+    {
+    public:
+        LayoutApplicationPlacementStrategy(
+            std::optional<std::string> const& snap_name,
+            std::optional<std::string> const& surface_title,
+            mir::geometry::Point const& position,
+            mir::geometry::Size const& size);
+        static std::optional<LayoutApplicationPlacementStrategy> from_yaml(YAML::Node const& node);
+
+        std::optional<std::string> const snap_name;
+        std::optional<std::string> const surface_title;
+        mir::geometry::Point const position;
+        mir::geometry::Size const size;
+    };
+
+    std::vector<LayoutApplicationPlacementStrategy> applications;
 
 };
 

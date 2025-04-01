@@ -134,11 +134,13 @@ parts:
       - libboost-iostreams-dev
       - libapparmor-dev
       - libfreetype6-dev
+      - libyaml-cpp-dev
     stage-packages:
       - libboost-iostreams1.74.0
       # Stage libmiral<n> indirectly as we cannot (since core22) do `try:/else:`
       - libmiral-dev
       - xkb-data
+      - libyaml-cpp0.8
     prime:
       # Do not prime the `-dev` part of libmiral-dev, we don't need it (just the libmiral<n> dependency)
       - -usr/include

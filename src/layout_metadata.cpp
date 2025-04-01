@@ -55,15 +55,8 @@ bool try_parse_vec2(YAML::Node const& node, const char* field_name, int& x, int&
 }
 }
 
-LayoutMetadata::LayoutMetadata(std::vector<LayoutApplicationPlacementStrategy> const& applications)
-    : applications(applications)
+LayoutMetadata::LayoutMetadata(YAML::Node const& layout_node)
 {
-}
-
-std::shared_ptr<LayoutMetadata> LayoutMetadata::from_yaml(YAML::Node const& layout_node)
-{
-    std::vector<LayoutApplicationPlacementStrategy> applications;
-
     if (layout_node["applications"] && layout_node["applications"].IsSequence())
     {
         for (auto const& app_node : layout_node["applications"])
@@ -72,8 +65,6 @@ std::shared_ptr<LayoutMetadata> LayoutMetadata::from_yaml(YAML::Node const& layo
                 applications.push_back(app.value());
         }
     }
-
-    return std::make_shared<LayoutMetadata>(applications);
 }
 
 bool LayoutMetadata::try_layout(miral::WindowSpecification& specification,
@@ -94,7 +85,7 @@ bool LayoutMetadata::try_layout(miral::WindowSpecification& specification,
     return false;
 }
 
-LayoutApplicationPlacementStrategy::LayoutApplicationPlacementStrategy(
+LayoutMetadata::LayoutApplicationPlacementStrategy::LayoutApplicationPlacementStrategy(
     std::optional<std::string> const& snap_name,
     std::optional<std::string> const& surface_title,
     mir::geometry::Point const& position,
@@ -105,7 +96,7 @@ LayoutApplicationPlacementStrategy::LayoutApplicationPlacementStrategy(
       size(size)
 {}
 
-std::optional<LayoutApplicationPlacementStrategy> LayoutApplicationPlacementStrategy::from_yaml(YAML::Node const& node)
+std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata::LayoutApplicationPlacementStrategy::from_yaml(YAML::Node const& node)
 {
     if (!node["snap-name"] && !node["surface-title"])
     {
