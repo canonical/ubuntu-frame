@@ -222,7 +222,7 @@ parts:
       if [[ "${CRAFT_ARCH_BUILD_FOR}" != @(amd64|arm64) ]]; then
         install --mode 755 --no-target-directory ubuntu_frame_launcher.fake ${CRAFT_PART_INSTALL}/ubuntu_frame_launcher
       else
-        git clone -b 3.19.6 https://github.com/flutter/flutter.git ${CRAFT_PART_BUILD}/flutter-distro
+        git clone -b 3.29.2 https://github.com/flutter/flutter.git ${CRAFT_PART_BUILD}/flutter-distro
         export PATH=${CRAFT_PART_BUILD}/flutter-distro/bin:$PATH
         flutter config --no-enable-{web,ios,android,fuchsia,windows-desktop,macos-desktop}
         flutter pub get
