@@ -19,6 +19,7 @@
 #include "background_client.h"
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
+#include "layout_metadata.h"
 
 #include <miral/configuration_option.h>
 #include <miral/display_configuration.h>
@@ -44,6 +45,11 @@ int main(int argc, char const* argv[])
     BackgroundClient background_client(&runner, &window_manager_observer);
 
     runner.add_stop_callback([&] { background_client.stop(); });
+
+    display_config.set_layout_userdata_builder([](std::string const&, YAML::Node const& value) -> std::shared_ptr<void>
+    {
+        return LayoutMetadata::from_yaml(value);
+    });
     
     return runner.run_with(
         {

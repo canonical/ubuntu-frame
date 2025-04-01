@@ -8,6 +8,7 @@ pkg_check_modules(MIRAL miral REQUIRED)
 pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client)
 pkg_check_modules(APPARMOR libapparmor REQUIRED)
 pkg_check_modules(FREETYPE freetype2 REQUIRED)
+pkg_check_modules(YAML REQUIRED IMPORTED_TARGET yaml-cpp)
 
 add_executable(frame
     frame_main.cpp
@@ -16,6 +17,7 @@ add_executable(frame
     egfullscreenclient.cpp egfullscreenclient.h
     background_client.cpp background_client.h
     snap_name_of.cpp snap_name_of.h
+    layout_metadata.cpp layout_metadata.h
 )
 
 # Check for boost
@@ -29,7 +31,7 @@ target_include_directories(frame
         ${MIRAL_INCLUDE_DIRS} 
     PRIVATE 
         ${FREETYPE_INCLUDE_DIRS})
-target_link_libraries(frame ${MIRAL_LDFLAGS} ${WAYLAND_CLIENT_LDFLAGS} ${APPARMOR_LDFLAGS} ${FREETYPE_LDFLAGS} ${Boost_LIBRARIES})
+target_link_libraries(frame ${MIRAL_LDFLAGS} ${WAYLAND_CLIENT_LDFLAGS} ${APPARMOR_LDFLAGS} ${FREETYPE_LDFLAGS} ${Boost_LIBRARIES} PkgConfig::YAML)
 
 install(PROGRAMS ${CMAKE_BINARY_DIR}/frame
     DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
