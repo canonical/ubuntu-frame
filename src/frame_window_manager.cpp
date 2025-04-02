@@ -183,8 +183,9 @@ void FrameWindowManagerPolicy::handle_layout(
         return;
 
     auto const snap_instance_name = snap_instance_name_of(application);
+    auto const surface_title = specification.name() ? specification.name() : window_info.name();
     auto const layout_metadata = std::static_pointer_cast<LayoutMetadata>(display_config.layout_userdata());
-    if (assign_to_output(specification, specification.name(), snap_instance_name))
+    if (assign_to_output(specification, surface_title, snap_instance_name))
     {
         if (specification.name())
         {
@@ -206,7 +207,7 @@ void FrameWindowManagerPolicy::handle_layout(
     }
     else if (layout_metadata == nullptr || !layout_metadata->try_layout(
         specification,
-        specification.name(),
+        surface_title,
         snap_instance_name))
     {
         apply_fullscreen(specification);
@@ -217,7 +218,6 @@ void FrameWindowManagerPolicy::handle_layout(
 auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info, WindowSpecification const& request)
 -> WindowSpecification
 {
-
     WindowSpecification specification = MinimalWindowManager::place_new_window(app_info, request);
     WindowInfo const window_info{};
     handle_layout(specification, app_info.application(), window_info);

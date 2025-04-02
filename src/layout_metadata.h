@@ -25,15 +25,15 @@
 #include <mir/geometry/size.h>
 #include <miral/window_specification.h>
 
-namespace YAML
+namespace miral
 {
-class Node;
+class DisplayConfigurationNode;
 }
 
 class LayoutMetadata
 {
 public:
-    explicit LayoutMetadata(YAML::Node const& layout_node);
+    explicit LayoutMetadata(std::unique_ptr<miral::DisplayConfigurationNode> layout_node);
 
     /// Try to assign the window to a positition and size based on its title and snap name.
     /// \returns true if successfully assigned, otherwise false
@@ -50,7 +50,7 @@ private:
             std::optional<std::string> const& surface_title,
             mir::geometry::Point const& position,
             mir::geometry::Size const& size);
-        static std::optional<LayoutApplicationPlacementStrategy> from_yaml(YAML::Node const& node);
+        static std::optional<LayoutApplicationPlacementStrategy> from_yaml(miral::DisplayConfigurationNode const& node);
 
         std::optional<std::string> const snap_name;
         std::optional<std::string> const surface_title;

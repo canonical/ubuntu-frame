@@ -15,55 +15,49 @@
  */
 
 #include "layout_metadata.h"
-#include <yaml-cpp/yaml.h>
 #include <mir/log.h>
+#include <miral/display_configuration.h>
 
 namespace
 {
-bool try_parse_vec2(YAML::Node const& node, const char* field_name, int& x, int& y)
+bool try_parse_vec2(miral::DisplayConfigurationNode const& node, const char* field_name, int& x, int& y)
 {
-    if (!node[field_name])
+    if (!node.at(field_name))
     {
         mir::log_error("Invalid application strategy: '%s' is required", field_name);
         return false;
     }
 
-    if (!node[field_name].IsSequence())
+    auto field = node.at(field_name);
+    std::vector<int> integers;
+    field.value()->for_each([&integers](std::unique_ptr<miral::DisplayConfigurationNode> const& node)
     {
-        mir::log_error("Invalid application strategy: '%s' must be a sequence", field_name);
-        return false;
-    }
+        if (auto int_field = node->as_int())
+            integers.push_back(int_field.value());
+    });
 
-    if (node[field_name].size() != 2)
+    if (integers.size() != 2)
     {
         mir::log_error("Invalid application strategy: '%s' must have a length of 2, but has length %lu",
-            field_name, node[field_name].size());
+            field_name, integers.size());
         return false;
     }
 
-    try
-    {
-        x = node[field_name][0].as<int>();
-        y = node[field_name][1].as<int>();
-        return true;
-    }
-    catch (YAML::Exception const& e)
-    {
-        mir::log_error("Invalid application strategy: failed to parse %s to values %s", field_name, e.what());
-        return false;
-    }
+    x = integers[0];
+    y = integers[1];
+    return true;
 }
 }
 
-LayoutMetadata::LayoutMetadata(YAML::Node const& layout_node)
+LayoutMetadata::LayoutMetadata(std::unique_ptr<miral::DisplayConfigurationNode> node)
 {
-    if (layout_node["applications"] && layout_node["applications"].IsSequence())
+    if (auto const applications_node = node->at("applications"))
     {
-        for (auto const& app_node : layout_node["applications"])
+        applications_node.value()->for_each([&](std::unique_ptr<miral::DisplayConfigurationNode> node)
         {
-            if (auto const app = LayoutApplicationPlacementStrategy::from_yaml(app_node))
+            if (auto const app = LayoutApplicationPlacementStrategy::from_yaml(*node))
                 applications.push_back(app.value());
-        }
+        });
     }
 }
 
@@ -96,16 +90,17 @@ LayoutMetadata::LayoutApplicationPlacementStrategy::LayoutApplicationPlacementSt
       size(size)
 {}
 
-std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata::LayoutApplicationPlacementStrategy::from_yaml(YAML::Node const& node)
+std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata::LayoutApplicationPlacementStrategy::from_yaml(
+    miral::DisplayConfigurationNode const& node)
 {
-    if (!node["snap-name"] && !node["surface-title"])
+    if (!node.at("snap-name") && !node.at("surface-title"))
     {
         mir::log_error("Invalid application strategy: missing snap-name and surface-title. One of them"
                        " must be provided.");
         return std::nullopt;
     }
 
-    if (node["snap-name"] && node["surface-title"])
+    if (node.at("snap-name") && node.at("surface-title"))
     {
         mir::log_error("Invalid application strategy: provided both snap-name and surface-title, but"
                        " only one of them can be provided.");
@@ -115,26 +110,10 @@ std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata
     std::optional<std::string> snap_name;
     std::optional<std::string> surface_title;
 
-    if (node["snap-name"])
-    {
-        if (!node["snap-name"].IsScalar())
-        {
-            mir::log_error("Invalid application strategy: snap-name should be a string");
-            return std::nullopt;
-        }
-
-        snap_name = node["snap-name"].Scalar();
-    }
+    if (node.at("snap-name"))
+        snap_name = node.at("snap-name").value()->as_string();
     else
-    {
-        if (!node["surface-title"].IsScalar())
-        {
-            mir::log_error("Invalid application strategy: surface-title should be a string");
-            return std::nullopt;
-        }
-
-        surface_title = node["surface-title"].Scalar();
-    }
+        surface_title = node.at("surface-title").value()->as_string();
 
     int x, y;
     int w, h;
