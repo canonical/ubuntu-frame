@@ -134,13 +134,11 @@ parts:
       - libboost-iostreams-dev
       - libapparmor-dev
       - libfreetype6-dev
-      - libyaml-cpp-dev
     stage-packages:
       - libboost-iostreams1.74.0
       # Stage libmiral<n> indirectly as we cannot (since core22) do `try:/else:`
       - libmiral-dev
       - xkb-data
-      - libyaml-cpp0.8
     prime:
       # Do not prime the `-dev` part of libmiral-dev, we don't need it (just the libmiral<n> dependency)
       - -usr/include
@@ -224,7 +222,7 @@ parts:
       if [[ "${CRAFT_ARCH_BUILD_FOR}" != @(amd64|arm64) ]]; then
         install --mode 755 --no-target-directory ubuntu_frame_launcher.fake ${CRAFT_PART_INSTALL}/ubuntu_frame_launcher
       else
-        git clone -b 3.19.6 https://github.com/flutter/flutter.git ${CRAFT_PART_BUILD}/flutter-distro
+        git clone -b 3.29.2 https://github.com/flutter/flutter.git ${CRAFT_PART_BUILD}/flutter-distro
         export PATH=${CRAFT_PART_BUILD}/flutter-distro/bin:$PATH
         flutter config --no-enable-{web,ios,android,fuchsia,windows-desktop,macos-desktop}
         flutter pub get
