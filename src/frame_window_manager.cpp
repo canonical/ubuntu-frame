@@ -174,17 +174,19 @@ void FrameWindowManagerPolicy::handle_layout(
     Application const& application,
     WindowInfo const& window_info)
 {
-    // Windows are placed according to the following strategy
-    // 1. If a window's position cannot be overridden, we return the requested spec.
-    // 2. If the snap name or surface title is mapped to a particular output, then the surface is fullscreen on that output.
-    // 3. If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
-    // 4. Otherwise, the snap appears fullscreen on whatever output is currently active.
+    // If a window's position cannot be overridden, we return the requested spec.
     if (!can_position_be_overridden(specification, window_info))
         return;
 
     auto const snap_instance_name = snap_instance_name_of(application);
     auto const surface_title = specification.name() ? specification.name() : window_info.name();
     auto const layout_metadata = std::static_pointer_cast<LayoutMetadata>(display_config.layout_userdata());
+
+    // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
+    if (layout_metadata != nullptr && layout_metadata->try_layout(specification, surface_title, snap_instance_name))
+        return;
+
+    // If the snap name or surface title is mapped to a particular output, then the surface is fullscreen on that output.
     if (assign_to_output(specification, surface_title, snap_instance_name))
     {
         if (specification.name())
@@ -205,11 +207,9 @@ void FrameWindowManagerPolicy::handle_layout(
         apply_fullscreen(specification);
         apply_bespoke_fullscreen_placement(specification, window_info);
     }
-    else if (layout_metadata == nullptr || !layout_metadata->try_layout(
-        specification,
-        surface_title,
-        snap_instance_name))
+    else
     {
+        // Otherwise, the snap appears fullscreen on whatever output is currently active.
         apply_fullscreen(specification);
         apply_bespoke_fullscreen_placement(specification, window_info);
     }
