@@ -185,6 +185,7 @@ void FrameWindowManagerPolicy::handle_layout(
     // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
     if (layout_metadata != nullptr && layout_metadata->try_layout(specification, surface_title, snap_instance_name))
     {
+        // Let's warn if the user is placing their surface beyond the extents of all outputs
         Rectangle const extents(specification.top_left().value(), specification.size().value());
         bool found = false;
         for (auto const& output : active_outputs)
@@ -197,6 +198,15 @@ void FrameWindowManagerPolicy::handle_layout(
             mir::log_warning(R"(Surface for snap="%s" with title="%s" was placed such that it overlaps no outputs)",
                               snap_instance_name.c_str(),
                               surface_title ? surface_title.value().c_str() : "");
+
+        // Let's also warn if the user has also mapped this surface to a specific output
+        WindowSpecification throwaway_spec;
+        if (assign_to_output(throwaway_spec, surface_title, snap_instance_name))
+            mir::log_warning(R"(Surface for snap="%s" with title="%s" is mapped to both a specific position)"
+                              " and a specific card. The card mapping will be ignored.",
+                              snap_instance_name.c_str(),
+                              surface_title ? surface_title.value().c_str() : "");
+
         return;
     }
 
