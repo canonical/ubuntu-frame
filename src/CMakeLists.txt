@@ -16,6 +16,7 @@ add_executable(frame
     egfullscreenclient.cpp egfullscreenclient.h
     background_client.cpp background_client.h
     snap_name_of.cpp snap_name_of.h
+    layout_metadata.cpp layout_metadata.h
 )
 
 # Check for boost
