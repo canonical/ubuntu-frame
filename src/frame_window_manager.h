@@ -19,6 +19,7 @@
 
 #include <miral/minimal_window_manager.h>
 #include <miral/display_configuration.h>
+#include <miral/output.h>
 #include <mir_toolkit/events/enums.h>
 
 #include <memory>
@@ -126,6 +127,8 @@ private:
         std::vector<std::pair<std::string, int>> surface_title_to_output_id;
         std::vector<std::pair<std::string, int>> snap_name_to_output_id;
     } placement_mapping;
+
+    std::vector<miral::Output> active_outputs;
 
     void handle_layout(
         miral::WindowSpecification& spec,

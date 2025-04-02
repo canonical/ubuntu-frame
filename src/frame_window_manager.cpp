@@ -184,7 +184,21 @@ void FrameWindowManagerPolicy::handle_layout(
 
     // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
     if (layout_metadata != nullptr && layout_metadata->try_layout(specification, surface_title, snap_instance_name))
+    {
+        Rectangle const extents(specification.top_left().value(), specification.size().value());
+        bool found = false;
+        for (auto const& output : active_outputs)
+        {
+            if (output.extents().overlaps(extents))
+                found = true;;
+        }
+
+        if (!found)
+            mir::log_warning(R"(Surface for snap="%s" with title="%s" was placed such that it overlaps no outputs)",
+                              snap_instance_name.c_str(),
+                              surface_title ? surface_title.value().c_str() : "");
         return;
+    }
 
     // If the snap name or surface title is mapped to a particular output, then the surface is fullscreen on that output.
     if (assign_to_output(specification, surface_title, snap_instance_name))
@@ -193,13 +207,13 @@ void FrameWindowManagerPolicy::handle_layout(
         {
             if (!snap_instance_name.empty())
             {
-                mir::log_info("New surface for snap=\"%s\" with title=\"%s\"",
+                mir::log_info(R"(Surface for snap="%s" with title="%s")",
                               snap_instance_name.c_str(),
                               specification.name().value().c_str());
             }
             else
             {
-                mir::log_info("New surface with title=\"%s\"",
+                mir::log_info("Surface with title=\"%s\"",
                               specification.name().value().c_str());
             }
         }
@@ -358,6 +372,7 @@ void FrameWindowManagerPolicy::advise_output_create(miral::Output const &output)
     WindowManagementPolicy::advise_output_create(output);
 
     placement_mapping.update(output);
+    active_outputs.push_back(output);
     display_layout_has_changed = true;
 }
 
@@ -366,6 +381,10 @@ void FrameWindowManagerPolicy::advise_output_delete(miral::Output const& output)
     WindowManagementPolicy::advise_output_delete(output);
 
     placement_mapping.clear(output);
+    active_outputs.erase(std::remove_if(active_outputs.begin(), active_outputs.end(), [&output](miral::Output const& other)
+    {
+        return other.id() == output.id();
+    }), active_outputs.end());
     display_layout_has_changed = true;
 }
 
