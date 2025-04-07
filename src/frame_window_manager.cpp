@@ -180,10 +180,13 @@ void FrameWindowManagerPolicy::handle_layout(
 
     auto const snap_instance_name = snap_instance_name_of(application);
     auto const surface_title = specification.name() ? specification.name() : window_info.name();
-    auto const layout_metadata = std::static_pointer_cast<LayoutMetadata>(display_config.layout_userdata());
+    auto const layout_userdata = display_config.layout_userdata("applications");
+    std::shared_ptr<LayoutMetadata> layout_metadata;
+    if (layout_userdata.has_value())
+        layout_metadata = std::any_cast<std::shared_ptr<LayoutMetadata>>(layout_userdata.value());
 
     // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
-    if (layout_metadata != nullptr && layout_metadata->try_layout(specification, surface_title, snap_instance_name))
+    if (layout_metadata && layout_metadata->try_layout(specification, surface_title, snap_instance_name))
     {
         // Let's warn if the user is placing their surface beyond the extents of all outputs
         Rectangle const extents(specification.top_left().value(), specification.size().value());

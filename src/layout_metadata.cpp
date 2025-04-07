@@ -49,16 +49,13 @@ bool try_parse_vec2(miral::DisplayConfigurationNode const& node, const char* fie
 }
 }
 
-LayoutMetadata::LayoutMetadata(std::unique_ptr<miral::DisplayConfigurationNode> node)
+LayoutMetadata::LayoutMetadata(std::unique_ptr<miral::DisplayConfigurationNode> applications_node)
 {
-    if (auto const applications_node = node->at("applications"))
+    applications_node->for_each([&](std::unique_ptr<miral::DisplayConfigurationNode> node)
     {
-        applications_node.value()->for_each([&](std::unique_ptr<miral::DisplayConfigurationNode> node)
-        {
-            if (auto const app = LayoutApplicationPlacementStrategy::from_yaml(*node))
-                applications.push_back(app.value());
-        });
-    }
+        if (auto const app = LayoutApplicationPlacementStrategy::from_yaml(*node))
+            applications.push_back(app.value());
+    });
 }
 
 bool LayoutMetadata::try_layout(miral::WindowSpecification& specification,
