@@ -46,9 +46,9 @@ int main(int argc, char const* argv[])
 
     runner.add_stop_callback([&] { background_client.stop(); });
 
-    display_config.set_layout_userdata_builder("applications", [](std::unique_ptr<DisplayConfigurationNode> node) -> std::any
+    display_config.layout_userdata_builder("applications", [](DisplayConfiguration::Node const& node) -> std::any
     {
-        return std::make_shared<LayoutMetadata>(std::move(node));
+        return std::make_shared<LayoutMetadata>(node);
     });
     
     return runner.run_with(

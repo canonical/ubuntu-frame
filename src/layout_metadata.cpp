@@ -16,11 +16,10 @@
 
 #include "layout_metadata.h"
 #include <mir/log.h>
-#include <miral/display_configuration.h>
 
 namespace
 {
-bool try_parse_vec2(miral::DisplayConfigurationNode const& node, const char* field_name, int& x, int& y)
+bool try_parse_vec2(miral::DisplayConfiguration::Node const& node, const char* field_name, int& x, int& y)
 {
     if (!node.at(field_name))
     {
@@ -28,11 +27,11 @@ bool try_parse_vec2(miral::DisplayConfigurationNode const& node, const char* fie
         return false;
     }
 
-    auto field = node.at(field_name);
+    auto const field = node.at(field_name);
     std::vector<int> integers;
-    field.value()->for_each([&integers](std::unique_ptr<miral::DisplayConfigurationNode> const& node)
+    field.value().for_each([&integers](miral::DisplayConfiguration::Node const& node)
     {
-        if (auto int_field = node->as_int())
+        if (auto const int_field = node.as_int())
             integers.push_back(int_field.value());
     });
 
@@ -49,11 +48,11 @@ bool try_parse_vec2(miral::DisplayConfigurationNode const& node, const char* fie
 }
 }
 
-LayoutMetadata::LayoutMetadata(std::unique_ptr<miral::DisplayConfigurationNode> applications_node)
+LayoutMetadata::LayoutMetadata(miral::DisplayConfiguration::Node const& applications_node)
 {
-    applications_node->for_each([&](std::unique_ptr<miral::DisplayConfigurationNode> node)
+    applications_node.for_each([&](miral::DisplayConfiguration::Node const& node)
     {
-        if (auto const app = LayoutApplicationPlacementStrategy::from_yaml(*node))
+        if (auto const app = LayoutApplicationPlacementStrategy::from_yaml(node))
             applications.push_back(app.value());
     });
 }
@@ -88,7 +87,7 @@ LayoutMetadata::LayoutApplicationPlacementStrategy::LayoutApplicationPlacementSt
 {}
 
 std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata::LayoutApplicationPlacementStrategy::from_yaml(
-    miral::DisplayConfigurationNode const& node)
+    miral::DisplayConfiguration::Node const& node)
 {
     if (!node.at("snap-name") && !node.at("surface-title"))
     {
@@ -108,9 +107,9 @@ std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata
     std::optional<std::string> surface_title;
 
     if (node.at("snap-name"))
-        snap_name = node.at("snap-name").value()->as_string();
+        snap_name = node.at("snap-name").value().as_string();
     else
-        surface_title = node.at("surface-title").value()->as_string();
+        surface_title = node.at("surface-title").value().as_string();
 
     int x, y;
     int w, h;
