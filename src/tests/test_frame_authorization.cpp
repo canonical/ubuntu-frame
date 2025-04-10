@@ -35,5 +35,4 @@ TEST_F(AuthModelTest, True)
     EXPECT_THAT(*model.snaps_for_protocols.at("zwlr_screencopy_manager_v1").begin(), Eq("my-snap"));
     EXPECT_THAT(model.snaps_for_protocols.at("zwlr_layer_shell_v1").size(), Eq(1));
     EXPECT_THAT(*model.snaps_for_protocols.at("zwlr_layer_shell_v1").begin(), Eq("my-snap"));
-
 }
