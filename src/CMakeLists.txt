@@ -4,6 +4,8 @@ include(FindPkgConfig)
 
 set(CMAKE_CXX_STANDARD 20)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+option(ENABLE_TESTING "Specifies whether or not we should build the tests" ON)
+
 pkg_check_modules(MIRAL miral REQUIRED)
 pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client)
 pkg_check_modules(APPARMOR libapparmor REQUIRED)
@@ -50,4 +52,6 @@ install(PROGRAMS ${CMAKE_BINARY_DIR}/frame
     DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
 )
 
-add_subdirectory(tests)
+if (ENABLE_TESTING)
+    add_subdirectory(tests)
+endif()
