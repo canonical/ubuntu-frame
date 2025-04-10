@@ -45,7 +45,7 @@ private:
             std::optional<std::string> const& surface_title,
             mir::geometry::Point const& position,
             mir::geometry::Size const& size);
-        static std::optional<LayoutApplicationPlacementStrategy> from_yaml(miral::DisplayConfiguration::Node const& node);
+        static std::optional<LayoutApplicationPlacementStrategy> from_node(miral::DisplayConfiguration::Node const& node);
 
         std::optional<std::string> const snap_name;
         std::optional<std::string> const surface_title;

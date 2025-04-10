@@ -21,7 +21,13 @@ namespace
 {
 bool try_parse_vec2(miral::DisplayConfiguration::Node const& node, const char* field_name, int& x, int& y)
 {
-    if (!node.at(field_name))
+    if (node.type() != miral::DisplayConfiguration::Node::Type::map)
+    {
+        mir::log_error("Invalid application strategy: node is not a map");
+        return false;
+    }
+
+    if (!node.has(field_name))
     {
         mir::log_error("Invalid application strategy: '%s' is required", field_name);
         return false;
@@ -29,10 +35,15 @@ bool try_parse_vec2(miral::DisplayConfiguration::Node const& node, const char* f
 
     auto const field = node.at(field_name);
     std::vector<int> integers;
-    field.value().for_each([&integers](miral::DisplayConfiguration::Node const& node)
+    field.for_each([field_name, &integers](miral::DisplayConfiguration::Node const& node)
     {
-        if (auto const int_field = node.as_int())
-            integers.push_back(int_field.value());
+        if (node.type() != miral::DisplayConfiguration::Node::Type::integer)
+        {
+            mir::log_error("Invalid application strategy: vector 2 contains a non-integer member in %s", field_name);
+            return;
+        }
+
+        integers.push_back(node.as_int());
     });
 
     if (integers.size() != 2)
@@ -52,7 +63,7 @@ LayoutMetadata::LayoutMetadata(miral::DisplayConfiguration::Node const& applicat
 {
     applications_node.for_each([&](miral::DisplayConfiguration::Node const& node)
     {
-        if (auto const app = LayoutApplicationPlacementStrategy::from_yaml(node))
+        if (auto const app = LayoutApplicationPlacementStrategy::from_node(node))
             applications.push_back(app.value());
     });
 }
@@ -86,17 +97,23 @@ LayoutMetadata::LayoutApplicationPlacementStrategy::LayoutApplicationPlacementSt
       size(size)
 {}
 
-std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata::LayoutApplicationPlacementStrategy::from_yaml(
+std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata::LayoutApplicationPlacementStrategy::from_node(
     miral::DisplayConfiguration::Node const& node)
 {
-    if (!node.at("snap-name") && !node.at("surface-title"))
+    if (node.type() != miral::DisplayConfiguration::Node::Type::map)
+    {
+        mir::log_error("Invalid application strategy: LayoutApplicationPlacementStrategy node is not a map");
+        return std::nullopt;
+    }
+
+    if (!node.has("snap-name") && !node.has("surface-title"))
     {
         mir::log_error("Invalid application strategy: missing snap-name and surface-title. One of them"
                        " must be provided.");
         return std::nullopt;
     }
 
-    if (node.at("snap-name") && node.at("surface-title"))
+    if (node.has("snap-name") && node.has("surface-title"))
     {
         mir::log_error("Invalid application strategy: provided both snap-name and surface-title, but"
                        " only one of them can be provided.");
@@ -106,10 +123,29 @@ std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata
     std::optional<std::string> snap_name;
     std::optional<std::string> surface_title;
 
-    if (node.at("snap-name"))
-        snap_name = node.at("snap-name").value().as_string();
+    if (node.has("snap-name"))
+    {
+        auto const snap_name_node = node.at("snap-name");
+        if (snap_name_node.type() != miral::DisplayConfiguration::Node::Type::string)
+        {
+            mir::log_error("Invalid application strategy: snap-name is not a string");
+            return std::nullopt;
+        }
+
+        snap_name = snap_name_node.as_string();
+    }
     else
-        surface_title = node.at("surface-title").value().as_string();
+    {
+        auto surface_title_node = node.at("surface-title");
+        if (surface_title_node.type() != miral::DisplayConfiguration::Node::Type::string)
+        {
+            mir::log_error("Invalid application strategy: surface-title is not a string");
+            return std::nullopt;
+        }
+
+
+        surface_title = node.at("surface-title").as_string();
+    }
 
     int x, y;
     int w, h;
