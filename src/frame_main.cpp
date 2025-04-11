@@ -46,10 +46,12 @@ int main(int argc, char const* argv[])
 
     runner.add_stop_callback([&] { background_client.stop(); });
 
+#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
     display_config.layout_userdata_builder("applications", [](DisplayConfiguration::Node const& node) -> std::any
     {
         return std::make_shared<LayoutMetadata>(node);
     });
+#endif
     
     return runner.run_with(
         {
