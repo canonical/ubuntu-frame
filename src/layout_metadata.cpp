@@ -35,7 +35,7 @@ bool try_parse_vec2(miral::DisplayConfiguration::Node const& node, const char* f
 
     auto const field = node.at(field_name);
     std::vector<int> integers;
-    field.for_each([field_name, &integers](miral::DisplayConfiguration::Node const& node)
+    field.value().for_each([field_name, &integers](miral::DisplayConfiguration::Node const& node)
     {
         if (node.type() != miral::DisplayConfiguration::Node::Type::integer)
         {
@@ -126,25 +126,25 @@ std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata
     if (node.has("snap-name"))
     {
         auto const snap_name_node = node.at("snap-name");
-        if (snap_name_node.type() != miral::DisplayConfiguration::Node::Type::string)
+        if (snap_name_node.value().type() != miral::DisplayConfiguration::Node::Type::string)
         {
             mir::log_error("Invalid application strategy: snap-name is not a string");
             return std::nullopt;
         }
 
-        snap_name = snap_name_node.as_string();
+        snap_name = snap_name_node.value().as_string();
     }
     else
     {
         auto surface_title_node = node.at("surface-title");
-        if (surface_title_node.type() != miral::DisplayConfiguration::Node::Type::string)
+        if (surface_title_node.value().type() != miral::DisplayConfiguration::Node::Type::string)
         {
             mir::log_error("Invalid application strategy: surface-title is not a string");
             return std::nullopt;
         }
 
 
-        surface_title = node.at("surface-title").as_string();
+        surface_title = node.at("surface-title").value().as_string();
     }
 
     int x, y;
