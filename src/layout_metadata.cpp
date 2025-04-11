@@ -14,6 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <miral/version.h>
+#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
 #include "layout_metadata.h"
 #include <mir/log.h>
 
@@ -162,3 +164,4 @@ std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata
         {x, y},
         {w, h});
 }
+#endif

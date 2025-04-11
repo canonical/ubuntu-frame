@@ -181,13 +181,12 @@ void FrameWindowManagerPolicy::handle_layout(
 
     auto const snap_instance_name = snap_instance_name_of(application);
     auto const surface_title = specification.name() ? specification.name() : window_info.name();
-    std::shared_ptr<LayoutMetadata> layout_metadata;
 
 #if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+    std::shared_ptr<LayoutMetadata> layout_metadata;
     auto const layout_userdata = display_config.layout_userdata("applications");
     if (layout_userdata.has_value())
         layout_metadata = std::any_cast<std::shared_ptr<LayoutMetadata>>(layout_userdata.value());
-#endif
 
     // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
     if (layout_metadata && layout_metadata->try_layout(specification, surface_title, snap_instance_name))
@@ -216,6 +215,7 @@ void FrameWindowManagerPolicy::handle_layout(
 
         return;
     }
+#endif
 
     // If the snap name or surface title is mapped to a particular output, then the surface is fullscreen on that output.
     if (assign_to_output(specification, surface_title, snap_instance_name))

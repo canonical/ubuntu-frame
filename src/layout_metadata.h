@@ -17,6 +17,9 @@
 #ifndef LAYOUT_METADATA_H
 #define LAYOUT_METADATA_H
 
+#include <miral/version.h>
+#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+
 #include <optional>
 #include <string>
 #include <vector>
@@ -58,4 +61,5 @@ private:
 };
 
 
+#endif
 #endif //LAYOUT_METADATA_H
