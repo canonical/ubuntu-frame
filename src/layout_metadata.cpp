@@ -74,7 +74,7 @@ bool LayoutMetadata::try_layout(miral::WindowSpecification& specification,
 {
     for (auto const& app : applications)
     {
-        if (app.snap_name == snap_name || app.surface_title == title)
+        if (app.snap_name == snap_name || (title.is_set() && app.surface_title == title))
         {
             specification.state() = mir_window_state_restored;
             specification.top_left() = app.position;

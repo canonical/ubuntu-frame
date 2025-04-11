@@ -63,7 +63,8 @@ bool can_position_be_overridden(WindowSpecification& spec, WindowInfo const& win
         case mir_window_state_hidden:
         case mir_window_state_attached:
             return false;
-        default:;
+        default:
+            break;
     }
 
     return true;
@@ -194,7 +195,7 @@ void FrameWindowManagerPolicy::handle_layout(
         for (auto const& output : active_outputs)
         {
             if (output.extents().overlaps(extents))
-                found = true;;
+                found = true;
         }
 
         if (!found)
