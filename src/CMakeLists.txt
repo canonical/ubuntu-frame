@@ -16,10 +16,12 @@ add_library(frame-implementation
     frame_window_manager.cpp frame_window_manager.h
     egfullscreenclient.cpp egfullscreenclient.h
     background_client.cpp background_client.h
-    snap_name_of.cpp snap_name_of.h)
+    snap_name_of.cpp snap_name_of.h
+)
 
 add_executable(frame
-    frame_main.cpp)
+    frame_main.cpp
+)
 
 # Check for boost
 find_package(Boost 1.48.0 COMPONENTS iostreams REQUIRED)
@@ -32,21 +34,25 @@ target_include_directories(frame-implementation
         SYSTEM 
         ${MIRAL_INCLUDE_DIRS} 
     PRIVATE 
-        ${FREETYPE_INCLUDE_DIRS})
+        ${FREETYPE_INCLUDE_DIRS}
+)
 
 target_include_directories(frame
     PRIVATE
-    ${FREETYPE_INCLUDE_DIRS})
+    ${FREETYPE_INCLUDE_DIRS}
+)
 
 target_link_libraries(frame-implementation
     ${MIRAL_LDFLAGS}
     ${WAYLAND_CLIENT_LDFLAGS}
     ${APPARMOR_LDFLAGS}
     ${FREETYPE_LDFLAGS}
-    ${Boost_LIBRARIES})
+    ${Boost_LIBRARIES}
+)
 
 target_link_libraries(frame
-    frame-implementation)
+    frame-implementation
+)
 
 install(PROGRAMS ${CMAKE_BINARY_DIR}/frame
     DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
