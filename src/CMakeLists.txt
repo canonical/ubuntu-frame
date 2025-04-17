@@ -17,6 +17,7 @@ add_library(frame-implementation
     egfullscreenclient.cpp egfullscreenclient.h
     background_client.cpp background_client.h
     snap_name_of.cpp snap_name_of.h
+    layout_metadata.cpp layout_metadata.h
 )
 
 add_executable(frame

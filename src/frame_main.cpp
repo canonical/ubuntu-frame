@@ -19,6 +19,7 @@
 #include "background_client.h"
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
+#include "layout_metadata.h"
 
 #include <miral/configuration_option.h>
 #include <miral/display_configuration.h>
@@ -44,6 +45,13 @@ int main(int argc, char const* argv[])
     BackgroundClient background_client(&runner, &window_manager_observer);
 
     runner.add_stop_callback([&] { background_client.stop(); });
+
+#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+    display_config.layout_userdata_builder("applications", [](DisplayConfiguration::Node const& node) -> std::any
+    {
+        return std::make_shared<LayoutMetadata>(node);
+    });
+#endif
     
     return runner.run_with(
         {
@@ -67,7 +75,7 @@ int main(int argc, char const* argv[])
             StartupInternalClient{std::ref(background_client)},
             ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
                                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
-            set_window_management_policy<FrameWindowManagerPolicy>(window_manager_observer),
+            set_window_management_policy<FrameWindowManagerPolicy>(window_manager_observer, display_config),
             Keymap{}
         });
 }

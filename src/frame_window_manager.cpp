@@ -15,7 +15,7 @@
  */
 
 #include "frame_window_manager.h"
-
+#include "layout_metadata.h"
 #include "snap_name_of.h"
 
 #include <mir/log.h>
@@ -37,17 +37,17 @@ using namespace miral::toolkit;
 
 namespace
 {
-bool needs_bespoke_fullscreen_placement(WindowSpecification& spec, WindowInfo const& window_info)
+bool can_position_be_overridden(WindowSpecification& spec, WindowInfo const& window_info)
 {
     // Only override behavior of windows of type normal and freestyle
     switch (spec.type().is_set() ? spec.type().value() : window_info.type())
     {
-    case mir_window_type_normal:
-    case mir_window_type_freestyle:
-        break;
+        case mir_window_type_normal:
+        case mir_window_type_freestyle:
+            break;
 
-    default:
-        return false;
+        default:
+            return false;
     }
 
     // Only override behavior of windows without a parent
@@ -59,18 +59,22 @@ bool needs_bespoke_fullscreen_placement(WindowSpecification& spec, WindowInfo co
     // Only override behavior if the (new) state is something other than minimized, hidden or attached
     switch (spec.state().is_set() ? spec.state().value() : window_info.state())
     {
-    case mir_window_state_minimized:
-    case mir_window_state_hidden:
-    case mir_window_state_attached:return false;
-
-    default:;
+        case mir_window_state_minimized:
+        case mir_window_state_hidden:
+        case mir_window_state_attached:
+            return false;
+        default:
+            break;
     }
 
+    return true;
+}
+
+void apply_fullscreen(WindowSpecification& spec)
+{
     spec.state() = mir_window_state_fullscreen;
     spec.size() = mir::optional_value<Size>{};      // Ignore requested size (if any) when we fullscreen
     spec.top_left() = mir::optional_value<Point>{}; // Ignore requested position (if any) when we fullscreen
-
-    return true;
 }
 
 auto is_application(WindowInfo const& window_info)
@@ -150,9 +154,13 @@ void WindowManagerObserver::process_window_closed_callbacks() const
 std::string const FrameWindowManagerPolicy::surface_title = "surface-title";
 std::string const FrameWindowManagerPolicy::snap_name = "snap-name";
 
-FrameWindowManagerPolicy::FrameWindowManagerPolicy(WindowManagerTools const& tools, WindowManagerObserver& window_manager_observer)
+FrameWindowManagerPolicy::FrameWindowManagerPolicy(
+    WindowManagerTools const& tools,
+    WindowManagerObserver& window_manager_observer,
+    miral::DisplayConfiguration const& display_config)
     : MinimalWindowManager{tools},
-      window_manager_observer{window_manager_observer}
+      window_manager_observer{window_manager_observer},
+      display_config{display_config}
 {
     window_manager_observer.set_weak_window_count(window_count);
 }
@@ -162,36 +170,88 @@ bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* eve
     return false;
 }
 
+void FrameWindowManagerPolicy::handle_layout(
+    WindowSpecification& specification,
+    Application const& application,
+    WindowInfo const& window_info)
+{
+    // If a window's position cannot be overridden, we return the requested spec.
+    if (!can_position_be_overridden(specification, window_info))
+        return;
+
+    auto const snap_instance_name = snap_instance_name_of(application);
+    auto const surface_title = specification.name() ? specification.name() : window_info.name();
+
+#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+    std::shared_ptr<LayoutMetadata> layout_metadata;
+    auto const layout_userdata = display_config.layout_userdata("applications");
+    if (layout_userdata.has_value())
+        layout_metadata = std::any_cast<std::shared_ptr<LayoutMetadata>>(layout_userdata.value());
+
+    // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
+    if (layout_metadata && layout_metadata->try_layout(specification, surface_title, snap_instance_name))
+    {
+        // Let's warn if the user is placing their surface beyond the extents of all outputs
+        Rectangle const extents(specification.top_left().value(), specification.size().value());
+        bool found = false;
+        for (auto const& output : active_outputs)
+        {
+            if (output.extents().overlaps(extents))
+                found = true;
+        }
+
+        if (!found)
+            mir::log_warning(R"(Surface for snap="%s" with title="%s" was placed such that it overlaps no outputs)",
+                              snap_instance_name.c_str(),
+                              surface_title ? surface_title.value().c_str() : "");
+
+        // Let's also warn if the user has also mapped this surface to a specific output
+        WindowSpecification throwaway_spec;
+        if (assign_to_output(throwaway_spec, surface_title, snap_instance_name))
+            mir::log_warning(R"(Surface for snap="%s" with title="%s" is mapped to both a specific position)"
+                              " and a specific card. The card mapping will be ignored.",
+                              snap_instance_name.c_str(),
+                              surface_title ? surface_title.value().c_str() : "");
+
+        return;
+    }
+#endif
+
+    // If the snap name or surface title is mapped to a particular output, then the surface is fullscreen on that output.
+    if (assign_to_output(specification, surface_title, snap_instance_name))
+    {
+        if (specification.name())
+        {
+            if (!snap_instance_name.empty())
+            {
+                mir::log_info(R"(Surface for snap="%s" with title="%s")",
+                              snap_instance_name.c_str(),
+                              specification.name().value().c_str());
+            }
+            else
+            {
+                mir::log_info("Surface with title=\"%s\"",
+                              specification.name().value().c_str());
+            }
+        }
+
+        apply_fullscreen(specification);
+        apply_bespoke_fullscreen_placement(specification, window_info);
+    }
+    else
+    {
+        // Otherwise, the snap appears fullscreen on whatever output is currently active.
+        apply_fullscreen(specification);
+        apply_bespoke_fullscreen_placement(specification, window_info);
+    }
+}
+
 auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info, WindowSpecification const& request)
 -> WindowSpecification
 {
     WindowSpecification specification = MinimalWindowManager::place_new_window(app_info, request);
-
-    {
-        WindowInfo window_info{};
-        if (needs_bespoke_fullscreen_placement(specification, window_info))
-        {
-            auto const snap_instance_name = snap_instance_name_of(app_info.application());
-
-            if (specification.name())
-            {
-                if (!snap_instance_name.empty())
-                {
-                    mir::log_info("New surface for snap=\"%s\" with title=\"%s\"",
-                                  snap_instance_name.c_str(),
-                                  specification.name().value().c_str());
-                }
-                else
-                {
-                    mir::log_info("New surface with title=\"%s\"",
-                                  specification.name().value().c_str());
-                }
-            }
-
-            assign_to_output(specification, specification.name(), snap_instance_name);
-            apply_bespoke_fullscreen_placement(specification, window_info);
-        }
-    }
+    WindowInfo const window_info{};
+    handle_layout(specification, app_info.application(), window_info);
 
     // TODO This is a hack to ensure the wallpaper remains in the background
     // Ideally the wallpaper would use layer-shell, but there's no convenient -dev package
@@ -204,13 +264,13 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
     return specification;
 }
 
-void FrameWindowManagerPolicy::assign_to_output(
+bool FrameWindowManagerPolicy::assign_to_output(
     WindowSpecification& specification,
     mir::optional_value<std::string> const& title,
     std::string_view snap_name)
 {
-    placement_mapping.set_output_for_surface(specification, title);
-    placement_mapping.set_output_for_snap(specification, snap_name);
+    return placement_mapping.set_output_for_surface(specification, title)
+        || placement_mapping.set_output_for_snap(specification, snap_name);
 }
 
 void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& window_info)
@@ -226,34 +286,7 @@ void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& window_inf
 void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, WindowSpecification const& modifications)
 {
     WindowSpecification specification = modifications;
-
-    if (needs_bespoke_fullscreen_placement(specification, window_info))
-    {
-        auto const snap_instance_name = snap_instance_name_of(window_info.window().application());
-
-        if (specification.name())
-        {
-            if (!snap_instance_name.empty())
-            {
-                mir::log_info(
-                    "Surface for snap=\"%s\" retitled to \"%s\" (was \"%s\")",
-                    snap_instance_name.c_str(),
-                    specification.name().value().c_str(),
-                    window_info.name().c_str());
-            }
-            else
-            {
-                mir::log_info(
-                    "Surface retitled to \"%s\" (was \"%s\")",
-                    specification.name().value().c_str(),
-                    window_info.name().c_str());
-            }
-        }
-        assign_to_output(specification, window_info.name(), snap_instance_name);
-
-        apply_bespoke_fullscreen_placement(specification, window_info);
-    }
-
+    handle_layout(specification, window_info.window().application(), window_info);
     MinimalWindowManager::handle_modify_window(window_info, specification);
 }
 
@@ -299,13 +332,8 @@ void FrameWindowManagerPolicy::advise_end()
                    {
                        auto& info = tools.info_for(window);
                        WindowSpecification specification;
-
-                       if (needs_bespoke_fullscreen_placement(specification, info))
-                       {
-                           assign_to_output(specification, info.name(), snap_instance_name_of(info.window().application()));
-                           apply_bespoke_fullscreen_placement(specification, info);
-                           tools.modify_window(info, specification);
-                       }
+                       handle_layout(specification, app.application(), info);
+                       tools.modify_window(info, specification);
                    }
                }
             });
@@ -361,6 +389,7 @@ void FrameWindowManagerPolicy::advise_output_create(miral::Output const &output)
     WindowManagementPolicy::advise_output_create(output);
 
     placement_mapping.update(output);
+    active_outputs.push_back(output);
     display_layout_has_changed = true;
 }
 
@@ -369,6 +398,10 @@ void FrameWindowManagerPolicy::advise_output_delete(miral::Output const& output)
     WindowManagementPolicy::advise_output_delete(output);
 
     placement_mapping.clear(output);
+    active_outputs.erase(std::remove_if(active_outputs.begin(), active_outputs.end(), [&output](miral::Output const& other)
+    {
+        return other.id() == output.id();
+    }), active_outputs.end());
     display_layout_has_changed = true;
 }
 
@@ -432,7 +465,7 @@ void FrameWindowManagerPolicy::PlacementMapping::clear(Output const& output)
         end(snap_name_to_output_id));
 }
 
-void FrameWindowManagerPolicy::PlacementMapping::set_output_for_surface(
+bool FrameWindowManagerPolicy::PlacementMapping::set_output_for_surface(
     WindowSpecification& specification,
     mir::optional_value<std::string> const& title) const
 {
@@ -441,12 +474,14 @@ void FrameWindowManagerPolicy::PlacementMapping::set_output_for_surface(
         if (t2o.first == title)
         {
             specification.output_id() = t2o.second;
-            break;
+            return true;
         }
     }
+
+    return false;
 }
 
-void FrameWindowManagerPolicy::PlacementMapping::set_output_for_snap(
+bool FrameWindowManagerPolicy::PlacementMapping::set_output_for_snap(
     WindowSpecification& specification,
     std::string_view name) const
 {
@@ -455,7 +490,9 @@ void FrameWindowManagerPolicy::PlacementMapping::set_output_for_snap(
         if (s2o.first == name)
         {
             specification.output_id() = s2o.second;
-            break;
+            return true;
         }
     }
+
+    return false;
 }
