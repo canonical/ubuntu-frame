@@ -86,6 +86,8 @@ public:
     auto place_new_window(miral::ApplicationInfo const& app_info, miral::WindowSpecification const& request)
     -> miral::WindowSpecification override;
 
+    void handle_window_ready(miral::WindowInfo& window_info) override;
+
     bool handle_keyboard_event(MirKeyboardEvent const* event) override;
     void handle_modify_window(miral::WindowInfo& window_info, miral::WindowSpecification const& modifications) override;
 
@@ -133,7 +135,7 @@ private:
     void handle_layout(
         miral::WindowSpecification& spec,
         miral::Application const& application_info,
-        miral::WindowInfo const& info);
+        miral::WindowInfo& info);
 
     /// Try to assign the window to an output given its title and snap name.
     /// \returns true if successfully assigned, otherwise false
