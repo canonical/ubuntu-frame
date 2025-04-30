@@ -183,13 +183,8 @@ void FrameWindowManagerPolicy::handle_layout(
     auto const surface_title = specification.name() ? specification.name() : window_info.name();
 
 #if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
-    std::shared_ptr<LayoutMetadata> layout_metadata;
-    auto const layout_userdata = display_config.layout_userdata("applications");
-    if (layout_userdata.has_value())
-        layout_metadata = std::any_cast<std::shared_ptr<LayoutMetadata>>(layout_userdata.value());
-
     // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
-    if (layout_metadata && layout_metadata->try_layout(specification, surface_title, snap_instance_name))
+    if (try_position_exactly(specification, snap_instance_name, surface_title.value_or("")))
     {
         // Let's warn if the user is placing their surface beyond the extents of all outputs
         Rectangle const extents(specification.top_left().value(), specification.size().value());
@@ -276,14 +271,9 @@ void FrameWindowManagerPolicy::handle_window_ready(WindowInfo& window_info)
     auto const snap_instance_name = snap_instance_name_of(application);
     auto const surface_title = window_info.name();
 
-    std::shared_ptr<LayoutMetadata> layout_metadata;
-    auto const layout_userdata = display_config.layout_userdata("applications");
-    if (layout_userdata.has_value())
-        layout_metadata = std::any_cast<std::shared_ptr<LayoutMetadata>>(layout_userdata.value());
-
     // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
     WindowSpecification specification;
-    if (layout_metadata && layout_metadata->try_layout(specification, surface_title, snap_instance_name))
+    if (try_position_exactly(specification, snap_instance_name, surface_title))
     {
         Rectangle const extents(specification.top_left().value(), specification.size().value());
         window_info.clip_area(extents);
@@ -523,6 +513,23 @@ bool FrameWindowManagerPolicy::PlacementMapping::set_output_for_snap(
             return true;
         }
     }
+
+    return false;
+}
+
+bool FrameWindowManagerPolicy::try_position_exactly(
+    WindowSpecification& spec,
+    std::string const& snap_instance_name,
+    std::string const& surface_title) const
+{
+    /// Retrieve the layout information from the "applications" key in the layout's userdata.
+    std::shared_ptr<LayoutMetadata> layout_metadata;
+    auto const layout_userdata = display_config.layout_userdata("applications");
+    if (layout_userdata.has_value())
+        layout_metadata = std::any_cast<std::shared_ptr<LayoutMetadata>>(layout_userdata.value());
+
+    if (layout_metadata && layout_metadata->try_layout(spec, surface_title, snap_instance_name))
+        return true;
 
     return false;
 }

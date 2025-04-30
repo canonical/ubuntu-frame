@@ -28,6 +28,8 @@
 
 using namespace mir::geometry;
 
+class LayoutMetadata;
+
 class WindowCount
 {
 public:
@@ -147,6 +149,11 @@ private:
     void apply_bespoke_fullscreen_placement(
         miral::WindowSpecification& specification,
         miral::WindowInfo const& window_info) const;
+
+    bool try_position_exactly(
+        miral::WindowSpecification& spec,
+        std::string const& snap_instance_name,
+        std::string const& surface_title) const;
 };
 
 #endif /* FRAME_WINDOW_MANAGER_H */
