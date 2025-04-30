@@ -173,7 +173,7 @@ bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* eve
 void FrameWindowManagerPolicy::handle_layout(
     WindowSpecification& specification,
     Application const& application,
-    WindowInfo const& window_info)
+    WindowInfo& window_info)
 {
     // If a window's position cannot be overridden, we return the requested spec.
     if (!can_position_be_overridden(specification, window_info))
@@ -183,13 +183,8 @@ void FrameWindowManagerPolicy::handle_layout(
     auto const surface_title = specification.name() ? specification.name() : window_info.name();
 
 #if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
-    std::shared_ptr<LayoutMetadata> layout_metadata;
-    auto const layout_userdata = display_config.layout_userdata("applications");
-    if (layout_userdata.has_value())
-        layout_metadata = std::any_cast<std::shared_ptr<LayoutMetadata>>(layout_userdata.value());
-
     // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
-    if (layout_metadata && layout_metadata->try_layout(specification, surface_title, snap_instance_name))
+    if (try_position_exactly(specification, snap_instance_name, surface_title.value_or("")))
     {
         // Let's warn if the user is placing their surface beyond the extents of all outputs
         Rectangle const extents(specification.top_left().value(), specification.size().value());
@@ -213,6 +208,8 @@ void FrameWindowManagerPolicy::handle_layout(
                               snap_instance_name.c_str(),
                               surface_title ? surface_title.value().c_str() : "");
 
+        if (window_info.window())
+            window_info.clip_area(extents);
         return;
     }
 #endif
@@ -250,7 +247,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 -> WindowSpecification
 {
     WindowSpecification specification = MinimalWindowManager::place_new_window(app_info, request);
-    WindowInfo const window_info{};
+    WindowInfo window_info{};
     handle_layout(specification, app_info.application(), window_info);
 
     // TODO This is a hack to ensure the wallpaper remains in the background
@@ -262,6 +259,29 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
     }
 
     return specification;
+}
+
+void FrameWindowManagerPolicy::handle_window_ready(WindowInfo& window_info)
+{
+#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+    // After a window has been placed at a specific coordinate, we must clip it to its tile
+    // so that it does not overlap with other applications in the event that the client insists on
+    // submitting buffers that are larger than its tile.
+    auto const application = window_info.window().application();
+    auto const snap_instance_name = snap_instance_name_of(application);
+    auto const surface_title = window_info.name();
+
+    // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
+    WindowSpecification specification;
+    if (try_position_exactly(specification, snap_instance_name, surface_title))
+    {
+        Rectangle const extents(specification.top_left().value(), specification.size().value());
+        window_info.clip_area(extents);
+    }
+#else
+    (void)window_info;
+#endif
+    MinimalWindowManager::handle_window_ready(window_info);
 }
 
 bool FrameWindowManagerPolicy::assign_to_output(
@@ -493,6 +513,23 @@ bool FrameWindowManagerPolicy::PlacementMapping::set_output_for_snap(
             return true;
         }
     }
+
+    return false;
+}
+
+bool FrameWindowManagerPolicy::try_position_exactly(
+    WindowSpecification& spec,
+    std::string const& snap_instance_name,
+    std::string const& surface_title) const
+{
+    /// Retrieve the layout information from the "applications" key in the layout's userdata.
+    std::shared_ptr<LayoutMetadata> layout_metadata;
+    auto const layout_userdata = display_config.layout_userdata("applications");
+    if (layout_userdata.has_value())
+        layout_metadata = std::any_cast<std::shared_ptr<LayoutMetadata>>(layout_userdata.value());
+
+    if (layout_metadata && layout_metadata->try_layout(spec, surface_title, snap_instance_name))
+        return true;
 
     return false;
 }
