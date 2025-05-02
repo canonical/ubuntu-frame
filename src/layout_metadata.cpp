@@ -78,7 +78,7 @@ bool LayoutMetadata::try_layout(miral::WindowSpecification& specification,
     {
         if (app.snap_name == snap_name || (title.is_set() && app.surface_title == title))
         {
-            specification.state() = mir_window_state_restored;
+            specification.state() = mir_window_state_fullscreen;
             specification.top_left() = app.position;
             specification.size() = app.size;
             return true;
