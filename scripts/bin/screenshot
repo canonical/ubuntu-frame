@@ -1,6 +1,16 @@
 #!/bin/sh
 set -eu
 
+if ! snapctl is-connected wayplug; then
+    echo "ERROR: The wayland plug needs to be connected:" >&2
+    echo "  # on Classic" >&2
+    echo "  snap connect ${SNAP_INSTANCE_NAME}:wayplug" >&2
+    echo "" >&2
+    echo "  # on Core" >&2
+    echo "  snap connect ${SNAP_INSTANCE_NAME}:wayplug ${SNAP_INSTANCE_NAME}:wayland" >&2
+    exit 1
+fi
+
 SUFFIX=""
 OUTPUT_FILE=""
 while test -z "$OUTPUT_FILE"; do
