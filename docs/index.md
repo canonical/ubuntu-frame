@@ -4,7 +4,7 @@ Ubuntu Frame is an easy to use, reliable and secure display server for embedded 
 
 With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window. It also automatically enables windows behaviours, input from touch, keyboard, and mouse, on-screen keyboard, power saving and more. Ubuntu Frame bundles communication protocols, input protocols, and security policies into a single kit, which can then be used in embedded devices. 
 
-Ubuntu Frame streamlines the build and development of products that need graphical output. WIth Ubuntu Frame, developers don't have to deal with drivers, input modalities, windows dynamics and rules. No more integrating DRM, KMS, input protocols and security policies. This means less code to manage, fewer opportunities for bugs and fewer vulnerabilities in untried code, with more time for developing the content of the display.
+Ubuntu Frame streamlines the build and development of products that need graphical output. With Ubuntu Frame, developers don't have to deal with drivers, input modalities, windows dynamics and rules. No more integrating DRM, KMS, input protocols and security policies. This means less code to manage, fewer opportunities for bugs and fewer vulnerabilities in untried code, with more time for developing the content of the display.
 
 Ubuntu Frame is for anyone looking to deploy graphic interfaces for embedded Linux devices such as IoT devices, robots, smart home devices, kiosks, and more.
 
@@ -52,8 +52,8 @@ You can get involved by:
 
 We will continue growing with our community. If you want to get involved:
 * Join the [Discourse community forum](https://discourse.ubuntu.com/tag/ubuntu-frame)
-* Read our [Code of Conduct](https://ubuntu.com/community/code-of-conduct)
-* Report a bug or contribute on [Github](https://github.com/MirServer/ubuntu-frame)
+* Read our [Code of Conduct](https://ubuntu.com/community/ethos/code-of-conduct)
+* Report a bug or contribute on [GitHub](https://github.com/canonical/ubuntu-frame)
 
 ```{toctree}
 :hidden:
