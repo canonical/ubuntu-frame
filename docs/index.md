@@ -52,8 +52,8 @@ You can get involved by:
 
 We will continue growing with our community. If you want to get involved:
 * Join the [Discourse community forum](https://discourse.ubuntu.com/tag/ubuntu-frame)
-* Read our [Code of Conduct](https://ubuntu.com/community/code-of-conduct)
-* Report a bug or contribute on [GitHub](https://github.com/MirServer/ubuntu-frame)
+* Read our [Code of Conduct](https://ubuntu.com/community/ethos/code-of-conduct)
+* Report a bug or contribute on [GitHub](https://github.com/canonical/ubuntu-frame)
 
 ```{toctree}
 :hidden:
