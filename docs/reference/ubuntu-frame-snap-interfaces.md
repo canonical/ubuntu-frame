@@ -8,7 +8,7 @@ ______________________________________________________________________
 
 The current [snap interface](https://snapcraft.io/docs/supported-interfaces) connections can be checked by issuing:
 
-```plain
+```
 $ snap connections ubuntu-frame
 Interface              Plug                                Slot                                  Notes
 content                -                                   ubuntu-frame:ubuntu-frame-diagnostic  -
@@ -25,13 +25,13 @@ x11                    ubuntu-frame:x11                    :x11                 
 
 The above is the default set of connections upon installation. It serves the default use case of Frame running as a system service. You can change the connections through [a gadget snap](/reference/configuring-ubuntu-frame-through-a-gadget-snap.md) or manually:
 
-```plain
+```
 sudo snap connect ubuntu-frame:login-session-control
 ```
 
 The `wayland` connection will be automatic if Frame is the only provider of the slot. On Classic systems this slot is provided by snapd, so upon installing a snap that has a `plugs: [wayland]`, a manual connection (to any `wayland` slot). The same applies if you have multiple snaps that have `slots: [wayland]` installed on a Core system:
 
-```plain
+```
 sudo snap connect <snap>:wayland
 # or, on Core
 sudo snap connect <snap>:wayland <compositor>:wayland

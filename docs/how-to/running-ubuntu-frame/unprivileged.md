@@ -28,7 +28,7 @@ You'll be able to run any Wayland application that's packaged as a snap, though 
 
 SystemD has built-in facilities to start a user session. Let's configure one:
 
-```plain
+```
 $ sudo systemctl edit --full --force user-session.service
 ```
 
@@ -47,7 +47,7 @@ ExecStart=/usr/bin/tail -f /dev/null
 
 Start the service and you can confirm the session properties with `loginctl` (there may be more sessions listed, including e.g. your SSH one):
 
-```plain
+```
 $ sudo systemctl start user-session.service
 $ loginctl
 SESSION  UID USER   SEAT  TTY
@@ -62,7 +62,7 @@ Active=yes
 
 We can now run Frame within the session. Let's configure a basic user service that start it:
 
-```plain
+```
 $ systemctl --user edit --full --force ubuntu-frame.service
 ```
 
@@ -79,7 +79,7 @@ ExecStart=/snap/bin/ubuntu-frame
 
 Start it, and you should see Frame's gradient background:
 
-```plain
+```
 $ systemctl --user start ubuntu-frame.service
 ```
 
@@ -93,7 +93,7 @@ I'll go through a couple examples that showcase two ways to "bring" applications
 
   Let's install [flutter-gallery](https://snapcraft.io/flutter-gallery) and symlink its `.desktop` file to the autostart directory:
 
-  ```plain
+  ```
   $ sudo snap install flutter-gallery
   flutter-gallery v2.8.1-82-g358fe2dd7d from Flutter Team✓ installed
   $ mkdir --parents .config/autostart/
@@ -105,7 +105,7 @@ I'll go through a couple examples that showcase two ways to "bring" applications
 
   Now it's just a case of reloading the user manager so it picks that up and we can start it (note the quotes!):
 
-  ```plain
+  ```
   $ systemctl --user daemon-reload
   $ systemctl --user start 'app-flutter\x2dgallery_flutter\x2dgallery@autostart.service'
   # Stop it, if you want to try the next example
@@ -117,7 +117,7 @@ I'll go through a couple examples that showcase two ways to "bring" applications
 - _With a custom user service_
   If the app you want to use does not have a `.desktop` file, or for any other reason you want to use a custom unit, you just need an `ExecStart=` line. We'll use [graphics-test-tools](https://snapcraft.io/graphics-test-tools/) for that:
 
-  ```plain
+  ```
   $ sudo snap install graphics-test-tools
   $ systemctl --user edit --full --force glmark2.service
   ```
@@ -133,7 +133,7 @@ I'll go through a couple examples that showcase two ways to "bring" applications
 
   And start:
 
-  ```plain
+  ```
   $ systemctl --user start glmark2.service
   # Stop it again
   $ systemctl --user stop glmark2.service
@@ -145,7 +145,7 @@ I'll go through a couple examples that showcase two ways to "bring" applications
 
 We could start the Frame service directly (instead of `tail`), but that would unnecessarily kill the user session. Instead we'll use a session target that will depend on all the pieces we want to run.
 
-```plain
+```
 $ systemctl --user edit --full --force user-session.target
 ```
 
@@ -161,7 +161,7 @@ Wants=ubuntu-frame.service xdg-desktop-autostart.target
 
 Now you can replace the `tail` in `ExecStart` with this target:
 
-```plain
+```
 $ sudo systemctl edit --full user-session.service
 ...
 ExecStart=/usr/bin/systemctl --user start --wait user-session.target
@@ -170,7 +170,7 @@ ExecStart=/usr/bin/systemctl --user start --wait user-session.target
 
 Restart the user session service and things should all start up:
 
-```plain
+```
 $ sudo systemctl restart user-session.service
 ```
 
@@ -184,7 +184,7 @@ $ systemctl edit --user --full glmark2.service
 
 To start it on boot:
 
-```plain
+```
 $ sudo systemctl add-wants graphical.target user-session.service
 ```
 
@@ -212,7 +212,7 @@ https://github.com/snapcore/pi-gadget/compare/22-arm64...MirServer:pi-gadget:22-
 
 To build it, just run Snapcraft within the checkout:
 
-```plain
+```
 $ snapcraft
 ...
 Created snap package pc_22-0.4_amd64.snap
@@ -235,7 +235,7 @@ To build the image, you run `ubuntu-image snap <model>`. To insert custom snaps,
 
 We've wrapped all the above steps into a Makefile for easy consumption in the above branches. To build the image as-is, just run:
 
-```plain
+```
 $ ./Makefile.frame
 ...
 Created snap package pc_22-0.4_amd64.snap
@@ -247,7 +247,7 @@ ubuntu-frame_amd64.img ready
 
 There are a handful ways you can test that image - by [installing it on a device](https://ubuntu.com/core/docs/install#guides), or by [running it under QEMU](https://ubuntu.com/core/docs/using-ubuntu-image#testing). Another approach is to use [virt-manager](https://ubuntu.com/server/docs/virtualization-virt-tools), creating the VM with the following command:
 
-```plain
+```
 $ sudo virt-install --connect qemu:///session \
   --name ubuntu-frame \
   --memory 2048 \

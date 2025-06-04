@@ -36,7 +36,7 @@ For some of the later steps, you will need an [Ubuntu One account](https://login
 
 Open a terminal window and type:
 
-```plain
+```
 sudo snap install ubuntu-frame --channel=24
 ```
 
@@ -47,7 +47,7 @@ For Ubuntu Frame there are various channels corresponding to the snap bases that
 
 **Frame-it** is a command-line utility for running snaps with Ubuntu Frame and is useful for testing on your development machine.
 
-```plain
+```
 sudo snap install frame-it --classic
 ````
 
@@ -55,7 +55,7 @@ sudo snap install frame-it --classic
 
 In the same terminal window type:
 
-```plain
+```
 sudo snap install snapcraft --classic
 ```
 
@@ -73,7 +73,7 @@ The examples used here are game applications, such as Mastermind, Neverputt, and
 
 The first step is to download the application and execute it:
 
-```plain
+```
 git clone https://github.com/electron/electron-quick-start.git
 cd electron-quick-start
 npm install
@@ -108,7 +108,7 @@ First, you will clone a repository containing a generic Snapcraft recipe for IoT
 
 In the *same terminal window* you opened at the start of the last section, type:
 
-```plain
+```
 cd ..
 git clone https://github.com/MirServer/iot-example-graphical-snap.git
 cd iot-example-graphical-snap
@@ -120,7 +120,7 @@ If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" fo
 
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
-```plain
+```
 $ $ git branch --list --remotes origin/24/*
   origin/24/Electron-quick-start
   origin/24/Flutter-demo
@@ -144,7 +144,7 @@ Once you have the customised snapcraft recipe you can snap your example applicat
 
 Switch to the Electron example branch. Then use snapcraft to build the snap:
 
-```plain
+```
 git checkout 24/Electron-quick-start
 snapcraft
 ````
@@ -153,20 +153,20 @@ Snapcraft is the packaging tool used to create snaps. We are not going to explor
 
 After a few minutes, the snap will be built with a message like:
 
-```plain
+```
 Snapped iot-example-graphical-snap_0+git.03795a5_amd64.snap
 ```
 
 You can then install and run the snap:
 
-```plain
+```
 sudo snap install --dangerous iot-example-graphical-snap_0+git.fc3da3d_amd64.snap
 frame-it iot-example-graphical-snap
 ```
 
 The first time you run your snap with Ubuntu Frame installed, you are likely to see a warning:
 
-```plain
+```
 WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
 [231190:0624/162014.069287:ERROR:wayland_connection.cc(209)] Failed to connect to Wayland display
 [231190:0624/162014.069317:ERROR:ozone_platform_wayland.cc(226)] Failed to initialize Wayland platform
@@ -176,7 +176,7 @@ The futex facility returned an unexpected error code.
 
 The first WARNING is the key to the problem and comes from one of the scripts in the generic recipe. While developing your snap (that is, until your snap is uploaded to the store and any necessary “store assertions” granted), connecting any “interfaces” your snap uses needs to be done manually. As the message suggests, there’s a helper script for this. Run it and try again:
 
-```plain
+```
 /snap/iot-example-graphical-snap/current/bin/setup.sh
 frame-it iot-example-graphical-snap
 ```
@@ -193,7 +193,7 @@ When packaging an application there are many issues to address: what needs to be
 
 You might get some inspiration from the examples we’ve given. You can see the customisation used in each example using git diff for example:
 
-```plain
+```
 git diff 24/main 24/Electron-quick-start
 ```
 
@@ -201,7 +201,7 @@ git diff 24/main 24/Electron-quick-start
 
 The simplest way to build your snap for other architectures is:
 
-```plain
+```
 snapcraft remote-build
 ```
 
@@ -213,7 +213,7 @@ Once the build is complete, you can scp the .snap file to your IoT device and in
 
 For the sake of this guide, we are using a VM set up using the approach described in[ Ubuntu Core: Preparing a virtual machine with graphics support](https://ubuntu.com/tutorials/ubuntu-core-preparing-a-virtual-machine-with-graphics-support). Apart from the address used for scp and ssh this is the same as any other device and makes showing screenshots easier.
 
-```plain
+```
 scp -P 10022 *.snap <username>@localhost:~
 ssh -p 10022 <username>@localhost
 snap install ubuntu-frame --channel 24

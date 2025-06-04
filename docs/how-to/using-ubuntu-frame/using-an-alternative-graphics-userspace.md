@@ -24,7 +24,7 @@ For this example, I'm going to show the steps using a desktop Linux installation
 
 First install the following:
 
-```plain
+```
 snap install ubuntu-frame
 snap install wpe-webkit-mir-kiosk
 snap connect wpe-webkit-mir-kiosk:wayland
@@ -33,7 +33,7 @@ snap install --edge kisak-core20
 
 Now (on desktop only) install Frame-it
 
-```plain
+```
 snap install --classic frame-it
 ```
 
@@ -43,7 +43,7 @@ Frame-it is a utility to make it simpler running Ubuntu Frame from a desktop env
 
 You can see what's connected to the graphics-core20 interface as follows:
 
-```plain
+```
 snap interfaces | grep graphics-core20
 kisak-core20:graphics-core20  -
 mesa-core20:graphics-core20   ubuntu-frame,wpe-webkit-mir-kiosk
@@ -51,7 +51,7 @@ mesa-core20:graphics-core20   ubuntu-frame,wpe-webkit-mir-kiosk
 
 First check that things are working by running:
 
-```plain
+```
 frame-it snap run wpe-webkit-mir-kiosk.cog
 ```
 
@@ -61,7 +61,7 @@ You can close this.
 
 Next we can change switch the graphics provider:
 
-```plain
+```
 snap disconnect ubuntu-frame:graphics-core20
 snap disconnect wpe-webkit-mir-kiosk:graphics-core20
 snap connect ubuntu-frame:graphics-core20 kisak-core20
@@ -78,7 +78,7 @@ mesa-core20:graphics-core20   -
 
 And prove that it still all works:
 
-```plain
+```
 frame-it snap run wpe-webkit-mir-kiosk.cog
 ```
 

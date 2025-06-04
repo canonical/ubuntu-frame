@@ -14,14 +14,14 @@ It is as easy as 1, 2, 3...
 
 We'll use `wpe-webkit-mir-kiosk` as an example here, but you can use your own snap, or a different one from the store. The only requirement is that it is intended as a IoT GUI as snaps intended for desktop use may work differently.
 
-```plain
+```
 snap install wpe-webkit-mir-kiosk
 snap connect wpe-webkit-mir-kiosk:wayland
 ```
 
 ## 1. Install frame-it
 
-```plain
+```
 snap install frame-it --classic
 ```
 
@@ -37,7 +37,7 @@ snap install frame-it --classic
 
 ## 2. Run frame-it.check
 
-```plain
+```
 $ frame-it.check
 Checking: Ubuntu Frame installation (needed for all commands)
  . OK . : Ubuntu Frame is installed
@@ -58,7 +58,7 @@ There are two ways you can use Frame-it to run your application.
 
 The first simply runs it as the current user (and can also be used for non-snapped applications that use Wayland). This doesn't test everything that might need testing on an IoT device, but is more convenient for tests of your UI.
 
-```plain
+```
 frame-it snap run wpe-webkit-mir-kiosk.cog
 ```
 
@@ -72,7 +72,7 @@ Normally, when deployed on an IoT device your snap will run as a daemon (which m
 
 Running Ubuntu Frame as root requires running one of the Frame-it scripts as root:
 
-```plain
+```
 sudo frame-it.root-on-x11
 ```
 
@@ -80,7 +80,7 @@ sudo frame-it.root-on-x11
 
 Running your snap's daemon may take a couple of commands. Many IoT GUI snaps don't try to run their daemons by default unless installed on Ubuntu Core and use a `daemon` configuration option to control this.
 
-```plain
+```
 $ snap set wpe-webkit-mir-kiosk daemon=true
 $ snap restart wpe-webkit-mir-kiosk.daemon
 ```
@@ -99,7 +99,7 @@ ______________________________________________________________________
 
 It is a classic snap, which gives it full access to your system, but you can review all the scripts to see what they are doing:
 
-```plain
+```
 $ find /snap/frame-it/current/ -type f -executable
 /snap/frame-it/current/frame-it
 /snap/frame-it/current/frame-it-check

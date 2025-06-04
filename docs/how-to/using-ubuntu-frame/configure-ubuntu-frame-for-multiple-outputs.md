@@ -119,7 +119,7 @@ This is somewhat verbose, but you can see two `layouts`, the `default` and `side
 
 We can switch between these layouts (and any others you add to the `display` configuration) by setting the `display-layout` configuration variable. For example:
 
-```plain
+```
 snap set ubuntu-frame display-layout=side_by_side
 ```
 

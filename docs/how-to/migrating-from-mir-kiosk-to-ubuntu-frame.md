@@ -22,7 +22,7 @@ Ubuntu Frame was announced in October 2021, so it is already a true and proven s
 
 The simplest way to migrate a device that you have shell access to, is to disable mir-kiosk, install Ubuntu Frame and transfer the configuration over:
 
-```plain
+```
 snap stop mir-kiosk
 snap install ubuntu-frame
 snap set ubuntu-frame config="$( cat /var/snap/mir-kiosk/current/miral-kiosk.config )"
@@ -37,7 +37,7 @@ Your device should now be running Ubuntu Frame configured identically to mir-kio
 
 You will also need to connect your application to the `ubuntu-frame` snap and potentially restart it:
 
-```plain
+```
 snap connect <your-application>:wayland ubuntu-frame
 snap restart <your-application>
 ```

@@ -340,7 +340,7 @@ You can see that two `layout` entries are provided `default` and `side_by_side`.
 
 If you need to reset this configuration (because your hardware changes, or you make a mistake) then simply unset it and restart Ubuntu Frame:
 
-```plain
+```
 $ snap unset ubuntu-frame display
 $ snap restart ubuntu-frame
 $ snap get ubuntu-frame display
@@ -351,6 +351,6 @@ $ snap get ubuntu-frame display
 
 By default Ubuntu Frame uses the `default` layout described above. But you can change this to another layout in the `display` configuration using the `display-layout` configuration option. For example:
 
-```plain
+```
 $ snap set ubuntu-frame display-layout=side_by_side
 ```

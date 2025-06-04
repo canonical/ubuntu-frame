@@ -10,7 +10,7 @@ The remote assistance feature of Ubuntu Frame is provided by [the ubuntu-frame-v
 
 You can install the snap:
 
-```plain
+```
 $ snap install ubuntu-frame-vnc
 ```
 
@@ -18,7 +18,7 @@ $ snap install ubuntu-frame-vnc
 
 The default on Ubuntu Core, using as a daemon allows you to always have the remote access enabled. To turn the daemon feature on or off, use:
 
-```plain
+```
 $ sudo snap set ubuntu-frame-vnc daemon=true
 # or
 $ sudo snap set ubuntu-frame-vnc daemon=false
@@ -28,14 +28,14 @@ $ sudo snap set ubuntu-frame-vnc daemon=false
 
 To run the server manually, just issue:
 
-```plain
+```
 $ ubuntu-frame-vnc
 # Ctrl+C to stop
 ```
 
 **NB**: If you're running Frame on a Wayland desktop, by default this will try and connect to your desktop rather than Frame. On Ubuntu 22.04, for example, the symptom is:
 
-```plain
+```
 $ ubuntu-frame-vnc
 wl_registry@2: error 0: invalid version for global wl_output (5): have 2, wanted 3
 ERROR: Compositor doesn't support screencopy! Exiting.
@@ -44,7 +44,7 @@ ERROR: Failed to initialise wayland
 
 To make sure you're using the same `WAYLAND_DISPLAY`, run all the components with the same value of the variable:
 
-```plain
+```
 $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame
 # in another terminal
 $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame-vnc
@@ -58,7 +58,7 @@ This feature is only available from version `82` onward on the `24` track.
 ````
 
 To improve security of the connection, you can configure the daemon to require a username and password - it's recommended to use `read -s` to avoid the password getting into your shell history:
-```plain
+```
 $ snap set ubuntu-frame-vnc username=user password=$( read -s P; echo P )
 # type your password and press Enter
 ````
@@ -69,7 +69,7 @@ The daemon will restart and require the provided username and password on connec
 
 To disable again, set both username and password to empty:
 
-```plain
+```
 $ snap set ubuntu-frame-vnc username= password=
 ```
 
@@ -79,7 +79,7 @@ Rather than expose an extra attack surface, `ubuntu-frame-vnc` is configured to 
 
 SSH port forwarding is a common approach. On your host, issue:
 
-```plain
+```
 $ ssh -L 5900:localhost:5900 <user>@<hostname>
 ```
 
@@ -89,7 +89,7 @@ ______________________________________________________________________
 
 Here is the same, wrapped in an [example](https://github.com/AlanGriffiths/frame-it/blob/master/frame-it/frame-it-vnc) using the `frame-it` snap and `gvncviewer`:
 
-```plain
+```
 $ sudo snap install frame-it
 $ sudo apt install gvncviewer
 ...
