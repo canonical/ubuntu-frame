@@ -1,4 +1,5 @@
 (the-graphics-core22-snap-interface)=
+
 # The graphics-core22 Snap interface
 
 This document describes how to use the `graphics-core22` Snap interface, what are the requirements to create a content provider snap as well as discusses the design of the interface.
@@ -22,6 +23,7 @@ The simplest way to enable your snap to consume the interface are the helpers we
 There's just a few things you have to do in your `snap/snapcraft.yaml` to make use of it:
 
 1. plug the `graphics-core22` interface (the wrapper assumes it's put under `$SNAP/graphics`):
+
    ```yaml
    plugs:
      graphics-core22:
@@ -30,7 +32,8 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        default-provider: mesa-core22
    ```
 
-2. [lay out](https://snapcraft.io/docs/snap-layouts) these paths in your snap:
+1. [lay out](https://snapcraft.io/docs/snap-layouts) these paths in your snap:
+
    ```yaml
    layout:
      /usr/share/libdrm:
@@ -40,6 +43,7 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
    ```
 
    If your app needs X11 support:
+
    ```yaml
      /usr/share/X11/XErrorDB:
        symlink: $SNAP/graphics/X11/XErrorDB
@@ -47,7 +51,7 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        symlink: $SNAP/graphics/X11/locale
    ```
 
-3. use [`bin/graphics-core22-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/graphics-core22-wrapper) in your [`command-chain`](https://snapcraft.io/docs/snapcraft-app-and-service-metadata#command-chain)s:
+1. use [`bin/graphics-core22-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/graphics-core22-wrapper) in your [`command-chain`](https://snapcraft.io/docs/snapcraft-app-and-service-metadata#command-chain)s:
 
    ```yaml
    apps:
@@ -57,7 +61,8 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        command: my-app
    ```
 
-4. use [`bin/graphics-core22-cleanup`](https://github.com/canonical/gpu-snap/blob/main/bin/graphics-core22-cleanup) after priming any staged packages to avoid shipping any libraries already provided by the `graphics-core22` providers:
+1. use [`bin/graphics-core22-cleanup`](https://github.com/canonical/gpu-snap/blob/main/bin/graphics-core22-cleanup) after priming any staged packages to avoid shipping any libraries already provided by the `graphics-core22` providers:
+
    ```yaml
    parts:
      my-app:
@@ -74,26 +79,31 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        prime:
        - bin/graphics-core22-wrapper
    ```
+
    You can override `$CRAFT_PRIME` if you have Mesa primed in a different location:
+
    ```
        override-prime: |
          craftctl default
          CRAFT_PRIME=${CRAFT_PRIME}/custom/prefix \
            ${CRAFT_PART_SRC}/bin/graphics-core22-cleanup mesa-core22 nvidia-core22
    ```
+
 Your snap, when installed, will pull in the default [`mesa-core22`](https://snapcraft.io/mesa-core22) provider, which supports a wide range of hardware. It also supports Nvidia drivers installed with debs on your host system.
 
 ### Going the manual route
 
 If, for whatever reason, you don't want to use the helpers, here is a description of the steps you should perform in your snap:
+
 1. connect the `graphics-core22`, see above.
-2. lay out the paths, see above.
-2. wrap your apps with `<target>/bin/graphics-core22-provider-wrapper`. This script, coming from the provider side, is what sets up all the environment - paths to the libraries, drivers and any supporting files.
-4. remove any libraries that are provided by the content providers (see [below](#libraries-shipped) for a list). _If_ you need to provide your own versions of any of those, you need to make sure they are ABI-compatible with Ubuntu 22.04.
+1. lay out the paths, see above.
+1. wrap your apps with `<target>/bin/graphics-core22-provider-wrapper`. This script, coming from the provider side, is what sets up all the environment - paths to the libraries, drivers and any supporting files.
+1. remove any libraries that are provided by the content providers (see [below](#libraries-shipped) for a list). _If_ you need to provide your own versions of any of those, you need to make sure they are ABI-compatible with Ubuntu 22.04.
 
 ## Creating a provider snap
 
 The requirements for a snap providing the content are purposefully quite simple:
+
 1. include a `bin/graphics-core22-provider-wrapper` that sets up all the environment and executes the provided arguments, usually:
    ```shell
    #!/bin/sh
@@ -102,12 +112,12 @@ The requirements for a snap providing the content are purposefully quite simple:
 
    exec "$@"
    ```
-2. it should support (include, in Ubuntu 22.04 ABI-compatible versions, and ensure the application can find them) as many of the [supported API](#supported-apis) libraries (and their dependencies) as possible/applicable
-3. if your provider uses the Mesa stack:
+1. it should support (include, in Ubuntu 22.04 ABI-compatible versions, and ensure the application can find them) as many of the [supported API](#supported-apis) libraries (and their dependencies) as possible/applicable
+1. if your provider uses the Mesa stack:
    - provide the `drirc.d` content source holding the app-specific workarounds
-4. if your provider supports X11:
+1. if your provider supports X11:
    - provide the `X11/locale` and `X11/XErrorDB` content source with the appropriate assets
-5. optionally, if there are Mir-specific workarounds required:
+1. optionally, if there are Mir-specific workarounds required:
    - provide the `mir-quirks` content source, with any options needed.
 
 The rest is left to the author of the provider snap. The default provider - [mesa-core22](https://github.com/canonical/mesa-core22) - is a good reference.
@@ -147,14 +157,14 @@ Refer to the documentation of the individual tools to see what the results mean.
   - GBM (libgbm.so.1)
 - video acceleration
   - VA-API (libva.so.2)
-     - libva-drm.so.2
-     - libva-x11.so.2
-     - libva-wayland.so.2
+    - libva-drm.so.2
+    - libva-x11.so.2
+    - libva-wayland.so.2
   - VDPAU (libvdpau.so.1)
 - X11 support
   - libglx0
   - libx11-6
-  -  libx11-xcb1
+  - libx11-xcb1
   - libxcb-dri2-0
   - libxcb-dri3-0
   - libxcb-glx0,

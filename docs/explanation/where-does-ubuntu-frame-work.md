@@ -1,9 +1,10 @@
 (where-does-ubuntu-frame-work)=
+
 # Where does Ubuntu Frame work?
 
 This document describes what are the requirements for running Ubuntu Frame.
 
----
+______________________________________________________________________
 
 Ubuntu Frame is a snap designed to provide a graphical shell on Linux based devices for a single application.
 
@@ -36,7 +37,7 @@ However, for most applications on the typical IoT devices that Ubuntu Frame targ
 Ubuntu Frame should work on hardware that:
 
 1. has a Mesa driver; and,
-2. has the corresponding kernel drivers enabled
+1. has the corresponding kernel drivers enabled
 
 If you find there are problems on such a system then it is worth [filing a bug](https://github.com/MirServer/ubuntu-frame/issues).
 
@@ -44,15 +45,16 @@ Because different drivers and hardware work differently we can only test and, if
 
 These are some systems where we have automated testing in place:
 
-|Device|Mesa driver|Video acceleration|
-| --- | --- | --- |
-|**RPi3b**|vc4|No|
-|**RPi4**|V3D|?|
-|**Intel**|i915|VAAPI|
-|**Nvidia**|Nouveau|VAAPI/VDPAU?|
-|**AMD**|radeon|VAAPI|
+| Device     | Mesa driver | Video acceleration |
+| ---------- | ----------- | ------------------ |
+| **RPi3b**  | vc4         | No                 |
+| **RPi4**   | V3D         | ?                  |
+| **Intel**  | i915        | VAAPI              |
+| **Nvidia** | Nouveau     | VAAPI/VDPAU?       |
+| **AMD**    | radeon      | VAAPI              |
 
-----
+______________________________________________________________________
+
 **Notes on Ubuntu Server**
 
 Ubuntu Frame fails to start when run on Ubuntu Server 21.10 in a default configuration. This can be fixed by changing the kernel device tree overlay to one with `kms`
@@ -61,7 +63,7 @@ Ubuntu Frame fails to start when run on Ubuntu Server 21.10 in a default configu
 
 Ref. [issue #39](https://github.com/MirServer/ubuntu-frame/issues/39):
 
-> In [Impish Release notes](https://discourse.ubuntu.com/t/impish-indri-release-notes/21951) I've followed the suggestion to change the `dtoverlay` setting in `config.txt`  ... In `config.txt` I found `dtoverlay=dwc2` and changed it to `dtoverlay=vc4-fkms-v3d`, and now it displays.
+> In [Impish Release notes](https://discourse.ubuntu.com/t/impish-indri-release-notes/21951) I've followed the suggestion to change the `dtoverlay` setting in `config.txt` ... In `config.txt` I found `dtoverlay=dwc2` and changed it to `dtoverlay=vc4-fkms-v3d`, and now it displays.
 
 *Note on RPi4 with Ubuntu Server 22.04*
 

@@ -1,4 +1,5 @@
 (developer-guide)=
+
 # Developer Guide
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the foundation for embedded displays. It provides a reliable, secure and easy way to embed your applications into a kiosk-style, IoT device, or digital signage solution. With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window, a dedicated set of windows behaviours, input from touch, keyboard and mouse without needing to deal with the specific hardware, on-screen keyboard, and more.
@@ -10,10 +11,10 @@ This developer guide will show you how to deploy your graphic application that s
 We will cover:
 
 1. Setting up the tools and environment required to package and deploy your application on your desktop
-2. Testing if an application works with Ubuntu Frame on your desktop
-3. Troubleshooting some common issues
-4. Packaging the app as a snap and testing whether the snap works on your desktop
-5. Packaging the snap for an IoT device and testing it on the device
+1. Testing if an application works with Ubuntu Frame on your desktop
+1. Troubleshooting some common issues
+1. Packaging the app as a snap and testing whether the snap works on your desktop
+1. Packaging the snap for an IoT device and testing it on the device
 
 If you want to learn how to install pre-built applications such as [wpe-webkit-mir-kiosk](https://snapcraft.io/wpe-webkit-mir-kiosk), [mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi/), or [Scummvm](https://snapcraft.io/scummvm), follow their official installation and configuration guides.
 
@@ -21,7 +22,7 @@ Note: This guide will not cover how to build an application using a toolkit that
 
 If you are new to Ubuntu Core, we recommend reading our [getting started document](https://ubuntu.com/core/docs/getting-started). If you want to learn about building custom Ubuntu Core images, you could find information on the [snapcraft docs](https://snapcraft.io/docs/gadget-snap).
 
-![image|388x581](upload://aykYNrjU60rwuUt34z2u1zrx66k.jpeg) 
+![image|388x581](upload://aykYNrjU60rwuUt34z2u1zrx66k.jpeg)
 
 ## Requirements
 
@@ -31,7 +32,7 @@ It is possible to work in a container or on a different computer (if snapd and X
 
 For some of the later steps, you will need an [Ubuntu One account](https://login.ubuntu.com/). This will let you enable `remote-build` on your [Launchpad](https://launchpad.net/) account and publish on the [Snap Store](https://snapcraft.io).
 
-![image|689x268](upload://894ZGy6nsTSlyR3kxrk2CfzSrLx.png) 
+![image|689x268](upload://894ZGy6nsTSlyR3kxrk2CfzSrLx.png)
 
 ## Setting up your test environment
 
@@ -45,13 +46,14 @@ sudo snap install ubuntu-frame --channel=22
 
 [note status="channel=22"]
 For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=22` which corresponds to `base: core22` which in turn refers to Ubuntu 22.04LTS.
-```
+
+````
 
 **Frame-it** is a command-line utility for running snaps with Ubuntu Frame and is useful for testing on your development machine.
 
 ```plain
 sudo snap install frame-it --classic
-```
+````
 
 **Snapcraft** is a command-line utility for building snaps. This software allows users to build their own applications or software packages, and then publish them to the [Snap Store](https://snapcraft.io).
 
@@ -84,7 +86,7 @@ frame-it gnome-mastermind
 
 Now Frame's window should contain the "Mastermind" game.
 
-![image|690x575](upload://zjKIC8nBpT1QdvW2Y93PTBDuhv2.jpeg) 
+![image|690x575](upload://zjKIC8nBpT1QdvW2Y93PTBDuhv2.jpeg)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
@@ -99,7 +101,7 @@ frame-it bomber
 
 Now Frame's window should contain the "Bomber" game as shown in the next image.
 
-![image|690x574](upload://fb08ypmlNuZFtnBg65Iw6AzFBD8.jpeg) 
+![image|690x574](upload://fb08ypmlNuZFtnBg65Iw6AzFBD8.jpeg)
 
 Close that (`Ctrl-Q`) and try the next example.
 
@@ -112,7 +114,7 @@ frame-it neverputt
 
 Now Frame's window should contain the "Neverputt" game. You’ll see is that the game doesn’t fill the display. That’s because the application doesn’t understand Ubuntu Frame telling it to fill the screen. This is a problem with some applications and, in this case, can be fixed by editing `~/.neverball/neverballrc` [sic] to say “fullscreen 1” and restarting the game. (The same file works for neverball, but you may need to figure out the right configuration option for your application.) This is what you will see:
 
-![image|690x575](upload://qsInLi6cXvNjZCH8AH5fCdrzC9i.jpeg)   
+![image|690x575](upload://qsInLi6cXvNjZCH8AH5fCdrzC9i.jpeg)
 
 You can now close the app.
 
@@ -141,7 +143,7 @@ cd iot-example-graphical-snap
 
 If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" for an IoT graphics snap. This is where you will insert instructions for packaging your application. This is how the `.yaml` file looks like:
 
-![image|690x575](upload://jVi5IdEqljarHP0XyJjgOhrmtKd.jpeg) 
+![image|690x575](upload://jVi5IdEqljarHP0XyJjgOhrmtKd.jpeg)
 
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
@@ -163,7 +165,8 @@ $ git branch --list --remotes origin/22/*
 
 [note status="22/"]
 The "22" prefix refers to the snap bases that snaps are based on, in this case we use `22/` for branches using to `base: core22` (which in turn refers to Ubuntu 22.04LTS).
-```
+
+````
 
 Once you have the customised snapcraft recipe you can snap your example applications.
 
@@ -176,9 +179,9 @@ Switch to the GTK example branch. Then use snapcraft to build the snap:
 ```plain
 git checkout 22/GTK3-mastermind
 snapcraft
-```
+````
 
-Snapcraft is the packaging tool used to create snaps. We are not going to explore all its options here but, to avoid confusion, note that when you first run snapcraft, you will be asked "Support for 'multipass' needs to be set up. Would you like to do it now? [y/N]:", answer "yes".
+Snapcraft is the packaging tool used to create snaps. We are not going to explore all its options here but, to avoid confusion, note that when you first run snapcraft, you will be asked "Support for 'multipass' needs to be set up. Would you like to do it now? \[y/N\]:", answer "yes".
 
 After a few minutes, the snap will be built with a message like:
 
@@ -198,7 +201,7 @@ The first time you run your snap with Ubuntu Frame installed, you are likely to 
 ```plain
 WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
 
-(gnome-mastermind:639854): Gtk-WARNING **: 12:30:27.215: cannot open display: 
+(gnome-mastermind:639854): Gtk-WARNING **: 12:30:27.215: cannot open display:
 [2023-08-09 12:30:27.218285] < - debug - > mirserver: Handling Terminated from pid=639737
 [2023-08-09 12:30:27.218522] < -warning- > mirserver: wl_surface@12 destroyed before associated role
 ```
@@ -212,7 +215,7 @@ frame-it iot-example-graphical-snap
 
 Now Frame’s window should contain the “Mastermind” game.
 
-![image|690x575](upload://c8D1ubEYF9IKdIQgRPAHEOtDQBI.png) 
+![image|690x575](upload://c8D1ubEYF9IKdIQgRPAHEOtDQBI.png)
 
 Close that (`Ctrl-Q`) and try the next example:
 
@@ -260,7 +263,7 @@ frame-it iot-example-graphical-snap
 
 Now Frame's window should contain the "Bomber" game.
 
-![image|690x575](upload://3uy0A96vsQTQDfYVLkzIXBaFGlc.jpeg)  
+![image|690x575](upload://3uy0A96vsQTQDfYVLkzIXBaFGlc.jpeg)
 
 Close that (`Ctrl-Q`) and try the next example:
 
@@ -303,7 +306,7 @@ frame-it iot-example-graphical-snap
 
 Now Frame's window should contain the "Neverputt" game.
 
-![image|690x575](upload://r7frB6bMFVvOqQeY5HJrE5Ly3pe.jpeg)   
+![image|690x575](upload://r7frB6bMFVvOqQeY5HJrE5Ly3pe.jpeg)
 
 Close that. Your application has been successfully snapped.
 
@@ -369,7 +372,7 @@ snap start iot-example-graphical-snap
 
 You should see Neverputt starting.
 
-![image|690x575](upload://qDTS1ykgoG6WGlm2Yu1u0gLMnOo.jpeg) 
+![image|690x575](upload://qDTS1ykgoG6WGlm2Yu1u0gLMnOo.jpeg)
 
 ## Conclusion
 
@@ -387,10 +390,9 @@ For more information about Ubuntu Frame please visit our [website](https://mir-s
 
 You may also consider reading the following materials:
 
-* How to [run Flutter applications on Ubuntu Core](https://ubuntu.com/tutorials/run-flutter-applications-on-ubuntu-core#1-overview)
-* How to leverage existing snaps to [build a webkiosk](https://ubuntu.com/tutorials/secure-ubuntu-kiosk#1-overview).
-* How to [configure audio on Ubuntu Core](https://github.com/MirServer/iot-example-graphical-snap/wiki/How-to-configure-audio-on-Ubuntu-Core)
-* How to [enable on-screen keyboard support](https://discourse.ubuntu.com/t/on-screen-keyboard-support-in-ubuntu-frame/25840) in Ubuntu Frame.
+- How to [run Flutter applications on Ubuntu Core](https://ubuntu.com/tutorials/run-flutter-applications-on-ubuntu-core#1-overview)
+- How to leverage existing snaps to [build a webkiosk](https://ubuntu.com/tutorials/secure-ubuntu-kiosk#1-overview).
+- How to [configure audio on Ubuntu Core](https://github.com/MirServer/iot-example-graphical-snap/wiki/How-to-configure-audio-on-Ubuntu-Core)
+- How to [enable on-screen keyboard support](https://discourse.ubuntu.com/t/on-screen-keyboard-support-in-ubuntu-frame/25840) in Ubuntu Frame.
 
 Need help in getting to market? [Contact us](https://ubuntu.com/internet-of-things/digital-signage#get-in-touch)
-

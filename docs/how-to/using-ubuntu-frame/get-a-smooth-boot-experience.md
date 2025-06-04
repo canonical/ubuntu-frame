@@ -1,13 +1,15 @@
 (how-to-get-a-smooth-boot-experience)=
+
 # How to get a smooth boot experience
 
 This document walks through the steps needed to achieve a flicker-free, smooth boot experience with Frame on Ubuntu Core.
 
----
+______________________________________________________________________
 
 [note status="Version 123-mir2.15.0+dev399"]
 This is only possible with Ubuntu Frame 123-mir2.15.0+dev399 and later
-```
+
+````
 
 ## Enabling the boot splash
 
@@ -19,7 +21,7 @@ If your image doesn't yet have Ubuntu Frame, you'll need to install it:
 
 ```shell
 $ sudo snap install ubuntu-frame --edge
-```
+````
 
 And maybe a client:
 
@@ -62,6 +64,7 @@ If you have other configuration, just amend it to include the above values. You 
 Refer to the relevant documentation for how to [configure Frame](/reference/configuring-ubuntu-frame-through-a-gadget-snap.md) and then [build images](https://ubuntu.com/core/docs/image-building), but here are the snippets specific to this solution:
 
 - The required configuration in the gadget snap:
+
   ```yaml
   # gadget.yaml
   defaults:
@@ -72,24 +75,25 @@ Refer to the relevant documentation for how to [configure Frame](/reference/conf
   ```
 
 - One way to include the necessary service changes is by [including cloud-init configuration](https://ubuntu.com/core/docs/gadget-snaps#setup) in the gadget snap:
-   ```
-   # cloud.conf
-   #cloud-config
-   datasource_list: [NoCloud]
+
+  ```
+  # cloud.conf
+  #cloud-config
+  datasource_list: [NoCloud]
 
   write_files:
-   - path: '/etc/systemd/system/snap.ubuntu-frame.daemon.service.d/override.conf'
-     content: |
-       [Unit]
-       Conflicts=plymouth-quit.service
-       After=plymouth-quit.service
-       OnFailure=plymouth-quit.service
+  - path: '/etc/systemd/system/snap.ubuntu-frame.daemon.service.d/override.conf'
+    content: |
+      [Unit]
+      Conflicts=plymouth-quit.service
+      After=plymouth-quit.service
+      OnFailure=plymouth-quit.service
 
-       [Service]
-       ExecStartPre=-/usr/bin/plymouth deactivate
-       ExecStartPost=/usr/bin/sleep 10
-       ExecStartPost=-/usr/bin/plymouth quit --retain-splash
-   ```
+      [Service]
+      ExecStartPre=-/usr/bin/plymouth deactivate
+      ExecStartPost=/usr/bin/sleep 10
+      ExecStartPost=-/usr/bin/plymouth quit --retain-splash
+  ```
 
 ## Display configuration
 

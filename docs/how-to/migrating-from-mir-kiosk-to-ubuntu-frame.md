@@ -1,18 +1,20 @@
 (migrating-from-mir-kiosk-to-ubuntu-frame)=
+
 # Migrating from mir-kiosk to Ubuntu Frame
 
 This document explains how to migrate from the legacy mir-kiosk display server to Ubuntu Frame.
 
----
+______________________________________________________________________
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the recommended way to enable embedded graphics on Ubuntu Core. It replaces mir-kiosk and provides an improved experience. New features will only be added to Ubuntu Frame, while mir-kiosk will remain maintained until we can decommission it.
 
 Some existing improvements are:
+
 1. Support for an on-screen keyboard
-2. A more powerful and easier configuration system
-3. A more polished “developer story”
-4. `idle-timeout` option for power saving
-5. A `ubuntu-frame.screenshot` utility
+1. A more powerful and easier configuration system
+1. A more polished “developer story”
+1. `idle-timeout` option for power saving
+1. A `ubuntu-frame.screenshot` utility
 
 Ubuntu Frame was announced in October 2021, so it is already a true and proven solution. Your migration from mir-kiosk should be planned as soon as possible. This document aims to help you migrate to the new solution as a drop-in replacement.
 
@@ -34,10 +36,12 @@ snap remove --purge mir-kiosk
 Your device should now be running Ubuntu Frame configured identically to mir-kiosk.
 
 You will also need to connect your application to the `ubuntu-frame` snap and potentially restart it:
+
 ```plain
 snap connect <your-application>:wayland ubuntu-frame
 snap restart <your-application>
 ```
+
 Below is a handy script that you can run on your target, optionally passing your application name as argument. If anything goes wrong, it will try and bring back mir-kiosk.
 
 ```shell
@@ -81,6 +85,7 @@ fi
 ## Use a custom image
 
 If you used a custom model and image, you just need to replace mir-kiosk with ubuntu-frame in your model assertion and provide your configuration options in the new format. An example config looked like follows:
+
 ```yaml
 defaults:
   rW4inp7UbJb1YBxWr6SVebxa3Yv7K1Vm:  # snap-id for mir-kiosk
@@ -96,6 +101,7 @@ defaults:
             HDMI-A-1:
               # ...
 ```
+
 You will need to convert it to look like so:
 
 ```yaml

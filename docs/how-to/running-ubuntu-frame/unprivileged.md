@@ -1,13 +1,15 @@
 (run-ubuntu-frame-unprivileged)=
+
 # Run Ubuntu Frame unprivileged
 
 This document describes how to run Ubuntu Frame and its clients unprivileged - as a user service - rather than the default system service as `root`.
 
----
+______________________________________________________________________
 
 ## Rationale
 
 When you install Ubuntu Frame on Ubuntu Core, it will start automatically as a system service. It's a simple solution, but has a handful of disadvantages:
+
 - it runs as `root`
 - as a result, its clients need to run as `root`
 - the clients need to be specially crafted to run as system services
@@ -29,7 +31,9 @@ SystemD has built-in facilities to start a user session. Let's configure one:
 ```plain
 $ sudo systemctl edit --full --force user-session.service
 ```
+
 Within the editor that opens, input these contents and exit:
+
 ```ini
 [Service]
 # This is what causes a user session to be allocated for the `ubuntu` user
@@ -42,6 +46,7 @@ ExecStart=/usr/bin/tail -f /dev/null
 ```
 
 Start the service and you can confirm the session properties with `loginctl` (there may be more sessions listed, including e.g. your SSH one):
+
 ```plain
 $ sudo systemctl start user-session.service
 $ loginctl
@@ -56,10 +61,13 @@ Active=yes
 ### Ubuntu Frame
 
 We can now run Frame within the session. Let's configure a basic user service that start it:
+
 ```plain
 $ systemctl --user edit --full --force ubuntu-frame.service
 ```
+
 As above, input the contents and close the editor:
+
 ```ini
 [Unit]
 Before=xdg-desktop-autostart.target
@@ -68,7 +76,9 @@ BindsTo=graphical-session.target
 ExecStartPre=/usr/bin/dbus-update-activation-environment --systemd WAYLAND_DISPLAY=wayland-0
 ExecStart=/snap/bin/ubuntu-frame
 ```
+
 Start it, and you should see Frame's gradient background:
+
 ```plain
 $ systemctl --user start ubuntu-frame.service
 ```
@@ -78,48 +88,58 @@ $ systemctl --user start ubuntu-frame.service
 I'll go through a couple examples that showcase two ways to "bring" applications into the user session.
 
 - _Using the app's `.desktop` file_
-All applications on Linux have a `.desktop` file that describes them - including what to execute to launch it. Another convention is that all `.desktop` files in `~/.config/autostart` are launched with the graphical session.
-We can use that through the [xdg-autostart-generator](https://www.freedesktop.org/software/systemd/man/systemd-xdg-autostart-generator.html), which reads the `.desktop` files and generates user services.
+  All applications on Linux have a `.desktop` file that describes them - including what to execute to launch it. Another convention is that all `.desktop` files in `~/.config/autostart` are launched with the graphical session.
+  We can use that through the [xdg-autostart-generator](https://www.freedesktop.org/software/systemd/man/systemd-xdg-autostart-generator.html), which reads the `.desktop` files and generates user services.
 
-   Let's install [flutter-gallery](https://snapcraft.io/flutter-gallery) and symlink its `.desktop` file to the autostart directory:
-   ```plain
-   $ sudo snap install flutter-gallery
-   flutter-gallery v2.8.1-82-g358fe2dd7d from Flutter Team✓ installed
-   $ mkdir --parents .config/autostart/
-   $ ln --verbose --symlink \
-       /var/lib/snapd/desktop/applications/flutter-gallery_flutter-gallery.desktop \
-       .config/autostart/
-   '.config/autostart/flutter-gallery_flutter-gallery.desktop' -> '/var/lib/snapd/desktop/applications/flutter-gallery_flutter-gallery.desktop'
-   ```
-   Now it's just a case of reloading the user manager so it picks that up and we can start it (note the quotes!):
-   ```plain
-   $ systemctl --user daemon-reload
-   $ systemctl --user start 'app-flutter\x2dgallery_flutter\x2dgallery@autostart.service'
-   # Stop it, if you want to try the next example
-   $ systemctl --user stop 'app-flutter\x2dgallery_flutter\x2dgallery@autostart.service'
-   ```
-   You should see the Flutter Gallery running within Frame.
+  Let's install [flutter-gallery](https://snapcraft.io/flutter-gallery) and symlink its `.desktop` file to the autostart directory:
+
+  ```plain
+  $ sudo snap install flutter-gallery
+  flutter-gallery v2.8.1-82-g358fe2dd7d from Flutter Team✓ installed
+  $ mkdir --parents .config/autostart/
+  $ ln --verbose --symlink \
+      /var/lib/snapd/desktop/applications/flutter-gallery_flutter-gallery.desktop \
+      .config/autostart/
+  '.config/autostart/flutter-gallery_flutter-gallery.desktop' -> '/var/lib/snapd/desktop/applications/flutter-gallery_flutter-gallery.desktop'
+  ```
+
+  Now it's just a case of reloading the user manager so it picks that up and we can start it (note the quotes!):
+
+  ```plain
+  $ systemctl --user daemon-reload
+  $ systemctl --user start 'app-flutter\x2dgallery_flutter\x2dgallery@autostart.service'
+  # Stop it, if you want to try the next example
+  $ systemctl --user stop 'app-flutter\x2dgallery_flutter\x2dgallery@autostart.service'
+  ```
+
+  You should see the Flutter Gallery running within Frame.
 
 - _With a custom user service_
-   If the app you want to use does not have a `.desktop` file, or for any other reason you want to use a custom unit, you just need an `ExecStart=` line. We'll use [graphics-test-tools](https://snapcraft.io/graphics-test-tools/) for that:
-   ```plain
-   $ sudo snap install graphics-test-tools
-   $ systemctl --user edit --full --force glmark2.service
-   ```
-   Save those contents and exit:
-   ```ini
-   [Unit]
-   After=ubuntu-frame.service
-   [Service]
-   ExecStart=/snap/bin/graphics-test-tools.glmark2-es2-wayland
-   ```
-   And start:
-   ```plain
-   $ systemctl --user start glmark2.service
-   # Stop it again
-   $ systemctl --user stop glmark2.service
-   ```
-   There, a prancing horse!
+  If the app you want to use does not have a `.desktop` file, or for any other reason you want to use a custom unit, you just need an `ExecStart=` line. We'll use [graphics-test-tools](https://snapcraft.io/graphics-test-tools/) for that:
+
+  ```plain
+  $ sudo snap install graphics-test-tools
+  $ systemctl --user edit --full --force glmark2.service
+  ```
+
+  Save those contents and exit:
+
+  ```ini
+  [Unit]
+  After=ubuntu-frame.service
+  [Service]
+  ExecStart=/snap/bin/graphics-test-tools.glmark2-es2-wayland
+  ```
+
+  And start:
+
+  ```plain
+  $ systemctl --user start glmark2.service
+  # Stop it again
+  $ systemctl --user stop glmark2.service
+  ```
+
+  There, a prancing horse!
 
 ### Putting it all together
 
@@ -128,7 +148,9 @@ We could start the Frame service directly (instead of `tail`), but that would un
 ```plain
 $ systemctl --user edit --full --force user-session.target
 ```
+
 Input these and quit the editor:
+
 ```ini
 [Unit]
 # This will cause all .config/autostart .desktop files to start
@@ -138,6 +160,7 @@ Wants=ubuntu-frame.service xdg-desktop-autostart.target
 ```
 
 Now you can replace the `tail` in `ExecStart` with this target:
+
 ```plain
 $ sudo systemctl edit --full user-session.service
 ...
@@ -146,11 +169,13 @@ ExecStart=/usr/bin/systemctl --user start --wait user-session.target
 ```
 
 Restart the user session service and things should all start up:
+
 ```plain
 $ sudo systemctl restart user-session.service
 ```
 
 Sprinkle `Restart=always` across the `[Service]` sections so things always come back up unless stopped:
+
 ```
 $ sudo systemctl edit user-session.service
 $ systemctl edit --user 'app-flutter\x2dgallery_flutter\x2dgallery@autostart.service'
@@ -158,6 +183,7 @@ $ systemctl edit --user --full glmark2.service
 ```
 
 To start it on boot:
+
 ```plain
 $ sudo systemctl add-wants graphical.target user-session.service
 ```
@@ -171,6 +197,7 @@ Bet you don't want to go through the above steps on the hundreds of devices you'
 ### The gadget snap
 
 From [gadget snap documentation](https://ubuntu.com/core/docs/gadget-snaps):
+
 > The gadget snap is responsible for defining and configuring system properties specific to one or more devices.)
 
 Rather than list all the changes to a gadget snap needed to build this solution, we'll maintain branches against stock gadgets for the PC and Pi platforms that you can modify to taste and go from there. We'll keep it heavily commented so it's clear what's happening where and why.
@@ -190,12 +217,14 @@ $ snapcraft
 ...
 Created snap package pc_22-0.4_amd64.snap
 ```
+
 There. Your gadget snap is ready.
 
 ### Building, testing and deploying the image
 
 To build images from the gadget snaps we've prepared, we'll use [ubuntu-image](https://github.com/canonical/ubuntu-image) and [stock](https://github.com/snapcore/models/) model [assertions](https://ubuntu.com/core/docs/reference/assertions/model). Your solution may require custom models, but that's out of scope here.
 Here are the assertions that interest us:
+
 - [ubuntu-core-22-amd64-dangerous](https://github.com/snapcore/models/blob/master/ubuntu-core-22-amd64-dangerous.model)
 - [ubuntu-core-22-arm64-dangerous](https://github.com/snapcore/models/blob/master/ubuntu-core-22-arm64-dangerous.model)
 - [ubuntu-core-22-pi-arm64-dangerous](https://github.com/snapcore/models/blob/master/ubuntu-core-22-pi-arm64-dangerous.model)

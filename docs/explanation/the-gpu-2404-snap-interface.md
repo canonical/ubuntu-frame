@@ -1,4 +1,5 @@
 (the-gpu-2404-snap-interface)=
+
 # The gpu-2404 Snap interface
 
 This document describes how to use the `gpu-2404` Snap interface, what are the requirements to create a content provider snap as well as discusses the design of the interface.
@@ -22,18 +23,21 @@ The simplest way to enable your snap to consume the interface are the helpers we
 There's just a few things you have to do in your `snap/snapcraft.yaml` to make use of it:
 
 > :warning: A lot of these parts doesn't need to be done when you're using the following extensions:
->  - `gnome`
->  - `kde-neon-6`
->  - `kde-neon-qt6`
+>
+> - `gnome`
+> - `kde-neon-6`
+> - `kde-neon-qt6`
 >
 > Except step 4, these extensions will set up all the other steps for your snap. You can check that out using this command:
 >
->```bash
->snapcraft expand-extensions
->```
+> ```bash
+> snapcraft expand-extensions
+> ```
+>
 > Please checkout the code for your specific extension [here](https://github.com/canonical/snapcraft/blob/main/extensions/desktop)
 
 1. plug the `gpu-2404` interface (the wrapper assumes it's put under `$SNAP/gpu`):
+
    ```yaml
    plugs:
      gpu-2404:
@@ -42,11 +46,12 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        default-provider: mesa-2404
    ```
 
-2.  If your app needs X11 support, [lay out](https://snapcraft.io/docs/snap-layouts) these paths in your snap:
-   ```yaml
-     /usr/share/X11/XErrorDB:
-       symlink: $SNAP/gpu-2404/X11/XErrorDB
-   ```
+1. If your app needs X11 support, [lay out](https://snapcraft.io/docs/snap-layouts) these paths in your snap:
+
+```yaml
+  /usr/share/X11/XErrorDB:
+    symlink: $SNAP/gpu-2404/X11/XErrorDB
+```
 
 3. use [`bin/gpu-2404-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-wrapper) in your [`command-chain`](https://snapcraft.io/docs/snapcraft-app-and-service-metadata#command-chain)s:
 
@@ -58,7 +63,8 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        command: my-app
    ```
 
-4. use [`bin/gpu-2404-cleanup`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-cleanup) after priming any staged packages to avoid shipping any libraries already provided by the `gpu-2404` providers:
+1. use [`bin/gpu-2404-cleanup`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-cleanup) after priming any staged packages to avoid shipping any libraries already provided by the `gpu-2404` providers:
+
    ```yaml
    parts:
      my-app:
@@ -75,7 +81,9 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        prime:
        - bin/gpu-2404-wrapper
    ```
+
    You can override `$CRAFT_PRIME` if you have Mesa primed in a different location:
+
    ```
        override-prime: |
          craftctl default
@@ -88,14 +96,16 @@ Your snap, when installed, will pull in the default [`mesa-2404`](https://snapcr
 ### Going the manual route
 
 If, for whatever reason, you don't want to use the helpers, here is a description of the steps you should perform in your snap:
+
 1. connect the `gpu-2404`, see above.
-2. lay out the paths, see above.
-2. wrap your apps with `<target>/bin/gpu-2404-provider-wrapper`. This script, coming from the provider side, is what sets up all the environment - paths to the libraries, drivers and any supporting files.
-4. remove any libraries that are provided by the content providers (see [below](#libraries-shipped) for a list). _If_ you need to provide your own versions of any of those, you need to make sure they are ABI-compatible with Ubuntu 24.04.
+1. lay out the paths, see above.
+1. wrap your apps with `<target>/bin/gpu-2404-provider-wrapper`. This script, coming from the provider side, is what sets up all the environment - paths to the libraries, drivers and any supporting files.
+1. remove any libraries that are provided by the content providers (see [below](#libraries-shipped) for a list). _If_ you need to provide your own versions of any of those, you need to make sure they are ABI-compatible with Ubuntu 24.04.
 
 ## Creating a provider snap
 
 The requirements for a snap providing the content are purposefully quite simple:
+
 1. include a `bin/gpu-2404-provider-wrapper` that sets up all the environment and executes the provided arguments, usually:
    ```shell
    #!/bin/sh
@@ -104,10 +114,10 @@ The requirements for a snap providing the content are purposefully quite simple:
 
    exec "$@"
    ```
-2. it should support (include, in Ubuntu 24.04 ABI-compatible versions, and ensure the application can find them) as many of the [supported API](#supported-apis) libraries (and their dependencies) as possible/applicable
-3. if your provider supports X11:
+1. it should support (include, in Ubuntu 24.04 ABI-compatible versions, and ensure the application can find them) as many of the [supported API](#supported-apis) libraries (and their dependencies) as possible/applicable
+1. if your provider supports X11:
    - provide the `X11/XErrorDB` content source with the appropriate assets
-4. optionally, if there are Mir-specific workarounds required:
+1. optionally, if there are Mir-specific workarounds required:
    - provide the `mir-quirks` content source, with any options needed.
 
 The rest is left to the author of the provider snap. The default provider - [mesa-2404](https://github.com/canonical/mesa-2404) - is a good reference.
@@ -148,10 +158,10 @@ Refer to the documentation of the individual tools to see what the results mean.
   - GBM (libgbm.so.1)
 - video acceleration
   - VA-API (libva.so.2)
-     - libva-drm.so.2
-     - libva-glx.so.2
-     - libva-x11.so.2
-     - libva-wayland.so.2
+    - libva-drm.so.2
+    - libva-glx.so.2
+    - libva-x11.so.2
+    - libva-wayland.so.2
   - VDPAU (libvdpau.so.1)
 - X11 support
   - libglx0

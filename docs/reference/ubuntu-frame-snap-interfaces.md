@@ -1,9 +1,10 @@
 (ubuntu-frame-snap-interfaces)=
+
 # Ubuntu Frame snap interfaces
 
 This document provides a reference for the snap interfaces available for Ubuntu Frame.
 
----
+______________________________________________________________________
 
 The current [snap interface](https://snapcraft.io/docs/supported-interfaces) connections can be checked by issuing:
 
@@ -36,19 +37,20 @@ sudo snap connect <snap>:wayland
 sudo snap connect <snap>:wayland <compositor>:wayland
 ```
 
----
+______________________________________________________________________
 
 The interface connections serve the following purposes:
-| Interface | Purpose | Notes |
-|-|-|-|
-| ubuntu-frame-diagnostic | The [diagnostic screen](/how-to/using-ubuntu-frame/use-the-diagnostic-feature.md) feature
-| [graphics-core20](/explanation/the-graphics-core20-snap-interface.md) | GPU userspace drivers on `20` track |
-| [graphics-core22](/explanation/the-graphics-core22-snap-interface.md) | GPU userspace drivers on `22` track |
-| [gpu-2404](/explanation/the-gpu-2404-snap-interface.md) | GPU userspace drivers on `24` track |
-| [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface) | Avoiding excessive logging from libinput |
-| [login-session-control](https://snapcraft.io/docs/the-login-session-control-interface) | [Running as an unprivileged user](/how-to/running-ubuntu-frame/unprivileged.md) | Not auto-connected, as the primary way to run Frame is as a system service |
-| [network-bind](https://snapcraft.io/docs/network-bind-interface) | Operate as a X11 server |
-| [opengl](https://snapcraft.io/docs/opengl-interface) | Access the GPU for hardware acceleration |
-| [wayland](https://snapcraft.io/docs/wayland-interface) | Act as a Wayland compositor |
-| [wayplug](https://snapcraft.io/docs/wayland-interface) | Supports the [launcher feature](/reference/ubuntu-frame-configuration-options.md) |
-| [x11](https://snapcraft.io/docs/x11-interface) | Run nested on a X11 session |
+
+| Interface                                                                              | Purpose                                                                                   | Notes                                                                      |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| ubuntu-frame-diagnostic                                                                | The [diagnostic screen](/how-to/using-ubuntu-frame/use-the-diagnostic-feature.md) feature |                                                                            |
+| [graphics-core20](/explanation/the-graphics-core20-snap-interface.md)                  | GPU userspace drivers on `20` track                                                       |                                                                            |
+| [graphics-core22](/explanation/the-graphics-core22-snap-interface.md)                  | GPU userspace drivers on `22` track                                                       |                                                                            |
+| [gpu-2404](/explanation/the-gpu-2404-snap-interface.md)                                | GPU userspace drivers on `24` track                                                       |                                                                            |
+| [hardware-observe](https://snapcraft.io/docs/hardware-observe-interface)               | Avoiding excessive logging from libinput                                                  |                                                                            |
+| [login-session-control](https://snapcraft.io/docs/the-login-session-control-interface) | [Running as an unprivileged user](/how-to/running-ubuntu-frame/unprivileged.md)           | Not auto-connected, as the primary way to run Frame is as a system service |
+| [network-bind](https://snapcraft.io/docs/network-bind-interface)                       | Operate as a X11 server                                                                   |                                                                            |
+| [opengl](https://snapcraft.io/docs/opengl-interface)                                   | Access the GPU for hardware acceleration                                                  |                                                                            |
+| [wayland](https://snapcraft.io/docs/wayland-interface)                                 | Act as a Wayland compositor                                                               |                                                                            |
+| [wayplug](https://snapcraft.io/docs/wayland-interface)                                 | Supports the [launcher feature](/reference/ubuntu-frame-configuration-options.md)         |                                                                            |
+| [x11](https://snapcraft.io/docs/x11-interface)                                         | Run nested on a X11 session                                                               |                                                                            |

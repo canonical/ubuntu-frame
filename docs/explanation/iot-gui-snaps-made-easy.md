@@ -1,4 +1,5 @@
 (iot-gui-snaps-made-easy)=
+
 # IoT GUI snaps made easy
 
 The following assumes some familiarity with using snapcraft to package snaps, and concentrates on the specifics of snapping graphical snap intended to work with, for example, the `ubuntu-frame` snap on Ubuntu Core.
@@ -20,6 +21,7 @@ The [iot-example-graphical-snap](https://github.com/MirServer/iot-example-graphi
 Snaps use "interfaces" to access capabilities of the system and one of these is the `wayland` interface. Snaps have their own `$XDG_RUNTIME_DIR` but Wayland expects to use a file in this location to connect to the server. As a result, every Wayland based snap needs logic to make this work.
 
 After writing this logic a few times, we extracted it into a `wayland-launch` helper script:
+
 ```sh
 #!/bin/sh
 set -e
@@ -65,6 +67,7 @@ unset DISPLAY
 
 exec "$@"
 ```
+
 This creates a link from the snap's `$XDG_RUNTIME_DIR` to the real one in the user's `$XDG_RUNTIME_DIR`.
 
 This "dance" (by design) works equally well on Ubuntu Core, running as a daemon and on Classic systems running in a user session.
@@ -76,6 +79,7 @@ There is a difference between the way that snaps are run on Ubuntu Core and on C
 To accommodate this I've introduced a `daemon` snap option, and on installation I set this according to the type of system. (Like other options this can then be changed using `snap set`.)
 
 This option is used by the `configure` hook (another script):
+
 ```bash
 #!/bin/bash
 set -euo pipefail
@@ -98,16 +102,16 @@ case "$daemon" in
     ;;
 esac
 ```
+
 The effect of this is that the snap will be disabled when `daemon=false` and enabled when `daemon=true`. This default is set in the `install` and `post-refresh` hooks.
 
 ## The end result
 
-If you build a snap based on the `iot-example-graphical-snap` examples it will have all the basics needed to work with Ubuntu Frame. (It will probably also run on a Wayland desktop, but that isn't the point.) 
+If you build a snap based on the `iot-example-graphical-snap` examples it will have all the basics needed to work with Ubuntu Frame. (It will probably also run on a Wayland desktop, but that isn't the point.)
 
 Here some examples that use these techniques:
 
-Snap Store|Github|Comment
---|--|--
-[mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi)|https://github.com/MirServer/mir-kiosk-kodi
-[mir-kiosk-scummvm](https://snapcraft.io/mir-kiosk-scummvm)|https://github.com/MirServer/mir-kiosk-scummvm| SDL2
-
+| Snap Store                                                  | Github                                         | Comment |
+| ----------------------------------------------------------- | ---------------------------------------------- | ------- |
+| [mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi)       | https://github.com/MirServer/mir-kiosk-kodi    |         |
+| [mir-kiosk-scummvm](https://snapcraft.io/mir-kiosk-scummvm) | https://github.com/MirServer/mir-kiosk-scummvm | SDL2    |

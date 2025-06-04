@@ -1,4 +1,5 @@
 (migrating-a-windows-application)=
+
 # Migrating a Windows application
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the foundation for embedded displays. It provides a reliable, secure and easy way to embed your applications into a kiosk-style, IoT device, or digital signage solution. With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window, a dedicated set of windows behaviours, input from touch, keyboard and mouse without needing to deal with the specific hardware, on-screen keyboard, and more.
@@ -10,8 +11,8 @@ This developer guide will show you how to deploy your graphic application that s
 We will cover:
 
 1. Setting up the tools and environment required to package and deploy your application on your desktop
-2. Packaging the app as a snap and testing whether the snap works on your desktop
-3. Packaging the snap for an IoT device and testing it on the device
+1. Packaging the app as a snap and testing whether the snap works on your desktop
+1. Packaging the snap for an IoT device and testing it on the device
 
 If you want to learn how to install pre-built applications such as [wpe-webkit-mir-kiosk](https://snapcraft.io/wpe-webkit-mir-kiosk), [mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi/), or [Scummvm](https://snapcraft.io/scummvm), follow their official installation and configuration guides.
 
@@ -37,13 +38,14 @@ sudo snap install ubuntu-frame --channel=22
 
 [note status="channel=22"]
 For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=22` which corresponds to `base: core22` which in turn refers to Ubuntu 22.04LTS.
-```
+
+````
 
 **Frame-it** is a command-line utility for running snaps with Ubuntu Frame and is useful for testing on your development machine.
 
 ```plain
 sudo snap install frame-it --classic
-```
+````
 
 **Snapcraft** is a command-line utility for building snaps. This software allows users to build their own applications or software packages, and then publish them to the [Snap Store](https://snapcraft.io).
 
@@ -80,7 +82,7 @@ cd iot-example-graphical-snap
 
 If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" for an IoT graphics snap. This is where you will insert instructions for packaging your application. This is how the `.yaml` file looks like:
 
-![image|690x575, 100%](upload://jVi5IdEqljarHP0XyJjgOhrmtKd.jpeg) 
+![image|690x575, 100%](upload://jVi5IdEqljarHP0XyJjgOhrmtKd.jpeg)
 
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
@@ -102,7 +104,8 @@ $ git branch --list --remotes origin/22/*
 
 [note status="22/"]
 The "22" prefix refers to the snap bases that snaps are based on, in this case we use `22/` for branches using to `base: core22` (which in turn refers to Ubuntu 22.04LTS).
-```
+
+````
 
 Once you have the customised snapcraft recipe you can snap your example applications.
 
@@ -111,9 +114,9 @@ Switch to the Wine example branch. Then use snapcraft to build the snap:
 ```plain
 git checkout 22/Wine-example
 snapcraft
-```
+````
 
-Snapcraft is the packaging tool used to create snaps. We are not going to explore all its options here but, to avoid confusion, note that when you first run snapcraft, you will be asked "Support for 'multipass' needs to be set up. Would you like to do it now? [y/N]:", answer "yes".
+Snapcraft is the packaging tool used to create snaps. We are not going to explore all its options here but, to avoid confusion, note that when you first run snapcraft, you will be asked "Support for 'multipass' needs to be set up. Would you like to do it now? \[y/N\]:", answer "yes".
 
 After a few minutes, the snap will be built with a message like:
 
@@ -155,35 +158,37 @@ The WARNING "Wayland interface not connected!" is the key to the problem and com
 /snap/iot-example-graphical-snap/current/bin/setup.sh
 frame-it iot-example-graphical-snap
 ```
+
 After a little time Frame's window should contain the example DNSBench app (we know it's not a great demo application, if you know about a better one, let us know!).
 
-![obraz|690x437](upload://Lt6aaFBF6TfZApOiQaSTBjwKu4.png) 
+![obraz|690x437](upload://Lt6aaFBF6TfZApOiQaSTBjwKu4.png)
 
 Close that. Your application has been successfully snapped.
 
 ### Packaging your own application
 
-Runing a Windows application on Ubuntu requires the use of a compatibility layer - [Wine](https://winehq.org). The snap uses a community-maintained set of utilities that make it easier to create a snap including the Windows application along with the elements required for Wine: [Sommelier Core](https://github.com/snapcrafters/sommelier-core). Refer to their documentation for more details of this layer, but some  elements of the YAML are particularly interesting to use your app:
+Runing a Windows application on Ubuntu requires the use of a compatibility layer - [Wine](https://winehq.org). The snap uses a community-maintained set of utilities that make it easier to create a snap including the Windows application along with the elements required for Wine: [Sommelier Core](https://github.com/snapcrafters/sommelier-core). Refer to their documentation for more details of this layer, but some elements of the YAML are particularly interesting to use your app:
 
 - installer URL, if your application should be downloaded and installed, rather than bundled with the snap:
-   ```yaml
-   INSTALL_URL: https://example.com/installer.exe
-   ```
+  ```yaml
+  INSTALL_URL: https://example.com/installer.exe
+  ```
 - installer flags, if the installer has a silent mode:
-   ```yaml
-   INSTALL_FLAGS: /silent
-   ```
+  ```yaml
+  INSTALL_FLAGS: /silent
+  ```
 - the list of Wine tricks (e.g. libriaries to be installed, see [the Wine tricks wiki page](https://wiki.winehq.org/Winetricks)):
-   ```yaml
-   TRICKS: vcrun2019
+  ```yaml
+  TRICKS: vcrun2019
   ```
 - the executable to run:
-   ```yaml
-   # if it's installed in the Wine environment
-   RUN_EXE: C:\path\to\installed\executable.exe
-   # or if it's bundled with the snap
-   RUN_EXE: $SNAP/executable.exe
-   ```
+  ```yaml
+  # if it's installed in the Wine environment
+  RUN_EXE: C:\path\to\installed\executable.exe
+  # or if it's bundled with the snap
+  RUN_EXE: $SNAP/executable.exe
+  ```
+
 Refer to [Sommelier Core README](https://github.com/snapcrafters/sommelier-core#variables) to see what other variables are available.
 
 There is a lot more to say about getting Windows apps to run under Wine, but it's out of scope for this document.
@@ -231,10 +236,9 @@ For more information about Ubuntu Frame please visit our [website](https://mir-s
 
 You may also consider reading the following materials:
 
-* How to [run Flutter applications on Ubuntu Core](https://ubuntu.com/tutorials/run-flutter-applications-on-ubuntu-core#1-overview)
-* How to leverage existing snaps to [build a webkiosk](https://ubuntu.com/tutorials/secure-ubuntu-kiosk#1-overview).
-* How to [configure audio on Ubuntu Core](https://github.com/MirServer/iot-example-graphical-snap/wiki/How-to-configure-audio-on-Ubuntu-Core)
-* How to [enable on-screen keyboard support](https://discourse.ubuntu.com/t/on-screen-keyboard-support-in-ubuntu-frame/25840) in Ubuntu Frame.
+- How to [run Flutter applications on Ubuntu Core](https://ubuntu.com/tutorials/run-flutter-applications-on-ubuntu-core#1-overview)
+- How to leverage existing snaps to [build a webkiosk](https://ubuntu.com/tutorials/secure-ubuntu-kiosk#1-overview).
+- How to [configure audio on Ubuntu Core](https://github.com/MirServer/iot-example-graphical-snap/wiki/How-to-configure-audio-on-Ubuntu-Core)
+- How to [enable on-screen keyboard support](https://discourse.ubuntu.com/t/on-screen-keyboard-support-in-ubuntu-frame/25840) in Ubuntu Frame.
 
 Need help in getting to market? [Contact us](https://ubuntu.com/internet-of-things/digital-signage#get-in-touch)
-

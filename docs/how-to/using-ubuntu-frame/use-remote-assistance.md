@@ -1,4 +1,5 @@
 (how-to-use-remote-assistance)=
+
 # How to use remote assistance
 
 This document describes how to use the remote assistance function in Ubuntu Frame.
@@ -53,20 +54,21 @@ $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame-vnc
 
 [note status="Version 82"]
 This feature is only available from version `82` onward on the `24` track.
-```
+
+````
 
 To improve security of the connection, you can configure the daemon to require a username and password - it's recommended to use `read -s` to avoid the password getting into your shell history:
 ```plain
 $ snap set ubuntu-frame-vnc username=user password=$( read -s P; echo P )
 # type your password and press Enter
-```
+````
 
 The daemon will restart and require the provided username and password on connection.
-
 
 **NB**: not all clients support this mechanism, see [Client compatibility](#client-compatibility) below.
 
 To disable again, set both username and password to empty:
+
 ```plain
 $ snap set ubuntu-frame-vnc username= password=
 ```
@@ -83,7 +85,7 @@ $ ssh -L 5900:localhost:5900 <user>@<hostname>
 
 You will then be able to connect to `localhost` with any VNC client running on your host.
 
----
+______________________________________________________________________
 
 Here is the same, wrapped in an [example](https://github.com/AlanGriffiths/frame-it/blob/master/frame-it/frame-it-vnc) using the `frame-it` snap and `gvncviewer`:
 
@@ -97,6 +99,7 @@ $ frame-it.vnc <user>@<hostname>
 ## Client compatibility
 
 The following VNC client software was tested against this:
+
 - [Remmina](https://remmina.org/) (authentication not supported)
 - [TigerVNC](https://tigervnc.org/)
 - [RealVNC](https://www.realvnc.com/)

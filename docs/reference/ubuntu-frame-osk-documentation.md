@@ -1,9 +1,10 @@
 (ubuntu-frame-osk-documentation)=
+
 # Ubuntu Frame OSK Documentation
 
 This document describes how to work with the Ubuntu Frame OSK
 
----
+______________________________________________________________________
 
 Ubuntu Frame OSK is the easiest way to add on-screen keyboard support to Ubuntu Frame. To create Ubuntu Frame OSK, we selected Squeekboard, an on-screen keyboard built by Purism for the Librem 5. We chose Squeekboard because it’s modern, stable, and actively maintained. Maintainers and contributors also made Squeekboard really easy to work with, plus it supports a large and growing number of languages and layouts, such as US, German, Russian, Arabic, and many more.
 
@@ -16,22 +17,26 @@ For the on-screen keyboard to work, you’ll need to use it with an app that sup
 ## Install Ubuntu Frame OSK
 
 To install the snap, run:
+
 ```
 sudo snap install ubuntu-frame-osk
 ```
 
 If on a classic system, make sure it’s connected to the Wayland interface:
+
 ```
 snap connect ubuntu-frame-osk:wayland
 ```
 
 On Ubuntu Core, Ubuntu Frame OSK runs automatically on startup. By default it does not do this on classic systems. If you want to turn this behavior on or off:
+
 ```
 sudo snap set ubuntu-frame-osk daemon=true
 sudo snap set ubuntu-frame-osk daemon=false
 ```
 
 You can also manually run Ubuntu Frame:
+
 ```
 ubuntu-frame-osk
 ```
@@ -43,13 +48,16 @@ Once Ubuntu Frame, an OSK-supporting app and Ubuntu Frame OSK are all running on
 ### Daemon
 
 To enable or disable the OSK daemon (which makes it run automatically on startup):
+
 ```
 sudo snap set ubuntu-frame-osk daemon=true
 sudo snap set ubuntu-frame-osk daemon=false
 ```
 
 ### Theme
+
 You can switch between light and dark mode with the `theme` option:
+
 ```
 sudo snap set ubuntu-frame-osk theme=dark
 sudo snap set ubuntu-frame-osk theme=light
@@ -58,16 +66,19 @@ sudo snap set ubuntu-frame-osk theme=light
 ### Layout
 
 To list all available languages/keyboard layouts:
+
 ```
 ubuntu-frame-osk.list-layouts
 ```
 
 To change the layout, set the `layout` option to the desired ID. For example, to use Arabic:
+
 ```
 sudo snap set ubuntu-frame-osk layout=ara
 ```
 
 You can enable multiple layouts. For example, to set layouts used in Switzerland:
+
 ```
 sudo snap set ubuntu-frame-osk layout=ch,ch+fr,us
 ```
@@ -105,6 +116,7 @@ $ sudo editor $( \
 ```
 
 Modify the layout to your liking and restart the OSK:
+
 ```shell
 sudo snap restart ubuntu-frame-osk
 ```

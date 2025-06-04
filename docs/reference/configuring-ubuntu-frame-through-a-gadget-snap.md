@@ -1,4 +1,5 @@
 (configuring-ubuntu-frame-through-a-gadget-snap)=
+
 # Configuring Ubuntu Frame through a gadget snap
 
 The [snapcraft documentation](https://snapcraft.io/docs/gadget-snap) describes gadget snaps in detail. The only additional thing we'll show here is an example showing how to set the above configuration options for `ubuntu-frame`:
@@ -19,4 +20,3 @@ defaults:
       add-wayland-extensions=zwp_pointer_constraints_v1:zwp_relative_pointer_manager_v1
     daemon: true
 ```
-

@@ -1,4 +1,5 @@
 (packaging-a-sdl2-application)=
+
 # Packaging a SDL2 application
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the foundation for embedded displays. It provides a reliable, secure and easy way to embed your applications into a kiosk-style, IoT device, or digital signage solution. With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window, a dedicated set of windows behaviours, input from touch, keyboard and mouse without needing to deal with the specific hardware, on-screen keyboard, and more.
@@ -10,10 +11,10 @@ This developer guide will show you how to deploy your graphic application that s
 We will cover:
 
 1. Setting up the tools and environment required to package and deploy your application on your desktop
-2. Testing if an application works with Ubuntu Frame on your desktop
-3. Troubleshooting some common issues
-4. Packaging the app as a snap and testing whether the snap works on your desktop
-5. Packaging the snap for an IoT device and testing it on the device
+1. Testing if an application works with Ubuntu Frame on your desktop
+1. Troubleshooting some common issues
+1. Packaging the app as a snap and testing whether the snap works on your desktop
+1. Packaging the snap for an IoT device and testing it on the device
 
 If you want to learn how to install pre-built applications such as [wpe-webkit-mir-kiosk](https://snapcraft.io/wpe-webkit-mir-kiosk), [mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi/), or [Scummvm](https://snapcraft.io/scummvm), follow their official installation and configuration guides.
 
@@ -41,13 +42,14 @@ sudo snap install ubuntu-frame --channel=24
 
 [note status="channel=24"]
 For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=24` which corresponds to `base: core24` which in turn refers to Ubuntu 24.04LTS.
-```
+
+````
 
 **Frame-it** is a command-line utility for running snaps with Ubuntu Frame and is useful for testing on your development machine.
 
 ```plain
 sudo snap install frame-it --classic
-```
+````
 
 **Snapcraft** is a command-line utility for building snaps. This software allows users to build their own applications or software packages, and then publish them to the [Snap Store](https://snapcraft.io).
 
@@ -130,7 +132,8 @@ $ $ git branch --list --remotes origin/24/*
 
 [note status="24"]
 The "24" prefix refers to the snap bases that snaps are based on, in this case we use `24` for branches using to `base: core24` which in turn refers to Ubuntu 24.04LTS. (There are similar `22` and `20` collections.)
-```
+
+````
 
 Once you have the customised snapcraft recipe you can snap your example applications.
 
@@ -139,9 +142,9 @@ Switch to the SDL example branch. Then use snapcraft to build the snap:
 ```plain
 git checkout 24/SDL2-neverputt
 snapcraft
-```
+````
 
-Snapcraft is the packaging tool used to create snaps. We are not going to explore all its options here but, to avoid confusion, note that when you first run snapcraft, you will be asked "Support for 'multipass' needs to be set up. Would you like to do it now? [y/N]:", answer "yes".
+Snapcraft is the packaging tool used to create snaps. We are not going to explore all its options here but, to avoid confusion, note that when you first run snapcraft, you will be asked "Support for 'multipass' needs to be set up. Would you like to do it now? \[y/N\]:", answer "yes".
 
 After a few minutes, the snap will be built with a message like:
 
@@ -174,6 +177,7 @@ The first WARNING is the key to the problem and comes from one of the scripts in
 /snap/iot-example-graphical-snap/current/bin/setup.sh
 frame-it iot-example-graphical-snap
 ```
+
 Now Frame's window should contain the "Neverputt" game.
 
 ![image|690x575](upload://r7frB6bMFVvOqQeY5HJrE5Ly3pe.jpeg)
@@ -235,8 +239,8 @@ For more information about Ubuntu Frame please visit our [website](https://mir-s
 
 You may also consider reading the following materials:
 
-* How to [run Flutter applications on Ubuntu Core](/how-to/packaging-iot-gui/a-flutter-application.md)
-* How to leverage existing snaps to [make a secure Ubuntu web kiosk](/tutorial/make-a-secure-ubuntu-web-kiosk.md).
-* How to [enable on-screen keyboard support](/reference/ubuntu-frame-osk-documentation.md) in Ubuntu Frame.
+- How to [run Flutter applications on Ubuntu Core](/how-to/packaging-iot-gui/a-flutter-application.md)
+- How to leverage existing snaps to [make a secure Ubuntu web kiosk](/tutorial/make-a-secure-ubuntu-web-kiosk.md).
+- How to [enable on-screen keyboard support](/reference/ubuntu-frame-osk-documentation.md) in Ubuntu Frame.
 
 Need help in getting to market? [Contact us](https://ubuntu.com/internet-of-things/digital-signage#get-in-touch)
