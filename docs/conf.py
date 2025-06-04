@@ -246,6 +246,8 @@ linkcheck_retries = 3
 
 myst_enable_extensions = set({"colon_fence"})
 
+# Enable internal cross-references
+myst_heading_anchors = 4
 
 # Custom Sphinx extensions; see
 # https://www.sphinx-doc.org/en/master/usage/extensions/index.html
