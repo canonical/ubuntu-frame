@@ -6,7 +6,7 @@ This document provides a reference for the configuration options for Ubuntu Fram
 
 ______________________________________________________________________
 
-### Snap configuration options
+## Snap configuration options
 
 There are three snap configuration options:
 
@@ -15,7 +15,7 @@ There are three snap configuration options:
 - `config=<contents for frame.config>`
 - `display=<contents for frame.display>`
 
-### <pre>daemon</pre>
+### `daemon`
 
 This controls the `ubuntu-frame.daemon` process. If `daemon=true` then the daemon runs and *takes control of the display on your computer*, otherwise the daemon is disabled.
 
@@ -33,7 +33,7 @@ Or set it using
 $ snap set ubuntu-frame daemon=true
 ```
 
-### <pre>launcher</pre>
+### `launcher`
 
 [note status="Architecture support"]
 This feature is only available on **Intel**, **AMD** and **ARM64** systems
@@ -64,7 +64,7 @@ Since version **211**, you can use `Mir` or `UbuntuFrame` in [`OnlyShowIn=` and 
 
 ````
 
-### <pre>config</pre>
+### `config`
 
 This provides a way to modify the Frame configuration file. Every time the option is set the provided config is merged with the default config and written to the file. The default file looks like this:
 
@@ -257,14 +257,14 @@ user options:
   -h [ --help ]                         this help text
 ```
 
-You might notice that the options are described as "command-line options", and they also can be supplied that way when running the snap from the command-line (and not as a daemon). That can be a convenient way of testing their effect. (See [RUNNING_ON_YOUR_DESKTOP.md](RUNNING_ON_YOUR_DESKTOP.md) for an example).
+You might notice that the options are described as "command-line options", and they also can be supplied that way when running the snap from the command-line (and not as a daemon). That can be a convenient way of testing their effect. (See [Running on your desktop](run-ubuntu-frame-in-your-desktop-environment) for an example).
 
-### <pre>display</pre>
+### `display`
 
 If the `display` option is unset when Ubuntu Frame starts, it will populate the `display` snap configuration option according to the hardware on your device. Here's an example (which will probably not match your device precisely).
 
 ```yaml
-$ snap get ubuntu-frame display
+# $ snap get ubuntu-frame display
 layouts:
 # keys here are layout labels (used for atomically switching between them).
 # The yaml anchor 'the_default' is used to alias the 'default' label
@@ -280,12 +280,12 @@ layouts:
         # Uncomment the following to enforce the selected configuration.
         # Or amend as desired.
         #
-        state: enabled	# {enabled, disabled}, defaults to enabled
-        mode: 1920x1080@60.0	# Defaults to preferred mode
-        position: [0, 0]	# Defaults to [0, 0]
-        orientation: normal	# {normal, left, right, inverted}, defaults to normal
+        state: enabled       # {enabled, disabled}, defaults to enabled
+        mode: 1920x1080@60.0 # Defaults to preferred mode
+        position: [0, 0]     # Defaults to [0, 0]
+        orientation: normal  # {normal, left, right, inverted}, defaults to normal
         scale: 1
-        group: 0	# Outputs with the same non-zero value are treated as a single display
+        group: 0 # Outputs with the same non-zero value are treated as a single display
 
       HDMI-A-1:
         # (disconnected)
@@ -313,12 +313,12 @@ layouts:
         # Uncomment the following to enforce the selected configuration.
         # Or amend as desired.
         #
-        state: enabled	# {enabled, disabled}, defaults to enabled
-        mode: 1920x1080@60.0	# Defaults to preferred mode
-        position: [0, 0]	# Defaults to [0, 0]
-        orientation: normal	# {normal, left, right, inverted}, defaults to normal
+        state: enabled       # {enabled, disabled}, defaults to enabled
+        mode: 1920x1080@60.0 # Defaults to preferred mode
+        position: [0, 0]     # Defaults to [0, 0]
+        orientation: normal  # {normal, left, right, inverted}, defaults to normal
         scale: 1
-        group: 0	# Outputs with the same non-zero value are treated as a single display
+        group: 0             # Outputs with the same non-zero value are treated as a single display
 
       HDMI-A-1:
         # (disconnected)
@@ -347,7 +347,7 @@ $ snap get ubuntu-frame display
 ...
 ```
 
-### <pre>display-layout</pre>
+### `display-layout`
 
 By default Ubuntu Frame uses the `default` layout described above. But you can change this to another layout in the `display` configuration using the `display-layout` configuration option. For example:
 
