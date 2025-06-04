@@ -231,7 +231,7 @@ Here are the assertions that interest us:
 
 **NB**: they are "dangerous" because they allow inserting snaps when building the image. If you have the appropriate infrastructure (e.g. a [Dedicated Snap Store](https://ubuntu.com/core/docs/dedicated-snap-stores)), you can create and publish a properly signed model assertion instead.
 
-To build the image, you run `ubuntu-image snap <model>`. To insert custom snaps, or additional ones from the store, pass `--snap <file> --snap <name>[=<channel>]`. You can read more about the available options in [ubuntu-image's manual](https://github.com/canonical/ubuntu-image/blob/main/ubuntu-image.rst).
+To build the image, you run `ubuntu-image snap <model>`. To insert custom snaps, or additional ones from the store, pass `--snap <file> --snap <name>[=<channel>]`. You can read more about the available options in [ubuntu-image's manual](https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/ubuntu-image.html).
 
 We've wrapped all the above steps into a Makefile for easy consumption in the above branches. To build the image as-is, just run:
 
@@ -245,7 +245,7 @@ Created snap package pc_22-0.4_amd64.snap
 ubuntu-frame_amd64.img ready
 ```
 
-There are a handful ways you can test that image - by [installing it on a device](https://ubuntu.com/core/docs/install#guides), or by [running it under QEMU](https://ubuntu.com/core/docs/using-ubuntu-image#testing). Another approach is to use [virt-manager](https://ubuntu.com/server/docs/virtualization-virt-tools), creating the VM with the following command:
+There are a handful ways you can test that image - by [installing it on a device](https://documentation.ubuntu.com/core/tutorials/try-pre-built-images/index.html#install-on-a-generic-device), or by [running it under QEMU](https://documentation.ubuntu.com/core/tutorials/try-pre-built-images/index.html#install-on-a-virtual-machine). Another approach is to use [virt-manager](https://ubuntu.com/server/docs/virtualization-virt-tools), creating the VM with the following command:
 
 ```
 $ sudo virt-install --connect qemu:///session \

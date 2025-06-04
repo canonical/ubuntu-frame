@@ -53,7 +53,7 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
     symlink: $SNAP/gpu-2404/X11/XErrorDB
 ```
 
-3. use [`bin/gpu-2404-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-wrapper) in your [`command-chain`](https://snapcraft.io/docs/snapcraft-app-and-service-metadata#command-chain)s:
+3. use [`bin/gpu-2404-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-wrapper) in your [`command-chain`](https://snapcraft.io/docs/snapcraft-app-and-service-metadata#apps.%3Capp-name%3E.command-chain)s:
 
    ```yaml
    apps:

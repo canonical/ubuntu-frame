@@ -16,7 +16,7 @@ https://canonical-mir.readthedocs-hosted.com/stable/explanation/security/
 
 There is no cryptography used in Frame itself or the On-Screen Keyboard snap. No direct dependency on en/decryption, hashing or digital signatures.
 
-The VNC snap is built on top of [wayvnc](https://github.com/any1/wayvnc), which has cryptographic features (password authentication, transport encryption) and that is handled through [gnutls](https://gnutls.org/) as [packaged and maintained in Ubuntu](https://packages.ubuntu.com/source/gnutls28). See [remote access documentation](https://discourse.ubuntu.com/t/29667#remote-access) for more information.
+The VNC snap is built on top of [wayvnc](https://github.com/any1/wayvnc), which has cryptographic features (password authentication, transport encryption) and that is handled through [gnutls](https://gnutls.org/) as [packaged and maintained in Ubuntu](https://packages.ubuntu.com/source/gnutls28). See [remote access documentation](/how-to/using-ubuntu-frame/use-remote-assistance.md#remote-access) for more information.
 
 ## Hardening
 

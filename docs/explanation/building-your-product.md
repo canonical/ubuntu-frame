@@ -63,6 +63,6 @@ https://snapcraft.io/docs/store-brand-accounts
 
 You can gain explicit control over the versions of snaps distributed to your devices with a "Brand Store":
 
-https://discourse.ubuntu.com/t/brand-stores/19723
+https://ubuntu.com/core/docs/dedicated-snap-stores
 
 If you want official support for your snap and our QA pipeline replicate your exact setup, please contact our support team at https://ubuntu.com/support.

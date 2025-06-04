@@ -103,7 +103,6 @@ The following VNC client software was tested against this:
 - [Remmina](https://remmina.org/) (authentication not supported)
 - [TigerVNC](https://tigervnc.org/)
 - [RealVNC](https://www.realvnc.com/)
-- [gtk-vnc](https://wiki.gnome.org/Projects/gtk-vnc)
 - *not working*: Finder on macOS ([any1/neatvnc#48](https://github.com/any1/neatvnc/issues/48))
 
 ## Debugging

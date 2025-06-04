@@ -51,7 +51,7 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        symlink: $SNAP/graphics/X11/locale
    ```
 
-1. use [`bin/graphics-core22-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/graphics-core22-wrapper) in your [`command-chain`](https://snapcraft.io/docs/snapcraft-app-and-service-metadata#command-chain)s:
+1. use [`bin/graphics-core22-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/graphics-core22-wrapper) in your [`command-chain`](https://documentation.ubuntu.com/snapcraft/stable/reference/project-file/snapcraft-yaml/#apps.%3Capp-name%3E.command-chain)s:
 
    ```yaml
    apps:

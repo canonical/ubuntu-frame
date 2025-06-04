@@ -236,9 +236,8 @@ For more information about Ubuntu Frame please visit our [website](https://mir-s
 
 You may also consider reading the following materials:
 
-- How to [run Flutter applications on Ubuntu Core](https://ubuntu.com/tutorials/run-flutter-applications-on-ubuntu-core#1-overview)
-- How to leverage existing snaps to [build a webkiosk](https://ubuntu.com/tutorials/secure-ubuntu-kiosk#1-overview).
-- How to [configure audio on Ubuntu Core](https://github.com/canonical/iot-example-graphical-snap/wiki/How-to-configure-audio-on-Ubuntu-Core)
-- How to [enable on-screen keyboard support](https://discourse.ubuntu.com/t/on-screen-keyboard-support-in-ubuntu-frame/25840) in Ubuntu Frame.
+- How to [run Flutter applications on Ubuntu Core](packaging-a-flutter-application)
+- How to leverage existing snaps to [build a webkiosk](make-a-secure-ubuntu-web-kiosk)
+- How to [enable on-screen keyboard support](ubuntu-frame-osk-documentation) in Ubuntu Frame.
 
 Need help in getting to market? [Contact us](https://ubuntu.com/internet-of-things/digital-signage#get-in-touch)

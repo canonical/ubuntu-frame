@@ -74,7 +74,7 @@ Refer to the relevant documentation for how to [configure Frame](/reference/conf
         wallpaper=false
   ```
 
-- One way to include the necessary service changes is by [including cloud-init configuration](https://ubuntu.com/core/docs/gadget-snaps#setup) in the gadget snap:
+- One way to include the necessary service changes is by [including cloud-init configuration](https://documentation.ubuntu.com/core/reference/gadget-snap-format/index.html#setup-files) in the gadget snap:
 
   ```
   # cloud.conf

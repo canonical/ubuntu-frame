@@ -18,7 +18,7 @@ We will cover:
 
 If you want to learn how to install pre-built applications such as [wpe-webkit-mir-kiosk](https://snapcraft.io/wpe-webkit-mir-kiosk), [mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi/), or [Scummvm](https://snapcraft.io/scummvm), follow their official installation and configuration guides.
 
-Note: This guide will not cover how to build an application using a toolkit that supports Wayland (there are many). And while it is possible to [package X11](https://discourse.ubuntu.com/t/making-x11-applications-talk-wayland/18631)-based applications to work on Ubuntu Core, this guide will not cover this either. We will also not cover how to upload your snap to the snap store, nor building custom Ubuntu Core images with pre-configured snaps. That is documented on [snapcraft.io/docs](https://snapcraft.io/docs).
+Note: This guide will not cover how to build an application using a toolkit that supports Wayland (there are many). And while it is possible to [package X11](packaging-an-x11-based-application)-based applications to work on Ubuntu Core, this guide will not cover this either. We will also not cover how to upload your snap to the snap store, nor building custom Ubuntu Core images with pre-configured snaps. That is documented on [snapcraft.io/docs](https://snapcraft.io/docs).
 
 If you are new to Ubuntu Core, we recommend reading our [getting started document](https://ubuntu.com/core/docs/getting-started). If you want to learn about building custom Ubuntu Core images, you could find information on the [snapcraft docs](https://snapcraft.io/docs/gadget-snap).
 
@@ -390,9 +390,8 @@ For more information about Ubuntu Frame please visit our [website](https://mir-s
 
 You may also consider reading the following materials:
 
-- How to [run Flutter applications on Ubuntu Core](https://ubuntu.com/tutorials/run-flutter-applications-on-ubuntu-core#1-overview)
-- How to leverage existing snaps to [build a webkiosk](https://ubuntu.com/tutorials/secure-ubuntu-kiosk#1-overview).
-- How to [configure audio on Ubuntu Core](https://github.com/canonical/iot-example-graphical-snap/wiki/How-to-configure-audio-on-Ubuntu-Core)
-- How to [enable on-screen keyboard support](https://discourse.ubuntu.com/t/on-screen-keyboard-support-in-ubuntu-frame/25840) in Ubuntu Frame.
+- How to [run Flutter applications on Ubuntu Core](packaging-a-flutter-application)
+- How to leverage existing snaps to [build a webkiosk](/tutorial/make-a-secure-ubuntu-web-kiosk.md)
+- How to [enable on-screen keyboard support](ubuntu-frame-osk-documentation) in Ubuntu Frame.
 
 Need help in getting to market? [Contact us](https://ubuntu.com/internet-of-things/digital-signage#get-in-touch)

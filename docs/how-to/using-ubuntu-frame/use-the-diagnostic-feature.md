@@ -85,4 +85,4 @@ The diagnostic screen will automatically update when it detects changes to the d
 
 ## Configuration Options
 
-To learn about Ubuntu Frame Diagnostic's various configuration options, please refer to [the configuration options reference](https://mir-server.io/docs/ubuntu-frame-configuration-options#snap-configuration-config).
+To learn about Ubuntu Frame Diagnostic's various configuration options, please refer to [the configuration options reference](/reference/ubuntu-frame-configuration-options.md#snap-configuration-options).
