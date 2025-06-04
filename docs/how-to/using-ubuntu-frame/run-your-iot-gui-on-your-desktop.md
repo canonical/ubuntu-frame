@@ -6,7 +6,7 @@ When developing things it is nice to have all your familiar development tools to
 
 Instead of running everything on an Ubuntu Core device and having to use ssh only to miss some key development tool; Or having to switch to another VT on your development machine and have processes you're trying to use suspend; Or trying to find another laptop to ssh into your own machine... wouldn't it be nice to simply have Ubuntu Frame running on a window on your desktop?
 
-![image|690x388](upload://dXaI2bcQkptlj6lpdkuMTtjgtfa.jpeg)
+![image|690x388](61cc9ea2639b30c91169b8c70970fa84dd72e7f0.jpeg)
 
 It is as easy as 1, 2, 3...
 
@@ -64,7 +64,7 @@ frame-it snap run wpe-webkit-mir-kiosk.cog
 
 (If you're using your own snap, it probably won't have or need the `.cog` extension. I don't know why `wpe-webkit-mir-kiosk` has that.)
 
-![image|690x388](upload://6k79J90cKQCV6O1sPSvpCobfe0l.png)
+![image|690x388](2c53266b106281dd566cd57af61664483d992085.png)
 
 ### 3.2 Running your "daemon"
 
@@ -76,7 +76,7 @@ Running Ubuntu Frame as root requires running one of the Frame-it scripts as roo
 sudo frame-it.root-on-x11
 ```
 
-![image|690x388](upload://xlGXXcPw9yDpVomfQ6f2r6quiXg.png)
+![image|690x388](e9bb7ff0cf4efa76589bcbeaa2d87131d18aaf52.png)
 
 Running your snap's daemon may take a couple of commands. Many IoT GUI snaps don't try to run their daemons by default unless installed on Ubuntu Core and use a `daemon` configuration option to control this.
 
@@ -87,7 +87,7 @@ $ snap restart wpe-webkit-mir-kiosk.daemon
 
 (If you're using your own snap, it probably won't have or need the `.daemon` extension. I don't know why `wpe-webkit-mir-kiosk` has that.)
 
-![image|690x388](upload://dXaI2bcQkptlj6lpdkuMTtjgtfa.jpeg)
+![image|690x388](61cc9ea2639b30c91169b8c70970fa84dd72e7f0.jpeg)
 
 ## And that's it!
 

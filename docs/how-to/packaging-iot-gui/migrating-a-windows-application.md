@@ -82,7 +82,7 @@ cd iot-example-graphical-snap
 
 If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" for an IoT graphics snap. This is where you will insert instructions for packaging your application. This is how the `.yaml` file looks like:
 
-![image|690x575, 100%](upload://jVi5IdEqljarHP0XyJjgOhrmtKd.jpeg)
+![image|690x575, 100%](8ba33b7d1bd1fc169b697a2a80d31d5962ebe905.jpeg)
 
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
@@ -161,7 +161,7 @@ frame-it iot-example-graphical-snap
 
 After a little time Frame's window should contain the example DNSBench app (we know it's not a great demo application, if you know about a better one, let us know!).
 
-![obraz|690x437](upload://Lt6aaFBF6TfZApOiQaSTBjwKu4.png)
+![obraz|690x437](055dae82692c95064bd6e15e1d4b8a91bcd04e50.png)
 
 Close that. Your application has been successfully snapped.
 

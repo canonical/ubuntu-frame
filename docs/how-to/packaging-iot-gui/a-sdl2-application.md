@@ -80,7 +80,7 @@ frame-it neverputt
 
 Now Ubuntu Frame's window should contain the "Neverputt" game.
 
-![image|690x575](upload://qsInLi6cXvNjZCH8AH5fCdrzC9i.jpeg)
+![image|690x575](b97782d3fb25d700a2f0f087f758be88d72f11d0.jpeg)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
@@ -111,7 +111,7 @@ cd iot-example-graphical-snap
 
 If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" for an IoT graphics snap. This is where you will insert instructions for packaging your application. This is how the `.yaml` file looks like:
 
-![image|690x575](upload://jVi5IdEqljarHP0XyJjgOhrmtKd.jpeg)
+![image|690x575](8ba33b7d1bd1fc169b697a2a80d31d5962ebe905.jpeg)
 
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
@@ -180,7 +180,7 @@ frame-it iot-example-graphical-snap
 
 Now Frame's window should contain the "Neverputt" game.
 
-![image|690x575](upload://r7frB6bMFVvOqQeY5HJrE5Ly3pe.jpeg)
+![image|690x575](be0c79621a30e294669b5954316cfbb96d0c3de8.jpeg)
 
 Close Neverputt.
 
@@ -221,7 +221,7 @@ snap install ubuntu-frame --channel 24
 snap install --dangerous *.snap
 ```
 
-![image|690x575](upload://qDTS1ykgoG6WGlm2Yu1u0gLMnOo.jpeg)
+![image|690x575](babb31bb8373e8350ed028413d1d3f3b43b6b300.jpeg)
 
 ## Conclusion
 

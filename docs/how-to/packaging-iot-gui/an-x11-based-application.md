@@ -82,7 +82,7 @@ cd iot-example-graphical-snap
 
 If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" for an IoT graphics snap. This is where you will insert instructions for packaging your application. This is how the `.yaml` file looks like:
 
-![image|690x575](upload://jVi5IdEqljarHP0XyJjgOhrmtKd.jpeg)
+![image|690x575](8ba33b7d1bd1fc169b697a2a80d31d5962ebe905.jpeg)
 
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
@@ -160,7 +160,7 @@ frame-it iot-example-graphical-snap
 
 Now Frame's window should contain glx-gears.
 
-![image|690x575](upload://iWBnmAOBRcQJWcCruZ9vIZ1aP7S.jpeg)
+![image|690x575](84c6ff6d8e535d1824380d7f3dbb53706af32c54.jpeg)
 
 Close that (`Esc`). Your application has been successfully snapped.
 
@@ -201,7 +201,7 @@ snap install ubuntu-frame --channel 24
 snap install --dangerous *.snap
 ```
 
-![image|690x575](upload://qG8q5hyJQ4OmHYd6dplocAjfWs5.jpeg)
+![image|690x575](bafbdc990c5b99cd9a9b077b42a13bcee8281ced.jpeg)
 
 ## Conclusion
 

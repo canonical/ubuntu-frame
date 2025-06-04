@@ -84,7 +84,7 @@ _(I'm no expert on Electron, so I don't know why, but I found this failed to run
 
 Now Frame's window should contain the "Hello World!" app.
 
-![image|690x575](upload://96sSqTonzgdyU3PGMfeL6Z0OueQ.jpeg)
+![image|690x575](3fceac9523815e0e4ebdab10adee2d5ca6a8a0e0.jpeg)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
@@ -116,7 +116,7 @@ cd iot-example-graphical-snap
 
 If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" for an IoT graphics snap. This is where you will insert instructions for packaging your application. This is how the `.yaml` file looks like:
 
-![image|690x575](upload://jVi5IdEqljarHP0XyJjgOhrmtKd.jpeg)
+![image|690x575](8ba33b7d1bd1fc169b697a2a80d31d5962ebe905.jpeg)
 
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
@@ -183,7 +183,7 @@ frame-it iot-example-graphical-snap
 
 Now Frame's window should contain the "Demo" app.
 
-![image|690x575](upload://p3Zt3bjo0jP5bKOMpSDAYmeJ3AO.jpeg)
+![image|690x575](afa9dab5e889664d711a50705dc25de7b5135dae.jpeg)
 
 Close that (`Ctrl-Q`). Your application has been successfully snapped.
 
@@ -220,7 +220,7 @@ snap install ubuntu-frame --channel 24
 snap install --dangerous *.snap
 ```
 
-![image|690x575](upload://8PYoJ1FlvkUhn2Sh5aMfuHcCNkB.jpeg)
+![image|690x575](3df16f7b1650ddd26952ff0db1d3d500a7fc84f1.jpeg)
 
 ## Conclusion
 

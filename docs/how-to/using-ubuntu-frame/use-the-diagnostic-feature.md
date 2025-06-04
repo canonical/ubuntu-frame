@@ -34,7 +34,7 @@ In another terminal, run the demo snap:
 frame-diagnostic "Hello, world!"
 ```
 
-![ubuntu-frame-hello-world-screenshot|690x591](upload://8H9q4sg7vgW7bEZYX29E2V3AEpu.jpeg)
+![ubuntu-frame-hello-world-screenshot|690x591](3cf2229ce226c5943ef26544fb80ca7bb75bcc3c.jpeg)
 
 Now, without closing Frame, try writing something else.
 
@@ -42,7 +42,7 @@ Now, without closing Frame, try writing something else.
 frame-diagnostic "Goodbye, world!"
 ```
 
-![ubuntu-frame-goodbye-world-screenshot|690x590](upload://dDlljTYS66WSs77oWymQIlxGIai.jpeg)
+![ubuntu-frame-goodbye-world-screenshot|690x590](5f8ed12c855479685e7e8a5518658cec3ce0ea4e.jpeg)
 
 The text will update automatically when the diagnostic text changes.
 

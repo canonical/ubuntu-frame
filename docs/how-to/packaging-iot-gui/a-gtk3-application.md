@@ -80,7 +80,7 @@ frame-it gnome-mastermind
 
 Now Ubuntu Frame's window should contain the "Mastermind" game.
 
-![image|690x575](upload://zjKIC8nBpT1QdvW2Y93PTBDuhv2.jpeg)
+![image|690x575](f787b8fe63197afac80c6f50cbeb2753d7584ee8.jpeg)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
@@ -111,7 +111,7 @@ cd iot-example-graphical-snap
 
 If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" for an IoT graphics snap. This is where you will insert instructions for packaging your application. This is how the `.yaml` file looks like:
 
-![image|690x575](upload://jVi5IdEqljarHP0XyJjgOhrmtKd.jpeg)
+![image|690x575](8ba33b7d1bd1fc169b697a2a80d31d5962ebe905.jpeg)
 
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
@@ -179,7 +179,7 @@ frame-it iot-example-graphical-snap
 
 Now Frame’s window should contain the “Mastermind” game.
 
-![image|690x575](upload://c8D1ubEYF9IKdIQgRPAHEOtDQBI.png)
+![image|690x575](5513cee9e8851b25d97704a32153fbe513087bca.png)
 
 Close that (`Ctrl-Q`). Your application has been successfully snapped.
 
@@ -220,7 +220,7 @@ snap install ubuntu-frame --channel 24
 snap install --dangerous *.snap
 ```
 
-![image|690x575](upload://7QQRD3tdoUXPpj9pbnT7rsWENYL.jpeg)
+![image|690x575](3708aef4159023b02fd49208f32f438a38a6e59b.jpeg)
 
 ## Conclusion
 

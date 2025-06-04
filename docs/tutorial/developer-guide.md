@@ -22,7 +22,7 @@ Note: This guide will not cover how to build an application using a toolkit that
 
 If you are new to Ubuntu Core, we recommend reading our [getting started document](https://ubuntu.com/core/docs/getting-started). If you want to learn about building custom Ubuntu Core images, you could find information on the [snapcraft docs](https://snapcraft.io/docs/gadget-snap).
 
-![image|388x581](upload://aykYNrjU60rwuUt34z2u1zrx66k.jpeg)
+![image|388x581](49f76f25a95ec6de4b51f92987e1cbae179a6428.jpeg)
 
 ## Requirements
 
@@ -32,7 +32,7 @@ It is possible to work in a container or on a different computer (if snapd and X
 
 For some of the later steps, you will need an [Ubuntu One account](https://login.ubuntu.com/). This will let you enable `remote-build` on your [Launchpad](https://launchpad.net/) account and publish on the [Snap Store](https://snapcraft.io).
 
-![image|689x268](upload://894ZGy6nsTSlyR3kxrk2CfzSrLx.png)
+![image|689x268](39182af06901d9dd4da6c8b28597b2f72b42700f.png)
 
 ## Setting up your test environment
 
@@ -86,7 +86,7 @@ frame-it gnome-mastermind
 
 Now Frame's window should contain the "Mastermind" game.
 
-![image|690x575](upload://zjKIC8nBpT1QdvW2Y93PTBDuhv2.jpeg)
+![image|690x575](f787b8fe63197afac80c6f50cbeb2753d7584ee8.jpeg)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
@@ -101,7 +101,7 @@ frame-it bomber
 
 Now Frame's window should contain the "Bomber" game as shown in the next image.
 
-![image|690x574](upload://fb08ypmlNuZFtnBg65Iw6AzFBD8.jpeg)
+![image|690x574](6a5efec07e12b4cbadc71c74a56e9eab00147ff6.jpeg)
 
 Close that (`Ctrl-Q`) and try the next example.
 
@@ -114,7 +114,7 @@ frame-it neverputt
 
 Now Frame's window should contain the "Neverputt" game. You’ll see is that the game doesn’t fill the display. That’s because the application doesn’t understand Ubuntu Frame telling it to fill the screen. This is a problem with some applications and, in this case, can be fixed by editing `~/.neverball/neverballrc` [sic] to say “fullscreen 1” and restarting the game. (The same file works for neverball, but you may need to figure out the right configuration option for your application.) This is what you will see:
 
-![image|690x575](upload://qsInLi6cXvNjZCH8AH5fCdrzC9i.jpeg)
+![image|690x575](b97782d3fb25d700a2f0f087f758be88d72f11d0.jpeg)
 
 You can now close the app.
 
@@ -143,7 +143,7 @@ cd iot-example-graphical-snap
 
 If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" for an IoT graphics snap. This is where you will insert instructions for packaging your application. This is how the `.yaml` file looks like:
 
-![image|690x575](upload://jVi5IdEqljarHP0XyJjgOhrmtKd.jpeg)
+![image|690x575](8ba33b7d1bd1fc169b697a2a80d31d5962ebe905.jpeg)
 
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
@@ -215,7 +215,7 @@ frame-it iot-example-graphical-snap
 
 Now Frame’s window should contain the “Mastermind” game.
 
-![image|690x575](upload://c8D1ubEYF9IKdIQgRPAHEOtDQBI.png)
+![image|690x575](5513cee9e8851b25d97704a32153fbe513087bca.png)
 
 Close that (`Ctrl-Q`) and try the next example:
 
@@ -263,7 +263,7 @@ frame-it iot-example-graphical-snap
 
 Now Frame's window should contain the "Bomber" game.
 
-![image|690x575](upload://3uy0A96vsQTQDfYVLkzIXBaFGlc.jpeg)
+![image|690x575](187a8b5c29c0fc1069c37b1e6a41861a86dadd42.jpeg)
 
 Close that (`Ctrl-Q`) and try the next example:
 
@@ -306,7 +306,7 @@ frame-it iot-example-graphical-snap
 
 Now Frame's window should contain the "Neverputt" game.
 
-![image|690x575](upload://r7frB6bMFVvOqQeY5HJrE5Ly3pe.jpeg)
+![image|690x575](be0c79621a30e294669b5954316cfbb96d0c3de8.jpeg)
 
 Close that. Your application has been successfully snapped.
 
@@ -372,7 +372,7 @@ snap start iot-example-graphical-snap
 
 You should see Neverputt starting.
 
-![image|690x575](upload://qDTS1ykgoG6WGlm2Yu1u0gLMnOo.jpeg)
+![image|690x575](babb31bb8373e8350ed028413d1d3f3b43b6b300.jpeg)
 
 ## Conclusion
 

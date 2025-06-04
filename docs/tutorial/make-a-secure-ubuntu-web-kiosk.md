@@ -38,7 +38,7 @@ Your graphics approach largely depends on the toolkit your application uses:
 
 Where we need an X11 server it is much more secure to embed it in the confined snap environment together with the application. The X11 protocol was not designed with security in mind and a malicious application connected to an X11 server can obtain information from other running X11 applications. For instance X11 servers do not protect sensitive information like keystrokes between applications using them. To avoid this, each snapped X11 application should have its own embedded X11 server (Xwayland) which then talks Wayland - a far more secure protocol.
 
-![mir-kiosk-architectures|690x428](upload://ghYyVcPUi4A3tqW1T4cwQRLf7Mx.png)
+![mir-kiosk-architectures|690x428](722b008b93317a7fe95abf4743685cc4d79f5eb5.png)
 
 One additional detail to note is how a Wayland client connects to a Wayland server. This is done via Wayland sockets, which need to be shared between client (your app) and server (ubuntu-frame). Snapd has robust and secure ways to provide this kind of communication channel between two snap applications, called '[interfaces](https://docs.snapcraft.io/core/interfaces)'.
 
@@ -69,7 +69,7 @@ snap install ubuntu-frame
 
 Now you should have a graduated grey screen.
 
-![Screenshot from 2021-09-23 14-48-57|690x543](upload://4ULFzAySmNkumntEAhHlMjp0y84.png)
+![Screenshot from 2021-09-23 14-48-57|690x543](22737d7bf315f4c377b816f579d6a8fce8f96e2c.png)
 
 Let's install a web kiosk snap to try it out:
 
@@ -78,7 +78,7 @@ snap install wpe-webkit-mir-kiosk
 ```
 
 and you should see something like this:
-![Screenshot from 2021-09-23 15-35-57|690x592](upload://5npz9Jpnj02hvHcLIcLGNQEVaPR.jpeg)
+![Screenshot from 2021-09-23 15-35-57|690x592](25b062438d89913b4902c3b7cb4b859e048fce2f.jpeg)
 
 The website can be changed using the “url” snap configuration option:
 
@@ -86,7 +86,7 @@ The website can be changed using the “url” snap configuration option:
 snap set wpe-webkit-mir-kiosk url=https://mir-server.io
 ```
 
-![Screenshot from 2021-09-23 15-39-31|690x592](upload://s9pLRZEiVAkJdXTstMvLzjTtU8U.jpeg)
+![Screenshot from 2021-09-23 15-39-31|690x592](c54d5843abfd63adcfb81c40901372c77e911a70.jpeg)
 
 ## Building your own kiosk Snap
 

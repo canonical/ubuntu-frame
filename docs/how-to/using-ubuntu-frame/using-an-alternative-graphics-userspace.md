@@ -55,7 +55,7 @@ First check that things are working by running:
 frame-it snap run wpe-webkit-mir-kiosk.cog
 ```
 
-![image|690x575](upload://ssgPPEX9Gg7fgQXYAiGrOms5UZE.jpeg)
+![image|690x575](c76f005baf606ac4822a5989182ee81cc95ab2a6.jpeg)
 
 You can close this.
 
@@ -82,4 +82,4 @@ And prove that it still all works:
 frame-it snap run wpe-webkit-mir-kiosk.cog
 ```
 
-![image|690x575](upload://uXz6CIXzrDa4goPf0L9rybmXC15.jpeg)
+![image|690x575](d8fcf6d3be9e263f6a9e13e81384a142e5878403.jpeg)

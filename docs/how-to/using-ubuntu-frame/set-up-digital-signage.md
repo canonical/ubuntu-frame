@@ -25,10 +25,10 @@ sudo snap install dashkiosk
 ```
 
 You can then reach the administration panel on port 9400, under `/admin`, for example http://127.0.0.1:9400/admin, if you installed it locally. You will see that there are no displays yet.
-![Dashkiosk — Administration interface|690x459, 50%](upload://3GWeX7UeUF1XZ4V9yN5E9JhdSdQ.jpeg)
+![Dashkiosk — Administration interface|690x459, 50%](19e11d2c3d603e469a7671034952053237329d7a.jpeg)
 
 If you point your browser at http://127.0.0.1:9400/receiver, you will see some default images being rendered, and a display will show up in the administration panel. The receiver will get a random serial generated and you can give it a name and set some other properties. You can find out more in [Dashkiosk display configuration](https://dashkiosk.readthedocs.io/en/latest/usage.html#display-configuration).
-![Dashkiosk — Receiver|690x459, 50%](upload://sEsdgWC9AF8loqLNMUiuRvGiTNp.jpeg)![Dashkiosk — Administration interface|690x459, 50%](upload://jaRaFceaMupfFkFxxBhKwqTnTFG.jpeg)
+![Dashkiosk — Receiver|690x459, 50%](c8cf925121e9eb1f34916771de610660c63b0e43.jpeg)![Dashkiosk — Administration interface|690x459, 50%](86638193ca091efa27d165e405c355ff25791c6c.jpeg)
 
 You can configure the server by editing `/var/snap/dashkiosk/current/config.json`. You can change the port, add basic authentication and see [Dashkiosk configuration](https://dashkiosk.readthedocs.io/en/latest/configuration.html#json-configuration-file) for a reference. After you change anything, restart the server to apply the changes:
 
@@ -73,7 +73,7 @@ sudo snap install ubuntu-frame wpe-webkit-mir-kiosk
    kill %1 %2
    ```
 
-   ![Ubuntu Frame|690x424](upload://w8s6xrgbYxJbJhxCZCEpcoHZpQD.jpeg)
+   ![Ubuntu Frame|690x424](e13a31035914e060847179297786e5dca07dd76b.jpeg)
 
    Or, if you're running things on dedicated hardware, you can make it permanent, just like on Core above:
 
@@ -86,7 +86,7 @@ sudo snap install ubuntu-frame wpe-webkit-mir-kiosk
 ### The dashboards
 
 For completion, as mentioned above, setting up the dashboards is out of scope for this guide. You should refer to [the Dashkiosk documentation](https://dashkiosk.readthedocs.io/en/latest/usage.html#about-the-dashboards) - but just as an example, I'll replace `/unassigned` in the "Unassigned" group's single dashboard with a [random dashboard example](https://share.geckoboard.com/dashboards/56R2XOCUMXD5MNV4).
-![Dashkiosk — Administration interface|690x459, 50%](upload://6snybc8bcac2uJgCnfsySe0zKhu.png) ![Ubuntu Frame|690x424, 50%](upload://xCr2hjXXxeX6EkXXdf5mtkeFn12.png)
+![Dashkiosk — Administration interface|690x459, 50%](2d424ef473cc439f13ca340ccb4a33435f919b9c.png) ![Ubuntu Frame|690x424, 50%](eba003eaff14ecd9adea96e33e7e942ae9d1f0f4.png)
 
 ## Summary
 
