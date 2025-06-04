@@ -12,7 +12,7 @@ For consistency, we'll call the hardware that you connect the displays to - the 
 
 Dashkiosk is a simple web server at which you need to point the renderers. You can manage as many displays as you need, for example by running it on some central server hardware - but you then need to ensure connectivity between the renderers and the server (like using a reverse proxy to listen outside of `localhost`), which is out of scope for this guide.
 
-A dashboard can be anything that a web browser can render - a web page, an image, or a video. The receivers need network access to whatever's hosting the dashboards, as the server only tells the renderers what URL to display, but doesn't participate in the rendering. Creating the dashboards is also out of scope for this guide - refer to [Dashkiosk documentation](https://dashkiosk.readthedocs.io/en/latest/usage.html#about-the-dashboards) for more detail.
+A dashboard can be anything that a web browser can render - a web page, an image, or a video. The receivers need network access to whatever is hosting the dashboards, as the server only tells the renderers what URL to display, but doesn't participate in the rendering. Creating the dashboards is also out of scope for this guide - refer to [Dashkiosk documentation](https://dashkiosk.readthedocs.io/en/latest/usage.html#about-the-dashboards) for more detail.
 
 ## Setting up
 

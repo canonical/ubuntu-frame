@@ -4,7 +4,7 @@
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the foundation for embedded displays. It provides a reliable, secure and easy way to embed your applications into a kiosk-style, IoT device, or digital signage solution. With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window, a dedicated set of windows behaviours, input from touch, keyboard and mouse without needing to deal with the specific hardware, on-screen keyboard, and more.
 
-Together with [Ubuntu Core](https://ubuntu.com/core), Ubuntu Frame provides all the infrastructure you need to securely deploy and maintain graphic applications on edge devices. And while Ubuntu Core maximises performance and security of your apps, Ubuntu Frame is compatible with any Linux operating system that supports snaps.
+Together with [Ubuntu Core](https://ubuntu.com/core), Ubuntu Frame provides all the infrastructure you need to securely deploy and maintain graphic applications on edge devices. And while Ubuntu Core maximizes performance and security of your apps, Ubuntu Frame is compatible with any Linux operating system that supports snaps.
 
 This developer guide will show you how to deploy your graphic application that supports the [Wayland protocol](https://wayland.freedesktop.org/docs/html/) to work with Ubuntu Frame and Ubuntu Core. This guide is for developers looking to build kiosks, digital signage solutions, infotainment systems, IoT devices or any other applications that require a graphic interface running on a screen.
 
@@ -177,7 +177,7 @@ Runing a Windows application on Ubuntu requires the use of a compatibility layer
   ```yaml
   INSTALL_FLAGS: /silent
   ```
-- the list of Wine tricks (e.g. libriaries to be installed, see [the Wine tricks wiki page](https://wiki.winehq.org/Winetricks)):
+- the list of Wine tricks (e.g. libraries to be installed, see [the Wine tricks wiki page](https://wiki.winehq.org/Winetricks)):
   ```yaml
   TRICKS: vcrun2019
   ```

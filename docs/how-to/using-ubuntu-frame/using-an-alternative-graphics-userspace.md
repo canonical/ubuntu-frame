@@ -4,7 +4,7 @@
 
 ## The issue
 
-On "desktop" linux installations there are limited options for the graphics stack, and most systems will run with the "open" Mesa graphics drivers and/or Nvidia drivers.
+On "desktop" Linux installations there are limited options for the graphics stack, and most systems will run with the "open" Mesa graphics drivers and/or Nvidia drivers.
 
 The IoT world is a bit more varied, often with device specific drivers provided by the board manufacturer. [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) is designed to work with graphics stacks that provide KMS, `libgbm` and an EGL supporting [EGL_WL_bind_wayland_display](https://www.khronos.org/registry/EGL/extensions/WL/EGL_WL_bind_wayland_display.txt).
 

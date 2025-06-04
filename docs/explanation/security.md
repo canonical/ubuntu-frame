@@ -8,7 +8,7 @@ ______________________________________________________________________
 
 ## Threat model
 
-We ran threat modelling for Mir itself (the [display server library](https://mir-server.io/) underpinning Frame) based on this snap stack, and maintain that documented there:
+We ran threat modeling for Mir itself (the [display server library](https://mir-server.io/) underpinning Frame) based on this snap stack, and maintain that documented there:
 
 https://canonical-mir.readthedocs-hosted.com/stable/explanation/security/
 

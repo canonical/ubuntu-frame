@@ -8,7 +8,7 @@ The How-to guides in this section give directions on how to achieve your goals w
 - [Run Ubuntu Frame in your Desktop Environment](/how-to/running-ubuntu-frame/in-your-desktop-environment.md)
 - [Run Ubuntu Frame in a Virtual Machine](/how-to/running-ubuntu-frame/in-a-virtual-machine.md)
 - [Run Ubuntu Frame on your Device](/how-to/running-ubuntu-frame/on-your-device.md)
-- [Run Ubuntu Frame unpriviliged](/how-to/running-ubuntu-frame/unprivileged.md)
+- [Run Ubuntu Frame unprivileged](/how-to/running-ubuntu-frame/unprivileged.md)
 - [Migrating from Mir Kiosk](/how-to/migrating-from-mir-kiosk-to-ubuntu-frame.md)
 
 ## Using Ubuntu Frame

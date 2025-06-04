@@ -28,7 +28,7 @@ $ qemu-virgil -enable-kvm -m 512 -device virtio-vga,virgl=on\
  ~/snap/qemu-virgil/common/ubuntu-core-20-amd64.img
 ```
 
-This will create a QEMU window on your desktop and you need to follow through the prompts to initialise the VM with your launchpad account. (If you don’t have a launchpad account, get one and set up a public SSH key.)
+This will create a QEMU window on your desktop and you need to follow through the prompts to initialize the VM with your launchpad account. (If you don’t have a launchpad account, get one and set up a public SSH key.)
 
 Connect to the VP using ssh from a terminal window (ignore the address shown in the QEMU window and use the port set in the above command):
 

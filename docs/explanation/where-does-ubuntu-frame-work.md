@@ -45,13 +45,13 @@ Because different drivers and hardware work differently we can only test and, if
 
 These are some systems where we have automated testing in place:
 
-| Device     | Mesa driver | Video acceleration |
-| ---------- | ----------- | ------------------ |
-| **RPi3b**  | vc4         | No                 |
-| **RPi4**   | V3D         | ?                  |
-| **Intel**  | i915        | VAAPI              |
-| **Nvidia** | Nouveau     | VAAPI/VDPAU?       |
-| **AMD**    | radeon      | VAAPI              |
+| Device              | Mesa driver | Video acceleration |
+| ------------------- | ----------- | ------------------ |
+| **Raspberry Pi 3b** | vc4         | No                 |
+| **Raspberry Pi 4**  | V3D         | ?                  |
+| **Intel**           | i915        | VAAPI              |
+| **Nvidia**          | Nouveau     | VAAPI/VDPAU?       |
+| **AMD**             | radeon      | VAAPI              |
 
 ______________________________________________________________________
 
@@ -59,13 +59,13 @@ ______________________________________________________________________
 
 Ubuntu Frame fails to start when run on Ubuntu Server 21.10 in a default configuration. This can be fixed by changing the kernel device tree overlay to one with `kms`
 
-*Note on RPi3 with Ubuntu Server 21.10*
+*Note on Raspberry Pi 3 with Ubuntu Server 21.10*
 
 Ref. [issue #39](https://github.com/canonical/ubuntu-frame/issues/39):
 
 > In [Impish Release notes](https://discourse.ubuntu.com/t/impish-indri-release-notes/21951) I've followed the suggestion to change the `dtoverlay` setting in `config.txt` ... In `config.txt` I found `dtoverlay=dwc2` and changed it to `dtoverlay=vc4-fkms-v3d`, and now it displays.
 
-*Note on RPi4 with Ubuntu Server 22.04*
+*Note on Raspberry Pi 4 with Ubuntu Server 22.04*
 
 Ref. [ Run Ubuntu Frame on your Device/2](https://discourse.ubuntu.com/t/29377/2):
 
