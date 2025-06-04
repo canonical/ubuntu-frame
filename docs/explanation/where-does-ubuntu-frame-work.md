@@ -39,7 +39,7 @@ Ubuntu Frame should work on hardware that:
 1. has a Mesa driver; and,
 1. has the corresponding kernel drivers enabled
 
-If you find there are problems on such a system then it is worth [filing a bug](https://github.com/MirServer/ubuntu-frame/issues).
+If you find there are problems on such a system then it is worth [filing a bug](https://github.com/canonical/ubuntu-frame/issues).
 
 Because different drivers and hardware work differently we can only test and, if necessary, debug on systems to which we have access.
 
@@ -61,7 +61,7 @@ Ubuntu Frame fails to start when run on Ubuntu Server 21.10 in a default configu
 
 *Note on RPi3 with Ubuntu Server 21.10*
 
-Ref. [issue #39](https://github.com/MirServer/ubuntu-frame/issues/39):
+Ref. [issue #39](https://github.com/canonical/ubuntu-frame/issues/39):
 
 > In [Impish Release notes](https://discourse.ubuntu.com/t/impish-indri-release-notes/21951) I've followed the suggestion to change the `dtoverlay` setting in `config.txt` ... In `config.txt` I found `dtoverlay=dwc2` and changed it to `dtoverlay=vc4-fkms-v3d`, and now it displays.
 

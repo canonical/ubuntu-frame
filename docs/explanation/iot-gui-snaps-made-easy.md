@@ -14,7 +14,7 @@ There are various types of application that fall into this category. As well as 
 
 ## Dancing with Wayland, Dancing with Daemons
 
-The [iot-example-graphical-snap](https://github.com/MirServer/iot-example-graphical-snap) repository incorporates the experience gained writing a number of snaps to work with Ubuntu Frame and simplified the process. The result of this is a simple approach to snapping an IoT GUI.
+The [iot-example-graphical-snap](https://github.com/canonical/iot-example-graphical-snap) repository incorporates the experience gained writing a number of snaps to work with Ubuntu Frame and simplified the process. The result of this is a simple approach to snapping an IoT GUI.
 
 ### The "wayland interface dance"
 
@@ -113,5 +113,5 @@ Here some examples that use these techniques:
 
 | Snap Store                                                  | Github                                         | Comment |
 | ----------------------------------------------------------- | ---------------------------------------------- | ------- |
-| [mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi)       | https://github.com/MirServer/mir-kiosk-kodi    |         |
-| [mir-kiosk-scummvm](https://snapcraft.io/mir-kiosk-scummvm) | https://github.com/MirServer/mir-kiosk-scummvm | SDL2    |
+| [mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi)       | https://github.com/canonical/mir-kiosk-kodi    |         |
+| [mir-kiosk-scummvm](https://snapcraft.io/mir-kiosk-scummvm) | https://github.com/canonical/mir-kiosk-scummvm | SDL2    |

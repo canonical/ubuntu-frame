@@ -114,4 +114,4 @@ The first place to look would be `snap logs ubuntu-frame-vnc`. Use `-n <number>`
 
 You can also use `[sudo] snap run --shell ubuntu-frame-vnc` to get into the environment of the VNC server and poke around. Use `${SNAP}/usr/local/bin/wayvnc` to run it, and provide configuration options, like `--log-level trace` to get more information.
 
-Please file any issues you find, with as much context as possible, on [the GitHub page](https://github.com/MirServer/ubuntu-frame-vnc/issues).
+Please file any issues you find, with as much context as possible, on [the GitHub page](https://github.com/canonical/ubuntu-frame-vnc/issues).

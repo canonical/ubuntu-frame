@@ -47,7 +47,7 @@ This feature is only available from Frame version **187** onward
 This controls whether a side bar application switcher ("Launcher" from Unity Desktop design) is displayed. If your solution requires multiple applications that the user needs to be able to switch between, this will enable that - displaying a side bar with clickable application icons.
 
 ```bash
-# Until https://github.com/snapcore/snapd/pull/14331 gets released
+# Until https://github.com/canonical/snapd/pull/14331 gets released
 $ snap refresh snapd --channel edge/ubuntu-core-desktop
 
 # Give Frame access to application metadata and icons

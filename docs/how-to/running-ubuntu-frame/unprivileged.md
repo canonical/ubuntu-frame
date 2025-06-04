@@ -206,9 +206,9 @@ We'll rely on [cloud-init](https://cloudinit.readthedocs.io/) to do the extra se
 
 You can view the differences between the stock gadgets and our custom ones here, for the PC and Pi platforms, respectively:
 
-https://github.com/snapcore/pc-gadget/compare/22...MirServer:pc-gadget:22-frame
+https://github.com/canonical/pc-gadget/compare/22...MirServer:pc-gadget:22-frame
 
-https://github.com/snapcore/pi-gadget/compare/22-arm64...MirServer:pi-gadget:22-arm64-frame
+https://github.com/canonical/pi-gadget/compare/22-arm64...MirServer:pi-gadget:22-arm64-frame
 
 To build it, just run Snapcraft within the checkout:
 
@@ -222,12 +222,12 @@ There. Your gadget snap is ready.
 
 ### Building, testing and deploying the image
 
-To build images from the gadget snaps we've prepared, we'll use [ubuntu-image](https://github.com/canonical/ubuntu-image) and [stock](https://github.com/snapcore/models/) model [assertions](https://ubuntu.com/core/docs/reference/assertions/model). Your solution may require custom models, but that's out of scope here.
+To build images from the gadget snaps we've prepared, we'll use [ubuntu-image](https://github.com/canonical/ubuntu-image) and [stock](https://github.com/canonical/models/) model [assertions](https://ubuntu.com/core/docs/reference/assertions/model). Your solution may require custom models, but that's out of scope here.
 Here are the assertions that interest us:
 
-- [ubuntu-core-22-amd64-dangerous](https://github.com/snapcore/models/blob/master/ubuntu-core-22-amd64-dangerous.model)
-- [ubuntu-core-22-arm64-dangerous](https://github.com/snapcore/models/blob/master/ubuntu-core-22-arm64-dangerous.model)
-- [ubuntu-core-22-pi-arm64-dangerous](https://github.com/snapcore/models/blob/master/ubuntu-core-22-pi-arm64-dangerous.model)
+- [ubuntu-core-22-amd64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-amd64-dangerous.model)
+- [ubuntu-core-22-arm64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-arm64-dangerous.model)
+- [ubuntu-core-22-pi-arm64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-pi-arm64-dangerous.model)
 
 **NB**: they are "dangerous" because they allow inserting snaps when building the image. If you have the appropriate infrastructure (e.g. a [Dedicated Snap Store](https://ubuntu.com/core/docs/dedicated-snap-stores)), you can create and publish a properly signed model assertion instead.
 

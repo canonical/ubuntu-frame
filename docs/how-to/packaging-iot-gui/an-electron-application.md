@@ -110,7 +110,7 @@ In the *same terminal window* you opened at the start of the last section, type:
 
 ```
 cd ..
-git clone https://github.com/MirServer/iot-example-graphical-snap.git
+git clone https://github.com/canonical/iot-example-graphical-snap.git
 cd iot-example-graphical-snap
 ```
 

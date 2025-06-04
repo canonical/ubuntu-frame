@@ -63,7 +63,7 @@ Finally, it is desirable to avoid shipping anything from mesa that gets pulled i
       done
 ```
 
-(This example is taken from a [mir-kiosk-kodi PR](https://github.com/MirServer/mir-kiosk-kodi/pull/22)).
+(This example is taken from a [mir-kiosk-kodi PR](https://github.com/canonical/mir-kiosk-kodi/pull/22)).
 
 ### The `graphics-core20` libraries
 
