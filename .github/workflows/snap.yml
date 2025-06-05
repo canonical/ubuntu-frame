@@ -40,3 +40,9 @@ jobs:
         launchpad-accept-public-upload: true
         publish: ${{ github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name }}
         publish-channel: 24/edge/pr${{ github.event.number }}
+
+    - if: ${{ failure() && runner.debug  }}
+      name: Setup upterm session
+      uses: mxschmitt/action-tmate@v3
+      with:
+        limit-access-to-actor: true
