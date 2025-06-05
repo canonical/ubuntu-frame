@@ -2,7 +2,7 @@
 
 # Configuring Ubuntu Frame through a gadget snap
 
-The [snapcraft documentation](https://snapcraft.io/docs/gadget-snap) describes gadget snaps in detail. The only additional thing we'll show here is an example showing how to set the above configuration options for `ubuntu-frame`:
+The [snapcraft documentation](https://snapcraft.io/docs/the-gadget-snap) describes gadget snaps in detail. The only additional thing we'll show here is an example showing how to set the above configuration options for `ubuntu-frame`:
 
 ```yaml
 defaults:

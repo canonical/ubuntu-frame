@@ -32,7 +32,7 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        default-provider: mesa-core22
    ```
 
-1. [lay out](https://snapcraft.io/docs/snap-layouts) these paths in your snap:
+1. [lay out](https://documentation.ubuntu.com/snapcraft/stable/reference/layouts/) these paths in your snap:
 
    ```yaml
    layout:

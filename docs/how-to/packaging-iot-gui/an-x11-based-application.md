@@ -20,7 +20,7 @@ If you want to learn how to install pre-built applications such as [wpe-webkit-m
 
 Note: This guide will not cover how to build an application using a toolkit that supports Wayland (there are many). And while it is possible to [package X11](/how-to/packaging-iot-gui/an-x11-based-application.md)-based applications to work on Ubuntu Core, this guide will not cover this either. We will also not cover how to upload your snap to the snap store, nor building custom Ubuntu Core images with pre-configured snaps. That is documented on [snapcraft.io/docs](https://snapcraft.io/docs).
 
-If you are new to Ubuntu Core, we recommend reading our [getting started document](https://ubuntu.com/core/docs/getting-started). If you want to learn about building custom Ubuntu Core images, you could find information on the [snapcraft docs](https://snapcraft.io/docs/gadget-snap).
+If you are new to Ubuntu Core, we recommend reading our [getting started document](https://documentation.ubuntu.com/core/getting-started/). If you want to learn about building custom Ubuntu Core images, you could find information on the [snapcraft docs](https://snapcraft.io/docs/the-gadget-snap).
 
 ## Requirements
 
@@ -65,9 +65,9 @@ If you don't have git installed, now is a good time to install it (on Ubuntu, us
 
 For use with [Ubuntu Core](https://ubuntu.com/core), your application needs to be packaged as a snap. This will also allow you to leverage Over The Air updates, automatic rollbacks, delta updates, update semantic channels, and more. If you don't use Ubuntu Core, but instead another form of Linux, we recommend you use snaps to get many of these advantages.
 
-There's a lot of information about [packaging snaps online](https://ubuntu.com/tutorials/create-your-first-snap#1-overview), and the purpose here is not to teach about the [snapcraft](https://snapcraft.io/docs/snapcraft-overview) packaging tool or the [Snap Store](https://snapcraft.io/store). We will, instead, focus on the things that are special to IoT graphics.
+There's a lot of information about [packaging snaps online](https://ubuntu.com/tutorials/create-your-first-snap#1-overview), and the purpose here is not to teach about the [snapcraft](https://documentation.ubuntu.com/snapcraft/stable/tutorials/craft-a-snap/) packaging tool or the [Snap Store](https://snapcraft.io/store). We will, instead, focus on the things that are special to IoT graphics.
 
-Much of what you find online about packaging GUI applications as a snap refers to packaging for desktop. Some of that doesn't apply to IoT as Ubuntu Core and Ubuntu Server do not include everything a desktop installation does and the snaps need to run as [daemons](https://snapcraft.io/docs/services-and-daemons) (background services) instead of being launched in a user session. In particular, for the time being, you should ignore various Snapcraft [extensions](https://snapcraft.io/docs/snapcraft-extensions) that help writing snap recipes that integrate with the desktop environment (e.g. using the correct theme) as they are not tested for use with Ubuntu Frame on Ubuntu Core.
+Much of what you find online about packaging GUI applications as a snap refers to packaging for desktop. Some of that doesn't apply to IoT as Ubuntu Core and Ubuntu Server do not include everything a desktop installation does and the snaps need to run as [daemons](https://documentation.ubuntu.com/snapcraft/stable/reference/project-file/snapcraft-yaml/#apps) (background services) instead of being launched in a user session. In particular, for the time being, you should ignore various Snapcraft [extensions](https://documentation.ubuntu.com/snapcraft/stable/how-to/extensions/) that help writing snap recipes that integrate with the desktop environment (e.g. using the correct theme) as they are not tested for use with Ubuntu Frame on Ubuntu Core.
 
 Writing snap recipes without these extensions is not difficult as we'll illustrate for each of the example programs used in the previous section.
 

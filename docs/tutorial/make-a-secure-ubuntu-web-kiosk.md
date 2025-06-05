@@ -40,13 +40,13 @@ Where we need an X11 server it is much more secure to embed it in the confined s
 
 ![mir-kiosk-architectures|690x428](722b008b93317a7fe95abf4743685cc4d79f5eb5.png)
 
-One additional detail to note is how a Wayland client connects to a Wayland server. This is done via Wayland sockets, which need to be shared between client (your app) and server (ubuntu-frame). Snapd has robust and secure ways to provide this kind of communication channel between two snap applications, called '[interfaces](https://docs.snapcraft.io/core/interfaces)'.
+One additional detail to note is how a Wayland client connects to a Wayland server. This is done via Wayland sockets, which need to be shared between client (your app) and server (ubuntu-frame). Snapd has robust and secure ways to provide this kind of communication channel between two snap applications, called '[interfaces](https://snapcraft.io/docs/interface-management)'.
 
 ### Snap interfaces
 
-Snapd provides a large number of [interfaces](https://docs.snapcraft.io/core/interfaces), permitting access to everything from hardware to other services on the system. The entire list is available here:
+Snapd provides a large number of [interfaces](https://snapcraft.io/docs/interface-management), permitting access to everything from hardware to other services on the system. The entire list is available here:
 
-<https://docs.snapcraft.io/reference/interfaces>
+<https://snapcraft.io/docs/interface-management>
 
 You can use the `snap interfaces` command to list the interfaces available on your system, the slots providing them and the plugs consuming them.
 

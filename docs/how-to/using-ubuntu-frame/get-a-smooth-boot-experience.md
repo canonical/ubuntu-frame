@@ -61,7 +61,7 @@ If you have other configuration, just amend it to include the above values. You 
 
 ## Embedding in an image
 
-Refer to the relevant documentation for how to [configure Frame](/reference/configuring-ubuntu-frame-through-a-gadget-snap.md) and then [build images](https://ubuntu.com/core/docs/image-building), but here are the snippets specific to this solution:
+Refer to the relevant documentation for how to [configure Frame](/reference/configuring-ubuntu-frame-through-a-gadget-snap.md) and then [build images](https://documentation.ubuntu.com/core/image-building/), but here are the snippets specific to this solution:
 
 - The required configuration in the gadget snap:
 

@@ -8,7 +8,7 @@ You've built an application and packaged it with a snap for use with Ubuntu Fram
 
 What you need is an Ubuntu Core image. It's a pre-configured bootable image that includes one or more snaps to provide a specific set of features.
 
-https://ubuntu.com/core/docs/quick-start
+https://documentation.ubuntu.com/core/quick-start/
 
 ### Which base?
 
@@ -51,7 +51,7 @@ https://snapcraft.io/docs
 
 As part of the release cycle of Ubuntu Frame we test it with the snaps we maintain and those we have developed with customers. Following that we promote the release to the `candidate` and announce a "call for testing". You also should run your testing devices on the `candidate` channel, in which we keep our next stable for at least a week before promoting to `stable`.
 
-https://discourse.ubuntu.com/c/mir/15
+https://discourse.ubuntu.com/c/project/mir/15
 
 ### Branding
 

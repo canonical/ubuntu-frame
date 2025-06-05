@@ -18,9 +18,9 @@ That means we lose the security layer of running as an unprivileged user, both f
 
 ## Solution
 
-To have Frame support as many existing applications as possible, we'll run it as the compositor in a full user session - as if we replaced e.g. GNOME in the default Ubuntu installation. That user session will be started automatically on boot, and resource access will be mediated by [systemd-logind](https://www.freedesktop.org/software/systemd/man/systemd-logind.service.html) - only the active session can access e.g. the GPU, the sound hardware and others.
+To have Frame support as many existing applications as possible, we'll run it as the compositor in a full user session - as if we replaced e.g. GNOME in the default Ubuntu installation. That user session will be started automatically on boot, and resource access will be mediated by [systemd-logind](https://www.freedesktop.org/software/systemd/man/latest/systemd-logind.service.html) - only the active session can access e.g. the GPU, the sound hardware and others.
 
-The client will also run as part of that session, all managed by the [SystemD user manager](https://www.freedesktop.org/software/systemd/man/user@.service.html#). They will be autostarted on session startup.
+The client will also run as part of that session, all managed by the [SystemD user manager](https://www.freedesktop.org/software/systemd/man/latest/user@.service.html). They will be autostarted on session startup.
 
 You'll be able to run any Wayland application that's packaged as a snap, though some may expect more components of a user session (for example, [portals](https://github.com/flatpak/xdg-desktop-portal) or an audio server), which are out of scope for the Ubuntu Frame snap.
 
@@ -89,7 +89,7 @@ I'll go through a couple examples that showcase two ways to "bring" applications
 
 - _Using the app's `.desktop` file_
   All applications on Linux have a `.desktop` file that describes them - including what to execute to launch it. Another convention is that all `.desktop` files in `~/.config/autostart` are launched with the graphical session.
-  We can use that through the [xdg-autostart-generator](https://www.freedesktop.org/software/systemd/man/systemd-xdg-autostart-generator.html), which reads the `.desktop` files and generates user services.
+  We can use that through the [xdg-autostart-generator](https://www.freedesktop.org/software/systemd/man/latest/systemd-xdg-autostart-generator.html), which reads the `.desktop` files and generates user services.
 
   Let's install [flutter-gallery](https://snapcraft.io/flutter-gallery) and symlink its `.desktop` file to the autostart directory:
 
@@ -192,17 +192,17 @@ If you reboot now, the user session will start on boot, and with it Frame and th
 
 ## Deployment
 
-Bet you don't want to go through the above steps on the hundreds of devices you're going to deploy on. The way to avoid this with Ubuntu Core is to build a bespoke image fitting your solution. See [Custom images](https://ubuntu.com/core/docs/custom-images) for a lot more information on this than we're going to cover.
+Bet you don't want to go through the above steps on the hundreds of devices you're going to deploy on. The way to avoid this with Ubuntu Core is to build a bespoke image fitting your solution. See [Custom images](https://documentation.ubuntu.com/core/custom-images/) for a lot more information on this than we're going to cover.
 
 ### The gadget snap
 
-From [gadget snap documentation](https://ubuntu.com/core/docs/gadget-snaps):
+From [gadget snap documentation](https://documentation.ubuntu.com/core/gadget-snaps/):
 
 > The gadget snap is responsible for defining and configuring system properties specific to one or more devices.)
 
 Rather than list all the changes to a gadget snap needed to build this solution, we'll maintain branches against stock gadgets for the PC and Pi platforms that you can modify to taste and go from there. We'll keep it heavily commented so it's clear what's happening where and why.
 
-We'll rely on [cloud-init](https://cloudinit.readthedocs.io/) to do the extra setup needed on first boot, with everything else being stock Ubuntu Core.
+We'll rely on [cloud-init](https://cloudinit.readthedocs.io/en/latest/) to do the extra setup needed on first boot, with everything else being stock Ubuntu Core.
 
 You can view the differences between the stock gadgets and our custom ones here, for the PC and Pi platforms, respectively:
 
@@ -222,14 +222,14 @@ There. Your gadget snap is ready.
 
 ### Building, testing and deploying the image
 
-To build images from the gadget snaps we've prepared, we'll use [ubuntu-image](https://github.com/canonical/ubuntu-image) and [stock](https://github.com/canonical/models/) model [assertions](https://ubuntu.com/core/docs/reference/assertions/model). Your solution may require custom models, but that's out of scope here.
+To build images from the gadget snaps we've prepared, we'll use [ubuntu-image](https://github.com/canonical/ubuntu-image) and [stock](https://github.com/canonical/models/) model [assertions](https://documentation.ubuntu.com/core/reference/assertions/model/). Your solution may require custom models, but that's out of scope here.
 Here are the assertions that interest us:
 
 - [ubuntu-core-22-amd64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-amd64-dangerous.model)
 - [ubuntu-core-22-arm64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-arm64-dangerous.model)
 - [ubuntu-core-22-pi-arm64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-pi-arm64-dangerous.model)
 
-**NB**: they are "dangerous" because they allow inserting snaps when building the image. If you have the appropriate infrastructure (e.g. a [Dedicated Snap Store](https://ubuntu.com/core/docs/dedicated-snap-stores)), you can create and publish a properly signed model assertion instead.
+**NB**: they are "dangerous" because they allow inserting snaps when building the image. If you have the appropriate infrastructure (e.g. a [Dedicated Snap Store](https://documentation.ubuntu.com/core/dedicated-snap-stores/)), you can create and publish a properly signed model assertion instead.
 
 To build the image, you run `ubuntu-image snap <model>`. To insert custom snaps, or additional ones from the store, pass `--snap <file> --snap <name>[=<channel>]`. You can read more about the available options in [ubuntu-image's manual](https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/ubuntu-image.html).
 
@@ -245,7 +245,7 @@ Created snap package pc_22-0.4_amd64.snap
 ubuntu-frame_amd64.img ready
 ```
 
-There are a handful ways you can test that image - by [installing it on a device](https://documentation.ubuntu.com/core/tutorials/try-pre-built-images/index.html#install-on-a-generic-device), or by [running it under QEMU](https://documentation.ubuntu.com/core/tutorials/try-pre-built-images/index.html#install-on-a-virtual-machine). Another approach is to use [virt-manager](https://ubuntu.com/server/docs/virtualization-virt-tools), creating the VM with the following command:
+There are a handful ways you can test that image - by [installing it on a device](https://documentation.ubuntu.com/core/tutorials/try-pre-built-images/index.html#install-on-a-generic-device), or by [running it under QEMU](https://documentation.ubuntu.com/core/tutorials/try-pre-built-images/index.html#install-on-a-virtual-machine). Another approach is to use [virt-manager](https://documentation.ubuntu.com/server/virtualization-virt-tools/), creating the VM with the following command:
 
 ```
 $ sudo virt-install --connect qemu:///session \
@@ -271,4 +271,4 @@ More components could be brought into the session, including [Ubuntu Frame OSK](
 
 With this solution, snaps won't refresh automatically, as it doesn't know how to restart the services when they're refreshed. You'll want to set up schedule to stop the user session, refresh the snaps and restart the session again at appropriate times.
 
-When user services are first class citizens in SnapD, this will again get simpler, as you [can manage how and when do things get refreshed automatically](https://snapcraft.io/docs/keeping-snaps-up-to-date).
+When user services are first class citizens in SnapD, this will again get simpler, as you [can manage how and when do things get refreshed automatically](https://snapcraft.io/docs/managing-updates).

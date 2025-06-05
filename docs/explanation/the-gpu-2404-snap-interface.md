@@ -18,7 +18,7 @@ This section explains how graphical application snaps can consume this interface
 
 ### Using the helpers provided
 
-The simplest way to enable your snap to consume the interface are the helpers we maintain in the [gpu-snap](https://github.com/canonical/graphics-core) repository.
+The simplest way to enable your snap to consume the interface are the helpers we maintain in the [gpu-snap](https://github.com/canonical/gpu-snap) repository.
 
 There's just a few things you have to do in your `snap/snapcraft.yaml` to make use of it:
 
@@ -34,7 +34,7 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
 > snapcraft expand-extensions
 > ```
 >
-> Please checkout the code for your specific extension [here](https://github.com/canonical/snapcraft/blob/main/extensions/desktop)
+> Please checkout the code for your specific extension [here](https://github.com/canonical/snapcraft/tree/main/extensions/desktop)
 
 1. plug the `gpu-2404` interface (the wrapper assumes it's put under `$SNAP/gpu`):
 
@@ -46,14 +46,14 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        default-provider: mesa-2404
    ```
 
-1. If your app needs X11 support, [lay out](https://snapcraft.io/docs/snap-layouts) these paths in your snap:
+1. If your app needs X11 support, [lay out](https://documentation.ubuntu.com/snapcraft/stable/reference/layouts/) these paths in your snap:
 
 ```yaml
   /usr/share/X11/XErrorDB:
     symlink: $SNAP/gpu-2404/X11/XErrorDB
 ```
 
-3. use [`bin/gpu-2404-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-wrapper) in your [`command-chain`](https://snapcraft.io/docs/snapcraft-app-and-service-metadata#apps.%3Capp-name%3E.command-chain)s:
+3. use [`bin/gpu-2404-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-wrapper) in your [`command-chain`](https://documentation.ubuntu.com/snapcraft/stable/reference/project-file/snapcraft-yaml/#apps.%3Capp-name%3E.command-chain)s:
 
    ```yaml
    apps:
@@ -189,6 +189,6 @@ Refer to the documentation of the individual tools to see what the results mean.
 
 The lists of files shipped by a selection of snaps is maintained in the gpu-snap repository here:
 
-https://github.com/canonical/graphics-core/tree/main/lists
+https://github.com/canonical/gpu-snap/tree/main/lists
 
 The cleanup wrapper above uses that to prune the application snap from things it will receive through the content interface.

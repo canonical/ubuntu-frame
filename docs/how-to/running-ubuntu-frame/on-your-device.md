@@ -8,7 +8,7 @@ This is a quick reference for running Ubuntu Frame on a device.
 
 You need either [Ubuntu Core](https://ubuntu.com/core) or a version of Linux supporting snaps.
 
-1. Setting up Ubuntu Core is described in [Get Ubuntu for IoT](https://ubuntu.com/download/iot)
+1. Setting up Ubuntu Core is described in [Get Ubuntu for IoT](https://ubuntu.com/download/core)
 1. Setting up snapd on other versions of Linux is described in [Installing snapd](https://snapcraft.io/docs/installing-snapd)
 
 Follow the instructions to install Ubuntu Core/snapd and ssh into your device.

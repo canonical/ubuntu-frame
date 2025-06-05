@@ -6,7 +6,7 @@
 
 On "desktop" Linux installations there are limited options for the graphics stack, and most systems will run with the "open" Mesa graphics drivers and/or Nvidia drivers.
 
-The IoT world is a bit more varied, often with device specific drivers provided by the board manufacturer. [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) is designed to work with graphics stacks that provide KMS, `libgbm` and an EGL supporting [EGL_WL_bind_wayland_display](https://www.khronos.org/registry/EGL/extensions/WL/EGL_WL_bind_wayland_display.txt).
+The IoT world is a bit more varied, often with device specific drivers provided by the board manufacturer. [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) is designed to work with graphics stacks that provide KMS, `libgbm` and an EGL supporting [EGL_WL_bind_wayland_display](https://registry.khronos.org/EGL/extensions/WL/EGL_WL_bind_wayland_display.txt).
 
 It does this by using a Snap "content interface", [graphics-core20](/explanation/the-graphics-core20-snap-interface.md), that allows alternative drivers providing the facilities to be used. By default, [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) will use the [mesa-core20](https://snapcraft.io/mesa-core20) implementation of this interface which provides the Mesa drivers from the Ubuntu 20.04LTS Archive.
 

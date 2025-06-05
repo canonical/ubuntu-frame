@@ -110,7 +110,7 @@ With this approach:
 
 ### Now and the future
 
-We have been using this approach with [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) both with mesa-core20 and other drivers providing KMS, `libgbm` and an EGL supporting [EGL_WL_bind_wayland_display](https://www.khronos.org/registry/EGL/extensions/WL/EGL_WL_bind_wayland_display.txt).
+We have been using this approach with [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) both with mesa-core20 and other drivers providing KMS, `libgbm` and an EGL supporting [EGL_WL_bind_wayland_display](https://registry.khronos.org/EGL/extensions/WL/EGL_WL_bind_wayland_display.txt).
 
 Use of the `graphics-core20` interface is fully integrated into both [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) and the examples we provide for [packaging IoT GUIs](/how-to/index.md).
 
