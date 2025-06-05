@@ -1,6 +1,6 @@
 (run-ubuntu-frame-in-your-desktop-environment)=
 
-# Run Ubuntu Frame in your Desktop Environment
+# Run Ubuntu Frame in your desktop environment
 
 This is how to run `ubuntu-frame` as an application window within your Linux desktop environment. For having Ubuntu Frame take over the whole display as you normally would for deployment, see the `daemon` configuration option in [the reference](ubuntu-frame-configuration-options).
 

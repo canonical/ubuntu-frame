@@ -1,6 +1,6 @@
 (developer-guide)=
 
-# Developer Guide
+# Developer guide
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the foundation for embedded displays. It provides a reliable, secure and easy way to embed your applications into a kiosk-style, IoT device, or digital signage solution. With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window, a dedicated set of windows behaviours, input from touch, keyboard and mouse without needing to deal with the specific hardware, on-screen keyboard, and more.
 
@@ -77,7 +77,7 @@ The examples used here are game applications, such as Mastermind, Neverputt, and
 
 The first step is to download the application and execute it:
 
-#### GTK Example: Mastermind
+#### GTK example: Mastermind
 
 ```
 sudo apt install gnome-mastermind
@@ -92,7 +92,7 @@ If your application doesn’t appear in the Ubuntu Frame window or look right at
 
 Close Mastermind (`Ctrl-Q`) and try the next example:
 
-#### Qt Example: Bomber
+#### Qt example: Bomber
 
 ```
 sudo apt install bomber
@@ -105,7 +105,7 @@ Now Frame's window should contain the "Bomber" game as shown in the next image.
 
 Close that (`Ctrl-Q`) and try the next example.
 
-#### SDL2 Example: Neverputt
+#### SDL2 example: Neverputt
 
 ```
 sudo apt install neverputt
@@ -172,7 +172,7 @@ Once you have the customised snapcraft recipe you can snap your example applicat
 
 ### Toolkit examples
 
-#### GTK Example: Mastermind
+#### GTK example: Mastermind
 
 Switch to the GTK example branch. Then use snapcraft to build the snap:
 
@@ -219,7 +219,7 @@ Now Frame’s window should contain the “Mastermind” game.
 
 Close that (`Ctrl-Q`) and try the next example:
 
-#### Qt Example: Bomber
+#### Qt example: Bomber
 
 To avoid confusion, delete the .snap file created with the previous example:
 
@@ -267,7 +267,7 @@ Now Frame's window should contain the "Bomber" game.
 
 Close that (`Ctrl-Q`) and try the next example:
 
-#### SDL2 Example: Neverputt
+#### SDL2 example: Neverputt
 
 To avoid confusion, delete the .snap file created with the previous example:
 

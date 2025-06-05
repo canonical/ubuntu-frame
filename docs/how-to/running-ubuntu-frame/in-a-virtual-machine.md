@@ -1,6 +1,6 @@
 (run-ubuntu-frame-in-a-virtual-machine)=
 
-# Run Ubuntu Frame in a Virtual Machine
+# Run Ubuntu Frame in a virtual machine
 
 This is a quick reference for running Ubuntu Frame in an Ubuntu Core virtual machine.
 
@@ -28,7 +28,7 @@ $ qemu-virgil -enable-kvm -m 512 -device virtio-vga,virgl=on\
  ~/snap/qemu-virgil/common/ubuntu-core-20-amd64.img
 ```
 
-This will create a QEMU window on your desktop and you need to follow through the prompts to initialize the VM with your launchpad account. (If you don’t have a launchpad account, get one and set up a public SSH key.)
+This will create a QEMU window on your desktop and you need to follow through the prompts to initialize the VM with your Launchpad account. (If you don’t have a Launchpad account, get one and set up a public SSH key.)
 
 Connect to the VP using ssh from a terminal window (ignore the address shown in the QEMU window and use the port set in the above command):
 
@@ -55,7 +55,7 @@ wallpaper-bottom=0xdd4814
 
 The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of configuration options to control Ubuntu Frame, but they are all set using `config` and `display` (more details in [the reference](ubuntu-frame-configuration-options))
 
-## Install a Web Kiosk
+## Install a web kiosk
 
 Still in your ssh session, install web kiosk:
 

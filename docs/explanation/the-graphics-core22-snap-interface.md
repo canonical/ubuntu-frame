@@ -1,6 +1,6 @@
 (the-graphics-core22-snap-interface)=
 
-# The graphics-core22 Snap interface
+# The graphics-core22 snap interface
 
 This document describes how to use the `graphics-core22` Snap interface, what are the requirements to create a content provider snap as well as discusses the design of the interface.
 

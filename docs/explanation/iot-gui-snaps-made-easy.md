@@ -12,7 +12,7 @@ Essentially IoT GUI snaps are Wayland applications packaged as a snap. Compared 
 
 There are various types of application that fall into this category. As well as bespoke "kiosks" e.g. [wpe-webkit](https://snapcraft.io/wpe-webkit-mir-kiosk), there are also things that might be embedded e.g. [Kodi](https://snapcraft.io/mir-kiosk-kodi) and games e.g. [scummvm](https://snapcraft.io/mir-kiosk-scummvm).
 
-## Dancing with Wayland, Dancing with Daemons
+## Dancing with Wayland, dancing with daemons
 
 The [iot-example-graphical-snap](https://github.com/canonical/iot-example-graphical-snap) repository incorporates the experience gained writing a number of snaps to work with Ubuntu Frame and simplified the process. The result of this is a simple approach to snapping an IoT GUI.
 

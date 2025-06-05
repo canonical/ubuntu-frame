@@ -1,6 +1,6 @@
 (the-graphics-core20-snap-interface)=
 
-# The graphics-core20 Snap interface
+# The graphics-core20 snap interface
 
 ## The problem with snapping userspace graphics drivers
 

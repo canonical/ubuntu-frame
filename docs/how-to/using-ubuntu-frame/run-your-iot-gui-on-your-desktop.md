@@ -50,11 +50,11 @@ Checking: shell-app option (needed for frame-it.shell and to run a login shell)
 
 If you don't have Ubuntu Frame installed already, Frame-it will prompt you with the commands to install it. Ignore any "WARNING" messages about `shell-app` for now as that's an advanced feature we don't need.
 
-## 3. Frame-it "your IoT GUI"
+## 3. `frame-it` "your IoT GUI"
 
 There are two ways you can use Frame-it to run your application.
 
-### 3.1 frame-it
+### 3.1 `frame-it`
 
 The first simply runs it as the current user (and can also be used for non-snapped applications that use Wayland). This doesn't test everything that might need testing on an IoT device, but is more convenient for tests of your UI.
 
@@ -95,7 +95,7 @@ $ snap restart wpe-webkit-mir-kiosk.daemon
 
 ______________________________________________________________________
 
-## Note: On Frame-it being a "classic" snap
+## Note: On `frame-it` being a "classic" snap
 
 It is a classic snap, which gives it full access to your system, but you can review all the scripts to see what they are doing:
 

@@ -1,4 +1,5 @@
 # Leave a blank line at the end of this file to support concatenation
+Bomber
 DBus
 DIRS
 DNSBench
@@ -7,6 +8,8 @@ Dashkiosk
 Datasheet
 Diagnostic's
 EGL
+Electron
+Flutter
 GBM
 GL
 GLES
@@ -22,6 +25,7 @@ LIBGL
 LIBVA
 Libdrm
 Librem
+Mastermind
 MirServer
 Neverputt
 Nouveau
@@ -29,6 +33,7 @@ Nvidia
 OSK
 OpenGL
 Phosh
+Qt5
 RGB
 RealVNC
 Remmina
@@ -42,6 +47,8 @@ Sommelier
 Squeekboard
 SystemD
 TigerVNC
+Ubuntu Frame
+Ubuntu Frame OSK
 VAAPI
 VDPAU
 VNC
@@ -50,6 +57,7 @@ WL
 WPE
 Wayland
 WebKit
+X11
 Xorg
 Xwayland
 authorise
@@ -90,6 +98,7 @@ iot
 kisak
 kms
 kodi
+landscape
 libEGL
 libGL
 libGLESv

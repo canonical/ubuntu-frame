@@ -1,6 +1,6 @@
 (building-your-product)=
 
-# Building Your Product
+# Building your product
 
 ## With Ubuntu Frame and Ubuntu Core
 

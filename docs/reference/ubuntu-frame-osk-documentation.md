@@ -8,7 +8,7 @@ ______________________________________________________________________
 
 Ubuntu Frame OSK is the easiest way to add on-screen keyboard support to Ubuntu Frame. To create Ubuntu Frame OSK, we selected Squeekboard, an on-screen keyboard built by Purism for the Librem 5. We chose Squeekboard because it’s modern, stable, and actively maintained. Maintainers and contributors also made Squeekboard really easy to work with, plus it supports a large and growing number of languages and layouts, such as US, German, Russian, Arabic, and many more.
 
-## Setup System
+## Setup system
 
 Make sure you’ve installed and refreshed [Ubuntu Frame](https://mir-server.io/ubuntu-frame/).
 

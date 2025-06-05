@@ -4,7 +4,7 @@
 
 Ubuntu Frame has an easy-to-use diagnostic screen that can be used to inform the user of any issues that have occurred when running your application. It allows the application to define which information is most useful to display to diagnose and fix any bring-up issues or runtime errors.
 
-## Setup System
+## Setup system
 
 Make sure to install or refresh [Ubuntu Frame](https://mir-server.io/ubuntu-frame/).
 
@@ -20,7 +20,7 @@ To install the demo snap:
 snap install frame-diagnostic --edge
 ```
 
-## Running the Demo
+## Running the demo
 
 Launch Ubuntu Frame:
 
@@ -46,7 +46,7 @@ frame-diagnostic "Goodbye, world!"
 
 The text will update automatically when the diagnostic text changes.
 
-## Using With Your Application
+## Using with your application
 
 To learn how to implement Ubuntu Frame's diagnostic screen, take a look at the demo app's [`snap/snapcraft.yaml`](https://github.com/AlanGriffiths/ubuntu-frame-diagnostic/blob/master/snap/snapcraft.yaml) and notice the following entries:
 

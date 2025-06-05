@@ -1,6 +1,6 @@
 (run-ubuntu-frame-on-your-device)=
 
-# Run Ubuntu Frame on your Device
+# Run Ubuntu Frame on your device
 
 This is a quick reference for running Ubuntu Frame on a device.
 
@@ -38,7 +38,7 @@ wallpaper-bottom=0xdd4814
 
 The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of configuration options to control the kiosk display, but they are all set using `config` and `display` (more details in [the reference](ubuntu-frame-configuration-options))
 
-## Install a Web Kiosk
+## Install a web kiosk
 
 Still in your ssh session, install web kiosk:
 
