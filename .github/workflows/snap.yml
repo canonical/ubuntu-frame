@@ -24,6 +24,7 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v4
       with:
+        lfs: true
         fetch-depth: 0  # needed for version determination
 
     - name: Patch PPA and version

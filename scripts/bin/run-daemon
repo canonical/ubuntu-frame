@@ -6,7 +6,7 @@ then
   initialise-display-config&
 fi
 
-# Unblock racy clients that hang https://github.com/MirServer/ubuntu-frame/issues/130
+# Unblock racy clients that hang https://github.com/canonical/ubuntu-frame/issues/130
 sh -c 'sleep 5; mkdir "/run/user/007"; rmdir "/run/user/007"'& disown
 
 exec nohup "$@"
