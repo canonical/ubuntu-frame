@@ -1,5 +1,23 @@
+(explanation-index)=
 # Explanation
 
 The explanatory and conceptual guides in this section provide a better understanding of Ubuntu Frame and get the most of it.
 
-<!--Follow the example landing page structure provided at https://docs.google.com/document/d/1T2aiuVCsF5krBQdqt8Rfaq3gXzhxaypoyetkCSN8RL4/edit?tab=t.0#heading=h.pay9imh0oih0 and add Ubuntu Frame explanation topics. -->
+- [Security](/explanation/security.md)
+- [Ubuntu Frame Datasheet](https://assets.ubuntu.com/v1/713b9224-Ubuntu.Frame.Datasheet.pdf)
+- [Mir graphics support](https://canonical-mir.readthedocs-hosted.com/stable/explanation/mir-graphics-support/)
+- [Where does Ubuntu Frame work?](/explanation/where-does-ubuntu-frame-work.md)
+- [IoT GUI snaps made easy](/explanation/iot-gui-snaps-made-easy.md)
+- [The `graphics-core20` Snap interface](/explanation/the-graphics-core20-snap-interface.md)
+- [The `graphics-core22` Snap interface](/explanation/the-graphics-core22-snap-interface.md)
+- [The `gpu-2404` Snap interface](/explanation/the-gpu-2404-snap-interface.md)
+
+```{toctree}
+---
+titlesonly:
+maxdepth: 2
+glob:
+hidden:
+---
+*
+```

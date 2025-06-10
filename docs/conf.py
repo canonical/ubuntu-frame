@@ -217,12 +217,10 @@ redirects = {}
 ###########################
 
 # A regex list of URLs that are ignored by 'make linkcheck'
-#
-# TODO: Remove or adjust the ACME entry after you update the contributing guide
 
 linkcheck_ignore = [
-    "http://127.0.0.1:8000",
-    "https://github.com/canonical/ACME/*"
+    "http://127.0.0.1:9400",
+    "https://ubuntu.com/.*#get-in-touch",
     ]
 
 
@@ -246,6 +244,8 @@ linkcheck_retries = 3
 
 myst_enable_extensions = set({"colon_fence"})
 
+# Enable internal cross-references
+myst_heading_anchors = 4
 
 # Custom Sphinx extensions; see
 # https://www.sphinx-doc.org/en/master/usage/extensions/index.html
