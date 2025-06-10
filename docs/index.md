@@ -21,11 +21,11 @@ ______________________________________________________________________
 ## In this documentation
 
 ````{grid} 1 1 2 2
-```{grid-item-card} [Tutorial](/tutorial/index.md)
+```{grid-item-card} [](tutorial-index)
 **An introduction** to Ubuntu Frame for new users
 ```
 
-```{grid-item-card} [How-to guides](/how-to/index.md)
+```{grid-item-card} [](how-to-index)
 **Step-by-step guides** covering key operations and common tasks
 ```
 ````
@@ -34,11 +34,11 @@ ______________________________________________________________________
 ---
 reverse:
 ---
-```{grid-item-card} [Reference](/reference/index.md)
+```{grid-item-card} [](reference-index)
 **Technical information** - specifications, APIs, architecture
 ```
 
-```{grid-item-card} [Explanation](/explanation/index.md)
+```{grid-item-card} [](explanation-index)
 **Discussion and clarification** of key topics
 ```
 ````

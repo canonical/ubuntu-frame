@@ -20,9 +20,9 @@ How to create a graphical kiosk on Ubuntu Core running a single full-screen demo
 
 - An Ubuntu desktop running any current release of Ubuntu or an Ubuntu Virtual Machine on another OS.
 - A 'Target Device' from one of the following:
-  - **A device running [Ubuntu Core](https://ubuntu.com/core).**<br /> [This guide](https://documentation.ubuntu.com/core/tutorials/try-pre-built-images) shows you how to set up a supported device. If there's no supported image that fits your needs you can [create your own core image](https://documentation.ubuntu.com/core/tutorials/build-your-first-image/).
+  - **A device running [Ubuntu Core](https://ubuntu.com/core).**<br /> {doc}`This guide <core:tutorials/try-pre-built-images/index>` shows you how to set up a supported device. If there's no supported image that fits your needs you can {doc}`create your own core image <core:tutorials/build-your-first-image/index>`.
   - **Using a Virtual Machine (VM)** You don't need to have a physical "Target Device", you can follow the tutorial with Ubuntu Core in a VM. [This guide](https://ubuntu.com/tutorials/ubuntu-core-preparing-a-virtual-machine-with-graphics-support) shows you how to set up an Ubuntu Core VM.
-  - **Using Ubuntu Classic** You don't *have* to use Ubuntu Core, you can use also a "Target Device" with Ubuntu Classic. Read [this guide](how-to-run-your-iot-gui-on-your-desktop) to understand how to run kiosk snaps on your desktop, as the particular details won't be repeated here.
+  - **Using Ubuntu Classic** You don't *have* to use Ubuntu Core, you can use also a "Target Device" with Ubuntu Classic. Read {ref}`this guide <how-to-run-your-iot-gui-on-your-desktop>` to understand how to run kiosk snaps on your desktop, as the particular details won't be repeated here.
 
 ## Basic infrastructure
 

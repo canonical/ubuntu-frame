@@ -6,9 +6,7 @@
 
 You've built an application and packaged it with a snap for use with Ubuntu Frame. Now you want to deliver the whole thing to your customers.
 
-What you need is an Ubuntu Core image. It's a pre-configured bootable image that includes one or more snaps to provide a specific set of features.
-
-https://documentation.ubuntu.com/core/quick-start/
+What you need is an Ubuntu Core image. It's a pre-configured bootable image that includes one or more snaps to provide a specific set of features: {doc}`core:how-to-guides/using-ubuntu-core`.
 
 ### Which base?
 

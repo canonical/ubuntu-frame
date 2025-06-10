@@ -8,15 +8,13 @@ ______________________________________________________________________
 
 ## Threat model
 
-We ran threat modeling for Mir itself (the [display server library](https://mir-server.io/) underpinning Frame) based on this snap stack, and maintain that documented there:
-
-https://canonical-mir.readthedocs-hosted.com/stable/explanation/security/
+We ran threat modeling for Mir itself (the [display server library](https://mir-server.io/) underpinning Frame) based on this snap stack, and maintain that documented there: {doc}`Mir Security documentation <mir:explanation/security>`.
 
 ## Cryptography
 
 There is no cryptography used in Frame itself or the On-Screen Keyboard snap. No direct dependency on en/decryption, hashing or digital signatures.
 
-The VNC snap is built on top of [wayvnc](https://github.com/any1/wayvnc), which has cryptographic features (password authentication, transport encryption) and that is handled through [gnutls](https://gnutls.org/) as [packaged and maintained in Ubuntu](https://packages.ubuntu.com/source/gnutls28). See [remote access documentation](/how-to/using-ubuntu-frame/use-remote-assistance.md#remote-access) for more information.
+The VNC snap is built on top of [wayvnc](https://github.com/any1/wayvnc), which has cryptographic features (password authentication, transport encryption) and that is handled through [gnutls](https://gnutls.org/) as [packaged and maintained in Ubuntu](https://packages.ubuntu.com/source/gnutls28). See {ref}`remote access documentation <how-to-use-remote-assistance#remote-access>` for more information.
 
 ## Hardening
 
@@ -34,16 +32,16 @@ opengl               ubuntu-frame:opengl            :opengl               -
 wayland              -                              ubuntu-frame:wayland  -
 ```
 
-Refer to [Snap interface](https://snapcraft.io/docs/interfaces) and [Frame snap interfaces](/reference/ubuntu-frame-snap-interfaces.md) documentation for more information.
+Refer to {doc}`snapcraft:explanation/interfaces` and {ref}`Frame snap interfaces <ubuntu-frame-snap-interfaces>` documentation for more information.
 
 ### Wayland extensions
 
 Avoid adding extensions to the ones allowed by `add-wayland-extensions`, as some of them may allow clients reading the screen contents or input events.
 
-Refer to [Frame configuration reference](/reference/ubuntu-frame-configuration-options.md) and the [wayland-protocols](https://gitlab.freedesktop.org/wayland/wayland-protocols/) repository for more information.
+Refer to {ref}`Frame configuration reference <ubuntu-frame-configuration-options>` and the [wayland-protocols](https://gitlab.freedesktop.org/wayland/wayland-protocols/) repository for more information.
 
 ### VNC authentication
 
 If using the VNC snap, It is recommended that you enable password authentication to avoid unauthorized access to the VNC socket on `localhost:5900`.
 
-Refer to [ubuntu-frame-vnc configuration reference](/how-to/using-ubuntu-frame/use-remote-assistance.md) for more information.
+Refer to {ref}`ubuntu-frame-vnc configuration reference <how-to-use-remote-assistance>` for more information.

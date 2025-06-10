@@ -4,7 +4,7 @@
 
 The following assumes some familiarity with using snapcraft to package snaps, and concentrates on the specifics of snapping graphical snap intended to work with, for example, the `ubuntu-frame` snap on Ubuntu Core.
 
-This is a peek "under the hood" of the `iot-example-graphical-snap` examples. If you are looking for a "how to" about packaging an IoT GUI based on a common graphics toolkit then you should look at the " Packaging applications as IoT GUIs section of [Ubuntu Frame How-to Guides](how-to-index).
+This is a peek "under the hood" of the `iot-example-graphical-snap` examples. If you are looking for a "how to" about packaging an IoT GUI based on a common graphics toolkit then you should look at the " Packaging applications as IoT GUIs section of {ref}`Ubuntu Frame How-to Guides <how-to-index>`.
 
 ## IoT GUIs
 
