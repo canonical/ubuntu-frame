@@ -2,7 +2,7 @@
 
 # Run Ubuntu Frame in your desktop environment
 
-This is how to run `ubuntu-frame` as an application window within your Linux desktop environment. For having Ubuntu Frame take over the whole display as you normally would for deployment, see the `daemon` configuration option in [the reference](ubuntu-frame-configuration-options).
+This is how to run `ubuntu-frame` as an application window within your Linux desktop environment. For having Ubuntu Frame take over the whole display as you normally would for deployment, see the `daemon` configuration option in {ref}`the reference <ubuntu-frame-configuration-options>`.
 
 ## Running on your desktop
 
@@ -51,7 +51,7 @@ You can connect any Wayland supporting application (for example, one you are dev
 $ WAYLAND_DISPLAY=wayland-99 gnome-system-monitor
 ```
 
-You can supply also configuration options (see [the reference](ubuntu-frame-configuration-options)) on the commandline. For example, for testing multiple displays:
+You can supply also configuration options (see {ref}`the reference <ubuntu-frame-configuration-options>`) on the commandline. For example, for testing multiple displays:
 
 ```bash
 $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame --x11-output 800x600:800x600

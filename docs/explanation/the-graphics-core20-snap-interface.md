@@ -12,7 +12,7 @@ Until recently, we have been including the mesa drivers inside the snap as these
 - Security updates to mesa require all the server and client snaps to be rebuilt and distributed; and
 - There's no way to introduce other drivers, even if Mir supports them.
 
-This led to some frustration as there are a number of [graphics stacks that Mir supports](https://canonical-mir.readthedocs-hosted.com/stable/explanation/mir-graphics-support/) that were not [supported by mir-kiosk](https://discourse.ubuntu.com/t/where-does-mir-kiosk-work/22270). With [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) we have adopted a more flexible approach.
+This led to some frustration as there are a number of {doc}`graphics stacks that Mir supports <mir:explanation/mir-graphics-support>` that were not [supported by mir-kiosk](https://discourse.ubuntu.com/t/where-does-mir-kiosk-work/22270). With [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) we have adopted a more flexible approach.
 
 ### Introducing graphics-core20
 
@@ -112,6 +112,6 @@ With this approach:
 
 We have been using this approach with [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) both with mesa-core20 and other drivers providing KMS, `libgbm` and an EGL supporting [EGL_WL_bind_wayland_display](https://registry.khronos.org/EGL/extensions/WL/EGL_WL_bind_wayland_display.txt).
 
-Use of the `graphics-core20` interface is fully integrated into both [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) and the examples we provide for [packaging IoT GUIs](/how-to/index.md).
+Use of the `graphics-core20` interface is fully integrated into both [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) and the examples we provide for {ref}`packaging IoT GUIs <how-to-index>`.
 
 Longer term, we're hopeful that the experience gained will feed into improvements in graphics support in snapd that make this unnecessary when packaging snaps.

@@ -121,4 +121,4 @@ defaults:
               # ...
 ```
 
-A big benefit of Ubuntu Frame over mir-kiosk is that under the `config` key you can provide any of the [supported Ubuntu Frame options](/reference/ubuntu-frame-configuration-options.md), which previously required a much more complex approach with preparation scripts. You can now build the new image / model and deploy it to the device or proceed with a remodel.
+A big benefit of Ubuntu Frame over mir-kiosk is that under the `config` key you can provide any of the {ref}`supported Ubuntu Frame options <ubuntu-frame-configuration-options>`, which previously required a much more complex approach with preparation scripts. You can now build the new image / model and deploy it to the device or proceed with a remodel.
