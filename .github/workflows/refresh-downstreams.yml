@@ -30,6 +30,9 @@ jobs:
         GIT_COMMITTER_NAME: "Mir CI Bot"
         GIT_COMMITTER_EMAIL: "mir-ci-bot@canonical.com"
       run: |
+        # avoid LFS
+        git lfs uninstall
+
         # bring mir-libs changes in
         git fetch origin ${{ matrix.ref }}
         git cherry-pick HEAD..origin/${{ matrix.ref }}
