@@ -192,13 +192,13 @@ If you reboot now, the user session will start on boot, and with it Frame and th
 
 ## Deployment
 
-Bet you don't want to go through the above steps on the hundreds of devices you're going to deploy on. The way to avoid this with Ubuntu Core is to build a bespoke image fitting your solution. See [Custom images](https://documentation.ubuntu.com/core/custom-images/) for a lot more information on this than we're going to cover.
+Bet you don't want to go through the above steps on the hundreds of devices you're going to deploy on. The way to avoid this with Ubuntu Core is to build a bespoke image fitting your solution. See {doc}`core:how-to-guides/image-creation/index` for a lot more information on this than we're going to cover.
 
 ### The gadget snap
 
-From [gadget snap documentation](https://documentation.ubuntu.com/core/gadget-snaps/):
+From {doc}`core:how-to-guides/image-creation/build-a-gadget-snap`:
 
-> The gadget snap is responsible for defining and configuring system properties specific to one or more devices.)
+> Gadget snaps define and manipulate device-specific configuration and system properties
 
 Rather than list all the changes to a gadget snap needed to build this solution, we'll maintain branches against stock gadgets for the PC and Pi platforms that you can modify to taste and go from there. We'll keep it heavily commented so it's clear what's happening where and why.
 
@@ -222,16 +222,16 @@ There. Your gadget snap is ready.
 
 ### Building, testing and deploying the image
 
-To build images from the gadget snaps we've prepared, we'll use [ubuntu-image](https://github.com/canonical/ubuntu-image) and [stock](https://github.com/canonical/models/) model [assertions](https://documentation.ubuntu.com/core/reference/assertions/model/). Your solution may require custom models, but that's out of scope here.
+To build images from the gadget snaps we've prepared, we'll use [ubuntu-image](https://github.com/canonical/ubuntu-image) and [stock](https://github.com/canonical/models/) model {doc}`assertions <core:reference/assertions/model>`. Your solution may require custom models, but that's out of scope here.
 Here are the assertions that interest us:
 
 - [ubuntu-core-22-amd64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-amd64-dangerous.model)
 - [ubuntu-core-22-arm64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-arm64-dangerous.model)
 - [ubuntu-core-22-pi-arm64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-pi-arm64-dangerous.model)
 
-**NB**: they are "dangerous" because they allow inserting snaps when building the image. If you have the appropriate infrastructure (e.g. a [Dedicated Snap Store](https://documentation.ubuntu.com/core/dedicated-snap-stores/)), you can create and publish a properly signed model assertion instead.
+**NB**: they are "dangerous" because they allow inserting snaps when building the image. If you have the appropriate infrastructure (e.g. a {doc}`core:explanation/stores/dedicated-snap-store`), you can create and publish a properly signed model assertion instead.
 
-To build the image, you run `ubuntu-image snap <model>`. To insert custom snaps, or additional ones from the store, pass `--snap <file> --snap <name>[=<channel>]`. You can read more about the available options in [ubuntu-image's manual](https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/ubuntu-image.html).
+To build the image, you run `ubuntu-image snap <model>`. To insert custom snaps, or additional ones from the store, pass `--snap <file> --snap <name>[=<channel>]`. You can read more about the available options in {doc}`ubuntu-image's manual <subiquity:reference/ubuntu-image>`.
 
 We've wrapped all the above steps into a Makefile for easy consumption in the above branches. To build the image as-is, just run:
 
@@ -245,7 +245,7 @@ Created snap package pc_22-0.4_amd64.snap
 ubuntu-frame_amd64.img ready
 ```
 
-There are a handful ways you can test that image - by [installing it on a device](https://documentation.ubuntu.com/core/tutorials/try-pre-built-images/index.html#install-on-a-generic-device), or by [running it under QEMU](https://documentation.ubuntu.com/core/tutorials/try-pre-built-images/index.html#install-on-a-virtual-machine). Another approach is to use [virt-manager](https://documentation.ubuntu.com/server/virtualization-virt-tools/), creating the VM with the following command:
+There are a handful ways you can test that image - by {doc}`installing it on a device <core:tutorials/try-pre-built-images/install-on-a-device/index>`, or by {doc}`running it under QEMU <core:tutorials/try-pre-built-images/install-on-a-vm>`. Another approach is to use {doc}`virt-manager <server:how-to/virtualisation/virtual-machine-manager>`, creating the VM with the following command:
 
 ```
 $ sudo virt-install --connect qemu:///session \

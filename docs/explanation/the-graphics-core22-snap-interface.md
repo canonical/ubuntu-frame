@@ -10,7 +10,7 @@ Snaps are software packages that are meant to bring all of their dependencies al
 
 The long-term solution is for SnapD (the daemon managing snaps on your system) to have explicit support for this, and other hardware-specific pieces of software (kernel modules, firmware, udev rules etc.). While this is being worked on, we've designed a content interface that allows application snaps to use the graphics hardware by providing the userspace drivers and environment in a content snap.
 
-This interface is an evolution of the [`graphics-core20` interface](/explanation/the-graphics-core20-snap-interface.md) - if your application uses `base: core20`, you'll need to rely on that, or move to the newer base.
+This interface is an evolution of {ref}`the-graphics-core20-snap-interface` - if your application uses `base: core20`, you'll need to rely on that, or move to the newer base.
 
 ## Consuming the interface
 
@@ -32,7 +32,7 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        default-provider: mesa-core22
    ```
 
-1. [lay out](https://documentation.ubuntu.com/snapcraft/stable/reference/layouts/) these paths in your snap:
+1. {doc}`lay out <snapcraft:reference/layouts>` these paths in your snap:
 
    ```yaml
    layout:
@@ -51,7 +51,7 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        symlink: $SNAP/graphics/X11/locale
    ```
 
-1. use [`bin/graphics-core22-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/graphics-core22-wrapper) in your [`command-chain`](https://documentation.ubuntu.com/snapcraft/stable/reference/project-file/snapcraft-yaml/#apps.%3Capp-name%3E.command-chain)s:
+1. use [`bin/graphics-core22-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/graphics-core22-wrapper) in your <code>{doc}`command-chain <snapcraft:reference/project-file/snapcraft-yaml>`</code>s:
 
    ```yaml
    apps:
@@ -98,7 +98,7 @@ If, for whatever reason, you don't want to use the helpers, here is a descriptio
 1. connect the `graphics-core22`, see above.
 1. lay out the paths, see above.
 1. wrap your apps with `<target>/bin/graphics-core22-provider-wrapper`. This script, coming from the provider side, is what sets up all the environment - paths to the libraries, drivers and any supporting files.
-1. remove any libraries that are provided by the content providers (see [below](#libraries-shipped) for a list). _If_ you need to provide your own versions of any of those, you need to make sure they are ABI-compatible with Ubuntu 22.04.
+1. remove any libraries that are provided by the content providers (see {ref}`below <the-graphics-core22-snap-interface#libraries-shipped>` for a list). _If_ you need to provide your own versions of any of those, you need to make sure they are ABI-compatible with Ubuntu 22.04.
 
 ## Creating a provider snap
 
@@ -112,7 +112,7 @@ The requirements for a snap providing the content are purposefully quite simple:
 
    exec "$@"
    ```
-1. it should support (include, in Ubuntu 22.04 ABI-compatible versions, and ensure the application can find them) as many of the [supported API](#supported-apis) libraries (and their dependencies) as possible/applicable
+1. it should support (include, in Ubuntu 22.04 ABI-compatible versions, and ensure the application can find them) as many of the {ref}`supported API <the-graphics-core22-snap-interface#supported-apis>` libraries (and their dependencies) as possible/applicable
 1. if your provider uses the Mesa stack:
    - provide the `drirc.d` content source holding the app-specific workarounds
 1. if your provider supports X11:
@@ -145,6 +145,8 @@ $ graphics-test-tools.eglinfo
 Refer to the documentation of the individual tools to see what the results mean.
 
 ## Lists
+
+(the-graphics-core22-snap-interface#supported-apis)=
 
 ### Supported APIs
 
@@ -182,6 +184,8 @@ Refer to the documentation of the individual tools to see what the results mean.
   - libwayland-server0
   - libwayland-egl1
   - libwayland-cursor0
+
+(the-graphics-core22-snap-interface#libraries-shipped)=
 
 ### Libraries shipped
 

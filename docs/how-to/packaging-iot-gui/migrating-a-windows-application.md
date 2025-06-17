@@ -16,7 +16,7 @@ We will cover:
 
 If you want to learn how to install pre-built applications such as [wpe-webkit-mir-kiosk](https://snapcraft.io/wpe-webkit-mir-kiosk), [mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi/), or [Scummvm](https://snapcraft.io/scummvm), follow their official installation and configuration guides.
 
-If you are new to Ubuntu Core, we recommend reading our [getting started document](https://documentation.ubuntu.com/core/getting-started/). If you want to learn about building custom Ubuntu Core images, you could find information on the [snapcraft docs](https://snapcraft.io/docs/the-gadget-snap).
+If you are new to Ubuntu Core, we recommend reading our {doc}`getting started document <core:tutorials/build-your-first-image/index>`. If you want to learn about building custom Ubuntu Core images, you could find information on the [snapcraft docs](https://snapcraft.io/docs/the-gadget-snap).
 
 ## Requirements
 
@@ -65,9 +65,9 @@ Now that you know how to confirm that an application is working with Ubuntu Fram
 
 For use with [Ubuntu Core](https://ubuntu.com/core), your application needs to be packaged as a snap. This will also allow you to leverage Over The Air updates, automatic rollbacks, delta updates, update semantic channels, and more. If you don't use Ubuntu Core, but instead another form of Linux, we recommend you use snaps to get many of these advantages.
 
-There's a lot of information about [packaging snaps online](https://ubuntu.com/tutorials/create-your-first-snap#1-overview), and the purpose here is not to teach about the [snapcraft](https://documentation.ubuntu.com/snapcraft/stable/tutorials/craft-a-snap/) packaging tool or the [Snap Store](https://snapcraft.io/store). We will, instead, focus on the things that are special to IoT graphics.
+There's a lot of information about [packaging snaps online](https://ubuntu.com/tutorials/create-your-first-snap#1-overview), and the purpose here is not to teach about the {doc}`snapcraft <snapcraft:tutorials/craft-a-snap>` packaging tool or the [Snap Store](https://snapcraft.io/store). We will, instead, focus on the things that are special to IoT graphics.
 
-Much of what you find online about packaging GUI applications as a snap refers to packaging for desktop. Some of that doesn't apply to IoT as Ubuntu Core and Ubuntu Server do not include everything a desktop installation does and the snaps need to run as [daemons](https://documentation.ubuntu.com/snapcraft/stable/reference/project-file/snapcraft-yaml/#apps) (background services) instead of being launched in a user session. In particular, for the time being, you should ignore various Snapcraft [extensions](https://documentation.ubuntu.com/snapcraft/stable/how-to/extensions/) that help writing snap recipes that integrate with the desktop environment (e.g. using the correct theme) as they are not tested for use with Ubuntu Frame on Ubuntu Core.
+Much of what you find online about packaging GUI applications as a snap refers to packaging for desktop. Some of that doesn't apply to IoT as Ubuntu Core and Ubuntu Server do not include everything a desktop installation does and the snaps need to run as {doc}`daemons <snapcraft:reference/project-file/snapcraft-yaml>` (background services) instead of being launched in a user session. In particular, for the time being, you should ignore various Snapcraft {doc}`extensions <snapcraft:how-to/extensions/index>` that help writing snap recipes that integrate with the desktop environment (e.g. using the correct theme) as they are not tested for use with Ubuntu Frame on Ubuntu Core.
 
 Writing snap recipes without these extensions is not difficult as we'll illustrate for each of the example programs used in the previous section.
 
@@ -236,8 +236,8 @@ For more information about Ubuntu Frame please visit our [website](https://mir-s
 
 You may also consider reading the following materials:
 
-- How to [run Flutter applications on Ubuntu Core](packaging-a-flutter-application)
-- How to leverage existing snaps to [build a webkiosk](make-a-secure-ubuntu-web-kiosk)
-- How to [enable on-screen keyboard support](ubuntu-frame-osk-documentation) in Ubuntu Frame.
+- {ref}`packaging-a-flutter-application`
+- {ref}`make-a-secure-ubuntu-web-kiosk`.
+- How to {ref}`enable on-screen keyboard support <ubuntu-frame-osk-documentation>` in Ubuntu Frame.
 
 Need help in getting to market? [Contact us](https://ubuntu.com/internet-of-things/digital-signage#get-in-touch)

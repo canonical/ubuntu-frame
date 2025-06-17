@@ -10,7 +10,7 @@ Snaps are software packages that are meant to bring all of their dependencies al
 
 The long-term solution is for SnapD (the daemon managing snaps on your system) to have explicit support for this, and other hardware-specific pieces of software (kernel modules, firmware, udev rules etc.). While this is being worked on, we've designed a content interface that allows application snaps to use the graphics hardware by providing the userspace drivers and environment in a content snap.
 
-This interface is an evolution of the [`graphics-core22` interface](/explanation/the-graphics-core22-snap-interface.md) - if your application uses `base: core22`, you'll need to rely on that, or move to the newer base. It was renamed to signify that all GPU functions, and not only graphics, are in scope; and that it's not only applicable to Ubuntu Core installations.
+This interface is an evolution of the \{ref}\`\`graphics-core22` interface <the-graphics-core22-snap-interface>` - if your application uses `base: core22`, you'll need to rely on that, or move to the newer base. It was renamed to signify that all GPU functions, and not only graphics, are in scope; and that it's not only applicable to Ubuntu Core installations.
 
 ## Consuming the interface
 
@@ -46,14 +46,14 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        default-provider: mesa-2404
    ```
 
-1. If your app needs X11 support, [lay out](https://documentation.ubuntu.com/snapcraft/stable/reference/layouts/) these paths in your snap:
+1. If your app needs X11 support, {doc}`lay out <snapcraft:reference/layouts>` these paths in your snap:
 
 ```yaml
   /usr/share/X11/XErrorDB:
     symlink: $SNAP/gpu-2404/X11/XErrorDB
 ```
 
-3. use [`bin/gpu-2404-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-wrapper) in your [`command-chain`](https://documentation.ubuntu.com/snapcraft/stable/reference/project-file/snapcraft-yaml/#apps.%3Capp-name%3E.command-chain)s:
+1. use [`bin/gpu-2404-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-wrapper) in your <code>{doc}`command-chain <snapcraft:reference/project-file/snapcraft-yaml>`</code>s:
 
    ```yaml
    apps:
@@ -100,7 +100,7 @@ If, for whatever reason, you don't want to use the helpers, here is a descriptio
 1. connect the `gpu-2404`, see above.
 1. lay out the paths, see above.
 1. wrap your apps with `<target>/bin/gpu-2404-provider-wrapper`. This script, coming from the provider side, is what sets up all the environment - paths to the libraries, drivers and any supporting files.
-1. remove any libraries that are provided by the content providers (see [below](#libraries-shipped) for a list). _If_ you need to provide your own versions of any of those, you need to make sure they are ABI-compatible with Ubuntu 24.04.
+1. remove any libraries that are provided by the content providers (see {ref}`below <the-gpu-2404-snap-interface#libraries-shipped>` for a list). _If_ you need to provide your own versions of any of those, you need to make sure they are ABI-compatible with Ubuntu 24.04.
 
 ## Creating a provider snap
 
@@ -114,7 +114,7 @@ The requirements for a snap providing the content are purposefully quite simple:
 
    exec "$@"
    ```
-1. it should support (include, in Ubuntu 24.04 ABI-compatible versions, and ensure the application can find them) as many of the [supported API](#supported-apis) libraries (and their dependencies) as possible/applicable
+1. it should support (include, in Ubuntu 24.04 ABI-compatible versions, and ensure the application can find them) as many of the {ref}`supported API <the-gpu-2404-snap-interface#supported-apis>` libraries (and their dependencies) as possible/applicable
 1. if your provider supports X11:
    - provide the `X11/XErrorDB` content source with the appropriate assets
 1. optionally, if there are Mir-specific workarounds required:
@@ -145,6 +145,8 @@ $ graphics-test-tools.eglinfo
 Refer to the documentation of the individual tools to see what the results mean.
 
 ## Lists
+
+(the-gpu-2404-snap-interface#supported-apis)=
 
 ### Supported APIs
 
@@ -184,6 +186,8 @@ Refer to the documentation of the individual tools to see what the results mean.
   - libwayland-cursor0
   - libwayland-egl1
   - libwayland-server0
+
+(the-gpu-2404-snap-interface#libraries-shipped)=
 
 ### Libraries shipped
 
