@@ -65,13 +65,15 @@ $ snap set ubuntu-frame-vnc username=user password=$( read -s P; echo P )
 
 The daemon will restart and require the provided username and password on connection.
 
-**NB**: not all clients support this mechanism, see [Client compatibility](#client-compatibility) below.
+**NB**: not all clients support this mechanism, see {ref}`how-to-use-remote-assistance#client-compatibility` below.
 
 To disable again, set both username and password to empty:
 
 ```
 $ snap set ubuntu-frame-vnc username= password=
 ```
+
+(how-to-use-remote-assistance#remote-access)=
 
 ## Remote access
 
@@ -95,6 +97,8 @@ $ sudo apt install gvncviewer
 ...
 $ frame-it.vnc <user>@<hostname>
 ```
+
+(how-to-use-remote-assistance#client-compatibility)=
 
 ## Client compatibility
 

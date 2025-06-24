@@ -61,7 +61,7 @@ If you have other configuration, just amend it to include the above values. You 
 
 ## Embedding in an image
 
-Refer to the relevant documentation for how to [configure Frame](/reference/configuring-ubuntu-frame-through-a-gadget-snap.md) and then [build images](https://documentation.ubuntu.com/core/image-building/), but here are the snippets specific to this solution:
+Refer to the relevant documentation for how to {ref}`configure Frame <configuring-ubuntu-frame-through-a-gadget-snap>` and then {doc}`core:how-to-guides/image-creation/index`, but here are the snippets specific to this solution:
 
 - The required configuration in the gadget snap:
 
@@ -74,7 +74,7 @@ Refer to the relevant documentation for how to [configure Frame](/reference/conf
         wallpaper=false
   ```
 
-- One way to include the necessary service changes is by [including cloud-init configuration](https://documentation.ubuntu.com/core/reference/gadget-snap-format/index.html#setup-files) in the gadget snap:
+- One way to include the necessary service changes is by {doc}`including cloud-init configuration <core:reference/gadget-snap-format>` in the gadget snap:
 
   ```
   # cloud.conf

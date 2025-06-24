@@ -12,7 +12,7 @@ We recommend Ubuntu Core for a lot of purposes, but you should be able to use Ub
 
 ## Suitable graphics
 
-Ubuntu Frame is based on Mir which [supports a range of graphics options](https://canonical-mir.readthedocs-hosted.com/stable/explanation/mir-graphics-support/). The current iteration of Ubuntu Frame does not support all of these, just "gbm-kms".
+Ubuntu Frame is based on Mir which {doc}`supports a range of graphics options <mir:explanation/mir-graphics-support>`. The current iteration of Ubuntu Frame does not support all of these, just "gbm-kms".
 
 In general, this means that Ubuntu Frame can work with any driver providing KMS, `libgbm` and an EGL supporting [EGL_WL_bind_wayland_display ](https://registry.khronos.org/EGL/extensions/WL/EGL_WL_bind_wayland_display.txt).
 
@@ -22,7 +22,7 @@ A default installation of Ubuntu Frame will install the open-source Mesa drivers
 
 ### Bespoke graphics
 
-Ubuntu Frame requires the graphics userspace to be supplied via [the `graphics-core20` Snap interface](/explanation/the-graphics-core20-snap-interface.md).
+Ubuntu Frame requires the graphics userspace to be supplied via {ref}`the-gpu-2404-snap-interface`.
 
 We've done some "proof of concept" work with non-mesa drivers, but we are not currently in a position to provide these as snaps.
 
@@ -67,6 +67,6 @@ Ref. [issue #39](https://github.com/canonical/ubuntu-frame/issues/39):
 
 *Note on Raspberry Pi 4 with Ubuntu Server 22.04*
 
-Ref. [ Run Ubuntu Frame on your Device/2](run-ubuntu-frame-on-your-device):
+Ref. [Run Ubuntu Frame on your Device](https://discourse.ubuntu.com/t/29377/2):
 
 > It was great, thank you very much for your help. yes when edit dtoverlay (in /boot/firmware/config.txt) to vc4-kms-v3d-pi4 value, it works for me

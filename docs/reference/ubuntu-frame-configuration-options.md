@@ -6,6 +6,8 @@ This document provides a reference for the configuration options for Ubuntu Fram
 
 ______________________________________________________________________
 
+(ubuntu-frame-configuration-options.md#snap-configuration-options)=
+
 ## Snap configuration options
 
 There are three snap configuration options:
@@ -57,7 +59,7 @@ $ snap connect ubuntu-frame:desktop-launch
 $ snap set ubuntu-frame launcher=true
 ```
 
-Make sure that the applications you want to run are annotated with metadata and icons appropriately, see [Snapcraft's "Desktop files for menu integration" documentation](https://documentation.ubuntu.com/snapcraft/stable/how-to/crafting/configure-package-information/) to get your app icons to display.
+Make sure that the applications you want to run are annotated with metadata and icons appropriately, see Snapcraft's {doc}`snapcraft:how-to/crafting/configure-package-information` documentation to get your app icons to display.
 
 [note status="Version 211"]
 Since version **211**, you can use `Mir` or `UbuntuFrame` in [`OnlyShowIn=` and `NotShowIn=`](https://specifications.freedesktop.org/desktop-entry-spec/latest/recognized-keys.html) to control visibility of the icon on different environments. This is useful to hide the daemon app in snaps that are also useful outside of the Frame ecosystem.
@@ -257,7 +259,7 @@ user options:
   -h [ --help ]                         this help text
 ```
 
-You might notice that the options are described as "command-line options", and they also can be supplied that way when running the snap from the command-line (and not as a daemon). That can be a convenient way of testing their effect. (See [Running on your desktop](run-ubuntu-frame-in-your-desktop-environment) for an example).
+You might notice that the options are described as "command-line options", and they also can be supplied that way when running the snap from the command-line (and not as a daemon). That can be a convenient way of testing their effect. (See {ref}`run-ubuntu-frame-in-your-desktop-environment` for an example).
 
 ### `display`
 

@@ -54,7 +54,7 @@ sudo snap install ubuntu-frame wpe-webkit-mir-kiosk
 
    That's it! Every time your device boots it will display the dashboards configured in Dashkiosk.
 
-   You can read [Where does Ubuntu Frame work?](/explanation/where-does-ubuntu-frame-work.md) to find the right hardware for you.
+   You can read {ref}`Where does Ubuntu Frame work? <where-does-ubuntu-frame-work>` to find the right hardware for you.
 
 1. On classic Ubuntu, you will need a bit more set up
    Allow the WPE snap to connect to Frame:

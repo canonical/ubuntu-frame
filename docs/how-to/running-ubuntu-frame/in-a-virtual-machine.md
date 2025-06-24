@@ -53,7 +53,7 @@ wallpaper-bottom=0xdd4814
 "
 ```
 
-The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of configuration options to control Ubuntu Frame, but they are all set using `config` and `display` (more details in [the reference](ubuntu-frame-configuration-options))
+The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of configuration options to control Ubuntu Frame, but they are all set using `config` and `display` (more details in {ref}`the reference <ubuntu-frame-configuration-options>`).
 
 ## Install a web kiosk
 
@@ -75,4 +75,4 @@ This will show the Mir Server website.
 
 ## Next steps
 
-For more detail about running and configuring Ubuntu Frame, and for resources to help build your own snaps to work with it see [the reference](ubuntu-frame-configuration-options).
+For more detail about running and configuring Ubuntu Frame, and for resources to help build your own snaps to work with it see {ref}`the reference <ubuntu-frame-configuration-options>`.
