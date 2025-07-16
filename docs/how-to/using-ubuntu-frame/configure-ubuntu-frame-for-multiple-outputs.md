@@ -39,12 +39,12 @@ layouts:
         # Uncomment the following to enforce the selected configuration.
         # Or amend as desired.
         #
-        state: enabled	# {enabled, disabled}, defaults to enabled
-        mode: 2560x1440@60.0	# Defaults to preferred mode
-        position: [0, 0]	# Defaults to [0, 0]
-        orientation: normal	# {normal, left, right, inverted}, defaults to normal
+        state: enabled        # {enabled, disabled}, defaults to enabled
+        mode: 2560x1440@60.0  # Defaults to preferred mode
+        position: [0, 0]      # Defaults to [0, 0]
+        orientation: normal   # {normal, left, right, inverted}, defaults to normal
         scale: 1
-        group: 0	# Outputs with the same non-zero value are treated as a single display
+        group: 0              # Outputs with the same non-zero value are treated as a single display
 
       DisplayPort-1:
         # (disconnected)
@@ -62,12 +62,12 @@ layouts:
         # Uncomment the following to enforce the selected configuration.
         # Or amend as desired.
         #
-        state: enabled	# {enabled, disabled}, defaults to enabled
-        mode: 1024x600@60.0	# Defaults to preferred mode
-        position: [0, 0]	# Defaults to [0, 0]
-        orientation: normal	# {normal, left, right, inverted}, defaults to normal
+        state: enabled       # {enabled, disabled}, defaults to enabled
+        mode: 1024x600@60.0  # Defaults to preferred mode
+        position: [0, 0]     # Defaults to [0, 0]
+        orientation: normal  # {normal, left, right, inverted}, defaults to normal
         scale: 1
-        group: 0	# Outputs with the same non-zero value are treated as a single display
+        group: 0             # Outputs with the same non-zero value are treated as a single display
 
   side_by_side:
     cards:
@@ -80,12 +80,12 @@ layouts:
         # Uncomment the following to enforce the selected configuration.
         # Or amend as desired.
         #
-        state: enabled	# {enabled, disabled}, defaults to enabled
-        mode: 2560x1440@60.0	# Defaults to preferred mode
-        position: [0, 0]	# Defaults to [0, 0]
-        orientation: normal	# {normal, left, right, inverted}, defaults to normal
+        state: enabled        # {enabled, disabled}, defaults to enabled
+        mode: 2560x1440@60.0  # Defaults to preferred mode
+        position: [0, 0]      # Defaults to [0, 0]
+        orientation: normal   # {normal, left, right, inverted}, defaults to normal
         scale: 1
-        group: 0	# Outputs with the same non-zero value are treated as a single display
+        group: 0              # Outputs with the same non-zero value are treated as a single display
 
       DisplayPort-1:
         # (disconnected)
@@ -103,12 +103,12 @@ layouts:
         # Uncomment the following to enforce the selected configuration.
         # Or amend as desired.
         #
-        state: enabled	# {enabled, disabled}, defaults to enabled
-        mode: 1024x600@60.0	# Defaults to preferred mode
-        position: [2560, 0]	# Defaults to [0, 0]
-        orientation: normal	# {normal, left, right, inverted}, defaults to normal
+        state: enabled       # {enabled, disabled}, defaults to enabled
+        mode: 1024x600@60.0  # Defaults to preferred mode
+        position: [2560, 0]  # Defaults to [0, 0]
+        orientation: normal  # {normal, left, right, inverted}, defaults to normal
         scale: 1
-        group: 0	# Outputs with the same non-zero value are treated as a single display
+        group: 0             # Outputs with the same non-zero value are treated as a single display
 
 ```
 
@@ -141,35 +141,35 @@ Next edit the file with your editor of choice. Now, I'm going to show changing t
 
 ```diff
 diff --unified my-uf-display-configuration{~original,}
---- my-uf-display-configuration~original	2023-03-23 11:26:31.482290742 +0000
-+++ my-uf-display-configuration	2023-03-23 12:24:36.974409249 +0000
+--- my-uf-display-configuration~original  2023-03-23 11:26:31.482290742 +0000
++++ my-uf-display-configuration 2023-03-23 12:24:36.974409249 +0000
 @@ -17,7 +17,7 @@
-         mode: 2560x1440@60.0	# Defaults to preferred mode
-         position: [0, 0]	# Defaults to [0, 0]
-         orientation: normal	# {normal, left, right, inverted}, defaults to normal
+         mode: 2560x1440@60.0  # Defaults to preferred mode
+         position: [0, 0]      # Defaults to [0, 0]
+         orientation: normal   # {normal, left, right, inverted}, defaults to normal
 -        scale: 1
 +        scale: 2
-         group: 0	# Outputs with the same non-zero value are treated as a single display
+         group: 0              # Outputs with the same non-zero value are treated as a single display
 
        DisplayPort-1:
 @@ -58,7 +58,7 @@
-         mode: 2560x1440@60.0	# Defaults to preferred mode
-         position: [0, 0]	# Defaults to [0, 0]
-         orientation: normal	# {normal, left, right, inverted}, defaults to normal
+         mode: 2560x1440@60.0  # Defaults to preferred mode
+         position: [0, 0]      # Defaults to [0, 0]
+         orientation: normal   # {normal, left, right, inverted}, defaults to normal
 -        scale: 1
 +        scale: 2
-         group: 0	# Outputs with the same non-zero value are treated as a single display
+         group: 0              # Outputs with the same non-zero value are treated as a single display
 
        DisplayPort-1:
 @@ -79,7 +79,7 @@
          #
-         state: enabled	# {enabled, disabled}, defaults to enabled
-         mode: 1024x600@60.0	# Defaults to preferred mode
--        position: [2560, 0]	# Defaults to [0, 0]
-+        position: [1280, 0]	# Defaults to [0, 0]
-         orientation: normal	# {normal, left, right, inverted}, defaults to normal
+         state: enabled       # {enabled, disabled}, defaults to enabled
+         mode: 1024x600@60.0  # Defaults to preferred mode
+-        position: [2560, 0]  # Defaults to [0, 0]
++        position: [1280, 0]  # Defaults to [0, 0]
+         orientation: normal  # {normal, left, right, inverted}, defaults to normal
          scale: 1
-         group: 0	# Outputs with the same non-zero value are treated as a single display
+         group: 0             # Outputs with the same non-zero value are treated as a single display
 ```
 
 You will likely have to make slightly different changes on your system, but the approach should be clear.
@@ -188,15 +188,15 @@ To specify which output an application appears on we need to add the snap name t
 
 ```diff
 $ diff --unified my-uf-display-configuration{~original,}
---- my-uf-display-configuration~original	2023-03-23 11:26:31.482290742 +0000
-+++ my-uf-display-configuration	2023-03-23 12:23:42.190975690 +0000
+--- my-uf-display-configuration~original  2023-03-23 11:26:31.482290742 +0000
++++ my-uf-display-configuration 2023-03-23 12:23:42.190975690 +0000
 @@ -17,7 +17,7 @@
-         mode: 2560x1440@60.0	# Defaults to preferred mode
-         position: [0, 0]	# Defaults to [0, 0]
-         orientation: normal	# {normal, left, right, inverted}, defaults to normal
+         mode: 2560x1440@60.0  # Defaults to preferred mode
+         position: [0, 0]      # Defaults to [0, 0]
+         orientation: normal   # {normal, left, right, inverted}, defaults to normal
 -        scale: 1
 +        scale: 2
-         group: 0	# Outputs with the same non-zero value are treated as a single display
+         group: 0              # Outputs with the same non-zero value are treated as a single display
 
        DisplayPort-1:
 @@ -49,6 +49,7 @@
@@ -208,12 +208,12 @@ $ diff --unified my-uf-display-configuration{~original,}
          #
          # Uncomment the following to enforce the selected configuration.
 @@ -58,7 +59,7 @@
-         mode: 2560x1440@60.0	# Defaults to preferred mode
-         position: [0, 0]	# Defaults to [0, 0]
-         orientation: normal	# {normal, left, right, inverted}, defaults to normal
+         mode: 2560x1440@60.0  # Defaults to preferred mode
+         position: [0, 0]      # Defaults to [0, 0]
+         orientation: normal   # {normal, left, right, inverted}, defaults to normal
 -        scale: 1
 +        scale: 2
-         group: 0	# Outputs with the same non-zero value are treated as a single display
+         group: 0              # Outputs with the same non-zero value are treated as a single display
 
        DisplayPort-1:
 @@ -71,6 +72,7 @@
@@ -226,13 +226,13 @@ $ diff --unified my-uf-display-configuration{~original,}
          #
 @@ -79,7 +81,7 @@
          #
-         state: enabled	# {enabled, disabled}, defaults to enabled
-         mode: 1024x600@60.0	# Defaults to preferred mode
--        position: [2560, 0]	# Defaults to [0, 0]
-+        position: [1280, 0]	# Defaults to [0, 0]
-         orientation: normal	# {normal, left, right, inverted}, defaults to normal
+         state: enabled       # {enabled, disabled}, defaults to enabled
+         mode: 1024x600@60.0  # Defaults to preferred mode
+-        position: [2560, 0]  # Defaults to [0, 0]
++        position: [1280, 0]  # Defaults to [0, 0]
+         orientation: normal  # {normal, left, right, inverted}, defaults to normal
          scale: 1
-         group: 0	# Outputs with the same non-zero value are treated as a single display
+         group: 0             # Outputs with the same non-zero value are treated as a single display
 ```
 
 And, again, apply these changes:
@@ -302,38 +302,38 @@ Instead of assigning applications to outputs we can also put both outputs into a
 
 ```diff
 $ diff --unified my-uf-display-configuration{~original,}
---- my-uf-display-configuration~original	2023-03-23 11:26:31.482290742 +0000
-+++ my-uf-display-configuration	2023-03-23 12:17:26.790860939 +0000
+--- my-uf-display-configuration~original  2023-03-23 11:26:31.482290742 +0000
++++ my-uf-display-configuration 2023-03-23 12:17:26.790860939 +0000
 @@ -17,7 +17,7 @@
-         mode: 2560x1440@60.0	# Defaults to preferred mode
-         position: [0, 0]	# Defaults to [0, 0]
-         orientation: normal	# {normal, left, right, inverted}, defaults to normal
+         mode: 2560x1440@60.0  # Defaults to preferred mode
+         position: [0, 0]      # Defaults to [0, 0]
+         orientation: normal   # {normal, left, right, inverted}, defaults to normal
 -        scale: 1
 +        scale: 2
-         group: 0	# Outputs with the same non-zero value are treated as a single display
+         group: 0              # Outputs with the same non-zero value are treated as a single display
 
        DisplayPort-1:
 @@ -58,8 +58,8 @@
-         mode: 2560x1440@60.0	# Defaults to preferred mode
-         position: [0, 0]	# Defaults to [0, 0]
-         orientation: normal	# {normal, left, right, inverted}, defaults to normal
+         mode: 2560x1440@60.0  # Defaults to preferred mode
+         position: [0, 0]      # Defaults to [0, 0]
+         orientation: normal   # {normal, left, right, inverted}, defaults to normal
 -        scale: 1
--        group: 0	# Outputs with the same non-zero value are treated as a single display
+-        group: 0              # Outputs with the same non-zero value are treated as a single display
 +        scale: 2
-+        group: 1	# Outputs with the same non-zero value are treated as a single display
++        group: 1              # Outputs with the same non-zero value are treated as a single display
 
        DisplayPort-1:
          # (disconnected)
 @@ -79,7 +79,7 @@
          #
-         state: enabled	# {enabled, disabled}, defaults to enabled
-         mode: 1024x600@60.0	# Defaults to preferred mode
--        position: [2560, 0]	# Defaults to [0, 0]
-+        position: [1280, 0]	# Defaults to [0, 0]
-         orientation: normal	# {normal, left, right, inverted}, defaults to normal
+         state: enabled       # {enabled, disabled}, defaults to enabled
+         mode: 1024x600@60.0  # Defaults to preferred mode
+-        position: [2560, 0]  # Defaults to [0, 0]
++        position: [1280, 0]  # Defaults to [0, 0]
+         orientation: normal  # {normal, left, right, inverted}, defaults to normal
          scale: 1
--        group: 0	# Outputs with the same non-zero value are treated as a single display
-+        group: 1	# Outputs with the same non-zero value are treated as a single display
+-        group: 0             # Outputs with the same non-zero value are treated as a single display
++        group: 1             # Outputs with the same non-zero value are treated as a single display
 ```
 
 Now, Ubuntu Frame treats the "side by side" windows as one large display:
