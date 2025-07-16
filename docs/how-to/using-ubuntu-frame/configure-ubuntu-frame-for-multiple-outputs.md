@@ -12,10 +12,9 @@ By default Ubuntu Frame will show the same content on all outputs. This works we
 
 But sometimes this is not what is wanted, and Ubuntu Frame can do a lot more.
 
-[note status="Version 98-mir2.13.0"]
+```{admonition} Version 98-mir2.13.0
 The features described below were introduced in release 98-mir2.13.0
-
-````
+```
 
 ## The `display` and `display-layouts` configuration options
 
@@ -111,7 +110,7 @@ layouts:
         scale: 1
         group: 0	# Outputs with the same non-zero value are treated as a single display
 
-````
+```
 
 Note that, unless your setup matches mine, the exact details will differ on your system.
 
@@ -252,12 +251,12 @@ There is also a `surface-title` key that can be set, but as windows tend to chan
 
 ### Using display properties
 
-[note status="Version 243-mir2.21"]
+```{admonition} Version 243-mir2.21
 This feature is only available from version 243-mir2.21 onward
-
-````
+```
 
 Rather than configuring _outputs_, you can configure _displays_, by way of the `displays:` map for each layout. In the startup configuration you'll see a commented-out section like:
+
 ```yaml
     # displays:
     # A list of display configurations matched by the displays' properties
@@ -275,7 +274,7 @@ Rather than configuring _outputs_, you can configure _displays_, by way of the `
     #   product: 61512
     #   serial: 1095650636
     #
-````
+```
 
 You can provide as many of those as needed in your setup, and - for each connected display - the first one in the list, **that exactly matches all given properties**, will be applied.
 
@@ -343,11 +342,12 @@ Now, Ubuntu Frame treats the "side by side" windows as one large display:
 
 ## Custom client placement
 
-[note status="Version 243-mir2.21"]
+```{admonition} Version 243-mir2.21
 This feature is only available from version 243-mir2.21 onward
+```
 
-````
 You can also be in full control over the placement of the clients. With the layout-level `applications:` entry, you can directly place application windows and give them a custom size:
+
 ```yaml
 layouts:
   default:
@@ -371,7 +371,7 @@ layouts:
       - surface-title: "My fun application"
         position: [1920, 0]
         size: [800, 600]
-````
+```
 
 Each entry may contain the following keys:
 
