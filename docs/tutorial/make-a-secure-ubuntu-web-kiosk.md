@@ -59,6 +59,10 @@ Using snapd interfaces your app can securely connect to Mir using the Wayland pr
 
 ## Demonstration kiosk on Ubuntu Core
 
+```{admonition} Support
+The `wpe-webkit-mir-kiosk` snap is provided and maintained by the community at https://gitlab.com/glancr/wpe-webkit-snap. If you require commercial support, please reach out at https://ubuntu.com/support.
+```
+
 This step assumes you have set up your device or VM and have SSHed into it. If you have not done this please see the guilds referenced above in "What you'll need".
 
 Install the "ubuntu-frame" snap:
