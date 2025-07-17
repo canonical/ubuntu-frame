@@ -86,6 +86,7 @@ fullscreen
 gbm
 github
 gitlab
+glancr
 glx
 gnutls
 gpu
