@@ -157,6 +157,7 @@ vc
 virt
 vm
 vnc
+vstable
 wayland
 wayplug
 wayvnc
