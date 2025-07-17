@@ -1,17 +1,27 @@
 name: TICS
 
 on:
-#  push:
-#    branches:
-#    - main
-  schedule:
-  # 5:04 on a Wednesday
-  - cron: 5 4 * * 3
+  push:
+    branches:
+    - main
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  merge_group:
+    types: [checks_requested]
   workflow_dispatch:
 
 jobs:
-  CI:
-    runs-on: ubuntu-latest
+  TICS:
+    # Only run if we have access to secrets.
+    if: github.event_name != 'pull_request' || github.repository == github.event.pull_request.head.repo.full_name
+
+    runs-on: [self-hosted, reactive, amd64, tiobe, noble]
+
+    env:
+      NEEDRESTART_SUSPEND: yes
+      DEBIAN_FRONTEND: noninteractive
+      TICS_CHANGED_LIST: tics_changed.list
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -21,6 +31,7 @@ jobs:
         sudo add-apt-repository --yes ppa:mir-team/dev
         sudo apt install --yes \
           build-essential \
+          cmake \
           libapparmor-dev \
           libboost-iostreams-dev \
           libgtest-dev \
@@ -39,14 +50,29 @@ jobs:
 
     - name: Build
       run: |
-        cmake -Bbuild src
+        cmake -Bbuild -GNinja src
         cmake --build build
+
+    - name: Get changed files
+      if: github.event_name == 'merge_group'
+      run: |
+        # Every merge_group event runs for one pull request, so we can diff against parent
+        git diff --name-only ${{ github.sha }}~1 ${{ github.sha }} >> $TICS_CHANGED_LIST
 
     - name: Run TICS analysis
       uses: tiobe/tics-github-action@v3
       with:
-        mode: qserver
+        mode: ${{ contains(fromJSON('["pull_request", "merge_group"]'), github.event_name) && 'client' || 'qserver' }}
         project: ubuntu-frame
         viewerUrl: https://canonical.tiobe.com/tiobeweb/TICS/api/cfg?name=default
         ticsAuthToken: ${{ secrets.TICSAUTHTOKEN }}
         installTics: true
+        filelist: ${{ github.event_name == 'merge_group' && env.TICS_CHANGED_LIST || '' }}
+        # FIXME: workaround for a TICS bug
+        additionalFlags: ${{ contains(fromJSON('["pull_request", "merge_group"]'), github.event_name) && '-resultdir build' || '' }}
+
+    - if: ${{ failure() && runner.debug }}
+      name: Setup tmate session
+      uses: canonical/action-tmate@main
+      with:
+        limit-access-to-actor: true
