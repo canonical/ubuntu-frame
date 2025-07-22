@@ -245,7 +245,7 @@ Created snap package pc_22-0.4_amd64.snap
 ubuntu-frame_amd64.img ready
 ```
 
-There are a handful ways you can test that image - by {doc}`installing it on a device <core:tutorials/try-pre-built-images/install-on-a-device/index>`, or by {doc}`running it under QEMU <core:tutorials/try-pre-built-images/install-on-a-vm>`. Another approach is to use {doc}`virt-manager <server:how-to/virtualisation/virtual-machine-manager>`, creating the VM with the following command:
+There are a handful ways you can test that image - by {doc}`installing it on a device <core:how-to-guides/deploy-an-image/index>`, or by {doc}`running it under QEMU <core:tutorials/try-pre-built-images/install-on-a-vm>`. Another approach is to use {doc}`virt-manager <server:how-to/virtualisation/virtual-machine-manager>`, creating the VM with the following command:
 
 ```
 $ sudo virt-install --connect qemu:///session \
