@@ -32,6 +32,8 @@ jobs:
         sudo apt install --yes \
           build-essential \
           cmake \
+          gcovr \
+          lcov \
           libapparmor-dev \
           libboost-iostreams-dev \
           libgtest-dev \
@@ -50,8 +52,12 @@ jobs:
 
     - name: Build
       run: |
-        cmake -Bbuild -GNinja src
+        cmake -Bbuild -GNinja -DENABLE_COVERAGE=ON src
         cmake --build build
+
+    - name: Measure coverage
+      run: |
+        cmake --build build --target coverage
 
     - name: Get changed files
       if: github.event_name == 'merge_group'

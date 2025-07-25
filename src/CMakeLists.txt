@@ -1,10 +1,38 @@
 cmake_minimum_required(VERSION 3.16)
 project(ubuntu-frame)
 include(FindPkgConfig)
+include(CMakeDependentOption)
 
 set(CMAKE_CXX_STANDARD 20)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+
 option(ENABLE_TESTING "Specifies whether or not we should build the tests" ON)
+
+cmake_dependent_option(ENABLE_COVERAGE "Enable code coverage" OFF ENABLE_TESTING OFF)
+if(ENABLE_COVERAGE)
+    include(CodeCoverage)
+    append_coverage_compiler_flags()
+    setup_target_for_coverage_lcov(
+        NAME coverage_html
+        BASE_DIRECTORY ${CMAKE_SOURCE_DIR}
+        EXECUTABLE ctest --test-dir ${CMAKE_BINARY_DIR} --output-on-failure
+        DEPENDENCIES ubuntu-frame-tests
+        EXCLUDE "tests/*" "/usr/include/**"
+        LCOV_ARGS --ignore-errors inconsistent --ignore-errors mismatch
+    )
+
+    setup_target_for_coverage_gcovr_xml(
+        NAME coverage_xml
+        EXECUTABLE ctest --test-dir ${CMAKE_BINARY_DIR} --output-on-failure
+        DEPENDENCIES ubuntu-frame-tests
+        EXCLUDE "tests/*"
+    )
+
+    add_custom_target(coverage
+        DEPENDS coverage_html coverage_xml
+    )
+endif()
 
 pkg_check_modules(MIRAL miral REQUIRED)
 pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client)
@@ -60,5 +88,6 @@ install(PROGRAMS ${CMAKE_BINARY_DIR}/frame
 )
 
 if (ENABLE_TESTING)
+    enable_testing()
     add_subdirectory(tests)
 endif()
