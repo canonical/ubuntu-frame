@@ -18,7 +18,6 @@
 #define FRAME_WINDOW_MANAGER_H
 
 #include <miral/minimal_window_manager.h>
-#include <miral/display_configuration.h>
 #include <miral/output.h>
 #include <mir_toolkit/events/enums.h>
 
@@ -72,6 +71,13 @@ private:
     std::weak_ptr<WindowCount> weak_window_count;
 };
 
+class LayoutDataAccessor
+{
+public:
+    virtual ~LayoutDataAccessor() = default;
+    virtual std::shared_ptr<LayoutMetadata> layout_metadata() = 0;
+};
+
 class FrameWindowManagerPolicy : public miral::MinimalWindowManager
 {
 public:
@@ -83,7 +89,7 @@ public:
     FrameWindowManagerPolicy(
         miral::WindowManagerTools const& tools,
         WindowManagerObserver& window_manager_observer,
-        miral::DisplayConfiguration const& display_config);
+        std::shared_ptr<LayoutDataAccessor> const& accessor);
 
     auto place_new_window(miral::ApplicationInfo const& app_info, miral::WindowSpecification const& request)
     -> miral::WindowSpecification override;
@@ -113,7 +119,7 @@ public:
 private:
     WindowManagerObserver const& window_manager_observer;
     std::shared_ptr<WindowCount> window_count = std::make_shared<WindowCount>();
-    miral::DisplayConfiguration display_config;
+    std::shared_ptr<LayoutDataAccessor> accessor;
 
     bool application_zones_have_changed = false;
     bool display_layout_has_changed = false;

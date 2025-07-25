@@ -157,10 +157,10 @@ std::string const FrameWindowManagerPolicy::snap_name = "snap-name";
 FrameWindowManagerPolicy::FrameWindowManagerPolicy(
     WindowManagerTools const& tools,
     WindowManagerObserver& window_manager_observer,
-    miral::DisplayConfiguration const& display_config)
+    std::shared_ptr<LayoutDataAccessor> const& accessor)
     : MinimalWindowManager{tools},
       window_manager_observer{window_manager_observer},
-      display_config{display_config}
+      accessor{accessor}
 {
     window_manager_observer.set_weak_window_count(window_count);
 }
@@ -523,11 +523,7 @@ bool FrameWindowManagerPolicy::try_position_exactly(
     std::string const& surface_title) const
 {
     /// Retrieve the layout information from the "applications" key in the layout's userdata.
-    std::shared_ptr<LayoutMetadata> layout_metadata;
-    auto const layout_userdata = display_config.layout_userdata("applications");
-    if (layout_userdata.has_value())
-        layout_metadata = std::any_cast<std::shared_ptr<LayoutMetadata>>(layout_userdata.value());
-
+    std::shared_ptr<LayoutMetadata> const layout_metadata = accessor->layout_metadata();
     if (layout_metadata && layout_metadata->try_layout(spec, surface_title, snap_instance_name))
         return true;
 
