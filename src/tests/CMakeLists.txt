@@ -29,4 +29,4 @@ target_link_libraries(ubuntu-frame-tests
     GTest::gmock
 )
 
-enable_testing()
+gtest_discover_tests(ubuntu-frame-tests)
