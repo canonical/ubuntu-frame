@@ -37,11 +37,11 @@ $ snap set ubuntu-frame daemon=true
 
 ### `launcher`
 
-```{admonition} Architecture support
+```{tip}
 This feature is only available on **Intel**, **AMD** and **ARM64** systems
 ```
 
-```{admonition} Version 187
+```{tip}
 This feature is only available from Frame version **187** onward
 ```
 
@@ -60,7 +60,7 @@ $ snap set ubuntu-frame launcher=true
 
 Make sure that the applications you want to run are annotated with metadata and icons appropriately, see Snapcraft's {doc}`snapcraft:how-to/crafting/configure-package-information` documentation to get your app icons to display.
 
-```{admonition} Version 211
+```{tip}
 Since version **211**, you can use `Mir` or `UbuntuFrame` in [`OnlyShowIn=` and `NotShowIn=`](https://specifications.freedesktop.org/desktop-entry-spec/latest/recognized-keys.html) to control visibility of the icon on different environments. This is useful to hide the daemon app in snaps that are also useful outside of the Frame ecosystem.
 ```
 

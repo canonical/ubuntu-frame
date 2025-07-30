@@ -12,7 +12,7 @@ By default Ubuntu Frame will show the same content on all outputs. This works we
 
 But sometimes this is not what is wanted, and Ubuntu Frame can do a lot more.
 
-```{admonition} Version 98-mir2.13.0
+```{tip}
 The features described below were introduced in release 98-mir2.13.0
 ```
 
@@ -251,7 +251,7 @@ There is also a `surface-title` key that can be set, but as windows tend to chan
 
 ### Using display properties
 
-```{admonition} Version 243-mir2.21
+```{tip}
 This feature is only available from version 243-mir2.21 onward
 ```
 
@@ -342,7 +342,7 @@ Now, Ubuntu Frame treats the "side by side" windows as one large display:
 
 ## Custom client placement
 
-```{admonition} Version 243-mir2.21
+```{tip}
 This feature is only available from version 243-mir2.21 onward
 ```
 
