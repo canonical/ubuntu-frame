@@ -15,10 +15,15 @@
  */
 
 #include "frame_window_manager.h"
+#include "layout_metadata.h"
+#include "display_configuration_builder.h"
 
 #include <mir_test_framework/window_management_test_harness.h>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <miral/display_configuration.h>
+#include <miral/runner.h>
+#include <fstream>
 
 using namespace testing;
 namespace mtf = mir_test_framework;
@@ -27,21 +32,15 @@ namespace geom = mir::geometry;
 namespace
 {
 auto constexpr DISPLAY_RECT = geom::Rectangle({0, 0}, {800, 600});
-
-class MockLayoutDataAccessor : public LayoutDataAccessor
-{
-public:
-    MOCK_METHOD(std::shared_ptr<LayoutMetadata>, layout_metadata, (), (override));
-};
 }
 
 class FrameWindowManagerTest : public mtf::WindowManagementTestHarness
 {
 public:
-    FrameWindowManagerTest()
+    FrameWindowManagerTest() : runner(argc, argv)
     {
-        ON_CALL(*mock_layout_data_accessor, layout_metadata()).WillByDefault(testing::Return(nullptr));
     }
+
     auto get_builder() -> mir_test_framework::WindowManagementPolicyBuilder override
     {
         return [&](miral::WindowManagerTools const& tools)
@@ -49,19 +48,25 @@ public:
             return std::make_unique<FrameWindowManagerPolicy>(
                 tools,
                 observer,
-                mock_layout_data_accessor);
+                get_display_config());
         };
     }
 
     auto get_initial_output_configs() -> std::vector<mir::graphics::DisplayConfigurationOutput> override
     {
-        auto r = output_configs_from_output_rectangles({DISPLAY_RECT});
-        return r;
+        return output_configs_from_output_rectangles({DISPLAY_RECT});
+    }
+
+protected:
+    virtual miral::DisplayConfiguration get_display_config()
+    {
+        return miral::DisplayConfiguration(runner);
     }
 
     WindowManagerObserver observer;
-    std::shared_ptr<MockLayoutDataAccessor> mock_layout_data_accessor
-        = std::make_shared<NiceMock<MockLayoutDataAccessor>>();
+    int const argc = 1;
+    const char* argv[1] = {"test"};
+    miral::MirRunner runner;
 };
 
 TEST_F(FrameWindowManagerTest, NewWindowsAreFullscreenByDefault)
@@ -81,3 +86,69 @@ TEST_F(FrameWindowManagerTest, NewWindowsTakeUpFullSizeOfDisplay)
     EXPECT_THAT(window.top_left(), Eq(DISPLAY_RECT.top_left));
     EXPECT_THAT(window.size(), Eq(DISPLAY_RECT.size));
 }
+
+namespace
+{
+miral::DisplayConfiguration write_and_build_display_config(
+    const char* path,
+    std::string const& yaml,
+    miral::MirRunner const& runner)
+{
+    // Set environment variables such that we'll always read the display
+    // configuration from the temporary directory.
+    setenv("XDG_CONFIG_HOME", "/tmp", 1);
+    unsetenv("XDG_CONFIG_DIRS");
+    unsetenv("HOME");
+
+    std::ofstream file(path);
+    file << yaml;
+    return build_display_configuration(runner);
+}
+}
+
+#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+class FrameWindowManagerWithSurfaceTitleInDisplayConfig : public FrameWindowManagerTest
+{
+protected:
+    FrameWindowManagerWithSurfaceTitleInDisplayConfig()
+        : display_config(write_and_build_display_config(
+            "/tmp/test.display",
+            R"(
+layouts:
+  default:
+    cards:
+    - card-id: 0
+      VGA-1:
+        state: enabled
+        mode: 800x600@60.0
+        position: [0, 0]	# Defaults to [0, 0]
+        orientation: normal	# {normal, left, right, inverted}, defaults to normal
+        scale: 1
+        group: 0	# Outputs with the same non-zero value are treated as a single display
+    applications:
+    - surface-title: test
+      position: [ 100, 100 ]
+      size: [ 50, 50 ]
+)", runner))
+    {
+        display_config.operator()(server);
+    }
+
+    miral::DisplayConfiguration get_display_config() override
+    {
+        return display_config;
+    }
+
+    miral::DisplayConfiguration display_config;
+};
+
+TEST_F(FrameWindowManagerWithSurfaceTitleInDisplayConfig, WindowsCanBePlacedExactlyByTitle)
+{
+    auto const app = open_application("test");
+    miral::WindowSpecification spec;
+    spec.name() = "test";
+    auto const window = create_window(app, spec);
+    EXPECT_THAT(window.top_left(), Eq(geom::Point{100, 100}));
+    EXPECT_THAT(window.size(), Eq(geom::Size{50, 50}));
+}
+#endif
