@@ -36,7 +36,7 @@ Open a terminal window and type:
 sudo snap install ubuntu-frame --channel=22
 ```
 
-```{admonition} channel=22
+```{tip}
 For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=22` which corresponds to `base: core22` which in turn refers to Ubuntu 22.04LTS.
 ```
 
@@ -101,7 +101,7 @@ $ git branch --list --remotes origin/22/*
   origin/22/x11-glxgears
 ```
 
-```{admonition} 22
+```{tip}
 The "22" prefix refers to the snap bases that snaps are based on, in this case we use `22/` for branches using to `base: core22` (which in turn refers to Ubuntu 22.04LTS).
 ```
 

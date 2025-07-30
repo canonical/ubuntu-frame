@@ -52,7 +52,7 @@ $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame-vnc
 
 ## Authentication
 
-```{admonition} Version 82
+```{tip}
 This feature is only available from version `82` onward on the `24` track.
 ```
 

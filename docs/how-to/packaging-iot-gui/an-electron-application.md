@@ -40,7 +40,7 @@ Open a terminal window and type:
 sudo snap install ubuntu-frame --channel=24
 ```
 
-```{admonition} channel=24
+```{tip}
 For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=24` which corresponds to `base: core24` which in turn refers to Ubuntu 24.04LTS.
 ```
 
@@ -134,7 +134,7 @@ $ $ git branch --list --remotes origin/24/*
   origin/24/x11-glxgears
 ```
 
-```{admonition} 24
+```{tip}
 The "24" prefix refers to the snap bases that snaps are based on, in this case we use `24` for branches using to `base: core24` which in turn refers to Ubuntu 24.04LTS. (There are similar `22` and `20` collections.)
 ```
 
