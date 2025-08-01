@@ -6,10 +6,9 @@ This document walks through the steps needed to achieve a flicker-free, smooth b
 
 ______________________________________________________________________
 
-[note status="Version 123-mir2.15.0+dev399"]
+```{tip}
 This is only possible with Ubuntu Frame 123-mir2.15.0+dev399 and later
-
-````
+```
 
 ## Enabling the boot splash
 
@@ -21,7 +20,7 @@ If your image doesn't yet have Ubuntu Frame, you'll need to install it:
 
 ```shell
 $ sudo snap install ubuntu-frame --edge
-````
+```
 
 And maybe a client:
 

@@ -40,16 +40,15 @@ Open a terminal window and type:
 sudo snap install ubuntu-frame --channel=24
 ```
 
-[note status="channel=24"]
+```{tip}
 For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=24` which corresponds to `base: core24` which in turn refers to Ubuntu 24.04LTS.
-
-````
+```
 
 **Frame-it** is a command-line utility for running snaps with Ubuntu Frame and is useful for testing on your development machine.
 
 ```
 sudo snap install frame-it --classic
-````
+```
 
 **Snapcraft** is a command-line utility for building snaps. This software allows users to build their own applications or software packages, and then publish them to the [Snap Store](https://snapcraft.io).
 
@@ -135,10 +134,9 @@ $ $ git branch --list --remotes origin/24/*
   origin/24/x11-glxgears
 ```
 
-[note status="24"]
+```{tip}
 The "24" prefix refers to the snap bases that snaps are based on, in this case we use `24` for branches using to `base: core24` which in turn refers to Ubuntu 24.04LTS. (There are similar `22` and `20` collections.)
-
-````
+```
 
 Once you have the customised snapcraft recipe you can snap your example applications.
 
@@ -147,7 +145,7 @@ Switch to the Electron example branch. Then use snapcraft to build the snap:
 ```
 git checkout 24/Electron-quick-start
 snapcraft
-````
+```
 
 Snapcraft is the packaging tool used to create snaps. We are not going to explore all its options here but, to avoid confusion, note that when you first run snapcraft, you will be asked "Support for 'multipass' needs to be set up. Would you like to do it now? \[y/N\]:", answer "yes".
 
