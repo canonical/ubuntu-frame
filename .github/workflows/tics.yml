@@ -62,7 +62,7 @@ jobs:
 
     - name: Measure coverage
       run: |
-        cmake --build build --target coverage
+        cmake --build build --target coverage_html
 
     - name: Get changed files
       if: github.event_name == 'merge_group'
