@@ -25,6 +25,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      # Need history to determine changed files
+      with:
+        fetch-depth: 2
 
     - name: Install dependencies
       run: |
