@@ -19,38 +19,15 @@
 #include "background_client.h"
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
-#include "layout_metadata.h"
+#include "display_configuration_builder.h""
 
 #include <miral/configuration_option.h>
 #include <miral/decorations.h>
-#include <miral/display_configuration.h>
 #include <miral/internal_client.h>
 #include <miral/keymap.h>
 #include <miral/runner.h>
 #include <miral/set_window_management_policy.h>
-#include <miral/version.h>
 #include <miral/wayland_extensions.h>
-
-namespace
-{
-class DisplayConfigLayoutDataAccessor : public LayoutDataAccessor
-{
-public:
-    explicit DisplayConfigLayoutDataAccessor(miral::DisplayConfiguration& display_config)
-        : display_config{display_config}
-    {}
-
-    std::shared_ptr<LayoutMetadata> layout_metadata() override
-    {
-        auto const layout_userdata = display_config.layout_userdata("applications");
-        if (layout_userdata.has_value())
-            return std::any_cast<std::shared_ptr<LayoutMetadata>>(layout_userdata.value());
-        return nullptr;
-    }
-
-    miral::DisplayConfiguration display_config;
-};
-}
 
 int main(int argc, char const* argv[])
 {
@@ -58,24 +35,15 @@ int main(int argc, char const* argv[])
     MirRunner runner{argc, argv};
     WindowManagerObserver window_manager_observer{};
 
-    DisplayConfiguration display_config{runner};
-    display_config.add_output_attribute(FrameWindowManagerPolicy::surface_title);
-    display_config.add_output_attribute(FrameWindowManagerPolicy::snap_name);
+
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);
 
     BackgroundClient background_client(&runner, &window_manager_observer);
 
     runner.add_stop_callback([&] { background_client.stop(); });
+    auto display_config = build_display_configuration(runner);
 
-#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
-    display_config.layout_userdata_builder("applications", [](DisplayConfiguration::Node const& node) -> std::any
-    {
-        return std::make_shared<LayoutMetadata>(node);
-    });
-#endif
-
-    auto const accessor = std::make_shared<DisplayConfigLayoutDataAccessor>(display_config);
     return runner.run_with(
         {
             wayland_extensions,
@@ -100,7 +68,7 @@ int main(int argc, char const* argv[])
                                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
             set_window_management_policy<FrameWindowManagerPolicy>(
                 window_manager_observer,
-                accessor),
+                display_config),
             Keymap{},
             miral::Decorations::always_csd()
         });

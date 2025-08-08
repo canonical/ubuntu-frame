@@ -18,7 +18,7 @@
 #define LAYOUT_METADATA_H
 
 #include <miral/version.h>
-#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
 
 #include <optional>
 #include <string>
