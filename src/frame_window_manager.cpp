@@ -182,7 +182,7 @@ void FrameWindowManagerPolicy::handle_layout(
     auto const snap_instance_name = snap_instance_name_of(application);
     auto const surface_title = specification.name() ? specification.name() : window_info.name();
 
-#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
     // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
     if (try_position_exactly(specification, snap_instance_name, surface_title.value_or("")))
     {
@@ -263,7 +263,7 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 
 void FrameWindowManagerPolicy::handle_window_ready(WindowInfo& window_info)
 {
-#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
     // After a window has been placed at a specific coordinate, we must clip it to its tile
     // so that it does not overlap with other applications in the event that the client insists on
     // submitting buffers that are larger than its tile.

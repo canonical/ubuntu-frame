@@ -27,7 +27,7 @@ auto build_display_configuration(miral::MirRunner const& runner)
     display_config.add_output_attribute(FrameWindowManagerPolicy::surface_title);
     display_config.add_output_attribute(FrameWindowManagerPolicy::snap_name);
 
-#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
     display_config.layout_userdata_builder("applications", [](miral::DisplayConfiguration::Node const& node) -> std::any
     {
         return std::make_shared<LayoutMetadata>(node);

@@ -65,7 +65,7 @@ protected:
 
     WindowManagerObserver observer;
     int const argc = 1;
-    const char* argv[1] = {"test"};
+    const char* argv[2] = {"test", nullptr};
     miral::MirRunner runner;
 };
 
@@ -106,7 +106,7 @@ miral::DisplayConfiguration write_and_build_display_config(
 }
 }
 
-#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
 class FrameWindowManagerWithSurfaceTitleInDisplayConfig : public FrameWindowManagerTest
 {
 protected:
