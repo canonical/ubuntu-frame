@@ -1,0 +1,92 @@
+name: TICS
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  merge_group:
+    types: [checks_requested]
+  workflow_dispatch:
+
+jobs:
+  TICS:
+    # Only run if we have access to secrets.
+    if: github.event_name != 'pull_request' || github.repository == github.event.pull_request.head.repo.full_name
+
+    runs-on: [self-hosted, reactive, amd64, tiobe, noble]
+
+    env:
+      NEEDRESTART_SUSPEND: yes
+      DEBIAN_FRONTEND: noninteractive
+      TICS_CHANGED_LIST: tics_changed.list
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      # Need history to determine changed files
+      with:
+        fetch-depth: 2
+
+    - name: Install dependencies
+      run: |
+        sudo add-apt-repository --yes ppa:mir-team/dev
+        sudo apt install --yes \
+          build-essential \
+          cmake \
+          gcovr \
+          lcov \
+          libapparmor-dev \
+          libboost-iostreams-dev \
+          libgtest-dev \
+          libgmock-dev \
+          libfreetype6-dev \
+          libmiral-dev \
+          libmirserver-dev \
+          libmirserver-internal-dev \
+          libmircommon-dev \
+          libmircommon-internal-dev \
+          mirtest-dev \
+          mir-wlcs-integration \
+          libwayland-dev \
+          ninja-build \
+          pkg-config
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        cache: true
+
+    - name: Build
+      run: |
+        cmake -Bbuild -GNinja -DENABLE_COVERAGE=ON src
+        cmake --build build
+
+    - name: Measure coverage
+      run: |
+        cmake --build build --target coverage_html
+
+    - name: Get changed files
+      if: github.event_name == 'merge_group'
+      run: |
+        # Every merge_group event runs for one pull request, so we can diff against parent
+        git diff --name-only ${{ github.sha }}~1 ${{ github.sha }} >> $TICS_CHANGED_LIST
+
+    - name: Run TICS analysis
+      uses: tiobe/tics-github-action@v3
+      with:
+        mode: ${{ contains(fromJSON('["pull_request", "merge_group"]'), github.event_name) && 'client' || 'qserver' }}
+        project: ubuntu-frame
+        viewerUrl: https://canonical.tiobe.com/tiobeweb/TICS/api/cfg?name=default
+        ticsAuthToken: ${{ secrets.TICSAUTHTOKEN }}
+        installTics: true
+        filelist: ${{ github.event_name == 'merge_group' && env.TICS_CHANGED_LIST || '' }}
+        # FIXME: workaround for a TICS bug
+        additionalFlags: ${{ contains(fromJSON('["pull_request", "merge_group"]'), github.event_name) && '-resultdir build' || '' }}
+
+    - if: ${{ failure() && runner.debug }}
+      name: Setup tmate session
+      uses: canonical/action-tmate@main
+      with:
+        limit-access-to-actor: true
