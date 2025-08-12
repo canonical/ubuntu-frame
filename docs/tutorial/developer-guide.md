@@ -44,16 +44,15 @@ Open a terminal window and type:
 sudo snap install ubuntu-frame --channel=22
 ```
 
-[note status="channel=22"]
+```{tip}
 For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=22` which corresponds to `base: core22` which in turn refers to Ubuntu 22.04LTS.
-
-````
+```
 
 **Frame-it** is a command-line utility for running snaps with Ubuntu Frame and is useful for testing on your development machine.
 
 ```
 sudo snap install frame-it --classic
-````
+```
 
 **Snapcraft** is a command-line utility for building snaps. This software allows users to build their own applications or software packages, and then publish them to the [Snap Store](https://snapcraft.io).
 
@@ -163,10 +162,9 @@ $ git branch --list --remotes origin/22/*
   origin/22/x11-glxgears
 ```
 
-[note status="22/"]
+```{tip}
 The "22" prefix refers to the snap bases that snaps are based on, in this case we use `22/` for branches using to `base: core22` (which in turn refers to Ubuntu 22.04LTS).
-
-````
+```
 
 Once you have the customised snapcraft recipe you can snap your example applications.
 
@@ -179,7 +177,7 @@ Switch to the GTK example branch. Then use snapcraft to build the snap:
 ```
 git checkout 22/GTK3-mastermind
 snapcraft
-````
+```
 
 Snapcraft is the packaging tool used to create snaps. We are not going to explore all its options here but, to avoid confusion, note that when you first run snapcraft, you will be asked "Support for 'multipass' needs to be set up. Would you like to do it now? \[y/N\]:", answer "yes".
 
