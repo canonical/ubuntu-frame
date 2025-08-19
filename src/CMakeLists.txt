@@ -46,6 +46,7 @@ add_library(frame-implementation
     background_client.cpp background_client.h
     snap_name_of.cpp snap_name_of.h
     layout_metadata.cpp layout_metadata.h
+    display_configuration_builder.cpp display_configuration_builder.h
 )
 
 add_executable(frame
