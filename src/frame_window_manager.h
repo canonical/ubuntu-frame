@@ -150,8 +150,8 @@ private:
 
     bool try_position_exactly(
         miral::WindowSpecification& spec,
-        std::string const& snap_instance_name,
-        std::string const& surface_title) const;
+        miral::WindowInfo const& window_info,
+        miral::Application const& application) const;
 };
 
 #endif /* FRAME_WINDOW_MANAGER_H */
