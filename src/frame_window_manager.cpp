@@ -179,7 +179,7 @@ void FrameWindowManagerPolicy::handle_layout(
     if (!can_position_be_overridden(specification, window_info))
         return;
 
-    auto const snap_instance_name = application ? snap_instance_name_of(application) : "";
+    auto const snap_instance_name = snap_instance_name_of(application);
     auto const surface_title = specification.name() ? specification.name() : window_info.name();
     // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
     if (try_position_exactly(specification, window_info, application))
@@ -519,7 +519,7 @@ bool FrameWindowManagerPolicy::try_position_exactly(
     WindowInfo const& window_info,
     Application const& application) const
 {
-#if MIRAL_MAJOR_VERSION > 5 || (MIRAL_MAJOR_VERSION == 5 && MIRAL_MINOR_VERSION >= 3)
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
     /// Retrieve the layout information from the "applications" key in the layout's userdata.
     auto const snap_instance_name = application ? snap_instance_name_of(application) : "";
     auto const surface_title = spec.name() ? spec.name() : window_info.name();
