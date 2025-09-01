@@ -275,7 +275,7 @@ $ snap get ubuntu-frame display
 ...
 ```
 
-#### `layouts`
+#### Layouts
 
 Display configuration is made up of one of more named layout.
 Each layout contains their own set of configuration that is applied when that layout is active.
@@ -301,7 +301,7 @@ layouts:
         # Configuration to place this output to the right of eDP-1
 ```
 
-#### Output configuration
+#### Output Configuration
 
 Each output can be configured by setting properties keyed by the card ID and output name.
 All properties are optional.
