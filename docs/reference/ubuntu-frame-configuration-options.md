@@ -281,23 +281,22 @@ Display configuration is made up of one of more named layout.
 Each layout contains their own set of configuration that is applied when that layout is active.
 The first layout is used by default and can be changed using the `display-layout` configuration option (see below).
 
-An example of configuration for a Frame system with two outputs that is required to either show the same contents on both monitors or show content spanning both monitors.
-This is expressed with the following configuration:
+A system could be configured to show different application during the day and night using two layouts:
 ```yaml
 layouts:
-  default:
+  day:
     - card-id: 0
       eDP-1:
-        # No configuration, this output shows the same as HDMI-A-1
+        # ...
       HDMI-A-1:
-        # No configuration, this output shows the same as eDP-1
+        # ...
 
-  side_by_side:
+  night:
     - card-id: 0
       eDP-1:
-        # Configuration to place this output to the left of HDMI-A-1
+        # ...
       HDMI-A-1:
-        # Configuration to place this output to the right of eDP-1
+        # ...
 ```
 
 #### Output Configuration
