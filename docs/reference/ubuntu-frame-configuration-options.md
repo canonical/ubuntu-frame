@@ -316,18 +316,18 @@ layouts:
         # Configuration options
 ```
 
-The output resolution, framerate, orientation and pixel scaling can be overriden from the default values:
+The output resolution, frame rate, orientation and pixel scaling can be overridden from the default values:
 ```yaml
 layouts:
   default:
     - card-id: 0
       eDP-1:
-        mode: 1920x1080@60.0 # Resolution and framerate, defaults to preferred mode.
+        mode: 1920x1080@60.0 # Resolution and frame rate, defaults to preferred mode.
         orientation: normal  # {normal, left, right, inverted}, defaults to normal.
         scale: 1             # Pixel scaling, defaults to 1.
 ```
 
-Setting an output `position` changes the default behaviour of applications showing on all outputs to instead show different content on each output:
+Setting an output `position` changes the default behavior of applications showing on all outputs to instead show different content on each output:
 ```yaml
 layouts:
   default:

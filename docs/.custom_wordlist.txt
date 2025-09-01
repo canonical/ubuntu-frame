@@ -80,6 +80,7 @@ dri
 drirc
 drm
 dtoverlay
+eDP
 egl
 favour
 fullscreen
