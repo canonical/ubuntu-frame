@@ -279,8 +279,7 @@ $ snap get ubuntu-frame display
 
 Display configuration is made up of one of more named layout.
 Each layout contains their own set of configuration that is applied when that layout is active.
-The `default` layout is always required and is the one used by Frame initially.
-The `display-layout` configuration option is used to control the active layout (see below).
+The first layout is used by default and can be changed using the `display-layout` configuration option (see below).
 
 An example of configuration for a Frame system with two outputs that is required to either show the same contents on both monitors or show content spanning both monitors.
 This is expressed with the following configuration:
