@@ -366,12 +366,13 @@ layouts:
 
 Controls the layout in use.
 
-Change the layout to `side_by_side`:
+Change the layout to `night`:
 ```
-$ snap set ubuntu-frame display-layout=side_by_side
+$ snap set ubuntu-frame display-layout=night
 ```
 
 Get the current layout:
 ```
 $ snap get ubuntu-frame display-layout
+night
 ```
