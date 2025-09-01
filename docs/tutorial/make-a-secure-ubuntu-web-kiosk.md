@@ -96,4 +96,4 @@ snap set wpe-webkit-mir-kiosk url=https://mir-server.io
 
 As mentioned above, the approach to building a kiosk snap from your application depends on whether your application has native support for Wayland (e.g. uses GTK3/4, Qt5/6 or SDL2), is Electron/HTML5 based, or not (everything else).
 
-We have written up a series of tutorials to address each of these possibilities. We recommend reading the [developer guide](https://mir-server.io/docs/developer-guide) as it is currently the most comprehensive way to get familiar with what Ubuntu Frame has to offer.
+We have written up a series of tutorials to address each of these possibilities. We recommend reading the {ref}`developer tutorial <tutorial-deploy-graphical-application>` as it is currently the most comprehensive way to get familiar with what Ubuntu Frame has to offer.
