@@ -10,7 +10,7 @@ ______________________________________________________________________
 
 ## Snap configuration options
 
-There are three snap configuration options:
+There are four snap configuration options:
 
 - `daemon=[true|false]` enables the daemon (defaults to true on Ubuntu Core and false on classic systems)
 - `launcher=[true|false]` enables a side bar application switcher if your solution calls for that
