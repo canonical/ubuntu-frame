@@ -285,6 +285,7 @@ A system could be configured to show different application during the day and ni
 ```yaml
 layouts:
   day:
+    cards:
     - card-id: 0
       eDP-1:
         # ...
@@ -292,6 +293,7 @@ layouts:
         # ...
 
   night:
+    cards:
     - card-id: 0
       eDP-1:
         # ...
@@ -309,6 +311,7 @@ Configuration for the eDP-1 output on the first graphics card is specified using
 ```yaml
 layouts:
   default:
+    cards:
     - card-id: 0
       eDP-1:
         # Configuration options
@@ -318,6 +321,7 @@ The output resolution, frame rate, orientation and pixel scaling can be overridd
 ```yaml
 layouts:
   default:
+    cards:
     - card-id: 0
       eDP-1:
         mode: 1920x1080@60.0 # Resolution and frame rate, defaults to preferred mode.
@@ -329,6 +333,7 @@ Setting an output `position` changes the default behavior of applications showin
 ```yaml
 layouts:
   default:
+    cards:
     - card-id: 0
       eDP-1:
         position: [0, 0] # Note this is the default position and could be omitted.
@@ -340,6 +345,7 @@ A non-zero `group` value is used to join outputs together so applications can sp
 ```yaml
 layouts:
   default:
+    cards:
     - card-id: 0
       eDP-1:
         position: [0, 0]
@@ -353,6 +359,7 @@ If the output should not be used by frame it can be disabled by setting `state`:
 ```yaml
 layouts:
   default:
+    cards:
     - card-id: 0
       eDP-1:
         state: disabled  # Output not used
