@@ -139,7 +139,9 @@ else:
 # NOTE: If undefined, set to None, or empty,
 #       the sphinx_reredirects extension will be disabled.
 
-redirects = {}
+redirects = {
+    'tutorial/developer-guide': '../deploy-graphical-application-with-frame',
+}
 
 
 ###########################

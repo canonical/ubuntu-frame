@@ -34,18 +34,25 @@ For some of the later steps, you will need an [Ubuntu One account](https://login
 
 Install Ubuntu Frame:
 
-    sudo snap install ubuntu-frame --channel=24
+```
+sudo snap install ubuntu-frame --channel=24
+```
 
 Ubuntu Frame has various channels corresponding to the snap bases, we use `--channel=24` here which corresponds to `base: core24` which in turn refers to Ubuntu 24.04 LTS.
 
 Install Frame-it, a command-line utility for running snaps with Ubuntu Frame and testing on your development machine:
-    sudo snap install frame-it --classic
+    
+```
+sudo snap install frame-it --classic
+```
 
 Install Snapcraft, a command-line utility for building snaps. This software allows users to build their own applications or software packages, and then publish them to the [Snap Store](https://snapcraft.io):
 
 In the same terminal window type:
 
-    sudo snap install snapcraft --classic
+```
+sudo snap install snapcraft --classic
+```
 
 If you don't have git installed, now is a good time to install it (on Ubuntu, use the command `sudo apt install git`).
 
