@@ -367,8 +367,6 @@ layouts:
         # Output in use, state defaults to enabled
 ```
 
-####
-
 ### `display-layout`
 
 Controls the layout in use.
