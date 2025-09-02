@@ -14,24 +14,25 @@ You should make an explicit decision on which `base` to build your appliance wit
 
 | `base`   | Corresponding LTS |
 | -------- | ----------------- |
+| `core24` | Ubuntu 24.04LTS   |
 | `core22` | Ubuntu 22.04LTS   |
 | `core20` | Ubuntu 20.04LTS   |
 | `core18` | Ubuntu 18.04LTS   |
 | `core`   | Ubuntu 16.04LTS   |
 
-As well as providing more recent libraries and tools to work with, that means support for the base is limited by support for the LTS. For example, The core20/20.04 version is supported until April 2030.
+As well as providing more recent libraries and tools to work with, that means support for the base is limited by support for the LTS. For example, The `core20/20.04` version is supported until April 2030.
 
-Ubuntu Frame supports both `base: core20` and `base: core22`.
+Ubuntu Frame supports all `base: core20`, `base: core22` and `base: core24`.
 
-For `base: core20` there is a `20` track using `graphics-core20` (with a `mesa-core20` default provider). This is in maintenance mode and will only receive security updates.
+For `base: core20` and `base: core22` there are a `20` and `22` tracks, using the matching `graphics-coreXX` (with `mesa-coreXX` default providers). These are in maintenance mode and will only receive security updates.
 
-For `base: core22` there is a `22` track using `graphics-core22` (with a `mesa-core22` default provider). This is the basis for ongoing development.
+For `base: core24` there is a `24` track using `graphics-core24` (with a `mesa-core24` default provider). This is the basis for ongoing development.
 
-Your application snap can also make use of either `base: core20` or `base: core22` (and the corresponding `graphics-coreXX` content interface.
+Your application snap can also make use of any of the above bases, and the corresponding graphics interface.
 
 In principle, it is possible to mix & match snaps with different bases but that comes at a cost having multiple base and graphics snaps installed.
 
-Ubuntu Frame also has a default `latest` track. This is deprecated in favour of appliances explicitly choosing either `base: core20` or `base: core22`.
+Ubuntu Frame also has a default `latest` track. This is deprecated in favour of appliances explicitly choosing one of the `XX` tracks.
 
 ### Maintaining your snap
 
