@@ -41,11 +41,11 @@ For some of the later steps, you will need an [Ubuntu One account](https://login
 Open a terminal window and type:
 
 ```
-sudo snap install ubuntu-frame --channel=22
+sudo snap install ubuntu-frame --channel=24
 ```
 
 ```{tip}
-For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=22` which corresponds to `base: core22` which in turn refers to Ubuntu 22.04LTS.
+For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=24` which corresponds to `base: core24` which in turn refers to Ubuntu 24.04LTS.
 ```
 
 **Frame-it** is a command-line utility for running snaps with Ubuntu Frame and is useful for testing on your development machine.
@@ -147,23 +147,24 @@ If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" fo
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
 ```
-$ git branch --list --remotes origin/22/*
-  origin/22/Electron-quick-start
-  origin/22/Flutter-demo
-  origin/22/GTK3-adventure
-  origin/22/GTK3-mastermind
-  origin/22/Qt5-bomber
-  origin/22/Qt5-bomber-first-try
-  origin/22/Qt6-example
-  origin/22/SDL2-neverputt
-  origin/22/Wine-example
-  origin/22/main
-  origin/22/native-glmark2
-  origin/22/x11-glxgears
+$ git branch --list --remotes origin/24/*
+
 ```
 
+origin/24/Electron-quick-start
+origin/24/Flutter-demo
+origin/24/GTK3-adventure
+origin/24/GTK3-mastermind
+origin/24/Qt5-bomber
+origin/24/Qt5-bomber-first-try
+origin/24/Qt6-example
+origin/24/SDL2-neverputt
+origin/24/main
+origin/24/native-glmark2
+origin/24/x11-glxgears
+
 ```{tip}
-The "22" prefix refers to the snap bases that snaps are based on, in this case we use `22/` for branches using to `base: core22` (which in turn refers to Ubuntu 22.04LTS).
+The "24" prefix refers to the snap bases that snaps are based on, in this case we use `24/` for branches using to `base: core24` (which in turn refers to Ubuntu 24.04LTS).
 ```
 
 Once you have the customised snapcraft recipe you can snap your example applications.
@@ -175,7 +176,7 @@ Once you have the customised snapcraft recipe you can snap your example applicat
 Switch to the GTK example branch. Then use snapcraft to build the snap:
 
 ```
-git checkout 22/GTK3-mastermind
+git checkout 24/GTK3-mastermind
 snapcraft
 ```
 
@@ -200,8 +201,6 @@ The first time you run your snap with Ubuntu Frame installed, you are likely to 
 WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
 
 (gnome-mastermind:639854): Gtk-WARNING **: 12:30:27.215: cannot open display:
-[2023-08-09 12:30:27.218285] < - debug - > mirserver: Handling Terminated from pid=639737
-[2023-08-09 12:30:27.218522] < -warning- > mirserver: wl_surface@12 destroyed before associated role
 ```
 
 The first WARNING is the key to the problem and comes from one of the scripts in the generic recipe. While developing your snap (that is, until your snap is uploaded to the store and any necessary “store assertions” granted), connecting any “interfaces” your snap uses needs to be done manually. As the message suggests, there’s a helper script for this. Run it and try again:
@@ -228,7 +227,7 @@ rm *.snap
 Now switch to the Qt first-try example branch. Then build, install, and run the snap:
 
 ```
-git checkout 22/Qt5-bomber-first-try
+git checkout 24/Qt5-bomber-first-try
 snapcraft
 sudo snap install --dangerous *.snap
 frame-it iot-example-graphical-snap
@@ -246,14 +245,14 @@ kf.dbusaddons: DBus session bus not found. To circumvent this problem try the fo
 This didn’t work as the bomber application requires a DBus “session bus”. To solve this issue, you can provide one within the snap using dbus-run-session. You can see exactly how this is done by comparing branches:
 
 ```
-git diff 22/Qt5-bomber-first-try origin/22/Qt5-bomber
+git diff 24/Qt5-bomber-first-try origin/24/Qt5-bomber
 
 ```
 
-Or you can just switch to the 22/Qt5-bomber example branch. Then build, install and run the snap:
+Or you can just switch to the 24/Qt5-bomber example branch. Then build, install and run the snap:
 
 ```
-git checkout 22/Qt5-bomber
+git checkout 24/Qt5-bomber
 snapcraft
 sudo snap install --dangerous *.snap
 frame-it iot-example-graphical-snap
@@ -276,7 +275,7 @@ rm *.snap
 Now switch to the SDL2 example branch. Then build, install, and run the snap:
 
 ```
-git checkout 22/SDL2-neverputt
+git checkout 24/SDL2-neverputt
 snapcraft
 sudo snap install --dangerous *.snap
 frame-it iot-example-graphical-snap
@@ -315,7 +314,7 @@ When packaging an application there are many issues to address: what needs to be
 You might get some inspiration from the examples we’ve given. You can see the customisation used in each example using git diff for example:
 
 ```
-git diff 22/main 22/SDL2-neverputt
+git diff 24/main 24/SDL2-neverputt
 ```
 
 You’ll see, for example, the `SDL_VIDEODRIVER` settings and the `neverballrc` file in this example. But we can’t go into all the possibilities and tools in this guide. There are helpful docs and forums on the [Snapcraft website](https://snapcraft.io/).
@@ -348,17 +347,12 @@ snap install --dangerous *.snap
 You'll see the Ubuntu Frame grayscale background once that installs, but (if you've been following the steps precisely) you won't see Neverputt start:
 
 ```
-$ snap logs  iot-example-graphical-snap
-2022-06-23T16:17:51Z iot-example-graphical-snap.iot-example-graphical-snap[4210]: WARNING: hardware-observe interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
-2022-06-23T16:17:51Z iot-example-graphical-snap.iot-example-graphical-snap[4210]: WARNING: audio-playback interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
-2022-06-23T16:17:51Z iot-example-graphical-snap.iot-example-graphical-snap[4210]: WARNING: joystick interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
-2022-06-23T16:17:51Z iot-example-graphical-snap.iot-example-graphical-snap[4210]: Failure to initialize SDL (Could not initialize UDEV)
-2022-06-23T16:17:51Z systemd[1]: snap.iot-example-graphical-snap.iot-example-graphical-snap.service: Succeeded.
-2022-06-23T16:17:51Z systemd[1]: snap.iot-example-graphical-snap.iot-example-graphical-snap.service: Scheduled restart job, restart counter is at 5.
-2022-06-23T16:17:51Z systemd[1]: Stopped Service for snap application iot-example-graphical-snap.iot-example-graphical-snap.
-2022-06-23T16:17:51Z systemd[1]: snap.iot-example-graphical-snap.iot-example-graphical-snap.service: Start request repeated too quickly.
-2022-06-23T16:17:51Z systemd[1]: snap.iot-example-graphical-snap.iot-example-graphical-snap.service: Failed with result 'start-limit-hit'.
-2022-06-23T16:17:51Z systemd[1]: Failed to start Service for snap application iot-example-graphical-snap.iot-example-graphical-snap.
+$ snap logs iot-example-graphical-snap
+# these are abridged
+WARNING: hardware-observe interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
+WARNING: audio-playback interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
+WARNING: joystick interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
+Failure to initialize SDL (Could not initialize UDEV)
 ```
 
 All these WARNING messages give the clue: you’re still developing the snap and interfaces are not yet being connected automatically. So, connect the missing interfaces and manually start the daemon:

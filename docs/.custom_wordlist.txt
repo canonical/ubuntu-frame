@@ -42,8 +42,8 @@ Runing
 SDL
 SSHed
 Scummvm
-Snapcraft's
 SnapD
+Snapcraft's
 Sommelier
 Squeekboard
 SystemD
@@ -87,7 +87,9 @@ gbm
 github
 gitlab
 glancr
+glmark
 glx
+glxgears
 gnutls
 gpu
 grayscale
@@ -129,6 +131,7 @@ mir
 multipass
 neatvnc
 neverball
+neverputt
 opengl
 osk
 pc
