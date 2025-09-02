@@ -268,7 +268,7 @@ If no display configuration was previously set an automatically generated config
 This may be a useful starting point for writing new configuration.
 
 If you need to reset this configuration (because your hardware changes, or you make a mistake) then simply unset it and restart Ubuntu Frame:
-```
+```bash
 $ snap unset ubuntu-frame display
 $ snap restart ubuntu-frame
 $ snap get ubuntu-frame display
@@ -367,12 +367,12 @@ layouts:
 Controls the layout in use.
 
 Change the layout to `night`:
-```
+```bash
 $ snap set ubuntu-frame display-layout=night
 ```
 
 Get the current layout:
-```
+```bash
 $ snap get ubuntu-frame display-layout
 night
 ```
