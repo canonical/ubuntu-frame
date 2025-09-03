@@ -519,7 +519,6 @@ bool FrameWindowManagerPolicy::try_position_exactly(
     WindowInfo const& window_info,
     Application const& application) const
 {
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
     /// Retrieve the layout information from the "applications" key in the layout's userdata.
     auto const snap_instance_name = application ? snap_instance_name_of(application) : "";
     auto const surface_title = spec.name() ? spec.name() : window_info.name();
@@ -531,10 +530,5 @@ bool FrameWindowManagerPolicy::try_position_exactly(
 
     if (layout_metadata && layout_metadata->try_layout(spec, surface_title, snap_instance_name))
         return true;
-#else
-    (void)spec;
-    (void)window_info;
-    (void)application;
-#endif
     return false;
 }

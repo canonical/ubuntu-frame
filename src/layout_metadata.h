@@ -18,7 +18,6 @@
 #define LAYOUT_METADATA_H
 
 #include <miral/version.h>
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
 
 #include <optional>
 #include <string>
@@ -61,5 +60,4 @@ private:
 };
 
 
-#endif
 #endif //LAYOUT_METADATA_H
