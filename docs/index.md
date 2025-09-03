@@ -1,21 +1,10 @@
 # Ubuntu Frame
 
-Ubuntu Frame is an easy to use, reliable and secure display server for embedded Linux devices allowing developers to deploy their graphic applications for kiosks, digital signage and more.
+Ubuntu Frame is a secure and reliable display server designed for embedded Linux devices. It simplifies the development and deployment of graphical applications on kiosks, digital signage and more.
 
-With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window. It also automatically enables windows behaviours, input from touch, keyboard, and mouse, on-screen keyboard, power saving and more. Ubuntu Frame bundles communication protocols, input protocols, and security policies into a single kit, which can then be used in embedded devices.
+With Ubuntu Frame's built-in features like kiosk mode, power saving, touch input support, and an on-screen keyboard, developers can quickly create full-screen applications using any of the popular application display frameworks - HTML5/web, X11, or native Wayland. It’s also compatible with most popular toolkits such as Qt, Flutter, Electron, and JavaScript, offering the flexibility to use whichever framework suits your needs best.
 
-Ubuntu Frame streamlines the build and development of products that need graphical output. With Ubuntu Frame, developers don't have to deal with drivers, input modalities, windows dynamics and rules. No more integrating DRM, KMS, input protocols and security policies. This means less code to manage, fewer opportunities for bugs and fewer vulnerabilities in untried code, with more time for developing the content of the display.
-
-Ubuntu Frame is for anyone looking to deploy graphic interfaces for embedded Linux devices such as IoT devices, robots, smart home devices, kiosks, and more.
-
-## Benefits
-
-- Create maintainable images for kiosks and digital signage solutions in under an hour.
-- Out of the box features such as kiosk mode, on-screen keyboard and power saving for making the perfect shell for touchscreen kiosks.
-- Less code for you to integrate and maintain as it bundles communication protocols, input protocols, and security policies into a single kit
-- Compatible with popular toolkits for creating graphical user interfaces like Qt, Flutter, electron, and also html5 and java.
-- Built-in security and long term supported by Canonical.
-
+In under an hour, you can create a maintainable image for your display solution without the need to deal with drivers, input modalities, window dynamics and more. Because Ubuntu Frame handles it all, you can focus on your display content without having to worry about integrating DRM, KMS, input protocols and security policies.
 ______________________________________________________________________
 
 ## In this documentation
@@ -45,20 +34,22 @@ reverse:
 
 ## Project and community
 
-Ubuntu Frame is fully open source. We value your input and contributions!
-You can get involved by:
+Ubuntu Frame is fully open source. We welcome your input and involvement through bugs, feature requests and fixes on the product and its documentation.
+You can engage with us and the community using the following channels:
 
-- **Reporting bugs**: we want to know about the problems so we can fix them.
-- **Quality assurance**: before releasing new features we make a "Call for Testing" a week prior to each update reaching "stable". This is your opportunity to discover and report any problems.
-- **Documentation**: there are lots of ways to use Ubuntu Frame and we try to describe the important ones, but maybe we missed yours.
-- **Feature requests**: we have a lot of ideas on what to do next but you know what you need.
-- **Code changes**: the code is open and we are open to accepting changes to it. So, don’t worry about maintaining a new fork, and instead, let's work together.
+````{grid}
+:reverse:
 
-We will continue growing with our community. If you want to get involved:
+```{grid-item-card} Contribute
+[GitHub](https://github.com/canonical/ubuntu-frame) | [Code of conduct](https://ubuntu.com/community/ethos/code-of-conduct)
 
-- Join the [Discourse community forum](https://discourse.ubuntu.com/tag/ubuntu-frame)
-- Read our [Code of Conduct](https://ubuntu.com/community/ethos/code-of-conduct)
-- Report a bug or contribute on [GitHub](https://github.com/canonical/ubuntu-frame)
+```
+```{grid-item-card} Engage
+[Discourse](https://discourse.ubuntu.com/tag/ubuntu-frame) | [Matrix](https://matrix.to/#/#mir-server:matrix.org) |
+[Contact us](https://canonical.com/contact-us)
+
+```
+````
 
 ```{toctree}
 ---
