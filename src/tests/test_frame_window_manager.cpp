@@ -106,7 +106,6 @@ miral::DisplayConfiguration write_and_build_display_config(
 }
 }
 
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
 class FrameWindowManagerWithSurfaceTitleInDisplayConfig : public FrameWindowManagerTest
 {
 protected:
@@ -151,4 +150,3 @@ TEST_F(FrameWindowManagerWithSurfaceTitleInDisplayConfig, WindowsCanBePlacedExac
     EXPECT_THAT(window.top_left(), Eq(geom::Point{100, 100}));
     EXPECT_THAT(window.size(), Eq(geom::Size{50, 50}));
 }
-#endif

@@ -181,10 +181,8 @@ void FrameWindowManagerPolicy::handle_layout(
 
     auto const snap_instance_name = snap_instance_name_of(application);
     auto const surface_title = specification.name() ? specification.name() : window_info.name();
-
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
     // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
-    if (try_position_exactly(specification, snap_instance_name, surface_title.value_or("")))
+    if (try_position_exactly(specification, window_info, application))
     {
         // Let's warn if the user is placing their surface beyond the extents of all outputs
         Rectangle const extents(specification.top_left().value(), specification.size().value());
@@ -212,7 +210,6 @@ void FrameWindowManagerPolicy::handle_layout(
             window_info.clip_area(extents);
         return;
     }
-#endif
 
     // If the snap name or surface title is mapped to a particular output, then the surface is fullscreen on that output.
     if (assign_to_output(specification, surface_title, snap_instance_name))
@@ -263,24 +260,17 @@ auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info,
 
 void FrameWindowManagerPolicy::handle_window_ready(WindowInfo& window_info)
 {
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
     // After a window has been placed at a specific coordinate, we must clip it to its tile
     // so that it does not overlap with other applications in the event that the client insists on
     // submitting buffers that are larger than its tile.
     auto const application = window_info.window().application();
-    auto const snap_instance_name = snap_instance_name_of(application);
-    auto const surface_title = window_info.name();
-
-    // If the snap name or surface title is mapped to a particular position and size, then the surface is placed there.
     WindowSpecification specification;
-    if (try_position_exactly(specification, snap_instance_name, surface_title))
+    if (try_position_exactly(specification, window_info, application))
     {
         Rectangle const extents(specification.top_left().value(), specification.size().value());
         window_info.clip_area(extents);
     }
-#else
-    (void)window_info;
-#endif
+
     MinimalWindowManager::handle_window_ready(window_info);
 }
 
@@ -323,7 +313,12 @@ auto FrameWindowManagerPolicy::confirm_placement_on_display(
     MirWindowState new_state,
     Rectangle const& new_placement) -> Rectangle
 {
-    if (new_state == mir_window_state_fullscreen)
+    auto const application = window_info.window().application();
+    WindowSpecification throwaway_specification;
+    auto const is_positioned_exactly = try_position_exactly(
+        throwaway_specification, window_info, application);
+
+    if (!is_positioned_exactly && new_state == mir_window_state_fullscreen)
     {
         WindowSpecification specification;
         specification.state() = mir_window_state_maximized;
@@ -369,8 +364,10 @@ void FrameWindowManagerPolicy::advise_end()
                    if (window)
                    {
                        auto& info = tools.info_for(window);
+                       WindowSpecification specification;
+                       auto const is_positioned_exactly = try_position_exactly(specification, info, app.application());
 
-                       if (info.state() == mir_window_state_fullscreen)
+                       if (!is_positioned_exactly && info.state() == mir_window_state_fullscreen)
                        {
                            WindowSpecification specification;
                            specification.state() = mir_window_state_maximized;
@@ -519,10 +516,13 @@ bool FrameWindowManagerPolicy::PlacementMapping::set_output_for_snap(
 
 bool FrameWindowManagerPolicy::try_position_exactly(
     WindowSpecification& spec,
-    std::string const& snap_instance_name,
-    std::string const& surface_title) const
+    WindowInfo const& window_info,
+    Application const& application) const
 {
     /// Retrieve the layout information from the "applications" key in the layout's userdata.
+    auto const snap_instance_name = application ? snap_instance_name_of(application) : "";
+    auto const surface_title = spec.name() ? spec.name() : window_info.name();
+
     std::shared_ptr<LayoutMetadata> layout_metadata;
     auto const layout_userdata = display_config.layout_userdata("applications");
     if (layout_userdata.has_value())
@@ -530,6 +530,5 @@ bool FrameWindowManagerPolicy::try_position_exactly(
 
     if (layout_metadata && layout_metadata->try_layout(spec, surface_title, snap_instance_name))
         return true;
-
     return false;
 }

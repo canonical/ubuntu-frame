@@ -15,7 +15,6 @@
  */
 
 #include <miral/version.h>
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 3, 0)
 #include "layout_metadata.h"
 #include <mir/log.h>
 
@@ -78,7 +77,7 @@ bool LayoutMetadata::try_layout(miral::WindowSpecification& specification,
     {
         if (app.snap_name == snap_name || (title.is_set() && app.surface_title == title))
         {
-            specification.state() = mir_window_state_restored;
+            specification.state() = mir_window_state_fullscreen;
             specification.top_left() = app.position;
             specification.size() = app.size;
             return true;
@@ -164,4 +163,3 @@ std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata
         {x, y},
         {w, h});
 }
-#endif
