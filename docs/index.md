@@ -59,4 +59,5 @@ tutorial/index
 how-to/index
 explanation/index
 reference/index
+release-notes
 ```
