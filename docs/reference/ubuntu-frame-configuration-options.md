@@ -357,6 +357,18 @@ layouts:
         group: 1  # Joins eDP-1 to make a 3840x1080 display.
 ```
 
+Applications can be assigned to show on a particular output using either the snap name or surface title:
+```yaml
+layouts:
+  default:
+    cards:
+    - card-id: 0
+      eDP-1:
+        surface-title: Some App
+      HDMI-A-1:
+        snap-name: wpe-webkit-mir-kiosk
+```
+
 If the output should not be used by frame it can be disabled by setting `state` to either `enabled` or `disabled`:
 ```yaml
 layouts:
