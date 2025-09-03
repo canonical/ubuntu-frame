@@ -369,6 +369,27 @@ layouts:
         snap-name: wpe-webkit-mir-kiosk
 ```
 
+Applications can also be positioned in any location by adding them to `applications`.
+Each application is then provided with a position and size:
+```yaml
+layouts:
+  default:
+    cards:
+    - card-id: 0
+      eDP-1:
+        mode: 1920x1080@60.0
+
+    applications:
+    - surface-title: Some App
+      # Use left half of output
+      position: [0, 0]
+      size: [960, 1080]
+    - snap-name: wpe-webkit-mir-kiosk
+      # Use bottom right quarter of output
+      position: [960, 540]
+      size: [960, 540]
+```
+
 If the output should not be used by frame it can be disabled by setting `state` to either `enabled` or `disabled`:
 ```yaml
 layouts:
