@@ -45,20 +45,22 @@ reverse:
 
 ## Project and community
 
-Ubuntu Frame is fully open source. We value your input and contributions!
-You can get involved by:
+Ubuntu Frame is fully open source. We welcome your input and involvement through bugs, feature requests and fixes on the product and its documentation.
+You can engage with us and the community using the following channels:
 
-- **Reporting bugs**: we want to know about the problems so we can fix them.
-- **Quality assurance**: before releasing new features we make a "Call for Testing" a week prior to each update reaching "stable". This is your opportunity to discover and report any problems.
-- **Documentation**: there are lots of ways to use Ubuntu Frame and we try to describe the important ones, but maybe we missed yours.
-- **Feature requests**: we have a lot of ideas on what to do next but you know what you need.
-- **Code changes**: the code is open and we are open to accepting changes to it. So, don’t worry about maintaining a new fork, and instead, let's work together.
+````{grid}
+:reverse:
 
-We will continue growing with our community. If you want to get involved:
+```{grid-item-card} Contribute
+[GitHub](https://github.com/canonical/ubuntu-frame) | [Code of conduct](https://ubuntu.com/community/ethos/code-of-conduct)
 
-- Join the [Discourse community forum](https://discourse.ubuntu.com/tag/ubuntu-frame)
-- Read our [Code of Conduct](https://ubuntu.com/community/ethos/code-of-conduct)
-- Report a bug or contribute on [GitHub](https://github.com/canonical/ubuntu-frame)
+```
+```{grid-item-card} Engage
+[Discourse](https://discourse.ubuntu.com/tag/ubuntu-frame) | [Matrix](https://matrix.to/#/#mir-server:matrix.org) |
+[Contact us](https://canonical.com/contact-us)
+
+```
+````
 
 ```{toctree}
 ---
