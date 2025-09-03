@@ -7,6 +7,7 @@ through a guided lesson. Readers who are unfamiliar with Ubuntu Frame should
 begin with these tutorials.
 
 ## Getting Started with Frame
+
 - {ref}`make-a-secure-ubuntu-web-kiosk`
 - {ref}`tutorial-deploy-graphical-application`
 
@@ -18,5 +19,5 @@ glob:
 hidden:
 ---
 *
-*/*
 ```
+
