@@ -19,7 +19,7 @@
 #include "background_client.h"
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
-#include "display_configuration_builder.h""
+#include "display_configuration_builder.h"
 
 #include <miral/configuration_option.h>
 #include <miral/decorations.h>
