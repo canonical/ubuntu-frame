@@ -355,7 +355,7 @@ layouts:
         group: 1  # Joins eDP-1 to make a 3840x1080 display.
 ```
 
-If the output should not be used by frame it can be disabled by setting `state`:
+If the output should not be used by frame it can be disabled by setting `state` to either `enabled` or `disabled`:
 ```yaml
 layouts:
   default:
