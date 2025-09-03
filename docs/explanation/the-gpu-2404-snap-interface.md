@@ -36,7 +36,9 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
 >
 > Please checkout the code for your specific extension [here](https://github.com/canonical/snapcraft/tree/main/extensions/desktop)
 
-1. plug the `gpu-2404` interface (the wrapper assumes it's put under `$SNAP/gpu`):
+{#gpu-2404-plug}
+
+1. plug the `gpu-2404` interface (the wrapper assumes it's put under `$SNAP/gpu-2404`):
 
    ```yaml
    plugs:
@@ -45,6 +47,8 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        target: $SNAP/gpu-2404
        default-provider: mesa-2404
    ```
+
+{#gpu-2404-x11-layouts}
 
 1. If your app needs X11 support, {doc}`lay out <snapcraft:reference/layouts>` these paths in your snap:
 
@@ -62,6 +66,8 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        - bin/gpu-2404-wrapper
        command: my-app
    ```
+
+{#gpu-2404-cleanup}
 
 1. use [`bin/gpu-2404-cleanup`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-cleanup) after priming any staged packages to avoid shipping any libraries already provided by the `gpu-2404` providers:
 
@@ -92,6 +98,33 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
    ```
 
 Your snap, when installed, will pull in the default [`mesa-2404`](https://snapcraft.io/mesa-2404) provider, which supports a wide range of hardware. It also supports Nvidia drivers installed on your host system.
+
+### Migrating from `graphics-core20`
+
+If your snap currently uses the `graphics-core20` interface, here are the steps when you're migrating to `base: core24`:
+
+1. replace all references to `graphics-core20` with `gpu-2404`
+1. replace all references to `mesa-core20` with `mesa-2404`
+1. change the target of [the content interface](#gpu-2404-plug) to `$SNAP/gpu-2404`
+1. remove all environment variables / paths pointing at `graphics` paths (the wrapper takes care of these):
+   ```
+   LD_LIBRARY_PATH
+   LIBGL_DRIVERS_PATH
+   LIBVA_DRIVERS_PATH
+   __EGL_VENDOR_LIBRARY_DIRS
+   ```
+1. prepend `bin/gpu-2404-wrapper` to your apps' `command-chain:`
+1. add [the X11 layouts](#gpu-2404-x11-layouts), if your app needs them
+1. replace the `cleanup` part with [`gpu-2404` above](#gpu-2404-cleanup)
+
+### Migrating from `graphics-core22`
+
+If your snap currently uses the `graphics-2404` interface, here are the steps when you're migrating to `base: core24`:
+
+1. replace all references to `graphics-2404` with `gpu-2404`
+1. replace all references to `mesa-2404` with `mesa-2404`
+1. change the target of [the content interface](#gpu-2404-plug) to `$SNAP/gpu-2404`
+1. remove all the layouts - except for [the X11 ones](#gpu-2404-x11-layouts), if your app needs them
 
 ### Going the manual route
 

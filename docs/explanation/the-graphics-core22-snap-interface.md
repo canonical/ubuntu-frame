@@ -42,6 +42,7 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        symlink: $SNAP/graphics/drirc.d
    ```
 
+   {#graphics-core22-x11-layouts}
    If your app needs X11 support:
 
    ```yaml
@@ -60,6 +61,8 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
        - bin/graphics-core22-wrapper
        command: my-app
    ```
+
+{#graphics-core22-cleanup}
 
 1. use [`bin/graphics-core22-cleanup`](https://github.com/canonical/gpu-snap/blob/main/bin/graphics-core22-cleanup) after priming any staged packages to avoid shipping any libraries already provided by the `graphics-core22` providers:
 
@@ -90,6 +93,23 @@ There's just a few things you have to do in your `snap/snapcraft.yaml` to make u
    ```
 
 Your snap, when installed, will pull in the default [`mesa-core22`](https://snapcraft.io/mesa-core22) provider, which supports a wide range of hardware. It also supports Nvidia drivers installed with debs on your host system.
+
+### Migrating from `graphics-core20`
+
+If your snap currently uses the `graphics-core20` interface, here are the steps when you're migrating to `base: core22`:
+
+1. replace all references to `graphics-core20` with `graphics-core22`
+1. replace all references to `mesa-core20` with `mesa-core22`
+1. remove all environment variables / paths pointing at `graphics` paths (the wrapper takes care of these):
+   ```
+   LD_LIBRARY_PATH
+   LIBGL_DRIVERS_PATH
+   LIBVA_DRIVERS_PATH
+   __EGL_VENDOR_LIBRARY_DIRS
+   ```
+1. prepend `bin/graphics-core22-wrapper` to your apps' `command-chain:`
+1. add [the X11 layouts](#graphics-core22-x11-layouts), if your app needs them
+1. replace the `cleanup` part with [`graphics-core22` above](#graphics-core22-cleanup)
 
 ### Going the manual route
 

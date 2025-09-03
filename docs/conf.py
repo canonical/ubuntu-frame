@@ -175,7 +175,11 @@ linkcheck_retries = 3
 # NOTE: By default, the following MyST extensions are enabled:
 #       substitution, deflist, linkify
 
-myst_enable_extensions = set({"colon_fence"})
+myst_enable_extensions = set({
+    "attrs_block",
+    "attrs_inline",
+    "colon_fence",
+})
 
 # Enable internal cross-references
 myst_heading_anchors = 4
