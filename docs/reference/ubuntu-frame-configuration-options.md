@@ -261,7 +261,7 @@ You might notice that the options are described as "command-line options", and t
 
 ### `display`
 
-This  option provides a way to modify the display configuration for Ubuntu Frame, which is used to set the properties of the outputs and the placement of applications.
+This option provides a way to modify the display configuration for Ubuntu Frame, which is used to set the properties of the outputs and the placement of applications.
 
 The current display configuration can be read using `snap get ubuntu-frame display`.
 If no display configuration was previously set an automatically generated configuration is used.
