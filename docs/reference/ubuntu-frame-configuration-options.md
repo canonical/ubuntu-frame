@@ -267,6 +267,8 @@ The current display configuration can be read using `snap get ubuntu-frame displ
 If no display configuration was previously set an automatically generated configuration is used.
 This may be a useful starting point for writing new configuration.
 
+If invalid configuration is provided Ubuntu Frame will fail to start with an error message.
+
 If you need to reset this configuration (because your hardware changes, or you make a mistake) then simply unset it and restart Ubuntu Frame:
 ```bash
 $ snap unset ubuntu-frame display
