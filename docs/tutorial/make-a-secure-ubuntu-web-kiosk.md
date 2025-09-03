@@ -2,21 +2,17 @@
 
 # Make a secure Ubuntu web kiosk
 
-## Overview
-
 A kiosk or smart display is a full-screen application running on a secure device, with the sole purpose of driving that display to provide specific information or a particular function at that location.
 
-Ubuntu is popular for these applications thanks to its excellent security track record and widespread developer familiarity. We compiled this guide to a reference kiosk architecture to enable anybody, anywhere to make a highly secure kiosk using any of the popular application display frameworks - HTML5/web, X11, or native Wayland.
+Since these devices are often left unattended for long periods of time, and run in sensitive environments like airports, hospitals and public areas, the software run by them needs to be secure and easily maintained. This tutorial includes the option to use Ubuntu Core, which is a minimal, self-updating OS for your application to run on.
 
-Since these devices are often left unattended for long periods of time, and run in sensitive environments like airports, hospitals and public areas we also want to raise the bar on security and update management. So this tutorial includes the option to use Ubuntu Core, which is a minimal, self-updating OS for your application to run on.
+If you integrate touchscreen or keyboard capabilities, you can use it in any environment where user feedback is required, for example, industrial control interfaces.
 
-You can also integrate touchscreen or keyboard capabilities, which enables this tutorial to serve for industrial control interfaces and any environment where user feedback is needed.
-
-### What you'll learn
+## What you'll learn
 
 How to create a graphical kiosk on Ubuntu Core running a single full-screen demonstration application. We'll also discuss the basic architecture and its security benefits.
 
-### What you'll need
+## What you'll need
 
 - An Ubuntu desktop running any current release of Ubuntu or an Ubuntu Virtual Machine on another OS.
 - A 'Target Device' from one of the following:
