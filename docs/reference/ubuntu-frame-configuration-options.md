@@ -261,96 +261,125 @@ You might notice that the options are described as "command-line options", and t
 
 ### `display`
 
-If the `display` option is unset when Ubuntu Frame starts, it will populate the `display` snap configuration option according to the hardware on your device. Here's an example (which will probably not match your device precisely).
+This option provides a way to modify the display configuration for Ubuntu Frame, which is used to set the properties of the outputs and the placement of applications.
 
-```yaml
-# $ snap get ubuntu-frame display
-layouts:
-# keys here are layout labels (used for atomically switching between them).
-# The yaml anchor 'the_default' is used to alias the 'default' label
+The current display configuration can be read using `snap get ubuntu-frame display`.
+If no display configuration was previously set an automatically generated configuration is used.
+This may be a useful starting point for writing new configuration.
 
-  default:
-    cards:
-    # a list of cards (currently matched by card-id)
-
-    - card-id: 0
-      eDP-1:
-        # This output supports the following modes: 1920x1080@60.0
-        #
-        # Uncomment the following to enforce the selected configuration.
-        # Or amend as desired.
-        #
-        state: enabled       # {enabled, disabled}, defaults to enabled
-        mode: 1920x1080@60.0 # Defaults to preferred mode
-        position: [0, 0]     # Defaults to [0, 0]
-        orientation: normal  # {normal, left, right, inverted}, defaults to normal
-        scale: 1
-        group: 0 # Outputs with the same non-zero value are treated as a single display
-
-      HDMI-A-1:
-        # (disconnected)
-
-      DisplayPort-1:
-        # (disconnected)
-
-      HDMI-A-2:
-        # (disconnected)
-
-      DisplayPort-2:
-        # (disconnected)
-
-      HDMI-A-3:
-        # (disconnected)
-
-  side_by_side:
-    cards:
-    # a list of cards (currently matched by card-id)
-
-    - card-id: 0
-      eDP-1:
-        # This output supports the following modes: 1920x1080@60.0
-        #
-        # Uncomment the following to enforce the selected configuration.
-        # Or amend as desired.
-        #
-        state: enabled       # {enabled, disabled}, defaults to enabled
-        mode: 1920x1080@60.0 # Defaults to preferred mode
-        position: [0, 0]     # Defaults to [0, 0]
-        orientation: normal  # {normal, left, right, inverted}, defaults to normal
-        scale: 1
-        group: 0             # Outputs with the same non-zero value are treated as a single display
-
-      HDMI-A-1:
-        # (disconnected)
-
-      DisplayPort-1:
-        # (disconnected)
-
-      HDMI-A-2:
-        # (disconnected)
-
-      DisplayPort-2:
-        # (disconnected)
-
-      HDMI-A-3:
-        # (disconnected)
-```
-
-You can see that two `layout` entries are provided `default` and `side_by_side`. But you can edit these entries, or add your own.
+If invalid configuration is provided Ubuntu Frame will fail to start with an error message.
 
 If you need to reset this configuration (because your hardware changes, or you make a mistake) then simply unset it and restart Ubuntu Frame:
-
-```
+```bash
 $ snap unset ubuntu-frame display
 $ snap restart ubuntu-frame
 $ snap get ubuntu-frame display
 ...
 ```
 
+#### Layouts
+
+Display configuration is made up of one of more named layout.
+Each layout contains their own set of configuration that is applied when that layout is active.
+The first layout is used by default and can be changed using the `display-layout` configuration option (see below).
+
+A system could be configured to show different application during the day and night using two layouts:
+```yaml
+layouts:
+  day:
+    cards:
+    - card-id: 0
+      eDP-1:
+        # ...
+      HDMI-A-1:
+        # ...
+
+  night:
+    cards:
+    - card-id: 0
+      eDP-1:
+        # ...
+      HDMI-A-1:
+        # ...
+```
+
+#### Output Configuration
+
+Each output can be configured by setting properties keyed by the card ID and output name.
+All properties are optional.
+Each output is configured by name and index of the graphics card providing it.
+
+Configuration for the eDP-1 output on the first graphics card is specified using:
+```yaml
+layouts:
+  default:
+    cards:
+    - card-id: 0
+      eDP-1:
+        # Configuration options
+```
+
+The output resolution, frame rate, orientation and pixel scaling can be overridden from the default values:
+```yaml
+layouts:
+  default:
+    cards:
+    - card-id: 0
+      eDP-1:
+        mode: 1920x1080@60.0 # Resolution and frame rate, defaults to preferred mode.
+        orientation: normal  # {normal, left, right, inverted}, defaults to normal.
+        scale: 1             # Pixel scaling, defaults to 1.
+```
+
+Setting an output `position` changes the default behavior of applications showing on all outputs to instead show different content on each output:
+```yaml
+layouts:
+  default:
+    cards:
+    - card-id: 0
+      eDP-1:
+        position: [0, 0] # Note this is the default position and could be omitted.
+      HDMI-A-1:
+        position: [1920, 0] # Placed to the right of eDP-1
+```
+
+A non-zero `group` value is used to join outputs together so applications can span them:
+```yaml
+layouts:
+  default:
+    cards:
+    - card-id: 0
+      eDP-1:
+        position: [0, 0]
+        group: 1
+      HDMI-A-1:
+        position: [1920, 0]
+        group: 1  # Joins eDP-1 to make a 3840x1080 display.
+```
+
+If the output should not be used by frame it can be disabled by setting `state` to either `enabled` or `disabled`:
+```yaml
+layouts:
+  default:
+    cards:
+    - card-id: 0
+      eDP-1:
+        state: disabled  # Output not used
+      HDMI-A-1:
+        # Output in use, state defaults to enabled
+```
+
 ### `display-layout`
 
-By default Ubuntu Frame uses the `default` layout described above. But you can change this to another layout in the `display` configuration using the `display-layout` configuration option. For example:
+Controls the layout in use.
 
+Change the layout to `night`:
+```bash
+$ snap set ubuntu-frame display-layout=night
 ```
-$ snap set ubuntu-frame display-layout=side_by_side
+
+Get the current layout:
+```bash
+$ snap get ubuntu-frame display-layout
+night
 ```
