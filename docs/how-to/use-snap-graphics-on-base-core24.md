@@ -1,6 +1,6 @@
 (the-gpu-2404-snap-interface)=
 
-# The gpu-2404 snap interface
+# How to use graphics in `base: core24` snaps
 
 This document describes how to use the `gpu-2404` Snap interface, what are the requirements to create a content provider snap as well as discusses the design of the interface.
 

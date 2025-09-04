@@ -141,6 +141,9 @@ else:
 
 redirects = {
     'tutorial/developer-guide': '../deploy-graphical-application-with-frame',
+    'explanation/the-graphics-core20-snap-interface': '../../how-to/use-snap-graphics-on-base-core20',
+    'explanation/the-graphics-core22-snap-interface': '../../how-to/use-snap-graphics-on-base-core22',
+    'explanation/the-gpu-2404-snap-interface': '../../how-to/use-snap-graphics-on-base-core24',
 }
 
 
