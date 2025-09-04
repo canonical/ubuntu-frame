@@ -1,5 +1,5 @@
 graph BT
-    
+
     subgraph toolkit_without_wayland [Toolkits&nbsp;not&nbsp;supporting&nbsp;Wayland]
         direction TB
 
@@ -8,17 +8,6 @@ graph BT
             D2[Ubuntu Frame]
         end
 
-        subgraph UF3 [Snap]
-            direction TB
-            D3[Ubuntu Frame]
-        end
-
-        subgraph ApplicationSnap3 [Application snap]
-            direction TB
-            A3[Application + Chrome Browser Engine]
-            A3 --> C3[Xwayland]
-        end
-    
         subgraph ApplicationSnap2 [Application snap]
             direction TB
             A2[Application + Toolkit with only X11 support]
@@ -40,8 +29,7 @@ graph BT
         end
     end
 
-    
+
 
     A1 --> |Snapd Wayland interface|UF1
     C2 --> |Snapd Wayland interface|UF2
-    C3 --> |Snapd Wayland interface|UF3
