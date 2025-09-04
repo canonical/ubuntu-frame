@@ -1,0 +1,35 @@
+graph BT
+
+    subgraph toolkit_without_wayland [Toolkits&nbsp;not&nbsp;supporting&nbsp;Wayland]
+        direction TB
+
+        subgraph UF2 [Snap]
+            direction TB
+            D2[Ubuntu Frame]
+        end
+
+        subgraph ApplicationSnap2 [Application snap]
+            direction TB
+            A2[Application + Toolkit with only X11 support]
+            A2 --> C2[Xwayland]
+        end
+
+    end
+    subgraph toolkit_with_wayland [Toolkit supporting Wayland]
+        direction TB
+
+        subgraph UF1 [Snap]
+            direction TB
+            D1[Ubuntu Frame]
+        end
+
+        subgraph ApplicationSnap1 [Application snap]
+            direction TB
+            A1[Application + Toolkit with Wayland support]
+        end
+    end
+
+
+
+    A1 --> |Snapd Wayland interface|UF1
+    C2 --> |Snapd Wayland interface|UF2
