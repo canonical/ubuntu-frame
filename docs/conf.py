@@ -141,6 +141,9 @@ else:
 
 redirects = {
     'tutorial/developer-guide': '../deploy-graphical-application-with-frame',
+    'explanation/the-graphics-core20-snap-interface': '../../how-to/use-snap-graphics-on-base-core20',
+    'explanation/the-graphics-core22-snap-interface': '../../how-to/use-snap-graphics-on-base-core22',
+    'explanation/the-gpu-2404-snap-interface': '../../how-to/use-snap-graphics-on-base-core24',
 }
 
 
@@ -175,7 +178,11 @@ linkcheck_retries = 3
 # NOTE: By default, the following MyST extensions are enabled:
 #       substitution, deflist, linkify
 
-myst_enable_extensions = set({"colon_fence"})
+myst_enable_extensions = set({
+    "attrs_block",
+    "attrs_inline",
+    "colon_fence",
+})
 
 # Enable internal cross-references
 myst_heading_anchors = 4

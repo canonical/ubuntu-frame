@@ -1,6 +1,6 @@
 (the-graphics-core20-snap-interface)=
 
-# The graphics-core20 snap interface
+# How to use graphics in `base: core20` snaps
 
 ## The problem with snapping userspace graphics drivers
 
