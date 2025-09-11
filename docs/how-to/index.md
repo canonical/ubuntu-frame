@@ -14,9 +14,8 @@ The first step is to get Ubuntu Frame running:
 ## Packaging your application
 
 Once Ubuntu frame is running you need to make your application suitable for deployment:
-- Package applications built with popular toolkits like {ref}`Flutter <packaging-a-flutter-application>`, {ref}`GTK3 <packaging-a-gtk3-application>`, {ref}`Qt5 <packaging-a-qt5-application>`, {ref}`SDL2 <packaging-a-sdl2-application>` and {ref}`Electron <packaging-an-electron-application>`.
-- Special steps required for {ref}`X11 applications <packaging-an-x11-based-application>`.
-- How to {ref}`migrate a Windows application <migrating-a-windows-application>`.
+- {ref}`Package applications built with popular toolkits <packaging-an-application-iot-gui>`
+- {ref}`Migrate a Windows application <migrating-a-windows-application>`.
 
 ## Getting the most of Ubuntu Frame
 
