@@ -19,12 +19,7 @@ The How-to guides in this section give directions on how to achieve your goals w
 
 ## Packaging applications as IoT GUIs
 
-- {ref}`packaging-a-gtk3-application`
-- {ref}`packaging-a-qt5-application`
-- {ref}`packaging-a-sdl2-application`
-- {ref}`packaging-a-flutter-application`
-- {ref}`packaging-an-electron-application`
-- {ref}`packaging-an-x11-based-application`
+- {ref}`packaging-an-application-iot-gui`
 - {ref}`migrating-a-windows-application`
 
 ```{toctree}

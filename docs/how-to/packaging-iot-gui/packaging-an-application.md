@@ -1,5 +1,5 @@
-(packaging-an-application)=
-# Packaging an application
+(packaging-an-application-iot-gui)=
+# Packaging an application as IoT GUI
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the foundation for embedded displays. It provides a reliable, secure and easy way to embed your applications into a kiosk-style, IoT device, or digital signage solution. With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window, a dedicated set of windows behaviours, input from touch, keyboard and mouse without needing to deal with the specific hardware, on-screen keyboard, and more.
 
@@ -66,7 +66,7 @@ If you don't have git installed, now is a good time to install it (on Ubuntu, us
 ## Checking your application works with Ubuntu Frame
 
 ```{important}
-If you are packaging an X-11 based application, it won't yet work with Ubuntu Frame. You can skip this section and start packaging your application as a snap.
+If you are packaging an X11 based application, it won't yet work with Ubuntu Frame. You can skip this section and start packaging your application as a snap.
 ```
 
 There can be problems with both getting your application to work well with Ubuntu Frame and getting your application to work in a snap. To avoid confusion, we recommend first testing your application with Ubuntu Frame before packaging it as a snap. In this section, you will test your application, explore some common issues you might run into, and learn how to fix them.
@@ -280,7 +280,7 @@ snapcraft
 ```
 :::
 
-:::{tab-item} X-11
+:::{tab-item} X11
 :sync: x11
 ```
 git checkout 24/x11-glxgears
@@ -372,7 +372,7 @@ Available platform plugins are: eglfs (from /snap/iot-example-graphical-snap/x65
 
 :::
 
-:::{tab-item} X-11
+:::{tab-item} X11
 :sync: x11
 ```
 ...
@@ -411,7 +411,7 @@ This warning or exception about failure to connect to the Wayland interface is t
 frame-it iot-example-graphical-snap
 ```
 
-Now Frame’s window should contain the app. For example, the X-11 app `glx-gears` should look like this:
+Now Frame’s window should contain the app. For example, the X11 app `glx-gears` should look like this:
 
 ![image|690x575](84c6ff6d8e535d1824380d7f3dbb53706af32c54.jpeg)
 
