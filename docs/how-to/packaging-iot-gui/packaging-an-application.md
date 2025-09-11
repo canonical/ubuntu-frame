@@ -80,15 +80,42 @@ The examples used here are game applications, such as Mastermind, Neverputt, and
 The first step is to download the application and execute it:
 
 ::::{tab-set}
-:::{tab-item} Flutter/GTK3/SDL2/Qt5
+:::{tab-item} Flutter
+:sync: flutter
 ```
-sudo apt install <application-name>
-frame-it <application-name>
+snap install flutter  # or follow https://docs.flutter.dev/get-started/install
+git clone https://github.com/flutter/flutter.git --branch stable --depth 1
+cd flutter/examples/texture
+frame-it flutter run
 ```
-Replace <application-name> with your application name.
+:::
+
+:::{tab-item} GTK3
+:sync: gtk3
+```
+sudo apt install gnome-mastermind
+frame-it gnome-mastermind
+```
+:::
+
+:::{tab-item} SDL2
+:sync: sdl2
+```
+sudo apt install neverputt
+frame-it neverputt
+```
+:::
+
+:::{tab-item} Qt5
+:sync: qt5
+```
+sudo apt install bomber
+frame-it bomber
+```
 :::
 
 :::{tab-item} Electron
+:sync: electron
 ```
 git clone https://github.com/electron/electron-quick-start.git
 cd electron-quick-start
@@ -100,22 +127,29 @@ frame-it npm start -- --enable-features=UseOzonePlatform --ozone-platform=waylan
 
 Now Ubuntu Frame's window should contain the application window. It should look like this:
 
-<!--![image|690x575](f787b8fe63197afac80c6f50cbeb2753d7584ee8.jpeg)-->
-
 ::::{tab-set}
+:::{tab-item} Flutter
+:sync: flutter
+![image|690x575](flutter-texture-demo.png)
+:::
+
 :::{tab-item} GTK3
+:sync: gtk3
 ![image|690x575](f787b8fe63197afac80c6f50cbeb2753d7584ee8.jpeg)
 :::
 
 :::{tab-item} SDL2
+:sync: sdl2
 ![image|690x575](b97782d3fb25d700a2f0f087f758be88d72f11d0.jpeg)
 :::
 
 :::{tab-item} Qt5
+:sync: qt5
 ![image|690x574](6a5efec07e12b4cbadc71c74a56e9eab00147ff6.jpeg)
 :::
 
 :::{tab-item} Electron
+:sync: electron
 ![image|690x575](3fceac9523815e0e4ebdab10adee2d5ca6a8a0e0.jpeg)
 :::
 ::::
@@ -143,7 +177,33 @@ First, you will clone a repository containing a generic Snapcraft recipe for IoT
 In the *same terminal window* you opened at the start of the last section, type:
 
 ::::{tab-set}
-:::{tab-item} Flutter/GTK3/SDL2/Qt5
+:::{tab-item} Flutter
+:sync: flutter
+```
+cd ..
+git clone https://github.com/canonical/iot-example-graphical-snap.git
+cd iot-example-graphical-snap
+```
+:::
+
+:::{tab-item} GTK3
+:sync: gtk3
+```
+git clone https://github.com/canonical/iot-example-graphical-snap.git
+cd iot-example-graphical-snap
+```
+:::
+
+:::{tab-item} SDL2
+:sync: sdl2
+```
+git clone https://github.com/canonical/iot-example-graphical-snap.git
+cd iot-example-graphical-snap
+```
+:::
+
+:::{tab-item} Qt5
+:sync: qt5
 ```
 git clone https://github.com/canonical/iot-example-graphical-snap.git
 cd iot-example-graphical-snap
@@ -151,6 +211,7 @@ cd iot-example-graphical-snap
 :::
 
 :::{tab-item} Electron
+:sync: electron
 ```
 cd ..
 git clone https://github.com/canonical/iot-example-graphical-snap.git
@@ -190,6 +251,7 @@ Switch to the example branch relevant to your application and use snapcraft to b
 
 ::::{tab-set}
 :::{tab-item} Flutter
+:sync: flutter
 ```
 git checkout 24/Flutter-demo
 snapcraft
@@ -197,18 +259,21 @@ snapcraft
 :::
 
 :::{tab-item} GTK3
+:sync: gtk3
 ```
 git checkout 24/GTK3-mastermind
 snapcraft
 ```
 :::
 :::{tab-item} SDL2
+:sync: sdl2
 ```
 git checkout 24/SDL2-neverputt
 snapcraft
 ```
 :::
 :::{tab-item} Qt5
+:sync: qt5
 ```
 git checkout 24/Qt5-bomber
 snapcraft
@@ -216,6 +281,7 @@ snapcraft
 :::
 
 :::{tab-item} X-11
+:sync: x11
 ```
 git checkout 24/x11-glxgears
 snapcraft
@@ -223,6 +289,7 @@ snapcraft
 :::
 
 :::{tab-item} Electron
+:sync: electron
 ```
 git checkout 24/Electron-quick-start
 snapcraft
@@ -253,6 +320,7 @@ The first time you run your snap with Ubuntu Frame installed, you are likely to 
 
 ::::{tab-set}
 :::{tab-item} Flutter
+:sync: flutter
 ```
 ...
 WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
@@ -264,6 +332,7 @@ WARNING: wayland interface not connected! Please run: /snap/iot-example-graphica
 :::
 
 :::{tab-item} GTK3
+:sync: gtk3
 ```
 ...
 WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
@@ -274,6 +343,7 @@ WARNING: wayland interface not connected! Please run: /snap/iot-example-graphica
 ```
 :::
 :::{tab-item} SDL2
+:sync: sdl2
 ```
 $ snap run iot-example-graphical-snap
 WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
@@ -285,6 +355,7 @@ Failure to initialize SDL (wayland not available)
 ```
 :::
 :::{tab-item} Qt5
+:sync: qt5
 ```
 ...
 WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
@@ -302,6 +373,7 @@ Available platform plugins are: eglfs (from /snap/iot-example-graphical-snap/x65
 :::
 
 :::{tab-item} X-11
+:sync: x11
 ```
 ...
 ERROR: ./src/server/graphics/default_configuration.cpp(198): Throw in function virtual const std::vector<std::shared_ptr<mir::graphics::DisplayPlatform> >& mir::DefaultServerConfiguration::the_display_platforms()
@@ -321,6 +393,7 @@ Error: couldn't open display :
 :::
 
 :::{tab-item} Electron
+:sync: electron
 ```
 WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
 [231190:0624/162014.069287:ERROR:wayland_connection.cc(209)] Failed to connect to Wayland display
