@@ -11,11 +11,11 @@ ______________________________________________________________________
 
 ````{grid} 1 1 2 2
 ```{grid-item-card} [](tutorial-index)
-**An introduction** to Ubuntu Frame for new users
+Get started - [make a web kiosk](tutorial/make-a-secure-ubuntu-web-kiosk.md).
 ```
 
 ```{grid-item-card} [](how-to-index)
-**Step-by-step guides** covering key operations and common tasks
+Step-by-step guides covering key operations and common tasks, from [packaging a Flutter application](how-to/packaging-iot-gui/a-flutter-application.md) to [running Ubuntu Frame on your device](how-to/running-ubuntu-frame/on-your-device.md).
 ```
 ````
 
@@ -24,11 +24,11 @@ ______________________________________________________________________
 reverse:
 ---
 ```{grid-item-card} [](reference-index)
-**Technical information** - specifications, APIs, architecture
+Technical information, including [configuration options](reference/ubuntu-frame-configuration-options.md) and [snap interfaces](reference/ubuntu-frame-snap-interfaces.md).
 ```
 
 ```{grid-item-card} [](explanation-index)
-**Discussion and clarification** of key topics
+**Discussion and clarification** of key topics: [where does Ubuntu Frame work](explanation/where-does-ubuntu-frame-work.md), [security](explanation/security.md) and others.
 ```
 ````
 
