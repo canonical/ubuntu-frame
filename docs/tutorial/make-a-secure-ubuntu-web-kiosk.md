@@ -34,7 +34,7 @@ Your graphics approach largely depends on the toolkit your application uses:
 
 Where we need an X11 server it is much more secure to embed it in the confined snap environment together with the application. The X11 protocol was not designed with security in mind and a malicious application connected to an X11 server can obtain information from other running X11 applications. For instance X11 servers do not protect sensitive information like keystrokes between applications using them. To avoid this, each snapped X11 application should have its own embedded X11 server (Xwayland) which then talks Wayland - a far more secure protocol.
 
-![mir-kiosk-architectures|690x428](722b008b93317a7fe95abf4743685cc4d79f5eb5.png)
+![mir-kiosk-architectures|690x428](mir-kiosk-architectures-light.png)
 
 One additional detail to note is how a Wayland client connects to a Wayland server. This is done via Wayland sockets, which need to be shared between client (your app) and server (ubuntu-frame). Snapd has robust and secure ways to provide this kind of communication channel between two snap applications, called '[interfaces](https://snapcraft.io/docs/interface-management)'.
 
