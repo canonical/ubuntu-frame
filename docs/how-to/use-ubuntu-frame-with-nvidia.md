@@ -59,7 +59,7 @@ sudo snap connect ubuntu-frame:graphics-core22 nvidia-core22
 To avoid having to do the above, make sure nvidia-core22 is installed before any snaps consuming the interface.
 They will get connected to the only provider on the system by default.
 
-If you'd like to fully switch over, unintall the Mesa snap and connect all the consumers to the Nvidia provider:
+If you'd like to fully switch over, uninstall the Mesa snap and connect all the consumers to the Nvidia provider:
 
 ```shell
 sudo snap remove mesa-core22
@@ -94,7 +94,7 @@ First, to verify that your setup works, reboot to load the new drivers:
 sudo reboot
 ```
 
-Next, check that the Nvidia driver was loadded and the devices node is there:
+Next, check that the Nvidia driver was loaded and the devices node is there:
 
 ```shell
 $ sudo dmesg | grep NVRM
