@@ -15,7 +15,7 @@ The steps and requirements differ by the operating system in use, choose the one
 ````{tab-item} Ubuntu
 :sync: ubuntu
 
-On classic Ubuntu, just install the drivers on the host.
+On classic Ubuntu, it is enough to install the drivers on the host.
 For example, to install the `570` driver version, issue the following:
 
 ```shell
