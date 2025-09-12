@@ -4,28 +4,27 @@
 
 The How-to guides in this section give directions on how to achieve your goals when using Ubuntu Frame. These How-to guides are more useful when you are familiar with Ubuntu Frame and seek to achieve specific tasks.
 
-## Deploying Ubuntu Frame
+## Running Ubuntu Frame
 
-- {ref}`run-ubuntu-frame-in-your-desktop-environment`
-- {ref}`run-ubuntu-frame-in-a-virtual-machine`
-- {ref}`run-ubuntu-frame-on-your-device`
-- {ref}`run-ubuntu-frame-unprivileged`
-- {ref}`migrating-from-mir-kiosk-to-ubuntu-frame`
+The first step is to get Ubuntu Frame running:
+- Test in your {ref}`<Desktop Environment <run-ubuntu-frame-in-your-desktop-environment>` or a {ref}`Virtual Machine <run-ubuntu-frame-in-a-virtual-machine>`.
+- Run Ubuntu Frame {ref}`on your target device <run-ubuntu-frame-on-your-device>`.
+- Snap configuration for graphics in {ref}`core20 <the-graphics-core20-snap-interface>`, {ref}`core22 <the-graphics-core22-snap-interface>` and {ref}`core24 <the-gpu-2404-snap-interface>`.
 
-## Using Ubuntu Frame
+## Packaging your application
 
-- {ref}`how-to-use-remote-assistance`
-- {ref}`how-to-run-your-iot-gui-on-your-desktop`
+Once Ubuntu frame is running you need to make your application suitable for deployment:
+- Package applications built with popular toolkits like {ref}`Flutter <packaging-a-flutter-application>`, {ref}`GTK3 <packaging-a-gtk3-application>`, {ref}`Qt5 <packaging-a-qt5-application>`, {ref}`SDL2 <packaging-a-sdl2-application>` and {ref}`Electron <packaging-an-electron-application>`.
+- Special steps required for {ref}`X11 applications <packaging-an-x11-based-application>`.
+- How to {ref}`migrate a Windows application <migrating-a-windows-application>`.
 
-## Packaging applications as IoT GUIs
+## Getting the most of Ubuntu Frame
 
-- {ref}`packaging-a-gtk3-application`
-- {ref}`packaging-a-qt5-application`
-- {ref}`packaging-a-sdl2-application`
-- {ref}`packaging-a-flutter-application`
-- {ref}`packaging-an-electron-application`
-- {ref}`packaging-an-x11-based-application`
-- {ref}`migrating-a-windows-application`
+Once you have Ubuntu Frame running with your application you can set things up for the perfect deployment:
+- Configure {ref}`multiple outputs <how-to-configure-ubuntu-frame-for-multiple-outputs>`.
+- Ensure a {ref}`smooth boot <how-to-get-a-smooth-boot-experience>`.
+- Access your Ubuntu Frame device with {ref}`remote assistance <how-to-use-remote-assistance>`.
+- Improving security by {ref}`running Ubuntu Frame unprivileged <run-ubuntu-frame-unprivileged>`.
 
 ```{toctree}
 ---
