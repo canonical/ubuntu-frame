@@ -200,49 +200,10 @@ First, you will clone a repository containing a generic Snapcraft recipe for IoT
 
 In the *same terminal window* you opened at the start of the last section, type:
 
-::::{tab-set}
-:::{tab-item} Flutter
-:sync: flutter
-```
-cd -
-git clone https://github.com/canonical/iot-example-graphical-snap.git
-cd iot-example-graphical-snap
-```
-:::
-
-:::{tab-item} GTK3
-:sync: gtk3
 ```
 git clone https://github.com/canonical/iot-example-graphical-snap.git
 cd iot-example-graphical-snap
 ```
-:::
-
-:::{tab-item} SDL2
-:sync: sdl2
-```
-git clone https://github.com/canonical/iot-example-graphical-snap.git
-cd iot-example-graphical-snap
-```
-:::
-
-:::{tab-item} Qt5
-:sync: qt5
-```
-git clone https://github.com/canonical/iot-example-graphical-snap.git
-cd iot-example-graphical-snap
-```
-:::
-
-:::{tab-item} Electron
-:sync: electron
-```
-cd -
-git clone https://github.com/canonical/iot-example-graphical-snap.git
-cd iot-example-graphical-snap
-```
-:::
-::::
 
 If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" for an IoT graphics snap. This is where you will insert instructions for packaging your application. This is how the `.yaml` file looks like:
 
@@ -278,7 +239,7 @@ Switch to the example branch relevant to your application and use snapcraft to b
 :sync: flutter
 ```
 git checkout 24/Flutter-demo
-snapcraft
+snapcraft pack
 ```
 :::
 
@@ -286,21 +247,21 @@ snapcraft
 :sync: gtk3
 ```
 git checkout 24/GTK3-mastermind
-snapcraft
+snapcraft pack
 ```
 :::
 :::{tab-item} SDL2
 :sync: sdl2
 ```
 git checkout 24/SDL2-neverputt
-snapcraft
+snapcraft pack
 ```
 :::
 :::{tab-item} Qt5
 :sync: qt5
 ```
 git checkout 24/Qt5-bomber
-snapcraft
+snapcraft pack
 ```
 :::
 
@@ -308,7 +269,7 @@ snapcraft
 :sync: x11
 ```
 git checkout 24/x11-glxgears
-snapcraft
+snapcraft pack
 ```
 :::
 
@@ -316,7 +277,7 @@ snapcraft
 :sync: electron
 ```
 git checkout 24/Electron-quick-start
-snapcraft
+snapcraft pack
 ```
 :::
 ::::
