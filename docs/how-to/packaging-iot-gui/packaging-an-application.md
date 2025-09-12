@@ -131,32 +131,48 @@ Now Ubuntu Frame's window should contain the application window. It should look 
 :::{tab-item} Flutter
 :sync: flutter
 ![image|690x575](flutter-texture-demo.png)
+
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close the application window (`Ctrl-Q`).
 :::
 
 :::{tab-item} GTK3
 :sync: gtk3
 ![image|690x575](f787b8fe63197afac80c6f50cbeb2753d7584ee8.jpeg)
+
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close Mastermind (`Ctrl-Q`).
 :::
 
 :::{tab-item} SDL2
 :sync: sdl2
 ![image|690x575](b97782d3fb25d700a2f0f087f758be88d72f11d0.jpeg)
+
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close Neverputt.
 :::
 
 :::{tab-item} Qt5
 :sync: qt5
 ![image|690x574](6a5efec07e12b4cbadc71c74a56e9eab00147ff6.jpeg)
+
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close the Bomber (`Ctrl-Q`).
 :::
 
 :::{tab-item} Electron
 :sync: electron
 ![image|690x575](3fceac9523815e0e4ebdab10adee2d5ca6a8a0e0.jpeg)
-:::
-::::
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
-Close the application window (`Ctrl-Q`).
+Close "Hello World!" (`Ctrl-Q`).
+:::
+::::
 
 ## Packaging your application as a Snap
 
@@ -180,7 +196,7 @@ In the *same terminal window* you opened at the start of the last section, type:
 :::{tab-item} Flutter
 :sync: flutter
 ```
-cd ..
+cd -
 git clone https://github.com/canonical/iot-example-graphical-snap.git
 cd iot-example-graphical-snap
 ```
@@ -213,7 +229,7 @@ cd iot-example-graphical-snap
 :::{tab-item} Electron
 :sync: electron
 ```
-cd ..
+cd -
 git clone https://github.com/canonical/iot-example-graphical-snap.git
 cd iot-example-graphical-snap
 ```
@@ -411,11 +427,51 @@ This warning or exception about failure to connect to the Wayland interface is t
 frame-it iot-example-graphical-snap
 ```
 
-Now Frame’s window should contain the app. For example, the X11 app `glx-gears` should look like this:
+Now Frame’s window should contain the app. 
 
-![image|690x575](84c6ff6d8e535d1824380d7f3dbb53706af32c54.jpeg)
+::::{tab-set}
+:::{tab-item} Flutter
+:sync: flutter
+![image|690x575](flutter-texture-demo.png)
 
 Close the application (`Ctrl-Q`). Your application has been successfully snapped.
+:::
+
+:::{tab-item} GTK3
+:sync: gtk3
+![image|690x575](5513cee9e8851b25d97704a32153fbe513087bca.png)
+
+Close the application (`Ctrl-Q`). Your application has been successfully snapped.
+:::
+
+:::{tab-item} SDL2
+:sync: sdl2
+![image|690x575](be0c79621a30e294669b5954316cfbb96d0c3de8.jpeg)
+
+Close Neverputt.
+:::
+
+:::{tab-item} Qt5
+:sync: qt5
+![image|690x575](187a8b5c29c0fc1069c37b1e6a41861a86dadd42.jpeg)
+
+Close the application (`Ctrl-Q`). Your application has been successfully snapped.
+:::
+
+:::{tab-item} X11
+:sync: x11
+![image|690x575](84c6ff6d8e535d1824380d7f3dbb53706af32c54.jpeg)
+
+Close the application (`Esc`). Your application has been successfully snapped.
+:::
+
+:::{tab-item} Electron
+:sync: electron
+![image|690x575](afa9dab5e889664d711a50705dc25de7b5135dae.jpeg)
+
+Close the application (`Ctrl-Q`). Your application has been successfully snapped.
+:::
+::::
 
 ### Packaging your own application
 
@@ -454,9 +510,37 @@ snap install ubuntu-frame --channel 24
 snap install --dangerous *.snap
 ```
 
-Here's an example illustration of how the Bomber game will look like within the VM:
+::::{tab-set}
+:::{tab-item} Flutter
+:sync: flutter
+![image|690x575](flutter-texture-demo.png)
+:::
 
+:::{tab-item} GTK3
+:sync: gtk3
+![image|690x575](3708aef4159023b02fd49208f32f438a38a6e59b.jpeg)
+:::
+
+:::{tab-item} SDL2
+:sync: sdl2
+![image|690x575](babb31bb8373e8350ed028413d1d3f3b43b6b300.jpeg)
+:::
+
+:::{tab-item} Qt5
+:sync: qt5
 ![image|690x575](f9030fbc1a10d23d4f39b8be426cc14bda398834.jpeg)
+:::
+
+:::{tab-item} X11
+:sync: x11
+![image|690x575](bafbdc990c5b99cd9a9b077b42a13bcee8281ced.jpeg)
+:::
+
+:::{tab-item} Electron
+:sync: electron
+![image|690x575](3df16f7b1650ddd26952ff0db1d3d500a7fc84f1.jpeg)
+:::
+::::
 
 ## Conclusion
 
