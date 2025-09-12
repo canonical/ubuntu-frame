@@ -135,6 +135,10 @@ Now Ubuntu Frame's window should contain the application window. It should look 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
 Close the application window (`Ctrl-Q`).
+
+Before continuing to the next section, return to your previous working directory:
+
+    cd -
 :::
 
 :::{tab-item} GTK3
@@ -152,7 +156,7 @@ Close Mastermind (`Ctrl-Q`).
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
-Close Neverputt.
+Close Neverputt (`Esc`)
 :::
 
 :::{tab-item} Qt5
@@ -171,6 +175,10 @@ Close the Bomber (`Ctrl-Q`).
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
 Close "Hello World!" (`Ctrl-Q`).
+
+Before continuing to the next section, return to your previous working directory:
+
+    cd -
 :::
 ::::
 
