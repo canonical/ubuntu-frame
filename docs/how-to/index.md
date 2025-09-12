@@ -9,7 +9,7 @@ The How-to guides in this section give directions on how to achieve your goals w
 The first step is to get Ubuntu Frame running:
 - Test in your {ref}`<Desktop Environment <run-ubuntu-frame-in-your-desktop-environment>` or a {ref}`Virtual Machine <run-ubuntu-frame-in-a-virtual-machine>`.
 - Run Ubuntu Frame {ref}`on your target device <run-ubuntu-frame-on-your-device>`.
-- Snap configuration for graphics in {ref}`core20 <use-snap-graphics-on-base-core20>`, {ref}`core22 <use-snap-graphics-on-base-core22>` and {ref}`core24 <use-snap-graphics-on-base-core24>`.
+- Snap configuration for graphics in {ref}`core20 <the-graphics-core20-snap-interface>`, {ref}`core22 <the-graphics-core22-snap-interface>` and {ref}`core24 <the-gpu-2404-snap-interface>`.
 
 ## Packaging your application
 
