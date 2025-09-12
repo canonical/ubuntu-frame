@@ -1,5 +1,5 @@
 (packaging-an-application-iot-gui)=
-# Packaging an application as IoT GUI
+# Packaging an application as an IoT GUI
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the foundation for embedded displays. It provides a reliable, secure and easy way to embed your applications into a kiosk-style, IoT device, or digital signage solution. With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window, a dedicated set of windows behaviours, input from touch, keyboard and mouse without needing to deal with the specific hardware, on-screen keyboard, and more.
 

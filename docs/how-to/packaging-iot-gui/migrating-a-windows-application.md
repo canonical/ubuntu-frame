@@ -234,7 +234,7 @@ For more information about Ubuntu Frame please visit our [website](https://mir-s
 
 You may also consider reading the following materials:
 
-- {ref}`packaging-an-application`
+- {ref}`packaging-an-application-iot-gui`
 - {ref}`make-a-secure-ubuntu-web-kiosk`.
 - How to {ref}`enable on-screen keyboard support <ubuntu-frame-osk-documentation>` in Ubuntu Frame.
 
