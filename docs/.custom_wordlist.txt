@@ -15,6 +15,7 @@ GL
 GLES
 GLESv
 GPLv
+GPUs
 GTK
 GUIs
 ICD
@@ -133,6 +134,7 @@ multipass
 neatvnc
 neverball
 neverputt
+nvidia
 opengl
 osk
 pc
