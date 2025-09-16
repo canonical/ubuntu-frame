@@ -65,10 +65,6 @@ If you don't have git installed, now is a good time to install it (on Ubuntu, us
 
 ## Checking your application works with Ubuntu Frame
 
-```{important}
-If you are packaging an X11 based application, it won't yet work with Ubuntu Frame. You can skip this section and start packaging your application as a snap.
-```
-
 There can be problems with both getting your application to work well with Ubuntu Frame and getting your application to work in a snap. To avoid confusion, we recommend first testing your application with Ubuntu Frame before packaging it as a snap. In this section, you will test your application, explore some common issues you might run into, and learn how to fix them.
 
 ### Testing your application with Frame-it
@@ -111,6 +107,14 @@ frame-it neverputt
 ```
 sudo apt install bomber
 frame-it bomber
+```
+:::
+
+:::{tab-item} X11
+:sync: x11
+```
+sudo apt install mesa-utils mir-x11-kiosk
+frame-it.x11 glxgears
 ```
 :::
 
@@ -166,6 +170,16 @@ Close Neverputt (`Esc`)
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
 Close the Bomber (`Ctrl-Q`).
+:::
+
+:::{tab-item} X11
+:sync: x11
+
+![image|690x575](ubuntu-frame-glxgears.jpeg)
+
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close glxgears (`Esc`)
 :::
 
 :::{tab-item} Electron
