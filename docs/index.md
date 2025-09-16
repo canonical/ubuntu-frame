@@ -15,7 +15,7 @@ Get started - [make a web kiosk](tutorial/make-a-secure-ubuntu-web-kiosk.md).
 ```
 
 ```{grid-item-card} [](how-to-index)
-Step-by-step guides covering key operations and common tasks, from [packaging a Flutter application](how-to/packaging-iot-gui/a-flutter-application.md) to [running Ubuntu Frame on your device](how-to/running-ubuntu-frame/on-your-device.md).
+Step-by-step guides covering key operations and common tasks, from [packaging an application as an IoT GUI](how-to/packaging-iot-gui/packaging-an-application) to [running Ubuntu Frame on your device](how-to/running-ubuntu-frame/on-your-device.md).
 ```
 ````
 

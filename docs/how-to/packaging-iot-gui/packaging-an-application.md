@@ -1,6 +1,5 @@
-(packaging-an-electron-application)=
-
-# Packaging an Electron application
+(packaging-an-application-iot-gui)=
+# Packaging an application as an IoT GUI
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the foundation for embedded displays. It provides a reliable, secure and easy way to embed your applications into a kiosk-style, IoT device, or digital signage solution. With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window, a dedicated set of windows behaviours, input from touch, keyboard and mouse without needing to deal with the specific hardware, on-screen keyboard, and more.
 
@@ -18,7 +17,11 @@ We will cover:
 
 If you want to learn how to install pre-built applications such as [wpe-webkit-mir-kiosk](https://snapcraft.io/wpe-webkit-mir-kiosk), [mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi/), or [Scummvm](https://snapcraft.io/scummvm), follow their official installation and configuration guides.
 
-Note: This guide will not cover how to build an application using a toolkit that supports Wayland (there are many). And while it is possible to {ref}`package X11 <packaging-an-x11-based-application>`-based applications to work on Ubuntu Core, this guide will not cover this either. We will also not cover how to upload your snap to the snap store, nor building custom Ubuntu Core images with pre-configured snaps. That is documented on [snapcraft.io/docs](https://snapcraft.io/docs).
+```{note}
+This guide will not cover how to build an application using a toolkit that supports Wayland (there are many). We will also not cover how to upload your snap to the snap store, nor building custom Ubuntu Core images with pre-configured snaps. That is documented on [snapcraft.io/docs](https://snapcraft.io/docs).
+
+If you are migrating a Windows application, redirect to {ref}`this guide <migrating-a-windows-application>` for instructions.
+```
 
 If you are new to Ubuntu Core, we recommend reading our {doc}`getting started document <core:tutorials/build-your-first-image/index>`. If you want to learn about building custom Ubuntu Core images, you could find information on the [snapcraft docs](https://snapcraft.io/docs/the-gadget-snap).
 
@@ -72,22 +75,126 @@ The examples used here are game applications, such as Mastermind, Neverputt, and
 
 The first step is to download the application and execute it:
 
+::::{tab-set}
+:::{tab-item} Flutter
+:sync: flutter
+```
+snap install flutter  # or follow https://docs.flutter.dev/get-started/install
+git clone https://github.com/flutter/flutter.git --branch stable --depth 1
+cd flutter/examples/texture
+frame-it flutter run
+```
+:::
+
+:::{tab-item} GTK3
+:sync: gtk3
+```
+sudo apt install gnome-mastermind
+frame-it gnome-mastermind
+```
+:::
+
+:::{tab-item} SDL2
+:sync: sdl2
+```
+sudo apt install neverputt
+frame-it neverputt
+```
+:::
+
+:::{tab-item} Qt5
+:sync: qt5
+```
+sudo apt install bomber
+frame-it bomber
+```
+:::
+
+:::{tab-item} X11
+:sync: x11
+```
+sudo apt install mesa-utils mir-x11-kiosk
+frame-it.x11 glxgears
+```
+:::
+
+:::{tab-item} Electron
+:sync: electron
 ```
 git clone https://github.com/electron/electron-quick-start.git
 cd electron-quick-start
 npm install
 frame-it npm start -- --enable-features=UseOzonePlatform --ozone-platform=wayland
 ```
+:::
+::::
 
-_(I'm no expert on Electron, so I don't know why, but I found this failed to run on the first attempt, but ran fine thereafter - Alan)_
+Now Ubuntu Frame's window should contain the application window. It should look like this:
 
-Now Frame's window should contain the "Hello World!" app.
+::::{tab-set}
+:::{tab-item} Flutter
+:sync: flutter
+![image|690x575](flutter-texture-demo.png)
 
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close the application window (`Ctrl-Q`).
+
+Before continuing to the next section, return to your previous working directory:
+
+    cd -
+:::
+
+:::{tab-item} GTK3
+:sync: gtk3
+![image|690x575](f787b8fe63197afac80c6f50cbeb2753d7584ee8.jpeg)
+
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close Mastermind (`Ctrl-Q`).
+:::
+
+:::{tab-item} SDL2
+:sync: sdl2
+![image|690x575](b97782d3fb25d700a2f0f087f758be88d72f11d0.jpeg)
+
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close Neverputt (`Esc`)
+:::
+
+:::{tab-item} Qt5
+:sync: qt5
+![image|690x574](6a5efec07e12b4cbadc71c74a56e9eab00147ff6.jpeg)
+
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close the Bomber (`Ctrl-Q`).
+:::
+
+:::{tab-item} X11
+:sync: x11
+
+![image|690x575](ubuntu-frame-glxgears.jpeg)
+
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close glxgears (`Esc`)
+:::
+
+:::{tab-item} Electron
+:sync: electron
 ![image|690x575](3fceac9523815e0e4ebdab10adee2d5ca6a8a0e0.jpeg)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
-Close "Hello World!" (`Ctrl-Q`)
+Close "Hello World!" (`Ctrl-Q`).
+
+Before continuing to the next section, return to your previous working directory:
+
+    cd -
+:::
+::::
 
 ## Packaging your application as a Snap
 
@@ -108,7 +215,6 @@ First, you will clone a repository containing a generic Snapcraft recipe for IoT
 In the *same terminal window* you opened at the start of the last section, type:
 
 ```
-cd ..
 git clone https://github.com/canonical/iot-example-graphical-snap.git
 cd iot-example-graphical-snap
 ```
@@ -138,32 +244,155 @@ $ $ git branch --list --remotes origin/24/*
 The "24" prefix refers to the snap bases that snaps are based on, in this case we use `24` for branches using to `base: core24` which in turn refers to Ubuntu 24.04LTS. (There are similar `22` and `20` collections.)
 ```
 
-Once you have the customised snapcraft recipe you can snap your example applications.
+Once you have the customised snapcraft recipe, you can snap your example applications.
 
-Switch to the Electron example branch. Then use snapcraft to build the snap:
+Switch to the example branch relevant to your application and use snapcraft to build the snap:
 
+::::{tab-set}
+:::{tab-item} Flutter
+:sync: flutter
+```
+git checkout 24/Flutter-demo
+snapcraft pack
+```
+:::
+
+:::{tab-item} GTK3
+:sync: gtk3
+```
+git checkout 24/GTK3-mastermind
+snapcraft pack
+```
+:::
+:::{tab-item} SDL2
+:sync: sdl2
+```
+git checkout 24/SDL2-neverputt
+snapcraft pack
+```
+:::
+:::{tab-item} Qt5
+:sync: qt5
+```
+git checkout 24/Qt5-bomber
+snapcraft pack
+```
+:::
+
+:::{tab-item} X11
+:sync: x11
+```
+git checkout 24/x11-glxgears
+snapcraft pack
+```
+:::
+
+:::{tab-item} Electron
+:sync: electron
 ```
 git checkout 24/Electron-quick-start
-snapcraft
+snapcraft pack
 ```
+:::
+::::
 
 Snapcraft is the packaging tool used to create snaps. We are not going to explore all its options here but, to avoid confusion, note that when you first run snapcraft, you will be asked "Support for 'multipass' needs to be set up. Would you like to do it now? \[y/N\]:", answer "yes".
 
-After a few minutes, the snap will be built with a message like:
+After a few minutes, the snap will be built with a message similar to:
 
 ```
-Snapped iot-example-graphical-snap_0+git.03795a5_amd64.snap
+Packed iot-example-graphical-snap_0+git.4c03a17_amd64.snap
 ```
+
+Here, `iot-example-graphical-snap_0+git.4c03a17_amd64.snap` is your snap file name.
 
 You can then install and run the snap:
 
 ```
-sudo snap install --dangerous iot-example-graphical-snap_0+git.fc3da3d_amd64.snap
+sudo snap install --dangerous <snap-file>
 frame-it iot-example-graphical-snap
 ```
+Replace <snap-file> with the name of the snap file.
 
 The first time you run your snap with Ubuntu Frame installed, you are likely to see a warning:
 
+
+::::{tab-set}
+:::{tab-item} Flutter
+:sync: flutter
+```
+...
+WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
+
+(flutterdemo:1072106): Gtk-WARNING **: 17:15:05.765: cannot open display:
+[2024-11-20 17:15:05.768233] < - debug - > mirserver: Handling Terminated from pid=1072004
+[2024-11-20 17:15:05.768477] < -warning- > mirserver: wl_surface@12 destroyed before associated role
+```
+:::
+
+:::{tab-item} GTK3
+:sync: gtk3
+```
+...
+WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
+
+(gnome-mastermind:1029616): Gtk-WARNING **: 15:43:32.167: cannot open display:
+[2024-11-20 15:43:32.169302] < - debug - > mirserver: Handling Terminated from pid=1029515
+[2024-11-20 15:43:32.169484] < -warning- > mirserver: wl_surface@12 destroyed before associated role
+```
+:::
+:::{tab-item} SDL2
+:sync: sdl2
+```
+$ snap run iot-example-graphical-snap
+WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
+WARNING: hardware-observe interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
+WARNING: joystick interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
+Failure to initialize SDL (wayland not available)
+[2024-11-20 16:56:32.762903] < - debug - > mirserver: Handling Terminated from pid=1055087
+[2024-11-20 16:56:32.763099] < -warning- > mirserver: wl_surface@12 destroyed before associated role
+```
+:::
+:::{tab-item} Qt5
+:sync: qt5
+```
+...
+WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
+Failed to create wl_display (Permission denied)
+Failed to create wl_display (Permission denied)
+qt.qpa.plugin: Could not load the Qt platform plugin "wayland" in "/snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/" even though it was found.
+This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+Available platform plugins are: eglfs (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), linuxfb (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), minimal (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), minimalegl (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), offscreen (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), vnc (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), wayland-egl (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), wayland (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), wayland-xcomposite-egl (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), wayland-xcomposite-glx (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), xcb (from /snap/iot-example-graphical-snap/x65/usr/lib/x86_64-linux-gnu/qt5/plugins/platforms/), eglfs, linuxfb, minimal, minimalegl, offscreen, vnc, wayland-egl, wayland, wayland-xcomposite-egl, wayland-xcomposite-glx, xcb.
+
+[2024-11-20 16:17:25.832791] < - debug - > mirserver: Handling Terminated from pid=1042144
+[2024-11-20 16:17:25.832961] < -warning- > mirserver: wl_surface@12 destroyed before associated role
+```
+
+:::
+
+:::{tab-item} X11
+:sync: x11
+```
+...
+ERROR: ./src/server/graphics/default_configuration.cpp(198): Throw in function virtual const std::vector<std::shared_ptr<mir::graphics::DisplayPlatform> >& mir::DefaultServerConfiguration::the_display_platforms()
+Dynamic exception type: boost::wrapexcept<std::runtime_error>
+std::exception::what: Exception while creating graphics platform
+ERROR: ./src/platforms/wayland/wayland_display.cpp(65): Throw in function wl_display* mir::platform::wayland::connection(const mir::options::Option&)
+Dynamic exception type: boost::wrapexcept<std::runtime_error>
+std::exception::what: Failed to connect to Wayland display '/run/user/1000/wayland-2'
+
+/tmp/tmp.rh9HQmjZ8T CLOSE_WRITE,CLOSE
+Error: couldn't open display :
+/snap/iot-example-graphical-snap/x68/usr/bin/mir-x11-kiosk-launch: 20: kill: No such process
+
+[2024-11-20 17:46:45.733516] < - debug - > mirserver: Handling Terminated from pid=1085119
+[2024-11-20 17:46:45.733721] < -warning- > mirserver: wl_surface@12 destroyed before associated role
+```
+:::
+
+:::{tab-item} Electron
+:sync: electron
 ```
 WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
 [231190:0624/162014.069287:ERROR:wayland_connection.cc(209)] Failed to connect to Wayland display
@@ -171,29 +400,75 @@ WARNING: wayland interface not connected! Please run: /snap/iot-example-graphica
 [231190:0624/162014.069322:ERROR:env.cc(226)] The platform failed to initialize.  Exiting.
 The futex facility returned an unexpected error code.
 ```
+:::
+::::
 
-The first WARNING is the key to the problem and comes from one of the scripts in the generic recipe. While developing your snap (that is, until your snap is uploaded to the store and any necessary “store assertions” granted), connecting any “interfaces” your snap uses needs to be done manually. As the message suggests, there’s a helper script for this. Run it and try again:
+This warning or exception about failure to connect to the Wayland interface is the key to the problem and comes from one of the scripts in the generic recipe. While developing your snap (that is, until your snap is uploaded to the store and any necessary “store assertions” granted), connecting any “interfaces” your snap uses needs to be done manually. As the message suggests, there’s a helper script for this. Run it and try again:
 
 ```
 /snap/iot-example-graphical-snap/current/bin/setup.sh
 frame-it iot-example-graphical-snap
 ```
 
-Now Frame's window should contain the "Demo" app.
+Now Frame’s window should contain the app. 
 
+::::{tab-set}
+:::{tab-item} Flutter
+:sync: flutter
+![image|690x575](flutter-texture-demo.png)
+
+Close the application (`Ctrl-Q`). Your application has been successfully snapped.
+:::
+
+:::{tab-item} GTK3
+:sync: gtk3
+![image|690x575](5513cee9e8851b25d97704a32153fbe513087bca.png)
+
+Close the application (`Ctrl-Q`). Your application has been successfully snapped.
+:::
+
+:::{tab-item} SDL2
+:sync: sdl2
+![image|690x575](be0c79621a30e294669b5954316cfbb96d0c3de8.jpeg)
+
+Close Neverputt.
+:::
+
+:::{tab-item} Qt5
+:sync: qt5
+![image|690x575](187a8b5c29c0fc1069c37b1e6a41861a86dadd42.jpeg)
+
+Close the application (`Ctrl-Q`). Your application has been successfully snapped.
+:::
+
+:::{tab-item} X11
+:sync: x11
+![image|690x575](84c6ff6d8e535d1824380d7f3dbb53706af32c54.jpeg)
+
+Close the application (`Esc`). Your application has been successfully snapped.
+:::
+
+:::{tab-item} Electron
+:sync: electron
 ![image|690x575](afa9dab5e889664d711a50705dc25de7b5135dae.jpeg)
 
-Close that (`Ctrl-Q`). Your application has been successfully snapped.
+Close the application (`Ctrl-Q`). Your application has been successfully snapped.
+:::
+::::
 
 ### Packaging your own application
 
 When packaging an application there are many issues to address: what needs to be in the snap, how does the runtime environment need to be configured and what interfaces are needed.
 
-You might get some inspiration from the examples we’ve given. You can see the customisation used in each example using git diff for example:
+You might get some inspiration from the examples we’ve given. You can see the customisation used in each example using git diff, for example:
 
 ```
-git diff 24/main 24/Electron-quick-start
+git diff 24/main 24/x11-glxgears
 ```
+
+## Building for and installing on a device
+
+So far you explored the process for testing if your snapped application will work on Ubuntu Frame only using your desktop. While this accelerates the development process, you still need to consider the final board for your edge device. A lot of edge devices don’t use the amd64 architecture that is typical of development machines. Therefore, in this section, you will see how to build for and install on a device if your device uses a different architecture.
 
 ### Leveraging Snapcraft remote build tool
 
@@ -218,7 +493,37 @@ snap install ubuntu-frame --channel 24
 snap install --dangerous *.snap
 ```
 
+::::{tab-set}
+:::{tab-item} Flutter
+:sync: flutter
+![image|690x575](flutter-texture-demo.png)
+:::
+
+:::{tab-item} GTK3
+:sync: gtk3
+![image|690x575](3708aef4159023b02fd49208f32f438a38a6e59b.jpeg)
+:::
+
+:::{tab-item} SDL2
+:sync: sdl2
+![image|690x575](babb31bb8373e8350ed028413d1d3f3b43b6b300.jpeg)
+:::
+
+:::{tab-item} Qt5
+:sync: qt5
+![image|690x575](f9030fbc1a10d23d4f39b8be426cc14bda398834.jpeg)
+:::
+
+:::{tab-item} X11
+:sync: x11
+![image|690x575](bafbdc990c5b99cd9a9b077b42a13bcee8281ced.jpeg)
+:::
+
+:::{tab-item} Electron
+:sync: electron
 ![image|690x575](3df16f7b1650ddd26952ff0db1d3d500a7fc84f1.jpeg)
+:::
+::::
 
 ## Conclusion
 
@@ -236,7 +541,6 @@ For more information about Ubuntu Frame please visit our [website](https://mir-s
 
 You may also consider reading the following materials:
 
-- {ref}`packaging-a-flutter-application`
 - {ref}`make-a-secure-ubuntu-web-kiosk`.
 - How to {ref}`enable on-screen keyboard support <ubuntu-frame-osk-documentation>` in Ubuntu Frame.
 

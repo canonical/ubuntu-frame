@@ -8,7 +8,7 @@ Together with [Ubuntu Core](https://ubuntu.com/core), Ubuntu Frame provides all 
 
 This tutorial helps you deploy your graphic application that supports the [Wayland protocol](https://wayland.freedesktop.org/docs/html/) to work with Ubuntu Frame and Ubuntu Core. This guide is for developers looking to build kiosks, digital signage solutions, infotainment systems, IoT devices or any other applications that require a graphic interface running on a screen.
 
-Note that this tutorial does not cover how to build an application using a toolkit that supports Wayland or to {ref}`package X11 <packaging-an-x11-based-application>`-based applications to work on Ubuntu Core. It also does not cover how to upload your snap to the snap store, nor building custom Ubuntu Core images with pre-configured snaps. For information on these topics, see [Snapcraft documentation](https://snapcraft.io/docs).
+Note that this tutorial does not cover how to build an application using a toolkit that supports Wayland or to {ref}`package X11 <packaging-an-application-iot-gui>`-based applications to work on Ubuntu Core. It also does not cover how to upload your snap to the snap store, nor building custom Ubuntu Core images with pre-configured snaps. For information on these topics, see [Snapcraft documentation](https://snapcraft.io/docs).
 
 If you want to learn how to install pre-built applications such as [wpe-webkit-mir-kiosk](https://snapcraft.io/wpe-webkit-mir-kiosk), [mir-kiosk-kodi](https://snapcraft.io/mir-kiosk-kodi/), or [Scummvm](https://snapcraft.io/scummvm), follow their official installation and configuration guides.
 
@@ -343,7 +343,7 @@ Once you’ve uploaded the snap to the store, you can [request store assertions]
 For more information about Ubuntu Frame, visit our [website](https://mir-server.io/ubuntu-frame). 
 
 Other useful guides to learn about Ubuntu Frame are:
-- {ref}`packaging-a-flutter-application`
+- {ref}`packaging-an-application-iot-gui`
 - How to leverage existing snaps to {ref}`build a webkiosk <make-a-secure-ubuntu-web-kiosk>`
 - How to {ref}`enable on-screen keyboard support <ubuntu-frame-osk-documentation>` in Ubuntu Frame
 
