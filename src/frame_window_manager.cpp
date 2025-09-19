@@ -297,6 +297,7 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 {
     WindowSpecification specification = modifications;
 
+    // FIXME: this shouldn't be necessary, see canonical/mir#4282
     // If the client requests a change to its state, size, or topleft, we for a
     // relayout so that it is aware of its true parameters.
     if (specification.state().is_set() || specification.size().is_set() || specification.top_left().is_set())
