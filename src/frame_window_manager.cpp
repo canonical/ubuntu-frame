@@ -296,7 +296,15 @@ void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& window_inf
 void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, WindowSpecification const& modifications)
 {
     WindowSpecification specification = modifications;
-    handle_layout(specification, window_info.window().application(), window_info);
+
+    // FIXME: this shouldn't be necessary, see canonical/mir#4282
+    // If the client requests a change to its state, size, or topleft, we for a
+    // relayout so that it is aware of its true parameters.
+    if (specification.state().is_set() || specification.size().is_set() || specification.top_left().is_set())
+    {
+        handle_layout(specification, window_info.window().application(), window_info);
+    }
+
     MinimalWindowManager::handle_modify_window(window_info, specification);
 }
 
