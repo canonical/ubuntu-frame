@@ -132,6 +132,7 @@ parts:
     build-packages:
       - pkg-config
       - libmiral-dev
+      - libmircommon-dev
       - libwayland-dev
       - libboost-iostreams-dev
       - libapparmor-dev

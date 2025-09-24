@@ -34,10 +34,11 @@ if(ENABLE_COVERAGE)
     )
 endif()
 
-pkg_check_modules(MIRAL miral REQUIRED)
-pkg_check_modules(WAYLAND_CLIENT REQUIRED wayland-client)
-pkg_check_modules(APPARMOR libapparmor REQUIRED)
-pkg_check_modules(FREETYPE freetype2 REQUIRED)
+pkg_check_modules(MIRAL miral REQUIRED IMPORTED_TARGET)
+pkg_check_modules(MIRCOMMON mircommon REQUIRED IMPORTED_TARGET)
+pkg_check_modules(WAYLAND_CLIENT wayland-client REQUIRED IMPORTED_TARGET)
+pkg_check_modules(APPARMOR libapparmor REQUIRED IMPORTED_TARGET)
+pkg_check_modules(FREETYPE freetype2 REQUIRED IMPORTED_TARGET)
 
 add_library(frame-implementation
     frame_authorization.cpp frame_authorization.h
@@ -59,24 +60,13 @@ find_package(Boost 1.48.0 COMPONENTS iostreams REQUIRED)
 target_compile_definitions(frame PRIVATE MIR_LOG_COMPONENT="frame")
 target_compile_definitions(frame-implementation PRIVATE MIR_LOG_COMPONENT="frame")
 
-target_include_directories(frame-implementation
-    PUBLIC 
-        SYSTEM 
-        ${MIRAL_INCLUDE_DIRS} 
-    PRIVATE 
-        ${FREETYPE_INCLUDE_DIRS}
-)
-
-target_include_directories(frame
-    PRIVATE
-    ${FREETYPE_INCLUDE_DIRS}
-)
-
 target_link_libraries(frame-implementation
-    ${MIRAL_LDFLAGS}
-    ${WAYLAND_CLIENT_LDFLAGS}
-    ${APPARMOR_LDFLAGS}
-    ${FREETYPE_LDFLAGS}
+    PUBLIC
+    PkgConfig::MIRAL
+    PkgConfig::MIRCOMMON
+    PkgConfig::WAYLAND_CLIENT
+    PkgConfig::APPARMOR
+    PkgConfig::FREETYPE
     ${Boost_LIBRARIES}
 )
 
