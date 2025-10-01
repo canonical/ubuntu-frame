@@ -484,7 +484,7 @@ Close the application (`Ctrl-Q`). Your application has been successfully snapped
 :::
 
 :::{tab-item} Qt6
-:sync: qt5
+:sync: qt6
 ![image|690x575](explosive-c4-native.png)
 
 Close the window (`Alt-F4`). Your application has been successfully snapped.
