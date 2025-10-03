@@ -110,6 +110,14 @@ frame-it bomber
 ```
 :::
 
+:::{tab-item} Qt6
+:sync: qt6
+```
+sudo apt install explosive-c4 qt6-wayland
+frame-it explosive-c4
+```
+:::
+
 :::{tab-item} X11
 :sync: x11
 ```
@@ -172,6 +180,15 @@ If your application doesn’t appear in the Ubuntu Frame window or look right at
 Close the Bomber (`Ctrl-Q`).
 :::
 
+:::{tab-item} Qt6
+:sync: qt6
+![image|690x574](explosive-c4-native.png)
+
+If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
+
+Close the window (`Alt-F4`).
+:::
+
 :::{tab-item} X11
 :sync: x11
 
@@ -204,7 +221,7 @@ Now that you know how to confirm that an application is working with Ubuntu Fram
 
 For use with [Ubuntu Core](https://ubuntu.com/core), your application needs to be packaged as a snap. This will also allow you to leverage Over The Air updates, automatic rollbacks, delta updates, update semantic channels, and more. If you don't use Ubuntu Core, but instead another form of Linux, we recommend you use snaps to get many of these advantages.
 
-There's a lot of information about [packaging snaps online](https://ubuntu.com/tutorials/create-your-first-snap#1-overview), and the purpose here is not to teach about the {doc}`snapcraft <snapcraft:tutorials/craft-a-snap>` packaging tool or the [Snap Store](https://snapcraft.io/store). We will, instead, focus on the things that are special to IoT graphics.
+There's a lot of information about [packaging snaps online](https://ubuntu.com/tutorials/create-your-first-snap), and the purpose here is not to teach about the {doc}`snapcraft <snapcraft:tutorials/craft-a-snap>` packaging tool or the [Snap Store](https://snapcraft.io/store). We will, instead, focus on the things that are special to IoT graphics.
 
 Much of what you find online about packaging GUI applications as a snap refers to packaging for desktop. Some of that doesn't apply to IoT as Ubuntu Core and Ubuntu Server do not include everything a desktop installation does and the snaps need to run as {doc}`daemons <snapcraft:reference/project-file/snapcraft-yaml>` (background services) instead of being launched in a user session. In particular, for the time being, you should ignore various Snapcraft {doc}`extensions <snapcraft:how-to/extensions/index>` that help writing snap recipes that integrate with the desktop environment (e.g. using the correct theme) as they are not tested for use with Ubuntu Frame on Ubuntu Core.
 
@@ -275,6 +292,14 @@ snapcraft pack
 :sync: qt5
 ```
 git checkout 24/Qt5-bomber
+snapcraft pack
+```
+:::
+
+:::{tab-item} Qt6
+:sync: qt6
+```
+git checkout 24/Qt6-example
 snapcraft pack
 ```
 :::
@@ -371,6 +396,23 @@ Available platform plugins are: eglfs (from /snap/iot-example-graphical-snap/x65
 
 :::
 
+:::{tab-item} Qt6
+:sync: qt6
+```
+...
+WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
+Failed to create wl_display (Permission denied)
+qt.qpa.plugin: Could not load the Qt platform plugin "wayland" in "/snap/iot-example-graphical-snap/x1/usr/lib/x86_64-linux-gnu/qt6/plugins/platforms/" even though it was found.
+This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, vkkhrdisplay, wayland-egl, wayland, xcb.
+
+/snap/frame-it/x8/frame-it: line 35: 102885 Aborted                 (core dumped) WAYLAND_DISPLAY="${wayland_display}" SDL_VIDEODRIVER=wayland QT_QPA_PLATFORM=wayland GDK_BACKEND=wayland $@
+[2025-09-30 16:56:47.992021] < - debug - > mirserver: Handling Terminated from pid=102741
+```
+
+:::
+
 :::{tab-item} X11
 :sync: x11
 ```
@@ -439,6 +481,13 @@ Close Neverputt.
 ![image|690x575](187a8b5c29c0fc1069c37b1e6a41861a86dadd42.jpeg)
 
 Close the application (`Ctrl-Q`). Your application has been successfully snapped.
+:::
+
+:::{tab-item} Qt6
+:sync: qt6
+![image|690x575](explosive-c4-native.png)
+
+Close the window (`Alt-F4`). Your application has been successfully snapped.
 :::
 
 :::{tab-item} X11
@@ -512,6 +561,11 @@ snap install --dangerous *.snap
 :::{tab-item} Qt5
 :sync: qt5
 ![image|690x575](f9030fbc1a10d23d4f39b8be426cc14bda398834.jpeg)
+:::
+
+:::{tab-item} Qt6
+:sync: qt6
+![image|690x575](qemu-qt6.png)
 :::
 
 :::{tab-item} X11
