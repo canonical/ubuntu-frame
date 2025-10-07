@@ -1,4 +1,5 @@
 (packaging-an-application-iot-gui)=
+
 # Packaging an application as an IoT GUI
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the foundation for embedded displays. It provides a reliable, secure and easy way to embed your applications into a kiosk-style, IoT device, or digital signage solution. With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window, a dedicated set of windows behaviours, input from touch, keyboard and mouse without needing to deal with the specific hardware, on-screen keyboard, and more.
@@ -337,10 +338,10 @@ You can then install and run the snap:
 sudo snap install --dangerous <snap-file>
 frame-it iot-example-graphical-snap
 ```
+
 Replace <snap-file> with the name of the snap file.
 
 The first time you run your snap with Ubuntu Frame installed, you are likely to see a warning:
-
 
 `````{tab-set}
 ````{tab-item} Flutter
@@ -452,7 +453,7 @@ This warning or exception about failure to connect to the Wayland interface is t
 frame-it iot-example-graphical-snap
 ```
 
-Now Frame’s window should contain the app. 
+Now Frame’s window should contain the app.
 
 `````{tab-set}
 ````{tab-item} Flutter

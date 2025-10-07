@@ -5,6 +5,7 @@ Ubuntu Frame is a secure and reliable display server designed for embedded Linux
 With Ubuntu Frame's built-in features like kiosk mode, power saving, touch input support, and an on-screen keyboard, developers can quickly create full-screen applications using any of the popular application display frameworks - HTML5/web, X11, or native Wayland. It’s also compatible with most popular toolkits such as Qt, Flutter, Electron, and JavaScript, offering the flexibility to use whichever framework suits your needs best.
 
 In under an hour, you can create a maintainable image for your display solution without the need to deal with drivers, input modalities, window dynamics and more. Because Ubuntu Frame handles it all, you can focus on your display content without having to worry about integrating DRM, KMS, input protocols and security policies.
+
 ______________________________________________________________________
 
 ## In this documentation
@@ -38,8 +39,9 @@ Ubuntu Frame is fully open source. We welcome your input and involvement through
 You can engage with us and the community using the following channels:
 
 ````{grid}
-:reverse:
-
+---
+reverse:
+---
 ```{grid-item-card} Contribute
 [GitHub](https://github.com/canonical/ubuntu-frame) | [Code of conduct](https://ubuntu.com/community/ethos/code-of-conduct)
 
