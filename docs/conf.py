@@ -297,6 +297,7 @@ intersphinx_mapping = {
         None,
     ),
     "mir": ("https://canonical-mir.readthedocs-hosted.com/stable", None),
+    "mir-latest": ("https://canonical-mir.readthedocs-hosted.com/latest", None),
     "core": ("https://documentation.ubuntu.com/core", None),
     "server": ("https://documentation.ubuntu.com/server", None),
     "snapcraft": ("https://documentation.ubuntu.com/snapcraft/stable", None),
