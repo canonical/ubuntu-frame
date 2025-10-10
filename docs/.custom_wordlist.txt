@@ -34,6 +34,7 @@ Nouveau
 Nvidia
 OSK
 OpenGL
+OWASP
 Phosh
 Qt5
 RGB
@@ -157,11 +158,13 @@ txt
 ubuntu
 udev
 uncompress
+unhandled
 url
 userspace
 usr
 vc
 virt
+vlatest
 vm
 vnc
 vstable
