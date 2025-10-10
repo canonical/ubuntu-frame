@@ -13,4 +13,15 @@ then
   unset WAYLAND_DISPLAY
 fi
 
-exec "$@"
+format='{"datetime": "%s", "appid": "ubuntu-frame, "event": "%s", "level": "WARN", "description": "%s" }'
+
+printf "$format\n" "$( date --universal +%FT%TZ  )" "sys_startup" "Ubuntu Frame is starting up"
+
+"$@"
+RC=$?
+
+if [ $RC -ne 0 ]; then
+  printf "$format\n" "$( date --universal +%FT%TZ  )" "sys_crash" "Ubuntu Frame exited unexpectedly"
+  exit $RC
+fi
+printf "$format\n" "$( date --universal +%FT%TZ  )" "sys_shutdown" "Ubuntu Frame is shutting down"
