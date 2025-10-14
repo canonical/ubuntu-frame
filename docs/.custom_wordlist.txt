@@ -158,7 +158,6 @@ txt
 ubuntu
 udev
 uncompress
-unhandled
 url
 userspace
 usr

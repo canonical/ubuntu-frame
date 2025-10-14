@@ -16,18 +16,18 @@ The following events will be logged to standard error in [the OWASP JSON format]
 
 - `sys_startup` on startup:
   ```json
-  {"datetime": "YYYY-MM-DDThh:mm:ssZ", "appid": "ubuntu-frame", "event": "sys_startup", "level": "WARN", "description": "Ubuntu Frame is starting up" }
+  {"datetime": "YYYY-MM-DDThh:mm:ssZ", "appid": "frame", "event": "sys_startup", "level": "WARN", "description": "Mir is starting up" }
   ```
 - `sys_shutdown` on shutdown:
   ```json
-  {"datetime": "YYYY-MM-DDThh:mm:ssZ", "appid": "ubuntu-frame", "event": "sys_shutdown", "level": "WARN", "description": "Ubuntu Frame is shutting down" }
+  {"datetime": "YYYY-MM-DDThh:mm:ssZ", "appid": "frame", "event": "sys_shutdown", "level": "WARN", "description": "Mir is shutting down" }
   ```
-- `sys_crash` on unhandled error or fatal signal received:
+- `sys_crash` on a fatal signal received:
   ```json
-  {"datetime": "YYYY-MM-DDThh:mm:ssZ", "appid": "ubuntu-frame", "event": "sys_crash", "level": "WARN", "description": "Ubuntu Frame exited unexpectedly" }
+  {"datetime": "YYYY-MM-DDThh:mm:ssZ", "appid": "frame", "event": "sys_crash", "level": "WARN", "description": "Fatal signal received" }
   ```
 
-Additionally, events will be logged according to Mir's {ref}`mir-latest:security-event-logging`.
+This functionality comes from Mir's {ref}`mir-latest:security-event-logging`.
 
 ## Cryptography
 
