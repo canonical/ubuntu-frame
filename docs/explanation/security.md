@@ -10,6 +10,25 @@ ______________________________________________________________________
 
 We ran threat modeling for Mir itself (the [display server library](https://mir-server.io/) underpinning Frame) based on this snap stack, and maintain that documented there: {doc}`Mir Security documentation <mir:explanation/security>`.
 
+## Security event logging
+
+The following events will be logged to standard error in [the OWASP JSON format](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Logging_Vocabulary_Cheat_Sheet.md#format):
+
+- `sys_startup` on startup:
+  ```json
+  {"datetime": "YYYY-MM-DDThh:mm:ssZ", "appid": "frame", "event": "sys_startup", "level": "WARN", "description": "Mir is starting up" }
+  ```
+- `sys_shutdown` on shutdown:
+  ```json
+  {"datetime": "YYYY-MM-DDThh:mm:ssZ", "appid": "frame", "event": "sys_shutdown", "level": "WARN", "description": "Mir is shutting down" }
+  ```
+- `sys_crash` on a fatal signal received:
+  ```json
+  {"datetime": "YYYY-MM-DDThh:mm:ssZ", "appid": "frame", "event": "sys_crash", "level": "WARN", "description": "Fatal signal received" }
+  ```
+
+This functionality comes from Mir's {ref}`mir-latest:security-event-logging`.
+
 ## Cryptography
 
 There is no cryptography used in Frame itself or the On-Screen Keyboard snap. No direct dependency on en/decryption, hashing or digital signatures.
