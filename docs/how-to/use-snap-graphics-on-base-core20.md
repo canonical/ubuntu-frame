@@ -12,7 +12,7 @@ Until recently, we have been including the mesa drivers inside the snap as these
 - Security updates to mesa require all the server and client snaps to be rebuilt and distributed; and
 - There's no way to introduce other drivers, even if Mir supports them.
 
-This led to some frustration as there are a number of {doc}`graphics stacks that Mir supports <mir:explanation/mir-graphics-support>` that were not [supported by mir-kiosk](https://discourse.ubuntu.com/t/where-does-mir-kiosk-work/22270). With [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) we have adopted a more flexible approach.
+This led to some frustration as there are a number of {ref}`graphics stacks that Mir supports <mir:exp-mir-graphics-support>` that were not [supported by mir-kiosk](https://discourse.ubuntu.com/t/where-does-mir-kiosk-work/22270). With [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) we have adopted a more flexible approach.
 
 ### Introducing graphics-core20
 

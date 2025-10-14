@@ -12,7 +12,7 @@ We recommend Ubuntu Core for a lot of purposes, but you should be able to use Ub
 
 ## Suitable graphics
 
-Ubuntu Frame is based on Mir which {doc}`supports a range of graphics options <mir:explanation/mir-graphics-support>`. The current iteration of Ubuntu Frame does not support all of these, just "gbm-kms".
+Ubuntu Frame is based on Mir which {ref}`supports a range of graphics options <mir:exp-mir-graphics-support>`. The current iteration of Ubuntu Frame does not support all of these, just "gbm-kms".
 
 In general, this means that Ubuntu Frame can work with any driver providing KMS, `libgbm` and an EGL supporting [EGL_WL_bind_wayland_display ](https://registry.khronos.org/EGL/extensions/WL/EGL_WL_bind_wayland_display.txt).
 
