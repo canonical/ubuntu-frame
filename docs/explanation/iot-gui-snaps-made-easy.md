@@ -27,10 +27,10 @@ After writing this logic a few times, we extracted it into a `wayland-launch` he
 set -e
 
 for PLUG in %PLUGS%; do
-  if ! snapctl is-connected ${PLUG}
-  then
-    echo "WARNING: ${PLUG} interface not connected! Please run: /snap/${SNAP_INSTANCE_NAME}/current/bin/setup.sh"
-  fi
+    if ! snapctl is-connected ${PLUG}
+    then
+        echo "WARNING: ${PLUG} interface not connected! Please run: /snap/${SNAP_INSTANCE_NAME}/current/bin/setup.sh"
+    fi
 done
 
 if ! command -v inotifywait > /dev/null
@@ -43,14 +43,14 @@ fi
 
 wait_for()
 {
-  until
+    until
     inotifywait --event create "$(dirname "$1")"&
     inotify_pid=$!
     [ -O "$1" ]
-  do
-    wait "${inotify_pid}"
-  done
-  kill "${inotify_pid}"
+    do
+        wait "${inotify_pid}"
+    done
+    kill "${inotify_pid}"
 }
 
 real_xdg_runtime_dir=$(dirname "${XDG_RUNTIME_DIR}")
@@ -86,20 +86,20 @@ set -euo pipefail
 
 daemon=$(snapctl get daemon)
 case "$daemon" in
-  true)
-    # start the daemon
-    if snapctl services "$SNAP_INSTANCE_NAME" | grep -q inactive; then
-      snapctl start --enable "$SNAP_INSTANCE_NAME" 2>&1 || true
-    fi
-    ;;
-  false)
-    # stop the daemon
+    true)
+        # start the daemon
+        if snapctl services "$SNAP_INSTANCE_NAME" | grep -q inactive; then
+            snapctl start --enable "$SNAP_INSTANCE_NAME" 2>&1 || true
+        fi
+        ;;
+    false)
+        # stop the daemon
         snapctl stop --disable "$SNAP_INSTANCE_NAME" 2>&1 || true
-    ;;
-  *)
-    echo "ERROR: Set 'daemon' to one of true|false"
-    exit 1
-    ;;
+        ;;
+    *)
+        echo "ERROR: Set 'daemon' to one of true|false"
+        exit 1
+        ;;
 esac
 ```
 

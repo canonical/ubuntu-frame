@@ -270,6 +270,7 @@ This may be a useful starting point for writing new configuration.
 If invalid configuration is provided Ubuntu Frame will fail to start with an error message.
 
 If you need to reset this configuration (because your hardware changes, or you make a mistake) then simply unset it and restart Ubuntu Frame:
+
 ```bash
 $ snap unset ubuntu-frame display
 $ snap restart ubuntu-frame
@@ -284,6 +285,7 @@ Each layout contains their own set of configuration that is applied when that la
 The first layout is used by default and can be changed using the `display-layout` configuration option (see below).
 
 A system could be configured to show different application during the day and night using two layouts:
+
 ```yaml
 layouts:
   day:
@@ -310,6 +312,7 @@ All properties are optional.
 Each output is configured by name and index of the graphics card providing it.
 
 Configuration for the eDP-1 output on the first graphics card is specified using:
+
 ```yaml
 layouts:
   default:
@@ -320,6 +323,7 @@ layouts:
 ```
 
 The output resolution, frame rate, orientation and pixel scaling can be overridden from the default values:
+
 ```yaml
 layouts:
   default:
@@ -332,6 +336,7 @@ layouts:
 ```
 
 Setting an output `position` changes the default behavior of applications showing on all outputs to instead show different content on each output:
+
 ```yaml
 layouts:
   default:
@@ -344,6 +349,7 @@ layouts:
 ```
 
 A non-zero `group` value is used to join outputs together so applications can span them:
+
 ```yaml
 layouts:
   default:
@@ -358,6 +364,7 @@ layouts:
 ```
 
 Applications can be assigned to show on a particular output using either the snap name or surface title:
+
 ```yaml
 layouts:
   default:
@@ -371,6 +378,7 @@ layouts:
 
 Applications can also be positioned in any location by adding them to `applications`.
 Each application is then provided with a position and size:
+
 ```yaml
 layouts:
   default:
@@ -391,6 +399,7 @@ layouts:
 ```
 
 If the output should not be used by frame it can be disabled by setting `state` to either `enabled` or `disabled`:
+
 ```yaml
 layouts:
   default:
@@ -407,11 +416,13 @@ layouts:
 Controls the layout in use.
 
 Change the layout to `night`:
+
 ```bash
 $ snap set ubuntu-frame display-layout=night
 ```
 
 Get the current layout:
+
 ```bash
 $ snap get ubuntu-frame display-layout
 night
