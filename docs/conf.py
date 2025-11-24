@@ -239,6 +239,7 @@ linkcheck_ignore = [
     "http://127.0.0.1:9400",
     "https://ubuntu.com/.*#get-in-touch",
     "https://matrix.to/#/#mir-server:matrix.org",
+    "https://www.realvnc.com/.*",
     ]
 
 
