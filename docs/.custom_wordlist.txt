@@ -27,6 +27,7 @@ LIBGL
 LIBVA
 Libdrm
 Librem
+Makefile
 Mastermind
 MirServer
 Neverputt
