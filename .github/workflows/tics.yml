@@ -38,7 +38,9 @@ jobs:
           gcovr \
           lcov \
           libapparmor-dev \
+          libboost-filesystem-dev \
           libboost-iostreams-dev \
+          libboost-system-dev \
           libgtest-dev \
           libgmock-dev \
           libfreetype6-dev \
