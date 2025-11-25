@@ -1,4 +1,5 @@
 (packaging-an-application-iot-gui)=
+
 # Packaging an application as an IoT GUI
 
 [Ubuntu Frame](https://mir-server.io/ubuntu-frame/) is the foundation for embedded displays. It provides a reliable, secure and easy way to embed your applications into a kiosk-style, IoT device, or digital signage solution. With Ubuntu Frame, the graphic application you choose or design gets a fullscreen window, a dedicated set of windows behaviours, input from touch, keyboard and mouse without needing to deal with the specific hardware, on-screen keyboard, and more.
@@ -75,8 +76,8 @@ The examples used here are game applications, such as Mastermind, Neverputt, and
 
 The first step is to download the application and execute it:
 
-::::{tab-set}
-:::{tab-item} Flutter
+`````{tab-set}
+````{tab-item} Flutter
 :sync: flutter
 ```
 snap install flutter  # or follow https://docs.flutter.dev/get-started/install
@@ -84,49 +85,49 @@ git clone https://github.com/flutter/flutter.git --branch stable --depth 1
 cd flutter/examples/texture
 frame-it flutter run
 ```
-:::
+````
 
-:::{tab-item} GTK3
+````{tab-item} GTK3
 :sync: gtk3
 ```
 sudo apt install gnome-mastermind
 frame-it gnome-mastermind
 ```
-:::
+````
 
-:::{tab-item} SDL2
+````{tab-item} SDL2
 :sync: sdl2
 ```
 sudo apt install neverputt
 frame-it neverputt
 ```
-:::
+````
 
-:::{tab-item} Qt5
+````{tab-item} Qt5
 :sync: qt5
 ```
 sudo apt install bomber
 frame-it bomber
 ```
-:::
+````
 
-:::{tab-item} Qt6
+````{tab-item} Qt6
 :sync: qt6
 ```
 sudo apt install explosive-c4 qt6-wayland
 frame-it explosive-c4
 ```
-:::
+````
 
-:::{tab-item} X11
+````{tab-item} X11
 :sync: x11
 ```
 sudo apt install mesa-utils mir-x11-kiosk
 frame-it.x11 glxgears
 ```
-:::
+````
 
-:::{tab-item} Electron
+````{tab-item} Electron
 :sync: electron
 ```
 git clone https://github.com/electron/electron-quick-start.git
@@ -134,13 +135,13 @@ cd electron-quick-start
 npm install
 frame-it npm start -- --enable-features=UseOzonePlatform --ozone-platform=wayland
 ```
-:::
-::::
+````
+`````
 
 Now Ubuntu Frame's window should contain the application window. It should look like this:
 
-::::{tab-set}
-:::{tab-item} Flutter
+`````{tab-set}
+````{tab-item} Flutter
 :sync: flutter
 ![image|690x575](flutter-texture-demo.png)
 
@@ -151,45 +152,45 @@ Close the application window (`Ctrl-Q`).
 Before continuing to the next section, return to your previous working directory:
 
     cd -
-:::
+````
 
-:::{tab-item} GTK3
+````{tab-item} GTK3
 :sync: gtk3
 ![image|690x575](f787b8fe63197afac80c6f50cbeb2753d7584ee8.jpeg)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
 Close Mastermind (`Ctrl-Q`).
-:::
+````
 
-:::{tab-item} SDL2
+````{tab-item} SDL2
 :sync: sdl2
 ![image|690x575](b97782d3fb25d700a2f0f087f758be88d72f11d0.jpeg)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
 Close Neverputt (`Esc`)
-:::
+````
 
-:::{tab-item} Qt5
+````{tab-item} Qt5
 :sync: qt5
 ![image|690x574](6a5efec07e12b4cbadc71c74a56e9eab00147ff6.jpeg)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
 Close the Bomber (`Ctrl-Q`).
-:::
+````
 
-:::{tab-item} Qt6
+````{tab-item} Qt6
 :sync: qt6
 ![image|690x574](explosive-c4-native.png)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
 Close the window (`Alt-F4`).
-:::
+````
 
-:::{tab-item} X11
+````{tab-item} X11
 :sync: x11
 
 ![image|690x575](ubuntu-frame-glxgears.jpeg)
@@ -197,9 +198,9 @@ Close the window (`Alt-F4`).
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
 Close glxgears (`Esc`)
-:::
+````
 
-:::{tab-item} Electron
+````{tab-item} Electron
 :sync: electron
 ![image|690x575](3fceac9523815e0e4ebdab10adee2d5ca6a8a0e0.jpeg)
 
@@ -210,8 +211,8 @@ Close "Hello World!" (`Ctrl-Q`).
 Before continuing to the next section, return to your previous working directory:
 
     cd -
-:::
-::::
+````
+`````
 
 ## Packaging your application as a Snap
 
@@ -265,61 +266,61 @@ Once you have the customised snapcraft recipe, you can snap your example applica
 
 Switch to the example branch relevant to your application and use snapcraft to build the snap:
 
-::::{tab-set}
-:::{tab-item} Flutter
+`````{tab-set}
+````{tab-item} Flutter
 :sync: flutter
 ```
 git checkout 24/Flutter-demo
 snapcraft pack
 ```
-:::
+````
 
-:::{tab-item} GTK3
+````{tab-item} GTK3
 :sync: gtk3
 ```
 git checkout 24/GTK3-mastermind
 snapcraft pack
 ```
-:::
-:::{tab-item} SDL2
+````
+````{tab-item} SDL2
 :sync: sdl2
 ```
 git checkout 24/SDL2-neverputt
 snapcraft pack
 ```
-:::
-:::{tab-item} Qt5
+````
+````{tab-item} Qt5
 :sync: qt5
 ```
 git checkout 24/Qt5-bomber
 snapcraft pack
 ```
-:::
+````
 
-:::{tab-item} Qt6
+````{tab-item} Qt6
 :sync: qt6
 ```
 git checkout 24/Qt6-example
 snapcraft pack
 ```
-:::
+````
 
-:::{tab-item} X11
+````{tab-item} X11
 :sync: x11
 ```
 git checkout 24/x11-glxgears
 snapcraft pack
 ```
-:::
+````
 
-:::{tab-item} Electron
+````{tab-item} Electron
 :sync: electron
 ```
 git checkout 24/Electron-quick-start
 snapcraft pack
 ```
-:::
-::::
+````
+`````
 
 Snapcraft is the packaging tool used to create snaps. We are not going to explore all its options here but, to avoid confusion, note that when you first run snapcraft, you will be asked "Support for 'multipass' needs to be set up. Would you like to do it now? \[y/N\]:", answer "yes".
 
@@ -337,13 +338,13 @@ You can then install and run the snap:
 sudo snap install --dangerous <snap-file>
 frame-it iot-example-graphical-snap
 ```
+
 Replace <snap-file> with the name of the snap file.
 
 The first time you run your snap with Ubuntu Frame installed, you are likely to see a warning:
 
-
-::::{tab-set}
-:::{tab-item} Flutter
+`````{tab-set}
+````{tab-item} Flutter
 :sync: flutter
 ```
 ...
@@ -353,9 +354,9 @@ WARNING: wayland interface not connected! Please run: /snap/iot-example-graphica
 [2024-11-20 17:15:05.768233] < - debug - > mirserver: Handling Terminated from pid=1072004
 [2024-11-20 17:15:05.768477] < -warning- > mirserver: wl_surface@12 destroyed before associated role
 ```
-:::
+````
 
-:::{tab-item} GTK3
+````{tab-item} GTK3
 :sync: gtk3
 ```
 ...
@@ -365,8 +366,8 @@ WARNING: wayland interface not connected! Please run: /snap/iot-example-graphica
 [2024-11-20 15:43:32.169302] < - debug - > mirserver: Handling Terminated from pid=1029515
 [2024-11-20 15:43:32.169484] < -warning- > mirserver: wl_surface@12 destroyed before associated role
 ```
-:::
-:::{tab-item} SDL2
+````
+````{tab-item} SDL2
 :sync: sdl2
 ```
 $ snap run iot-example-graphical-snap
@@ -377,8 +378,8 @@ Failure to initialize SDL (wayland not available)
 [2024-11-20 16:56:32.762903] < - debug - > mirserver: Handling Terminated from pid=1055087
 [2024-11-20 16:56:32.763099] < -warning- > mirserver: wl_surface@12 destroyed before associated role
 ```
-:::
-:::{tab-item} Qt5
+````
+````{tab-item} Qt5
 :sync: qt5
 ```
 ...
@@ -394,9 +395,9 @@ Available platform plugins are: eglfs (from /snap/iot-example-graphical-snap/x65
 [2024-11-20 16:17:25.832961] < -warning- > mirserver: wl_surface@12 destroyed before associated role
 ```
 
-:::
+````
 
-:::{tab-item} Qt6
+````{tab-item} Qt6
 :sync: qt6
 ```
 ...
@@ -410,10 +411,9 @@ Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, 
 /snap/frame-it/x8/frame-it: line 35: 102885 Aborted                 (core dumped) WAYLAND_DISPLAY="${wayland_display}" SDL_VIDEODRIVER=wayland QT_QPA_PLATFORM=wayland GDK_BACKEND=wayland $@
 [2025-09-30 16:56:47.992021] < - debug - > mirserver: Handling Terminated from pid=102741
 ```
+````
 
-:::
-
-:::{tab-item} X11
+````{tab-item} X11
 :sync: x11
 ```
 ...
@@ -431,9 +431,9 @@ Error: couldn't open display :
 [2024-11-20 17:46:45.733516] < - debug - > mirserver: Handling Terminated from pid=1085119
 [2024-11-20 17:46:45.733721] < -warning- > mirserver: wl_surface@12 destroyed before associated role
 ```
-:::
+````
 
-:::{tab-item} Electron
+````{tab-item} Electron
 :sync: electron
 ```
 WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
@@ -442,8 +442,8 @@ WARNING: wayland interface not connected! Please run: /snap/iot-example-graphica
 [231190:0624/162014.069322:ERROR:env.cc(226)] The platform failed to initialize.  Exiting.
 The futex facility returned an unexpected error code.
 ```
-:::
-::::
+````
+`````
 
 This warning or exception about failure to connect to the Wayland interface is the key to the problem and comes from one of the scripts in the generic recipe. While developing your snap (that is, until your snap is uploaded to the store and any necessary “store assertions” granted), connecting any “interfaces” your snap uses needs to be done manually. As the message suggests, there’s a helper script for this. Run it and try again:
 
@@ -452,58 +452,58 @@ This warning or exception about failure to connect to the Wayland interface is t
 frame-it iot-example-graphical-snap
 ```
 
-Now Frame’s window should contain the app. 
+Now Frame’s window should contain the app.
 
-::::{tab-set}
-:::{tab-item} Flutter
+`````{tab-set}
+````{tab-item} Flutter
 :sync: flutter
 ![image|690x575](flutter-texture-demo.png)
 
 Close the application (`Ctrl-Q`). Your application has been successfully snapped.
-:::
+````
 
-:::{tab-item} GTK3
+````{tab-item} GTK3
 :sync: gtk3
 ![image|690x575](5513cee9e8851b25d97704a32153fbe513087bca.png)
 
 Close the application (`Ctrl-Q`). Your application has been successfully snapped.
-:::
+````
 
-:::{tab-item} SDL2
+````{tab-item} SDL2
 :sync: sdl2
 ![image|690x575](be0c79621a30e294669b5954316cfbb96d0c3de8.jpeg)
 
 Close Neverputt.
-:::
+````
 
-:::{tab-item} Qt5
+````{tab-item} Qt5
 :sync: qt5
 ![image|690x575](187a8b5c29c0fc1069c37b1e6a41861a86dadd42.jpeg)
 
 Close the application (`Ctrl-Q`). Your application has been successfully snapped.
-:::
+````
 
-:::{tab-item} Qt6
+````{tab-item} Qt6
 :sync: qt6
 ![image|690x575](explosive-c4-native.png)
 
 Close the window (`Alt-F4`). Your application has been successfully snapped.
-:::
+````
 
-:::{tab-item} X11
+````{tab-item} X11
 :sync: x11
 ![image|690x575](84c6ff6d8e535d1824380d7f3dbb53706af32c54.jpeg)
 
 Close the application (`Esc`). Your application has been successfully snapped.
-:::
+````
 
-:::{tab-item} Electron
+````{tab-item} Electron
 :sync: electron
 ![image|690x575](afa9dab5e889664d711a50705dc25de7b5135dae.jpeg)
 
 Close the application (`Ctrl-Q`). Your application has been successfully snapped.
-:::
-::::
+````
+`````
 
 ### Packaging your own application
 
@@ -542,42 +542,42 @@ snap install ubuntu-frame --channel 24
 snap install --dangerous *.snap
 ```
 
-::::{tab-set}
-:::{tab-item} Flutter
+`````{tab-set}
+````{tab-item} Flutter
 :sync: flutter
 ![image|690x575](flutter-texture-demo.png)
-:::
+````
 
-:::{tab-item} GTK3
+````{tab-item} GTK3
 :sync: gtk3
 ![image|690x575](3708aef4159023b02fd49208f32f438a38a6e59b.jpeg)
-:::
+````
 
-:::{tab-item} SDL2
+````{tab-item} SDL2
 :sync: sdl2
 ![image|690x575](babb31bb8373e8350ed028413d1d3f3b43b6b300.jpeg)
-:::
+````
 
-:::{tab-item} Qt5
+````{tab-item} Qt5
 :sync: qt5
 ![image|690x575](f9030fbc1a10d23d4f39b8be426cc14bda398834.jpeg)
-:::
+````
 
-:::{tab-item} Qt6
+````{tab-item} Qt6
 :sync: qt6
 ![image|690x575](qemu-qt6.png)
-:::
+````
 
-:::{tab-item} X11
+````{tab-item} X11
 :sync: x11
 ![image|690x575](bafbdc990c5b99cd9a9b077b42a13bcee8281ced.jpeg)
-:::
+````
 
-:::{tab-item} Electron
+````{tab-item} Electron
 :sync: electron
 ![image|690x575](3df16f7b1650ddd26952ff0db1d3d500a7fc84f1.jpeg)
-:::
-::::
+````
+`````
 
 ## Conclusion
 

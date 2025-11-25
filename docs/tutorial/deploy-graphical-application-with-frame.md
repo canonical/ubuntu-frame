@@ -41,7 +41,7 @@ sudo snap install ubuntu-frame --channel=24
 Ubuntu Frame has various channels corresponding to the snap bases, we use `--channel=24` here which corresponds to `base: core24` which in turn refers to Ubuntu 24.04 LTS.
 
 Install Frame-it, a command-line utility for running snaps with Ubuntu Frame and testing on your development machine:
-    
+
 ```
 sudo snap install frame-it --classic
 ```
@@ -340,9 +340,10 @@ Once you’ve uploaded the snap to the store, you can [request store assertions]
 
 ## Learn more
 
-For more information about Ubuntu Frame, visit our [website](https://mir-server.io/ubuntu-frame). 
+For more information about Ubuntu Frame, visit our [website](https://mir-server.io/ubuntu-frame).
 
 Other useful guides to learn about Ubuntu Frame are:
+
 - {ref}`packaging-an-application-iot-gui`
 - How to leverage existing snaps to {ref}`build a webkiosk <make-a-secure-ubuntu-web-kiosk>`
 - How to {ref}`enable on-screen keyboard support <ubuntu-frame-osk-documentation>` in Ubuntu Frame

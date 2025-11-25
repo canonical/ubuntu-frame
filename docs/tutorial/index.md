@@ -7,9 +7,10 @@ To get started with Ubuntu Frame, the easiest thing you can do with it is to {re
 For a more involved tutorial on deploying your graphical application using Wayland, check out our {ref}`developer tutorial <tutorial-deploy-graphical-application>`.
 
 ```{toctree}
-:titlesonly:
-:hidden:
-
+---
+titlesonly:
+hidden:
+---
 make-a-secure-ubuntu-web-kiosk
 deploy-graphical-application-with-frame
 
