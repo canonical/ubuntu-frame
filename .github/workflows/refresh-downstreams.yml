@@ -19,6 +19,10 @@ jobs:
         - mir-libs-build
 
     steps:
+    - name: Drop LFS
+      run: |
+        sudo apt-get remove --yes git-lfs
+
     - name: Check out code
       uses: actions/checkout@v6
       with:
@@ -30,9 +34,6 @@ jobs:
         GIT_COMMITTER_NAME: "Mir CI Bot"
         GIT_COMMITTER_EMAIL: "mir-ci-bot@canonical.com"
       run: |
-        # avoid LFS
-        git lfs uninstall
-
         # bring mir-libs changes in
         git fetch origin ${{ matrix.ref }}
         git cherry-pick HEAD..origin/${{ matrix.ref }}
