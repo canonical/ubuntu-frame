@@ -12,11 +12,11 @@ ______________________________________________________________________
 
 ````{grid} 1 1 2 2
 ```{grid-item-card} [](tutorial-index)
-Get started - [make a web kiosk](tutorial/make-a-secure-ubuntu-web-kiosk.md).
+**Get started** - [make a web kiosk](tutorial/make-a-secure-ubuntu-web-kiosk.md).
 ```
 
 ```{grid-item-card} [](how-to-index)
-Step-by-step guides covering key operations and common tasks, from [packaging an application as an IoT GUI](how-to/packaging-iot-gui/packaging-an-application) to [running Ubuntu Frame on your device](how-to/running-ubuntu-frame/on-your-device.md).
+**Step-by-step guides** covering key operations and common tasks, from [packaging an application as an IoT GUI](how-to/packaging-iot-gui/packaging-an-application) to [running Ubuntu Frame on your device](how-to/running-ubuntu-frame/on-your-device.md).
 ```
 ````
 
@@ -25,7 +25,7 @@ Step-by-step guides covering key operations and common tasks, from [packaging an
 reverse:
 ---
 ```{grid-item-card} [](reference-index)
-Technical information, including [configuration options](reference/ubuntu-frame-configuration-options.md) and [snap interfaces](reference/ubuntu-frame-snap-interfaces.md).
+**Technical information**, including [configuration options](reference/ubuntu-frame-configuration-options.md) and [snap interfaces](reference/ubuntu-frame-snap-interfaces.md).
 ```
 
 ```{grid-item-card} [](explanation-index)
