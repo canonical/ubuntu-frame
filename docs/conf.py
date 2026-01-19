@@ -216,8 +216,10 @@ sitemap_show_lastmod = True
 redirects = {
     'tutorial/developer-guide': '../deploy-graphical-application-with-frame',
     'explanation/the-graphics-core20-snap-interface': '../../how-to/use-snap-graphics-on-base-core20',
-    'explanation/the-graphics-core22-snap-interface': '../../how-to/use-snap-graphics-on-base-core22',
-    'explanation/the-gpu-2404-snap-interface': '../../how-to/use-snap-graphics-on-base-core24',
+    'explanation/the-graphics-core22-snap-interface': '../../how-to/use-snap-graphics',
+    'explanation/the-gpu-2404-snap-interface': '../../how-to/use-snap-graphics',
+    'how-to/use-snap-graphics-on-base-core22': '../../how-to/use-snap-graphics',
+    'how-to/use-snap-graphics-on-base-core24': '../../how-to/use-snap-graphics',
     'how-to/packaging-iot-gui/a-flutter-application': '../packaging-an-application',
     'how-to/packaging-iot-gui/a-gtk3-application': '../packaging-an-application',
     'how-to/packaging-iot-gui/a-qt5-application': '../packaging-an-application',
