@@ -219,11 +219,13 @@ redirects = {
     'explanation/the-graphics-core22-snap-interface': '../../how-to/use-snap-graphics-on-base-core22',
     'explanation/the-gpu-2404-snap-interface': '../../how-to/use-snap-graphics-on-base-core24',
     'how-to/packaging-iot-gui/a-flutter-application': '../packaging-an-application',
-	'how-to/packaging-iot-gui/a-gtk3-application': '../packaging-an-application',
-	'how-to/packaging-iot-gui/a-qt5-application': '../packaging-an-application',
-	'how-to/packaging-iot-gui/a-sdl2-application': '../packaging-an-application',
-	'how-to/packaging-iot-gui/an-electron-application': '../packaging-an-application',
-	'how-to/packaging-iot-gui/an-x11-based-application': '../packaging-an-application',
+    'how-to/packaging-iot-gui/a-gtk3-application': '../packaging-an-application',
+    'how-to/packaging-iot-gui/a-qt5-application': '../packaging-an-application',
+    'how-to/packaging-iot-gui/a-sdl2-application': '../packaging-an-application',
+    'how-to/packaging-iot-gui/an-electron-application': '../packaging-an-application',
+    'how-to/packaging-iot-gui/an-x11-based-application': '../packaging-an-application',
+    'how-to/using-ubuntu-frame/use-remote-assistance': '../../../reference/ubuntu-frame-vnc-documentation',
+    'how-to/using-ubuntu-frame/use-the-diagnostic-feature': '../../../reference/the-diagnostic-feature',
 }
 
 

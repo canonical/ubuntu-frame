@@ -1,6 +1,6 @@
 (how-to-use-the-diagnostic-feature)=
 
-# How to use the diagnostic feature
+# The diagnostic feature
 
 Ubuntu Frame has an easy-to-use diagnostic screen that can be used to inform the user of any issues that have occurred when running your application. It allows the application to define which information is most useful to display to diagnose and fix any bring-up issues or runtime errors.
 
@@ -34,7 +34,7 @@ In another terminal, run the demo snap:
 frame-diagnostic "Hello, world!"
 ```
 
-![ubuntu-frame-hello-world-screenshot|690x591](3cf2229ce226c5943ef26544fb80ca7bb75bcc3c.jpeg)
+![A Hello World! diagnostic message](diagnostic-hello.jpeg)
 
 Now, without closing Frame, try writing something else.
 
@@ -42,7 +42,7 @@ Now, without closing Frame, try writing something else.
 frame-diagnostic "Goodbye, world!"
 ```
 
-![ubuntu-frame-goodbye-world-screenshot|690x590](5f8ed12c855479685e7e8a5518658cec3ce0ea4e.jpeg)
+![A Goodbye, World! diagnostic message](diagnostic-goodbye.jpeg)
 
 The text will update automatically when the diagnostic text changes.
 
