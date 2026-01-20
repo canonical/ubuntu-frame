@@ -1,6 +1,6 @@
 (how-to-use-remote-assistance)=
 
-# How to use remote assistance
+# Ubuntu Frame VNC documentation
 
 This document describes how to use the remote assistance function in Ubuntu Frame.
 
