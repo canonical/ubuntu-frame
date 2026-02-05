@@ -31,22 +31,22 @@ layout:
     bind: $SNAP/usr/share/icons
   /usr/share/fonts:
     bind: $SNAP/usr/share/fonts
-  /usr/share/drirc.d:  # Used by mesa-2404 for app specific workarounds
+  /usr/share/drirc.d: # Used by mesa-2404 for app specific workarounds
     symlink: $SNAP_COMMON/gpu-2404/drirc.d
 
 apps:
   ubuntu-frame:
     command-chain:
-    - bin/run-user
-    - bin/run-frame
-    - bin/gpu-2404-wrapper
+      - bin/run-user
+      - bin/run-frame
+      - bin/gpu-2404-wrapper
     command: usr/local/bin/frame
     plugs:
-      - opengl                # for compositing
+      - opengl # for compositing
       - login-session-control # to run as a user login (e.g. from a VT)
-      - x11                   # to run on a host X11 server
-      - network-bind          # to run via X-forwarding (e.g. development in a container/VM)
-      - hardware-observe      # libinput likes to scan udev
+      - x11 # to run on a host X11 server
+      - network-bind # to run via X-forwarding (e.g. development in a container/VM)
+      - hardware-observe # libinput likes to scan udev
       - desktop-launch
     slots:
       - wayland
@@ -71,9 +71,9 @@ apps:
 
   daemon:
     command-chain:
-    - bin/run-daemon
-    - bin/run-frame
-    - bin/gpu-2404-wrapper
+      - bin/run-daemon
+      - bin/run-frame
+      - bin/gpu-2404-wrapper
     command: usr/local/bin/frame
     daemon: simple
     restart-delay: 3s
@@ -84,7 +84,7 @@ apps:
       HOME: $SNAP_DATA
       XDG_DATA_DIRS: $SNAP/usr/share:/var/lib/snapd/desktop
     plugs:
-      - hardware-observe      # libinput likes to scan udev
+      - hardware-observe # libinput likes to scan udev
       - opengl
       - desktop-launch
     slots:
@@ -92,9 +92,9 @@ apps:
 
   screenshot:
     command-chain:
-    - bin/anon-shm-preload
-    - bin/run-client
-    - bin/gpu-2404-wrapper
+      - bin/anon-shm-preload
+      - bin/run-client
+      - bin/gpu-2404-wrapper
     command: bin/screenshot
     plugs:
       - opengl
@@ -112,7 +112,7 @@ slots:
   ubuntu-frame-diagnostic:
     interface: content
     content: diagnostic-text
-    write: 
+    write:
       - $SNAP_COMMON/diagnostic
 
 parts:
@@ -151,10 +151,10 @@ parts:
   assets:
     plugin: nil
     stage-packages:
-    - fonts-ubuntu
+      - fonts-ubuntu
     prime:
-    - usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf
-    - usr/share/fonts/truetype/ubuntu/Ubuntu[wdth,wght].ttf
+      - usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf
+      - usr/share/fonts/truetype/ubuntu/Ubuntu[wdth,wght].ttf
 
   platform:
     plugin: nil
@@ -225,7 +225,7 @@ parts:
       if [[ "${CRAFT_ARCH_BUILD_FOR}" != @(amd64|arm64) ]]; then
         install --mode 755 --no-target-directory ubuntu_frame_launcher.fake ${CRAFT_PART_INSTALL}/ubuntu_frame_launcher
       else
-        git clone -b 3.29.2 https://github.com/flutter/flutter.git ${CRAFT_PART_BUILD}/flutter-distro
+        git clone -b 3.30.0 https://github.com/flutter/flutter.git ${CRAFT_PART_BUILD}/flutter-distro
         export PATH=${CRAFT_PART_BUILD}/flutter-distro/bin:$PATH
         flutter config --no-enable-{web,ios,android,fuchsia,windows-desktop,macos-desktop}
         flutter pub get

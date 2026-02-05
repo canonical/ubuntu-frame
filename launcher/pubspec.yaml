@@ -1,11 +1,11 @@
 name: ubuntu_frame_launcher
 description: A launcher for Ubuntu Frame in Flutter
-publish_to: 'none'
+publish_to: "none"
 
 version: 0.0.1
 
 environment:
-  sdk: '>=3.5.0 <4.0.0'
+  sdk: ">=3.8.0 <4.0.0"
 
 dependencies:
   flutter:
