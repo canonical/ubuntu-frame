@@ -6,7 +6,7 @@
 
 # How to use graphics in snaps
 
-This document describes how to use the Snap interfaces supplying graphics drivers, what are the requirements to create a content provider snap as well as discusses the design of the interface.
+This document describes how to use the Snap interfaces supplying graphics drivers, what the requirements are to create a content provider snap, and the design of the interface.
 
 ## The basics
 
