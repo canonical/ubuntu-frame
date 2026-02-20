@@ -243,6 +243,7 @@ linkcheck_ignore = [
     "https://matrix.to/#/#mir-server:matrix.org",
     "https://www.realvnc.com/.*",
     "https://www.freedesktop.org/", # has bot protections in place
+    "https://www.winehq.org/", # has bot protections in place
     ]
 
 
