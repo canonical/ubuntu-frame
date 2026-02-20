@@ -1,6 +1,6 @@
 (ubuntu-frame-osk-documentation)=
 
-# Ubuntu Frame OSK Documentation
+# Ubuntu Frame OSK documentation
 
 This document describes how to work with the Ubuntu Frame OSK
 

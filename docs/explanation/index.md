@@ -2,7 +2,7 @@
 
 # Explanation
 
-The explanatory and conceptual guides in this section provide a better understanding of Ubuntu Frame and get the most of it.
+The explanatory and conceptual guides in this section provide a better understanding of Ubuntu Frame and enable you to get the most out of it.
 Start with the [Ubuntu Frame Datasheet](https://assets.ubuntu.com/v1/713b9224-Ubuntu.Frame.Datasheet.pdf) which gives a high level overview of Ubuntu Frame.
 
 More detail is provided in:

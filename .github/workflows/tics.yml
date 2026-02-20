@@ -48,7 +48,6 @@ jobs:
           libmirserver-dev \
           libmirserver-internal-dev \
           libmircommon-dev \
-          libmircommon-internal-dev \
           mirtest-dev \
           mir-wlcs-integration \
           libwayland-dev \

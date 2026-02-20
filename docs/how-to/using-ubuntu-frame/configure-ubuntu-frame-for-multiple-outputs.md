@@ -8,7 +8,7 @@ This document describes all the available options for using Ubuntu Frame with mu
 
 By default Ubuntu Frame will show the same content on all outputs. This works well for the simple case of one application showing one fullscreen window on multiple displays.
 
-![IMG_0353|690x517](2a0a1eef2ca0001fc98ed5b5ef2d57af6010af8d.jpeg)
+![Two displays showing the same content](outputs-default.jpeg)
 
 But sometimes this is not what is wanted, and Ubuntu Frame can do a lot more.
 
@@ -122,7 +122,7 @@ We can switch between these layouts (and any others you add to the `display` con
 snap set ubuntu-frame display-layout=side_by_side
 ```
 
-![IMG_0472|690x517](f0d18bbb59a8f37a35fcbe60cd1723ac69943b01.jpeg)
+![First display empty, second showing the application](outputs-sidebyside.jpeg)
 
 With these changes the displays are "side by side" and the cursor can be moved from one display to another. You'll also see that the test application is only running on one output. It is possible to assign applications to outputs and we'll discuss that later.
 
@@ -243,9 +243,9 @@ $ snap set ubuntu-frame display="`cat my-uf-display-configuration`"
 
 This will move the test application to the second monitor; and, if I install `mir-kiosk-kodi` that will run on the main monitor.
 
-![IMG_0473|690x517](1e60085416ac2a3f281fe333be4c421af2b2f81b.jpeg)
+![First display now showing the application, the second one empty](outputs-placed-app.jpeg)
 
-![IMG_0474|690x517](c208a3e2144211d3cc5a04c56fb516591c12ab1e.jpeg)
+![First display showing the example application, the second one - Kodi](outputs-two-apps.jpeg)
 
 There is also a `surface-title` key that can be set, but as windows tend to change their title that is of limited usefulness.
 
@@ -338,7 +338,7 @@ $ diff --unified my-uf-display-configuration{~original,}
 
 Now, Ubuntu Frame treats the "side by side" windows as one large display:
 
-![image|690x517](f0c0fb32dbe8a1e9dafb2b8c0874bbf9b702f003.jpeg)
+![The two displays forming a group, each showing a part of the application](outputs-group.jpeg)
 
 ## Custom client placement
 
@@ -384,6 +384,6 @@ Either `snap-name` or `surface-title` must be set. Both being set is invalid con
 
 Each entry in the configuration is checked if it matches `snap-name` or `surface-title`. If a match occurs, the window is placed in the `position` with the given `size`.
 
-![obraz|800x675](11993ddbb6f6ab25fc87620a4a67da656c4b7775.png)
+![A screenshot of Ubuntu Frame showing three applications laid out in the configured grid](outputs-custom-placement.png)
 
 **Note**: An experimental snapd feature, [parallel installs](https://snapcraft.io/docs/parallel-installs), allows you to run more than one instance of the same snap, configured separately and isolated from each other. That's why the `_two` suffix allows me to run the WPE kiosk twice.

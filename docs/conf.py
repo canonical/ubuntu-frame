@@ -221,11 +221,13 @@ redirects = {
     'how-to/use-snap-graphics-on-base-core22': '../../how-to/use-snap-graphics',
     'how-to/use-snap-graphics-on-base-core24': '../../how-to/use-snap-graphics',
     'how-to/packaging-iot-gui/a-flutter-application': '../packaging-an-application',
-	'how-to/packaging-iot-gui/a-gtk3-application': '../packaging-an-application',
-	'how-to/packaging-iot-gui/a-qt5-application': '../packaging-an-application',
-	'how-to/packaging-iot-gui/a-sdl2-application': '../packaging-an-application',
-	'how-to/packaging-iot-gui/an-electron-application': '../packaging-an-application',
-	'how-to/packaging-iot-gui/an-x11-based-application': '../packaging-an-application',
+    'how-to/packaging-iot-gui/a-gtk3-application': '../packaging-an-application',
+    'how-to/packaging-iot-gui/a-qt5-application': '../packaging-an-application',
+    'how-to/packaging-iot-gui/a-sdl2-application': '../packaging-an-application',
+    'how-to/packaging-iot-gui/an-electron-application': '../packaging-an-application',
+    'how-to/packaging-iot-gui/an-x11-based-application': '../packaging-an-application',
+    'how-to/using-ubuntu-frame/use-remote-assistance': '../../../reference/ubuntu-frame-vnc-documentation',
+    'how-to/using-ubuntu-frame/use-the-diagnostic-feature': '../../../reference/the-diagnostic-feature',
 }
 
 
@@ -243,6 +245,7 @@ linkcheck_ignore = [
     "https://matrix.to/#/#mir-server:matrix.org",
     "https://www.realvnc.com/.*",
     "https://www.freedesktop.org/", # has bot protections in place
+    "https://www.winehq.org/", # has bot protections in place
     ]
 
 
