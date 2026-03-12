@@ -10,7 +10,7 @@ The first step is to get Ubuntu Frame running:
 
 - Test in your {ref}`<Desktop Environment <run-ubuntu-frame-in-your-desktop-environment>` or a {ref}`Virtual Machine <run-ubuntu-frame-in-a-virtual-machine>`.
 - Run Ubuntu Frame {ref}`on your target device <run-ubuntu-frame-on-your-device>`.
-- Snap configuration for graphics in {ref}`core20 <the-graphics-core20-snap-interface>`, {ref}`core22 <the-graphics-core22-snap-interface>` and {ref}`core24 <the-gpu-2404-snap-interface>`.
+- Snap configuration for graphics in {ref}`core20 <the-graphics-core20-snap-interface>`.
 
 ## Packaging your application
 
@@ -24,9 +24,7 @@ Once Ubuntu frame is running you need to make your application suitable for depl
 Once you have Ubuntu Frame running with your application you can set things up for the perfect deployment:
 
 - Configure {ref}`multiple outputs <how-to-configure-ubuntu-frame-for-multiple-outputs>`.
-- Ensure a {ref}`smooth boot <how-to-get-a-smooth-boot-experience>`.
 - Access your Ubuntu Frame device with {ref}`remote assistance <how-to-use-remote-assistance>`.
-- Improving security by {ref}`running Ubuntu Frame unprivileged <run-ubuntu-frame-unprivileged>`.
 
 ```{toctree}
 ---

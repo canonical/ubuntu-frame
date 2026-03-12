@@ -10,10 +10,9 @@ ______________________________________________________________________
 
 ## Snap configuration options
 
-There are four snap configuration options:
+There are three snap configuration options:
 
 - `daemon=[true|false]` enables the daemon (defaults to true on Ubuntu Core and false on classic systems)
-- `launcher=[true|false]` enables a side bar application switcher if your solution calls for that
 - `config=<contents for frame.config>`
 - `display=<contents for frame.display>`
 
@@ -33,35 +32,6 @@ Or set it using
 
 ```bash
 $ snap set ubuntu-frame daemon=true
-```
-
-### `launcher`
-
-```{tip}
-This feature is only available on **Intel**, **AMD** and **ARM64** systems
-```
-
-```{tip}
-This feature is only available from Frame version **187** onward
-```
-
-This controls whether a side bar application switcher ("Launcher" from Unity Desktop design) is displayed. If your solution requires multiple applications that the user needs to be able to switch between, this will enable that - displaying a side bar with clickable application icons.
-
-```bash
-# Until https://github.com/canonical/snapd/pull/14331 gets released
-$ snap refresh snapd --channel edge/ubuntu-core-desktop
-
-# Give Frame access to application metadata and icons
-$ snap connect ubuntu-frame:desktop-launch
-
-# Enable the launcher
-$ snap set ubuntu-frame launcher=true
-```
-
-Make sure that the applications you want to run are annotated with metadata and icons appropriately, see Snapcraft's {doc}`snapcraft:how-to/crafting/configure-package-information` documentation to get your app icons to display.
-
-```{tip}
-Since version **211**, you can use `Mir` or `UbuntuFrame` in [`OnlyShowIn=` and `NotShowIn=`](https://specifications.freedesktop.org/desktop-entry-spec/latest/recognized-keys.html) to control visibility of the icon on different environments. This is useful to hide the daemon app in snaps that are also useful outside of the Frame ecosystem.
 ```
 
 ### `config`

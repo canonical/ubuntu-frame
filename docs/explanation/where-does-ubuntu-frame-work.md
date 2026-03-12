@@ -22,7 +22,7 @@ A default installation of Ubuntu Frame will install the open-source Mesa drivers
 
 ### Bespoke graphics
 
-Ubuntu Frame requires the graphics userspace to be supplied via {ref}`the-gpu-2404-snap-interface`.
+Ubuntu Frame requires the graphics userspace to be supplied via {ref}`the-graphics-core20-snap-interface`.
 
 We've done some "proof of concept" work with non-mesa drivers, but we are not currently in a position to provide these as snaps.
 

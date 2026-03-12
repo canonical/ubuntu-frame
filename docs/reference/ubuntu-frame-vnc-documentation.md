@@ -33,7 +33,7 @@ $ ubuntu-frame-vnc
 # Ctrl+C to stop
 ```
 
-**NB**: If you're running Frame on a Wayland desktop, by default this will try and connect to your desktop rather than Frame. On Ubuntu 22.04, for example, the symptom is:
+**NB**: If you're running Frame on a Wayland desktop, by default this will try and connect to your desktop rather than Frame. For example, the symptom may be:
 
 ```
 $ ubuntu-frame-vnc
@@ -48,29 +48,6 @@ To make sure you're using the same `WAYLAND_DISPLAY`, run all the components wit
 $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame
 # in another terminal
 $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame-vnc
-```
-
-## Authentication
-
-```{tip}
-This feature is only available from version `82` onward on the `24` track.
-```
-
-To improve security of the connection, you can configure the daemon to require a username and password - it's recommended to use `read -s` to avoid the password getting into your shell history:
-
-```
-$ snap set ubuntu-frame-vnc username=user password=$( read -s P; echo P )
-# type your password and press Enter
-```
-
-The daemon will restart and require the provided username and password on connection.
-
-**NB**: not all clients support this mechanism, see {ref}`how-to-use-remote-assistance#client-compatibility` below.
-
-To disable again, set both username and password to empty:
-
-```
-$ snap set ubuntu-frame-vnc username= password=
 ```
 
 (how-to-use-remote-assistance#remote-access)=
@@ -104,7 +81,7 @@ $ frame-it.vnc <user>@<hostname>
 
 The following VNC client software was tested against this:
 
-- [Remmina](https://remmina.org/) (authentication not supported)
+- [Remmina](https://remmina.org/)
 - [TigerVNC](https://tigervnc.org/)
 - [RealVNC](https://www.realvnc.com/en/)
 - *not working*: Finder on macOS ([any1/neatvnc#48](https://github.com/any1/neatvnc/issues/48))
