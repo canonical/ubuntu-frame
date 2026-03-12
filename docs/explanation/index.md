@@ -1,0 +1,22 @@
+(explanation-index)=
+
+# Explanation
+
+The explanatory and conceptual guides in this section provide a better understanding of Ubuntu Frame and enable you to get the most out of it.
+Start with the [Ubuntu Frame Datasheet](https://assets.ubuntu.com/v1/713b9224-Ubuntu.Frame.Datasheet.pdf) which gives a high level overview of Ubuntu Frame.
+
+More detail is provided in:
+
+- {ref}`where-does-ubuntu-frame-work`.
+- {ref}`mir:exp-mir-graphics-support`.
+- {ref}`security`.
+
+```{toctree}
+---
+titlesonly:
+maxdepth: 2
+glob:
+hidden:
+---
+*
+```
