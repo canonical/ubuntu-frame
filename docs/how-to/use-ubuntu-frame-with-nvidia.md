@@ -69,21 +69,6 @@ done
 ```
 ````
 
-````{tab-item} Ubuntu Core 24
-:sync: ubuntu-core24
-
-On Ubuntu Core 24, the drivers and userspace libraries come in components of the kernel snap.
-To find out which version is available
-
-```shell
-sudo snap set pc-kernel nvidia-stream=570
-```
-
-You will need to make sure Ubuntu Frame is from the `24` track:
-```shell
-sudo snap refresh ubuntu-frame --channel 24
-```
-````
 `````
 
 ## Verification
@@ -127,13 +112,6 @@ sudo snap install graphics-test-tools
 
 ```shell
 sudo snap install graphics-test-tools --channel 22
-```
-````
-````{tab-item} Ubuntu Core 24
-:sync: ubuntu-core24
-
-```shell
-sudo snap install graphics-test-tools --channel 24
 ```
 ````
 `````

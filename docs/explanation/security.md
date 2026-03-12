@@ -43,12 +43,12 @@ Review the snap connections between snaps on the system and disconnect those not
 
 ```
 $ snap connections
-Interface            Plug                           Slot                  Notes
+Interface                 Plug                           Slot                  Notes
 # ... some examples
-content[gpu-2404]    ubuntu-frame:gpu-2404          mesa-2404:gpu-2404    -
-hardware-observe     ubuntu-frame:hardware-observe  :hardware-observe     -
-opengl               ubuntu-frame:opengl            :opengl               -
-wayland              -                              ubuntu-frame:wayland  -
+content[graphics-core22]  ubuntu-frame:graphics-core22   mesa-core22:graphics-core22    -
+hardware-observe          ubuntu-frame:hardware-observe  :hardware-observe     -
+opengl                    ubuntu-frame:opengl            :opengl               -
+wayland                   -                              ubuntu-frame:wayland  -
 ```
 
 Refer to {doc}`snapcraft:explanation/interfaces` and {ref}`Frame snap interfaces <ubuntu-frame-snap-interfaces>` documentation for more information.
