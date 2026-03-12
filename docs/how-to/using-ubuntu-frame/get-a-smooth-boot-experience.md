@@ -7,7 +7,7 @@ This document walks through the steps needed to achieve a flicker-free, smooth b
 ______________________________________________________________________
 
 ```{tip}
-This is only possible with Ubuntu Frame 123-mir2.15.0+dev399 and later
+This is only possible with Ubuntu Frame 123-mir2.16.0 and later
 ```
 
 ## Enabling the boot splash

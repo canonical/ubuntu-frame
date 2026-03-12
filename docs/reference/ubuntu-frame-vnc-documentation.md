@@ -50,29 +50,6 @@ $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame
 $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame-vnc
 ```
 
-## Authentication
-
-```{tip}
-This feature is only available from version `82` onward on the `24` track.
-```
-
-To improve security of the connection, you can configure the daemon to require a username and password - it's recommended to use `read -s` to avoid the password getting into your shell history:
-
-```
-$ snap set ubuntu-frame-vnc username=user password=$( read -s P; echo P )
-# type your password and press Enter
-```
-
-The daemon will restart and require the provided username and password on connection.
-
-**NB**: not all clients support this mechanism, see {ref}`how-to-use-remote-assistance#client-compatibility` below.
-
-To disable again, set both username and password to empty:
-
-```
-$ snap set ubuntu-frame-vnc username= password=
-```
-
 (how-to-use-remote-assistance#remote-access)=
 
 ## Remote access
