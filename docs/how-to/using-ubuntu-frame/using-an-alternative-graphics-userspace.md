@@ -8,15 +8,15 @@ On "desktop" Linux installations there are limited options for the graphics stac
 
 The IoT world is a bit more varied, often with device specific drivers provided by the board manufacturer. [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) is designed to work with graphics stacks that provide KMS, `libgbm` and an EGL supporting [EGL_WL_bind_wayland_display](https://registry.khronos.org/EGL/extensions/WL/EGL_WL_bind_wayland_display.txt).
 
-It does this by using a Snap "content interface", {ref}`gpu-2404 <the-gpu-2404-snap-interface>`, that allows alternative drivers providing the facilities to be used. By default, [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) will use the [mesa-2404](https://snapcraft.io/mesa-2404) implementation of this interface which provides the Mesa drivers from the Ubuntu 24.04LTS Archive.
+It does this by using a Snap "content interface", {ref}`gpu-2604 <the-gpu-2604-snap-interface>`, that allows alternative drivers providing the facilities to be used. By default, [Ubuntu Frame](https://snapcraft.io/ubuntu-frame) will use the [mesa-2604](https://snapcraft.io/mesa-2604) implementation of this interface which provides the Mesa drivers from the Ubuntu 26.04LTS Archive.
 
 ## The example
 
 The default provider can be overridden in a number of ways. Manufacturers will ideally do this through a brand store; but, it can also be done "by hand" on a device and that's what we will describe here.
 
-First we need an alternative `gpu-2404` provider. As you won't have access to a brand store we will use a parallel installation of a backport of a more recent version of Mesa, which serves the purpose of illustrating this functionality.
+First we need an alternative `gpu-2604` provider. As you won't have access to a brand store we will use a parallel installation of a backport of a more recent version of Mesa, which serves the purpose of illustrating this functionality.
 
-Packaging graphics drivers as a snap isn't something we discuss here. There's details of the requirements in {ref}`The gpu-2404 Snap interface <the-gpu-2404-snap-interface>`, and the [mesa-2404](https://snapcraft.io/mesa-2404) snap can be used as a reference example.
+Packaging graphics drivers as a snap isn't something we discuss here. There's details of the requirements in {ref}`The gpu-2604 Snap interface <the-gpu-2604-snap-interface>`, and the [mesa-2604](https://snapcraft.io/mesa-2604) snap can be used as a reference example.
 
 ## Setup
 
@@ -29,7 +29,7 @@ snap install ubuntu-frame
 snap install wpe-webkit-mir-kiosk
 snap connect wpe-webkit-mir-kiosk:wayland
 snap set core experimental.parallel-instances=true
-snap install --channel beta/kisak mesa-2404_kisak
+snap install --channel beta/kisak mesa-2604_kisak
 ```
 
 Now (on desktop only) install Frame-it
@@ -42,12 +42,12 @@ Frame-it is a utility to make it simpler running Ubuntu Frame from a desktop env
 
 ## How to
 
-You can see what's connected to the gpu-2404 interface as follows:
+You can see what's connected to the gpu-2604 interface as follows:
 
 ```
-snap interfaces | grep gpu-2404
-mesa-2404:gpu-2404   ubuntu-frame,wpe-webkit-mir-kiosk
-mesa-2404_kisak:gpu-2404  -
+snap interfaces | grep gpu-2604
+mesa-2604:gpu-2604   ubuntu-frame,wpe-webkit-mir-kiosk
+mesa-2604_kisak:gpu-2604  -
 ```
 
 First check that things are working by running:
@@ -63,18 +63,18 @@ You can close this.
 Next we can change switch the graphics provider:
 
 ```
-snap disconnect ubuntu-frame:gpu-2404
-snap disconnect wpe-webkit-mir-kiosk:gpu-2404
-snap connect ubuntu-frame:gpu-2404 mesa-2404_kisak
-snap connect wpe-webkit-mir-kiosk:gpu-2404 mesa-2404_kisak
+snap disconnect ubuntu-frame:gpu-2604
+snap disconnect wpe-webkit-mir-kiosk:gpu-2604
+snap connect ubuntu-frame:gpu-2604 mesa-2604_kisak
+snap connect wpe-webkit-mir-kiosk:gpu-2604 mesa-2604_kisak
 ```
 
 And show the changes:
 
 ```
-$ snap interfaces | grep gpu-2404
-mesa-2404:gpu-2404   -
-mesa-2404_kisak:gpu-2404  ubuntu-frame,wpe-webkit-mir-kiosk
+$ snap interfaces | grep gpu-2604
+mesa-2604:gpu-2604   -
+mesa-2604_kisak:gpu-2604  ubuntu-frame,wpe-webkit-mir-kiosk
 ```
 
 And prove that it still all works:

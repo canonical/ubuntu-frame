@@ -33,11 +33,11 @@ For some of the later steps, you will need an [Ubuntu One account](https://login
 Open a terminal window and type:
 
 ```
-sudo snap install ubuntu-frame --channel=24
+sudo snap install ubuntu-frame --channel=26
 ```
 
 ```{tip}
-For Ubuntu Frame there are various channels corresponding to snap bases; in this guide we use the `24` channel.
+For Ubuntu Frame there are various channels corresponding to snap bases; in this guide we use the `26` channel.
 ```
 
 **Frame-it** is a command-line utility for running snaps with Ubuntu Frame and is useful for testing on your development machine.
@@ -86,21 +86,21 @@ If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" fo
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
 ```
-$ git branch --list --remotes origin/24/*
-  origin/24/Electron-quick-start
-  origin/24/Flutter-demo
-  origin/24/GTK3-adventure
-  origin/24/GTK3-mastermind
-  origin/24/Qt5-bomber
-  origin/24/Qt5-bomber-first-try
-  origin/24/Qt6-example
-  origin/24/main
-  origin/24/native-glmark2
-  origin/24/x11-glxgears
+$ git branch --list --remotes origin/26/*
+  origin/26/Electron-quick-start
+  origin/26/Flutter-demo
+  origin/26/GTK3-adventure
+  origin/26/GTK3-mastermind
+  origin/26/Qt5-bomber
+  origin/26/Qt5-bomber-first-try
+  origin/26/Qt6-example
+  origin/26/main
+  origin/26/native-glmark2
+  origin/26/x11-glxgears
 ```
 
 ```{tip}
-The "24" prefix refers to the snap bases that snaps are based on, in this case we use `24/` for branches using to `base: core24` (which in turn refers to Ubuntu 24.04LTS).
+The "26" prefix refers to the snap bases that snaps are based on, in this case we use `26/` for branches using to `base: core26` (which in turn refers to Ubuntu 26.04LTS).
 ```
 
 Once you have the customised snapcraft recipe you can snap your example applications.
@@ -108,7 +108,7 @@ Once you have the customised snapcraft recipe you can snap your example applicat
 Switch to the Wine example branch. Then use snapcraft to build the snap:
 
 ```
-git checkout 24/Wine-example
+git checkout 26/Wine-example
 snapcraft
 ```
 

@@ -52,10 +52,6 @@ $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame-vnc
 
 ## Authentication
 
-```{tip}
-This feature is only available from version `82` onward on the `24` track.
-```
-
 To improve security of the connection, you can configure the daemon to require a username and password - it's recommended to use `read -s` to avoid the password getting into your shell history:
 
 ```
