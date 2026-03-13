@@ -40,6 +40,7 @@ jobs:
     - name: Build and publish the snap
       uses: canonical/actions/build-snap@78e8dd5f693653767f2c60c4a6a421a1ebed35af # release @ 2025.06.05
       with:
+        snapcraft-channel: edge
         architecture: ${{ matrix.platform }}
         snapcraft-token: ${{ secrets.SNAPCRAFT_TOKEN }}
         launchpad-credentials: ${{ secrets.LAUNCHPAD_CREDENTIALS }}
