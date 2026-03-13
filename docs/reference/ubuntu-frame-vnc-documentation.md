@@ -33,7 +33,7 @@ $ ubuntu-frame-vnc
 # Ctrl+C to stop
 ```
 
-**NB**: If you're running Frame on a Wayland desktop, by default this will try and connect to your desktop rather than Frame. On Ubuntu 22.04, for example, the symptom is:
+**NB**: If you're running Frame on a Wayland desktop, by default this will try and connect to your desktop rather than Frame. For example, the symptom might be:
 
 ```
 $ ubuntu-frame-vnc
@@ -51,10 +51,6 @@ $ WAYLAND_DISPLAY=wayland-99 ubuntu-frame-vnc
 ```
 
 ## Authentication
-
-```{tip}
-This feature is only available from version `82` onward on the `24` track.
-```
 
 To improve security of the connection, you can configure the daemon to require a username and password - it's recommended to use `read -s` to avoid the password getting into your shell history:
 

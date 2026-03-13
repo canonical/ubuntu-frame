@@ -45,7 +45,7 @@ Review the snap connections between snaps on the system and disconnect those not
 $ snap connections
 Interface            Plug                           Slot                  Notes
 # ... some examples
-content[gpu-2404]    ubuntu-frame:gpu-2404          mesa-2404:gpu-2404    -
+content[gpu-2604]    ubuntu-frame:gpu-2604          mesa-2604:gpu-2604    -
 hardware-observe     ubuntu-frame:hardware-observe  :hardware-observe     -
 opengl               ubuntu-frame:opengl            :opengl               -
 wayland              -                              ubuntu-frame:wayland  -

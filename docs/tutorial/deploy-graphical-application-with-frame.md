@@ -35,10 +35,10 @@ For some of the later steps, you will need an [Ubuntu One account](https://login
 Install Ubuntu Frame:
 
 ```
-sudo snap install ubuntu-frame --channel=24
+sudo snap install ubuntu-frame --channel=26
 ```
 
-Ubuntu Frame has various channels corresponding to the snap bases, we use `--channel=24` here which corresponds to `base: core24` which in turn refers to Ubuntu 24.04 LTS.
+Ubuntu Frame has various channels corresponding to the snap bases, we use `--channel=26` here which corresponds to `base: core26` which in turn refers to Ubuntu 26.04 LTS.
 
 Install Frame-it, a command-line utility for running snaps with Ubuntu Frame and testing on your development machine:
 
@@ -113,22 +113,22 @@ If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" fo
 The customised snapcraft recipe for each example described in this tutorial (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
 ```
-$ git branch --list --remotes origin/24/*
-  origin/24/Electron-quick-start
-  origin/24/Flutter-demo
-  origin/24/GTK3-adventure
-  origin/24/GTK3-mastermind
-  origin/24/Qt5-bomber
-  origin/24/Qt5-bomber-first-try
-  origin/24/Qt6-example
-  origin/24/SDL2-neverputt
-  origin/24/main
-  origin/24/native-glmark2
-  origin/24/x11-glxgears
+$ git branch --list --remotes origin/26/*
+  origin/26/Electron-quick-start
+  origin/26/Flutter-demo
+  origin/26/GTK3-adventure
+  origin/26/GTK3-mastermind
+  origin/26/Qt5-bomber
+  origin/26/Qt5-bomber-first-try
+  origin/26/Qt6-example
+  origin/26/SDL2-neverputt
+  origin/26/main
+  origin/26/native-glmark2
+  origin/26/x11-glxgears
 ```
 
 ```{tip}
-The "24" prefix refers to the snap bases, in this case we use `24/` for branches using to `base: core24`.
+The "26" prefix refers to the snap bases, in this case we use `26/` for branches using to `base: core26`.
 ```
 
 Once you have the customised snapcraft recipe, you can snap your example toolkit applications.
@@ -138,7 +138,7 @@ Once you have the customised snapcraft recipe, you can snap your example toolkit
 Switch to the GTK example branch. Then use snapcraft to build the snap:
 
 ```
-git checkout 24/GTK3-mastermind
+git checkout 26/GTK3-mastermind
 snapcraft
 ```
 
@@ -191,7 +191,7 @@ rm *.snap
 Now switch to the Qt first-try example branch. Then build, install, and run the snap:
 
 ```
-git checkout 24/Qt5-bomber-first-try
+git checkout 26/Qt5-bomber-first-try
 snapcraft
 sudo snap install --dangerous *.snap
 frame-it iot-example-graphical-snap
@@ -209,14 +209,14 @@ kf.dbusaddons: DBus session bus not found. To circumvent this problem try the fo
 This didn’t work as the bomber application requires a DBus “session bus”. To solve this issue, you can provide one within the snap using dbus-run-session. You can see exactly how this is done by comparing branches:
 
 ```
-git diff 24/Qt5-bomber-first-try origin/24/Qt5-bomber
+git diff 26/Qt5-bomber-first-try origin/26/Qt5-bomber
 
 ```
 
-Or you can just switch to the 24/Qt5-bomber example branch. Then build, install and run the snap:
+Or you can just switch to the 26/Qt5-bomber example branch. Then build, install and run the snap:
 
 ```
-git checkout 24/Qt5-bomber
+git checkout 26/Qt5-bomber
 snapcraft
 sudo snap install --dangerous *.snap
 frame-it iot-example-graphical-snap
@@ -239,7 +239,7 @@ rm *.snap
 Now switch to the SDL2 example branch. Then build, install, and run the snap:
 
 ```
-git checkout 24/SDL2-neverputt
+git checkout 26/SDL2-neverputt
 snapcraft
 sudo snap install --dangerous *.snap
 frame-it iot-example-graphical-snap
@@ -278,7 +278,7 @@ When packaging an application, there are many issues to address: what needs to b
 You might get some inspiration from the examples we’ve given. You can see the customisation used in each example using git diff for example:
 
 ```
-git diff 24/main 24/SDL2-neverputt
+git diff 26/main 26/SDL2-neverputt
 ```
 
 You’ll see, for example, the `SDL_VIDEODRIVER` settings and the `neverballrc` file in this example. For additional information, there are helpful docs and forums on the [Snapcraft website](https://snapcraft.io/).
