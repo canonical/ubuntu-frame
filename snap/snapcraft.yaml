@@ -4,6 +4,8 @@ summary: The foundation for many embedded graphical display implementations
 description: ubuntu-frame is a simple fullscreen shell (based on Wayland) used for kiosks, industrial displays, digital signage, smart mirrors, etc.
 confinement: strict
 base: core26
+build-base: devel
+grade: devel
 license: GPL-3.0
 compression: lzo
 package-repositories:
@@ -122,7 +124,7 @@ parts:
       git config --global --add safe.directory ${CRAFT_PROJECT_DIR}
       recipe_version=`git -C ${CRAFT_PROJECT_DIR} rev-list --count HEAD`
       craftctl set version=$recipe_version-mir$mir_version
-      if echo $mir_version | grep -e '+dev' -e '~rc' -q; then craftctl set grade=devel; else craftctl set grade=stable; fi
+      #if echo $mir_version | grep -e '+dev' -e '~rc' -q; then craftctl set grade=devel; else craftctl set grade=stable; fi
     plugin: cmake
     cmake-parameters:
       - -DENABLE_TESTING=OFF
