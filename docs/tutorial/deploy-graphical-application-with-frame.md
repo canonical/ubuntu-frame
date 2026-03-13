@@ -114,20 +114,18 @@ The customised snapcraft recipe for each example described in this tutorial (i.e
 
 ```
 $ git branch --list --remotes origin/24/*
-
+  origin/24/Electron-quick-start
+  origin/24/Flutter-demo
+  origin/24/GTK3-adventure
+  origin/24/GTK3-mastermind
+  origin/24/Qt5-bomber
+  origin/24/Qt5-bomber-first-try
+  origin/24/Qt6-example
+  origin/24/SDL2-neverputt
+  origin/24/main
+  origin/24/native-glmark2
+  origin/24/x11-glxgears
 ```
-
-origin/24/Electron-quick-start
-origin/24/Flutter-demo
-origin/24/GTK3-adventure
-origin/24/GTK3-mastermind
-origin/24/Qt5-bomber
-origin/24/Qt5-bomber-first-try
-origin/24/Qt6-example
-origin/24/SDL2-neverputt
-origin/24/main
-origin/24/native-glmark2
-origin/24/x11-glxgears
 
 ```{tip}
 The "24" prefix refers to the snap bases, in this case we use `24/` for branches using to `base: core24`.

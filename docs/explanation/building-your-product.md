@@ -26,7 +26,7 @@ Ubuntu Frame supports all `base: core20`, `base: core22` and `base: core24`.
 
 For `base: core20` and `base: core22` there are a `20` and `22` tracks, using the matching `graphics-coreXX` (with `mesa-coreXX` default providers). These are in maintenance mode and will only receive security updates.
 
-For `base: core24` there is a `24` track using `graphics-core24` (with a `mesa-core24` default provider). This is the basis for ongoing development.
+For `base: core24` there is a `24` track using `gpu-2404` (with a `mesa-2404` default provider). This is the basis for ongoing development.
 
 Your application snap can also make use of any of the above bases, and the corresponding graphics interface.
 

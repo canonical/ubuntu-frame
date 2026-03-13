@@ -342,8 +342,8 @@ If your snap currently uses the `graphics-2404` interface, here are the steps wh
 ````{tab-item} core26
 :sync: core26
 
-1. replace all references to `gpu-2404` with `gpu-2604`
-1. replace all references to `mesa-2404` with `mesa-2604`
+1. replace all references to `graphics-core22` with `gpu-2604`
+1. replace all references to `mesa-core22` with `mesa-2604`
 1. change the target of [the content interface](#gpu-2604-plug) to `$SNAP/gpu-2604`
 1. remove all the layouts - except for [the X11 ones](#gpu-2604-x11-layouts), if your app needs them
 
@@ -352,8 +352,8 @@ If your snap currently uses the `graphics-2404` interface, here are the steps wh
 ````{tab-item} core24
 :sync: core24
 
-1. replace all references to `gpu-2404` with `gpu-2604`
-1. replace all references to `mesa-2404` with `mesa-2604`
+1. replace all references to `graphics-core22` with `gpu-2604`
+1. replace all references to `mesa-core22` with `mesa-2604`
 1. change the target of [the content interface](#gpu-2604-plug) to `$SNAP/gpu-2604`
 1. remove all the layouts - except for [the X11 ones](#gpu-2404-x11-layouts), if your app needs them
 
