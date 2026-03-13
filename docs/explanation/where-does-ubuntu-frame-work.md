@@ -18,7 +18,7 @@ In general, this means that Ubuntu Frame can work with any driver providing KMS,
 
 ### Default graphics
 
-A default installation of Ubuntu Frame will install the open-source Mesa drivers (via the `mesa-core20` snap). Mesa provides gbm-kms support across a wide range of hardware.
+A default installation of Ubuntu Frame will install the open-source Mesa drivers (via the `mesa-2404` snap). Mesa provides gbm-kms support across a wide range of hardware.
 
 ### Bespoke graphics
 

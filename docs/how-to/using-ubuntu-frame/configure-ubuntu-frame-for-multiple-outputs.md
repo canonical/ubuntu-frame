@@ -12,10 +12,6 @@ By default Ubuntu Frame will show the same content on all outputs. This works we
 
 But sometimes this is not what is wanted, and Ubuntu Frame can do a lot more.
 
-```{tip}
-The features described below were introduced in release 98-mir2.13.0
-```
-
 ## The `display` and `display-layouts` configuration options
 
 By setting the `display` configuration option you can control very precisely how multiple outputs are used. However, there's a lot of detail and it may not be obvious how to proceed. Because the configuration depends on the graphics cards and displays attached to your system the first step is to find the configuration for your hardware.

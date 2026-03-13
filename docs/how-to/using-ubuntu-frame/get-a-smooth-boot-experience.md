@@ -6,10 +6,6 @@ This document walks through the steps needed to achieve a flicker-free, smooth b
 
 ______________________________________________________________________
 
-```{tip}
-This is only possible with Ubuntu Frame 123-mir2.15.0+dev399 and later
-```
-
 ## Enabling the boot splash
 
 This guide assumes that you enable the boot splash in your Ubuntu Core image, so head on to [the relevant documentation](https://ubuntu.com/core/docs/splash-screen) if you didn't, yet.
