@@ -24,7 +24,7 @@ The simplest way to enable your snap to consume the interface are the helpers we
 
 There's just a few things you have to do in your `snap/snapcraft.yaml` to make use of it:
 
-:::{warning}
+:::\{warning}
 A lot of these parts doesn't need to be done when you're using the following extensions:
 
 - `gnome`
