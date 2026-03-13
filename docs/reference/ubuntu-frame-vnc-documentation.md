@@ -33,7 +33,7 @@ $ ubuntu-frame-vnc
 # Ctrl+C to stop
 ```
 
-**NB**: If you're running Frame on a Wayland desktop, by default this will try and connect to your desktop rather than Frame. On Ubuntu 22.04, for example, the symptom is:
+**NB**: If you're running Frame on a Wayland desktop, by default this will try and connect to your desktop rather than Frame. For example, the symptom might be:
 
 ```
 $ ubuntu-frame-vnc

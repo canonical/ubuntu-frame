@@ -33,11 +33,11 @@ For some of the later steps, you will need an [Ubuntu One account](https://login
 Open a terminal window and type:
 
 ```
-sudo snap install ubuntu-frame --channel=22
+sudo snap install ubuntu-frame --channel=24
 ```
 
 ```{tip}
-For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=22` which corresponds to `base: core22` which in turn refers to Ubuntu 22.04LTS.
+For Ubuntu Frame there are various channels corresponding to snap bases; in this guide we use the `24` channel.
 ```
 
 **Frame-it** is a command-line utility for running snaps with Ubuntu Frame and is useful for testing on your development machine.
@@ -86,23 +86,21 @@ If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" fo
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
 ```
-$ git branch --list --remotes origin/22/*
-  origin/22/Electron-quick-start
-  origin/22/Flutter-demo
-  origin/22/GTK3-adventure
-  origin/22/GTK3-mastermind
-  origin/22/Qt5-bomber
-  origin/22/Qt5-bomber-first-try
-  origin/22/Qt6-example
-  origin/22/SDL2-neverputt
-  origin/22/Wine-example
-  origin/22/main
-  origin/22/native-glmark2
-  origin/22/x11-glxgears
+$ git branch --list --remotes origin/24/*
+  origin/24/Electron-quick-start
+  origin/24/Flutter-demo
+  origin/24/GTK3-adventure
+  origin/24/GTK3-mastermind
+  origin/24/Qt5-bomber
+  origin/24/Qt5-bomber-first-try
+  origin/24/Qt6-example
+  origin/24/main
+  origin/24/native-glmark2
+  origin/24/x11-glxgears
 ```
 
 ```{tip}
-The "22" prefix refers to the snap bases that snaps are based on, in this case we use `22/` for branches using to `base: core22` (which in turn refers to Ubuntu 22.04LTS).
+The "24" prefix refers to the snap bases that snaps are based on, in this case we use `24/` for branches using to `base: core24` (which in turn refers to Ubuntu 24.04LTS).
 ```
 
 Once you have the customised snapcraft recipe you can snap your example applications.
@@ -110,7 +108,7 @@ Once you have the customised snapcraft recipe you can snap your example applicat
 Switch to the Wine example branch. Then use snapcraft to build the snap:
 
 ```
-git checkout 22/Wine-example
+git checkout 24/Wine-example
 snapcraft
 ```
 

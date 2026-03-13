@@ -40,7 +40,7 @@ You also need to consider maintenance of your snap and testing with changes to t
 
 The snap store will send you emails if there is a security update to any of the packages included in your snap. You should be ready to for a "no-change" repackaging of your snap to pick up these updates.
 
-If you've based your snap on one of our tutorials be aware that we sometimes update these. Either because we find a better approach, or because we update things. (At the time of writing, we'll soon be updating our examples from `base: core20` to `base: core22`.)
+If you've based your snap on one of our tutorials be aware that we sometimes update these. Either because we find a better approach, or because we update things.
 
 There's more documentation on managing your snaps here:
 
