@@ -47,11 +47,11 @@ For some of the later steps, you will need an [Ubuntu One account](https://login
 Open a terminal window and type:
 
 ```
-sudo snap install ubuntu-frame --channel=24
+sudo snap install ubuntu-frame --channel=26
 ```
 
 ```{tip}
-For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=24` which corresponds to `base: core24` which in turn refers to Ubuntu 24.04LTS.
+For Ubuntu Frame there are various channels corresponding to the snap bases that snaps are based on, in this case we use `--channel=26` which corresponds to `base: core26` which in turn refers to Ubuntu 26.04LTS.
 ```
 
 **Frame-it** is a command-line utility for running snaps with Ubuntu Frame and is useful for testing on your development machine.
@@ -250,22 +250,22 @@ If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" fo
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
 ```
-$ $ git branch --list --remotes origin/24/*
-  origin/24/Electron-quick-start
-  origin/24/Flutter-demo
-  origin/24/GTK3-adventure
-  origin/24/GTK3-mastermind
-  origin/24/Qt5-bomber
-  origin/24/Qt5-bomber-first-try
-  origin/24/Qt6-example
-  origin/24/SDL2-neverputt
-  origin/24/main
-  origin/24/native-glmark2
-  origin/24/x11-glxgears
+$ $ git branch --list --remotes origin/26/*
+  origin/26/Electron-quick-start
+  origin/26/Flutter-demo
+  origin/26/GTK3-adventure
+  origin/26/GTK3-mastermind
+  origin/26/Qt5-bomber
+  origin/26/Qt5-bomber-first-try
+  origin/26/Qt6-example
+  origin/26/SDL2-neverputt
+  origin/26/main
+  origin/26/native-glmark2
+  origin/26/x11-glxgears
 ```
 
 ```{tip}
-The "24" prefix refers to the snap bases that snaps are based on, in this case we use `24` for branches using to `base: core24` which in turn refers to Ubuntu 24.04LTS. (There are similar `22` and `20` collections.)
+The "26" prefix refers to the snap bases that snaps are based on, in this case we use `26` for branches using to `base: core26` which in turn refers to Ubuntu 26.04LTS. (There are collections for other bases.)
 ```
 
 Once you have the customised snapcraft recipe, you can snap your example applications.
@@ -276,7 +276,7 @@ Switch to the example branch relevant to your application and use snapcraft to b
 ````{tab-item} Flutter
 :sync: flutter
 ```
-git checkout 24/Flutter-demo
+git checkout 26/Flutter-demo
 snapcraft pack
 ```
 ````
@@ -284,21 +284,21 @@ snapcraft pack
 ````{tab-item} GTK3
 :sync: gtk3
 ```
-git checkout 24/GTK3-mastermind
+git checkout 26/GTK3-mastermind
 snapcraft pack
 ```
 ````
 ````{tab-item} SDL2
 :sync: sdl2
 ```
-git checkout 24/SDL2-neverputt
+git checkout 26/SDL2-neverputt
 snapcraft pack
 ```
 ````
 ````{tab-item} Qt5
 :sync: qt5
 ```
-git checkout 24/Qt5-bomber
+git checkout 26/Qt5-bomber
 snapcraft pack
 ```
 ````
@@ -306,7 +306,7 @@ snapcraft pack
 ````{tab-item} Qt6
 :sync: qt6
 ```
-git checkout 24/Qt6-example
+git checkout 26/Qt6-example
 snapcraft pack
 ```
 ````
@@ -314,7 +314,7 @@ snapcraft pack
 ````{tab-item} X11
 :sync: x11
 ```
-git checkout 24/x11-glxgears
+git checkout 26/x11-glxgears
 snapcraft pack
 ```
 ````
@@ -322,7 +322,7 @@ snapcraft pack
 ````{tab-item} Electron
 :sync: electron
 ```
-git checkout 24/Electron-quick-start
+git checkout 26/Electron-quick-start
 snapcraft pack
 ```
 ````
@@ -518,7 +518,7 @@ When packaging an application there are many issues to address: what needs to be
 You might get some inspiration from the examples we’ve given. You can see the customisation used in each example using git diff, for example:
 
 ```
-git diff 24/main 24/x11-glxgears
+git diff 26/main 26/x11-glxgears
 ```
 
 ## Building for and installing on a device
@@ -544,7 +544,7 @@ For the sake of this guide, we are using a VM set up using the approach describe
 ```
 scp -P 10022 *.snap <username>@localhost:~
 ssh -p 10022 <username>@localhost
-snap install ubuntu-frame --channel 24
+snap install ubuntu-frame --channel 26
 snap install --dangerous *.snap
 ```
 
