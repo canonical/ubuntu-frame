@@ -3,7 +3,7 @@ adopt-info: ubuntu-frame
 summary: The foundation for many embedded graphical display implementations
 description: ubuntu-frame is a simple fullscreen shell (based on Wayland) used for kiosks, industrial displays, digital signage, smart mirrors, etc.
 confinement: strict
-base: core24
+base: core26
 license: GPL-3.0
 compression: lzo
 package-repositories:
@@ -31,15 +31,13 @@ layout:
     bind: $SNAP/usr/share/icons
   /usr/share/fonts:
     bind: $SNAP/usr/share/fonts
-  /usr/share/drirc.d:  # Used by mesa-2404 for app specific workarounds
-    symlink: $SNAP_COMMON/gpu-2404/drirc.d
 
 apps:
   ubuntu-frame:
     command-chain:
     - bin/run-user
     - bin/run-frame
-    - bin/gpu-2404-wrapper
+    - bin/gpu-2604-wrapper
     command: usr/local/bin/frame
     plugs:
       - opengl                # for compositing
@@ -56,7 +54,7 @@ apps:
   launcher:
     command-chain:
       - bin/wayland-launch
-      - bin/gpu-2404-wrapper
+      - bin/gpu-2604-wrapper
     command: ubuntu_frame_launcher
     daemon: simple
     restart-delay: 3s
@@ -73,7 +71,7 @@ apps:
     command-chain:
     - bin/run-daemon
     - bin/run-frame
-    - bin/gpu-2404-wrapper
+    - bin/gpu-2604-wrapper
     command: usr/local/bin/frame
     daemon: simple
     restart-delay: 3s
@@ -94,17 +92,17 @@ apps:
     command-chain:
     - bin/anon-shm-preload
     - bin/run-client
-    - bin/gpu-2404-wrapper
+    - bin/gpu-2604-wrapper
     command: bin/screenshot
     plugs:
       - opengl
       - wayplug
 
 plugs:
-  gpu-2404:
+  gpu-2604:
     interface: content
-    target: $SNAP/gpu-2404
-    default-provider: mesa-2404
+    target: $SNAP/gpu-2604
+    default-provider: mesa-2604
   wayplug:
     interface: wayland
 
@@ -138,7 +136,7 @@ parts:
       - libapparmor-dev
       - libfreetype6-dev
     stage-packages:
-      - libboost-iostreams1.74.0
+      - libboost-iostreams1.90.0
       # Stage libmiral<n> indirectly as we cannot (since core22) do `try:/else:`
       - libmiral-dev
       - xkb-data
@@ -200,11 +198,11 @@ parts:
     plugin: dump
     override-prime: |
       craftctl default
-      ${CRAFT_PART_SRC}/bin/gpu-2404-cleanup mesa-2404
+      ${CRAFT_PART_SRC}/bin/gpu-2604-cleanup mesa-2604
       rm -rf ${CRAFT_PRIME}/usr/{doc,man,lintian,pkgconfig,X11}
 
     prime:
-      - bin/gpu-2404-wrapper
+      - bin/gpu-2604-wrapper
 
   launcher:
     source: launcher
