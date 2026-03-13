@@ -24,11 +24,11 @@ In general, this means that Ubuntu Frame can work with any driver providing KMS,
 
 ### Default graphics
 
-A default installation of Ubuntu Frame will install the open-source Mesa drivers (via the `mesa-2404` snap). Mesa provides gbm-kms support across a wide range of hardware.
+A default installation of Ubuntu Frame will install the open-source Mesa drivers (via the `mesa-2604` snap). Mesa provides gbm-kms support across a wide range of hardware.
 
 ### Bespoke graphics
 
-Ubuntu Frame requires the graphics userspace to be supplied via {ref}`the-gpu-2404-snap-interface`.
+Ubuntu Frame requires the graphics userspace to be supplied via {ref}`the-gpu-2604-snap-interface`.
 
 We've done some "proof of concept" work with non-mesa drivers, but we are not currently in a position to provide these as snaps.
 
