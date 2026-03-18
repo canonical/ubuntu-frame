@@ -58,7 +58,7 @@ public:
         unsigned char* buffer,
         Colour const& bottom_colour,
         Colour const& top_colour);
-    
+
     static void render_background(
         uint32_t width,
         uint32_t height,
@@ -81,7 +81,7 @@ private:
     Colour wallpaper_bottom_colour = {31, 31, 31, 255};
     Colour crash_background_colour = {36, 12, 56, 255};
     Colour crash_text_colour = {255, 255, 255, 255};
-    
+
     uint diagnostic_delay = 0;
 
     std::optional<std::filesystem::path> diagnostic_path;
@@ -123,7 +123,7 @@ private:
     FT_Face face;
 
     std::mutex mutable mutex;
-    
+
     void set_char_size(uint32_t height) const;
     void rasterize_glyph(char32_t glyph) const;
     void render_glyph(

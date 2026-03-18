@@ -112,7 +112,7 @@ slots:
   ubuntu-frame-diagnostic:
     interface: content
     content: diagnostic-text
-    write: 
+    write:
       - $SNAP_COMMON/diagnostic
 
 parts:

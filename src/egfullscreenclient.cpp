@@ -420,7 +420,7 @@ egmde::FullscreenClient::~FullscreenClient()
     {
         (void)inotify_rm_watch(diagnostic_signal, diagnostic_wd.value());
     }
-    
+
     wl_display_roundtrip(display);
 }
 
@@ -691,7 +691,7 @@ void egmde::FullscreenClient::touch_motion(
 void egmde::FullscreenClient::touch_frame(wl_touch* /*touch*/)
 {
 }
-    
+
 void egmde::FullscreenClient::touch_cancel(wl_touch* /*touch*/)
 {
 }

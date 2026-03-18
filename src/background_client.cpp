@@ -104,7 +104,7 @@ public:
         uint diagnostic_delay);
 
     void draw_screen(SurfaceInfo& info, bool draws_crash) const override;
-    
+
     void render_text(uint32_t width, uint32_t height, unsigned char* buffer) const;
 
     bool const wallpaper_enabled;
@@ -133,7 +133,7 @@ TextRenderer::TextRenderer(Path font_path)
         BOOST_THROW_EXCEPTION(std::runtime_error(
             "Initializing freetype library failed with error " + std::to_string(error)));
     }
-    
+
     if (auto const error = FT_New_Face(library, font_path.c_str(), 0, &face))
     {
         if (error == FT_Err_Unknown_File_Format)
@@ -141,7 +141,7 @@ TextRenderer::TextRenderer(Path font_path)
             BOOST_THROW_EXCEPTION(std::runtime_error(
                 "Font " + font_path.string() + " has unsupported format"));
         }
-            
+
         else
         {
             auto const error_str = "Loading font from " + font_path.string() + " failed with error " + std::to_string(error);
@@ -155,7 +155,7 @@ TextRenderer::~TextRenderer()
     if (auto const error = FT_Done_Face(face))
     {
         mir::log_warning("Failed to uninitialize font face with error %d", error);
-    } 
+    }
     face = nullptr;
 
     if (auto const error = FT_Done_FreeType(library))
@@ -217,7 +217,7 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
         mir::log_info("No diagnostic file given. Crash reporting is disabled.");
         return;
     }
-    
+
     auto const path = fs::absolute(option);
 
     auto formatted_path_error = "\n Inputted path: " + option;
@@ -298,12 +298,12 @@ void BackgroundClient::render_background(uint32_t width, uint32_t height, unsign
 void BackgroundClient::operator()(wl_display* display)
 {
     auto client = std::make_shared<Self>(
-        display, 
+        display,
         runner,
         window_manager_observer,
         wallpaper_enabled,
-        wallpaper_top_colour, 
-        wallpaper_bottom_colour, 
+        wallpaper_top_colour,
+        wallpaper_bottom_colour,
         crash_background_colour,
         crash_text_colour,
         diagnostic_path,
@@ -353,7 +353,7 @@ void BackgroundClient::Self::render_text(
     uint32_t width,
     uint32_t height,
     unsigned char* buffer) const
-{   
+{
     auto size = geom::Size{width, height};
 
     auto const diagnostic = TextRenderer::DiagnosticText::from(diagnostic_path.value());
@@ -363,7 +363,7 @@ void BackgroundClient::Self::render_text(
 
     auto const x_diff = width - x_margin;
     auto const y_diff = height - y_margin;
-    
+
     auto const max_font_height_by_width = text_renderer.get_max_font_height_by_width(diagnostic, x_diff);
     auto const max_font_height_by_height = text_renderer.get_max_font_height_by_height(diagnostic, y_diff);
 
@@ -474,11 +474,11 @@ auto TextRenderer::convert_utf8_to_utf32(std::string const& text) -> std::u32str
 {
     std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
     std::u32string utf32_text;
-    try 
+    try
     {
         utf32_text = converter.from_bytes(text);
-    } 
-    catch(const std::range_error& e) 
+    }
+    catch(const std::range_error& e)
     {
         mir::log_warning("Window title %s is not valid UTF-8", text.c_str());
         // fall back to ASCII
@@ -487,11 +487,11 @@ auto TextRenderer::convert_utf8_to_utf32(std::string const& text) -> std::u32str
             if (isprint(c))
             {
                 utf32_text += c;
-            }  
+            }
             else
             {
                 utf32_text += 0xFFFD; // REPLACEMENT CHARACTER (�)
-            }    
+            }
         }
     }
 
@@ -597,7 +597,7 @@ void TextRenderer::render_glyph(
     geom::Displacement const glyph_offset = as_displacement(top_left);
 
     auto const colour_alpha = colour[3];
-    
+
     auto buffer_pixels = reinterpret_cast<uint32_t*>(buffer);
 
     for (geom::Y buffer_y = buffer_top; buffer_y < buffer_bottom; buffer_y += geom::DeltaY{1})

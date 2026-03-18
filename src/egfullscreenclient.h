@@ -36,9 +36,9 @@
 
 #include <sys/poll.h>
 
-namespace miral { 
-    class MirRunner; 
-    class FdHandle; 
+namespace miral {
+    class MirRunner;
+    class FdHandle;
 }
 
 class WindowManagerObserver;
@@ -51,7 +51,7 @@ public:
     using Path = std::filesystem::path;
 
     explicit FullscreenClient(
-        wl_display* display, 
+        wl_display* display,
         std::optional<Path> diagnostic_path,
         uint diagnostic_delay,
         miral::MirRunner* runner,
