@@ -10,12 +10,18 @@ on:
     types: [checks_requested]
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   TICS:
     # Only run if we have access to secrets.
     if: github.event_name != 'pull_request' || github.repository == github.event.pull_request.head.repo.full_name
 
     runs-on: [self-hosted, reactive, amd64, tiobe, noble]
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
 
     env:
       NEEDRESTART_SUSPEND: yes
@@ -28,6 +34,7 @@ jobs:
       # Need history to determine changed files
       with:
         fetch-depth: 2
+        persist-credentials: false
 
     - name: Install dependencies
       run: |

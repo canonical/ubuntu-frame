@@ -4,9 +4,12 @@ on:
   pull_request:
     types: [closed]
 
+permissions: {}
+
 jobs:
   close:
     runs-on: ubuntu-latest
+    permissions: {}
 
     timeout-minutes: 5
 

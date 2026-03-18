@@ -6,9 +6,13 @@ on:
     - main
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   Refresh:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     timeout-minutes: 5
 
@@ -28,6 +32,7 @@ jobs:
       with:
         # so that we know what to cherry-pick from
         fetch-depth: 2
+        persist-credentials: false
 
     - name: Update `${{ matrix.ref }}`
       env:
@@ -38,4 +43,4 @@ jobs:
         git fetch origin ${{ matrix.ref }}
         git cherry-pick HEAD..origin/${{ matrix.ref }}
 
-        git push --force origin HEAD:${{ matrix.ref }}
+        git push --force https://${{ github.token }}@github.com/${{ github.repository }}.git HEAD:${{ matrix.ref }}

@@ -6,9 +6,13 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
+permissions: {}
+
 jobs:
   Snap:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     timeout-minutes: 60
 
@@ -26,6 +30,7 @@ jobs:
       with:
         lfs: true
         fetch-depth: 0  # needed for version determination
+        persist-credentials: false
 
     - name: Patch PPA and version
       run: |
