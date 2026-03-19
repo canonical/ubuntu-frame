@@ -246,6 +246,7 @@ linkcheck_ignore = [
     "https://www.realvnc.com/.*",
     "https://www.freedesktop.org/", # has bot protections in place
     "https://www.winehq.org/", # has bot protections in place
+    "https://gitlab.gnome.org/",
     ]
 
 
