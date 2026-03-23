@@ -206,9 +206,9 @@ We'll rely on [cloud-init](https://cloudinit.readthedocs.io/en/latest/) to do th
 
 You can view the differences between the stock gadgets and our custom ones here, for the PC and Pi platforms, respectively:
 
-https://github.com/canonical/pc-gadget/compare/22...MirServer:pc-gadget:22-frame
+https://github.com/canonical/pc-gadget/compare/24...MirServer:pc-gadget:24-frame
 
-https://github.com/canonical/pi-gadget/compare/22-arm64...MirServer:pi-gadget:22-arm64-frame
+https://github.com/canonical/pi-gadget/compare/24...MirServer:pi-gadget:24-frame
 
 To build it, just run Snapcraft within the checkout:
 

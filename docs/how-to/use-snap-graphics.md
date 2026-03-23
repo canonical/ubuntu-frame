@@ -143,8 +143,6 @@ If, for whatever reason, you don't want to use the helpers, here is a descriptio
 
 The requirements for a snap providing the content are purposefully quite simple:
 
-The requirements for a snap providing the content are purposefully quite simple:
-
 1. include a `bin/gpu-2404-provider-wrapper` that sets up all the environment and executes the provided arguments, usually:
    ```shell
    #!/bin/sh
