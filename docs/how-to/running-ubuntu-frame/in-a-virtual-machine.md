@@ -14,18 +14,18 @@ $ sudo snap connect qemu-virgil:kvm
 $ qemu-virgil --version
 ```
 
-We also download an Ubuntu Core image from [https://cdimage.ubuntu.com/ubuntu-core/20/stable/current/](https://cdimage.ubuntu.com/ubuntu-core/20/stable/current/)
+We also download an Ubuntu Core image from [https://cdimage.ubuntu.com/ubuntu-core/24/stable/current/](https://cdimage.ubuntu.com/ubuntu-core/24/stable/current/)
 
 Now, uncompress the image and move it to a convenient location:
 
 ```
-$ unxz ~/Downloads/ubuntu-core-20-amd64.img.xz
-$ mv ~/Downloads/ubuntu-core-20-amd64.img ~/snap/qemu-virgil/common/
+$ unxz ~/Downloads/ubuntu-core-24-amd64.img.xz
+$ mv ~/Downloads/ubuntu-core-24-amd64.img ~/snap/qemu-virgil/common/
 $ qemu-virgil -enable-kvm -m 512 -device virtio-vga,virgl=on\
  -display sdl,gl=on -netdev user,id=ethernet.0,hostfwd=tcp::10022-:22\
  -device rtl8139,netdev=ethernet.0\
  -drive file=/snap/qemu-virgil/current/usr/share/qemu/edk2-x86_64-code.fd,if=pflash,format=raw,unit=0,readonly=on\
- ~/snap/qemu-virgil/common/ubuntu-core-20-amd64.img
+ ~/snap/qemu-virgil/common/ubuntu-core-24-amd64.img
 ```
 
 This will create a QEMU window on your desktop and you need to follow through the prompts to initialize the VM with your Launchpad account. (If you don’t have a Launchpad account, get one and set up a public SSH key.)

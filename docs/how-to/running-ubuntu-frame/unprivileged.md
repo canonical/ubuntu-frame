@@ -206,9 +206,9 @@ We'll rely on [cloud-init](https://cloudinit.readthedocs.io/en/latest/) to do th
 
 You can view the differences between the stock gadgets and our custom ones here, for the PC and Pi platforms, respectively:
 
-https://github.com/canonical/pc-gadget/compare/22...MirServer:pc-gadget:22-frame
+https://github.com/canonical/pc-gadget/compare/24...MirServer:pc-gadget:24-frame
 
-https://github.com/canonical/pi-gadget/compare/22-arm64...MirServer:pi-gadget:22-arm64-frame
+https://github.com/canonical/pi-gadget/compare/24...MirServer:pi-gadget:24-frame
 
 To build it, just run Snapcraft within the checkout:
 
@@ -225,9 +225,9 @@ There. Your gadget snap is ready.
 To build images from the gadget snaps we've prepared, we'll use [ubuntu-image](https://github.com/canonical/ubuntu-image) and [stock](https://github.com/canonical/models/) model {doc}`assertions <core:reference/assertions/model>`. Your solution may require custom models, but that's out of scope here.
 Here are the assertions that interest us:
 
-- [ubuntu-core-22-amd64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-amd64-dangerous.model)
-- [ubuntu-core-22-arm64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-arm64-dangerous.model)
-- [ubuntu-core-22-pi-arm64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-22-pi-arm64-dangerous.model)
+- [ubuntu-core-24-amd64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-24-amd64-dangerous.model)
+- [ubuntu-core-24-arm64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-24-arm64-dangerous.model)
+- [ubuntu-core-24-pi-arm64-dangerous](https://github.com/canonical/models/blob/master/ubuntu-core-24-pi-arm64-dangerous.model)
 
 **NB**: they are "dangerous" because they allow inserting snaps when building the image. If you have the appropriate infrastructure (e.g. a {doc}`core:explanation/stores/dedicated-snap-store`), you can create and publish a properly signed model assertion instead.
 
@@ -238,9 +238,9 @@ We've wrapped all the above steps into a Makefile for easy consumption in the ab
 ```
 $ ./Makefile.frame
 ...
-Created snap package pc_22-0.4_amd64.snap
+Created snap package pc_24-0.4_amd64.snap
 ...
-2023-09-08 14:31:54 (21.4 MB/s) - 'ubuntu-core-22-amd64-dangerous.model' saved [1454/1454]
+2023-09-08 14:31:54 (21.4 MB/s) - 'ubuntu-core-24-amd64-dangerous.model' saved [1454/1454]
 ...
 ubuntu-frame_amd64.img ready
 ```
@@ -253,7 +253,7 @@ $ sudo virt-install --connect qemu:///session \
   --memory 2048 \
   --vcpus 2 \
   --boot uefi \
-  --os-variant ubuntu22.04 \
+  --os-variant ubuntu24.04 \
   --video virtio,accel3d=no \
   --graphics spice \
   --import --disk path=$PWD/ubuntu-frame_amd64.img,format=raw

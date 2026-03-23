@@ -25,50 +25,6 @@ sudo ubuntu-drivers install nvidia:570
 You can find out more at Ubuntu Server's {ref}`server:nvidia-drivers-installation`.
 ````
 
-````{tab-item} Ubuntu Core 22
-:sync: ubuntu-core22
-
-On Ubuntu Core 22, the drivers come with the kernel snap, but need to be assembled on device for licensing reasons.
-To do this, install the [nvidia-assemble](https://snapcraft.io/nvidia-assemble) snap:
-
-```shell
-sudo snap install nvidia-assemble --track 22
-```
-
-The userspace libraries needed for software to communicate with the kernel drivers are supplied by the [nvidia-core22](https://snapcraft.io/nvidia-core22) snap:
-
-```shell
-sudo snap install nvidia-core22
-```
-
-You will need to make sure Ubuntu Frame is from the `22` track:
-```shell
-sudo snap refresh ubuntu-frame --channel 22
-```
-
-### Avoid the mesa-core22 snap
-
-It might be that you already have another provider of [the `graphics-core22` interface](the-graphics-core22-snap-interface) installed - likely the default of [mesa-core22](https://snapcraft.io/mesa-core22),
-in which case you'll want to disconnect Ubuntu Frame (and any application snaps) from it, and connect to the Nvidia one:
-
-```shell
-sudo snap disconnect ubuntu-frame:graphics-core22
-sudo snap connect ubuntu-frame:graphics-core22 nvidia-core22
-```
-
-To avoid having to do the above, make sure nvidia-core22 is installed before any snaps consuming the interface.
-They will get connected to the only provider on the system by default.
-
-If you'd like to fully switch over, uninstall the Mesa snap and connect all the consumers to the Nvidia provider:
-
-```shell
-sudo snap remove mesa-core22
-for plug in $( snap connections --all | grep :graphics-core22 | awk '{ print $2 }' ); do
-    sudo snap connect "$plug" nvidia-core22
-done
-```
-````
-
 ````{tab-item} Ubuntu Core 24
 :sync: ubuntu-core24
 
@@ -120,13 +76,6 @@ Finally, run [`graphics-test-tools.glmark2-es2-wayland`](https://snapcraft.io/gr
 :sync: ubuntu
 ```shell
 sudo snap install graphics-test-tools
-```
-````
-````{tab-item} Ubuntu Core 22
-:sync: ubuntu-core22
-
-```shell
-sudo snap install graphics-test-tools --channel 22
 ```
 ````
 ````{tab-item} Ubuntu Core 24

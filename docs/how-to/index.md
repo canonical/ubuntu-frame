@@ -10,14 +10,13 @@ The first step is to get Ubuntu Frame running:
 
 - Test in your {ref}`<Desktop Environment <run-ubuntu-frame-in-your-desktop-environment>` or a {ref}`Virtual Machine <run-ubuntu-frame-in-a-virtual-machine>`.
 - Run Ubuntu Frame {ref}`on your target device <run-ubuntu-frame-on-your-device>`.
-- Snap configuration for graphics in {ref}`core20 <the-graphics-core20-snap-interface>`, {ref}`core22 <the-graphics-core22-snap-interface>` and {ref}`core24 <the-gpu-2404-snap-interface>`.
+- Snap configuration for graphics in {ref}`core24 <the-gpu-2404-snap-interface>`.
 
 ## Packaging your application
 
 Once Ubuntu frame is running you need to make your application suitable for deployment:
 
 - {ref}`Package applications built with popular toolkits <packaging-an-application-iot-gui>`
-- {ref}`Migrate a Windows application <migrating-a-windows-application>`.
 
 ## Getting the most of Ubuntu Frame
 
