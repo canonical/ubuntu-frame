@@ -51,7 +51,7 @@ public:
     WindowManagerObserver();
 
     void add_window_opened_callback(std::function<void()> const& callback);
-    
+
     void add_window_closed_callback(std::function<void()> const& callback);
 
     void set_weak_window_count(std::shared_ptr<WindowCount> window_count);

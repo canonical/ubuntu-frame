@@ -3,7 +3,6 @@
 # - `git commit` to commit them
 # - rinse and repeat, if pre-commit wants / applied changes
 
-files: ^docs
 exclude: ^docs/(\..*|Makefile|conf\.py)
 
 repos:
@@ -15,7 +14,7 @@ repos:
   - id: check-added-large-files
 
 - repo: https://github.com/executablebooks/mdformat
-  rev: 0.7.22
+  rev: 1.0.0
   hooks:
   - id: mdformat
     additional_dependencies:
@@ -26,7 +25,7 @@ repos:
     - setuptools # Necessary until beautysh fix their stuff, see: https://github.com/hukkin/mdformat/issues/442
 
 - repo: https://github.com/jackdewinter/pymarkdown
-  rev: v0.9.32
+  rev: v0.9.36
   hooks:
   - id: pymarkdown
     args:
