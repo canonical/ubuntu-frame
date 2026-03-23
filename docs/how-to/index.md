@@ -17,7 +17,6 @@ The first step is to get Ubuntu Frame running:
 Once Ubuntu frame is running you need to make your application suitable for deployment:
 
 - {ref}`Package applications built with popular toolkits <packaging-an-application-iot-gui>`
-- {ref}`Migrate a Windows application <migrating-a-windows-application>`.
 
 ## Getting the most of Ubuntu Frame
 

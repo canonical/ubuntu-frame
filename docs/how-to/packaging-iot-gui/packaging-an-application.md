@@ -21,7 +21,7 @@ If you want to learn how to install pre-built applications such as [wpe-webkit-m
 ```{note}
 This guide will not cover how to build an application using a toolkit that supports Wayland (there are many). We will also not cover how to upload your snap to the snap store, nor building custom Ubuntu Core images with pre-configured snaps. That is documented on [snapcraft.io/docs](https://snapcraft.io/docs).
 
-If you are migrating a Windows application, redirect to {ref}`this guide <migrating-a-windows-application>` for instructions.
+If you are migrating a Windows application, redirect to {ref}`this guide <frame-22:migrating-a-windows-application>` for instructions.
 ```
 
 If you are new to Ubuntu Core, we recommend reading our {doc}`getting started document <core:tutorials/build-your-first-image/index>`. If you want to learn about building custom Ubuntu Core images, you could find information on the [snapcraft docs](https://snapcraft.io/docs/the-gadget-snap).
