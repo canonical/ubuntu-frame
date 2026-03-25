@@ -29,8 +29,6 @@
 #include <miral/runner.h>
 #include <miral/set_window_management_policy.h>
 #include <miral/wayland_extensions.h>
-#include <fstream>
-#include <unistd.h>
 
 int main(int argc, char const* argv[])
 {
@@ -38,7 +36,7 @@ int main(int argc, char const* argv[])
     MirRunner runner{argc, argv};
     WindowManagerObserver window_manager_observer{};
 
-    enable_safe_mode(argc, argv, runner);
+    enable_safe_mode(argv, runner);
 
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);

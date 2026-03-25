@@ -1,3 +1,19 @@
+/*
+ * Copyright © Canonical Ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 or 3 as
+ * published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef UBUNTU_FRAME_SAFE_MODE_H
 #define UBUNTU_FRAME_SAFE_MODE_H
 
@@ -6,6 +22,6 @@ namespace miral
     class MirRunner;
 }
 
-void enable_safe_mode(int argc, char const* argv[], miral::MirRunner& runner);
+void enable_safe_mode(char const* argv[], miral::MirRunner& runner);
 
 #endif
