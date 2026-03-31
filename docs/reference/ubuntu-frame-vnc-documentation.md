@@ -11,7 +11,7 @@ The remote assistance feature of Ubuntu Frame is provided by [the ubuntu-frame-v
 You can install the snap:
 
 ```
-$ snap install ubuntu-frame-vnc
+snap install ubuntu-frame-vnc
 ```
 
 ### Using as a daemon
@@ -70,7 +70,7 @@ The daemon will restart and require the provided username and password on connec
 To disable again, set both username and password to empty:
 
 ```
-$ snap set ubuntu-frame-vnc username= password=
+snap set ubuntu-frame-vnc username= password=
 ```
 
 (how-to-use-remote-assistance#remote-access)=
@@ -82,7 +82,7 @@ Rather than expose an extra attack surface, `ubuntu-frame-vnc` is configured to 
 SSH port forwarding is a common approach. On your host, issue:
 
 ```
-$ ssh -L 5900:localhost:5900 <user>@<hostname>
+ssh -L 5900:localhost:5900 <user>@<hostname>
 ```
 
 You will then be able to connect to `localhost` with any VNC client running on your host.

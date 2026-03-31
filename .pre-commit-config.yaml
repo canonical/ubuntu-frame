@@ -28,6 +28,14 @@ repos:
   rev: v0.9.36
   hooks:
   - id: pymarkdown
+    alias: pymarkdown-fix
+    name: PyMarkdown (autofix)
     args:
     - --config=docs/.sphinx/.pymarkdown.json
     - fix
+  - id: pymarkdown
+    alias: pymarkdown-scan
+    name: PyMarkdown (scan)
+    args:
+    - --config=docs/.sphinx/.pymarkdown.json
+    - scan
