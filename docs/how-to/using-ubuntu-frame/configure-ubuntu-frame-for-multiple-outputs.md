@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Configure Ubuntu Frame for multiple outputs using display layouts, atomically switch between configurations, and manage display-specific kiosk content.
+---
+
 (how-to-configure-ubuntu-frame-for-multiple-outputs)=
 
 # How to configure Ubuntu Frame for multiple outputs

@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Deploy a Wayland graphical application with Ubuntu Frame and Ubuntu Core, from desktop testing and troubleshooting to snap packaging for reliable kiosk and IoT devices.
+---
+
 (tutorial-deploy-graphical-application)=
 
 # Deploy your graphical application

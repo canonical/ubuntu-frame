@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Run Ubuntu Frame in an Ubuntu Core virtual machine using qemu-virgil with GPU acceleration for desktop testing and development.
+---
+
 (run-ubuntu-frame-in-a-virtual-machine)=
 
 # Run Ubuntu Frame in a virtual machine

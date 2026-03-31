@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Install and run Ubuntu Frame on Ubuntu Core or Linux devices with snaps, from hardware setup through Frame installation and initial configuration.
+---
+
 (run-ubuntu-frame-on-your-device)=
 
 # Run Ubuntu Frame on your device

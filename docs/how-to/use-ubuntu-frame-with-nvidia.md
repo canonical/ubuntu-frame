@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Enable Nvidia GPU support for Ubuntu Frame on classic Ubuntu and Ubuntu Core with driver installation and configuration steps.
+---
+
 (how-to-use-ubuntu-frame-with-nvidia)=
 
 # How to use Ubuntu Frame with Nvidia

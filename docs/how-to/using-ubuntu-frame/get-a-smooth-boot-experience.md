@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Achieve a flicker-free, smooth Ubuntu Frame boot experience on Ubuntu Core using boot splash and synchronized startup configuration.
+---
+
 (how-to-get-a-smooth-boot-experience)=
 
 # How to get a smooth boot experience

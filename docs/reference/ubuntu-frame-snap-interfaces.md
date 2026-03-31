@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame snap interfaces reference lists available interfaces, required connections, and security implications for deploying Frame and related snaps.
+---
+
 (ubuntu-frame-snap-interfaces)=
 
 # Ubuntu Frame snap interfaces

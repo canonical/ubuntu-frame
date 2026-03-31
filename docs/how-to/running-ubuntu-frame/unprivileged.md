@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Run Ubuntu Frame and clients as unprivileged user services instead of root, improving security and application compatibility on Ubuntu Core.
+---
+
 (run-ubuntu-frame-unprivileged)=
 
 # Run Ubuntu Frame unprivileged

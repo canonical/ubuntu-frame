@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame reference documentation covers configuration, security interfaces, and auxiliary components to help you deploy and maintain production kiosk and IoT GUI systems.
+---
+
 (reference-index)=
 
 # Reference

@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame VNC documentation explains remote assistance setup with ubuntu-frame-vnc, daemon mode, and secure remote access configuration.
+---
+
 (how-to-use-remote-assistance)=
 
 # Ubuntu Frame VNC documentation

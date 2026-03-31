@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame tutorials guide you through web kiosk setup and Wayland application deployment, from quick start steps to integrating your own graphical app on Ubuntu Core.
+---
+
 (tutorial-index)=
 
 # Tutorials

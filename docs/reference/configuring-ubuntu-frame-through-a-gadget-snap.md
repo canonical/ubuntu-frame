@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame gadget snap reference shows how to set default Frame configuration in gadget snaps, including display layouts, wallpaper, Wayland extensions, and daemon state.
+---
+
 (configuring-ubuntu-frame-through-a-gadget-snap)=
 
 # Configuring Ubuntu Frame through a gadget snap

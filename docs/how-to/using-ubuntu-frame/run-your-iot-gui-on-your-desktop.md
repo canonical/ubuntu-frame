@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Run Ubuntu Frame IoT GUI applications on your desktop during development using frame-it snap for efficient testing without remote devices.
+---
+
 (how-to-run-your-iot-gui-on-your-desktop)=
 
 # How to run your IoT GUI on your desktop

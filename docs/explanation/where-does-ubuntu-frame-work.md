@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame compatibility guide explains hardware and graphics requirements, supported drivers, and deployment considerations for running Frame on Linux and Ubuntu Core.
+---
+
 (where-does-ubuntu-frame-work)=
 
 # Where does Ubuntu Frame work?

@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Deploy Ubuntu Frame digital signage solutions using Dashkiosk and WPE WebKit for multi-display dashboard management and content control.
+---
+
 (how-to-set-up-digital-signage)=
 
 # How to set up digital signage

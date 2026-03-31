@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame how-to guides with step-by-step instructions for running, packaging applications, and configuring displays for production deployments.
+---
+
 (how-to-index)=
 
 # How-to guides

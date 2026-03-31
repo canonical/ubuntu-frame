@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Migrate from mir-kiosk to Ubuntu Frame with improved features like on-screen keyboard, better configuration, and advanced power-saving options.
+---
+
 (migrating-from-mir-kiosk-to-ubuntu-frame)=
 
 # Migrating from mir-kiosk to Ubuntu Frame

@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame configuration options reference explains snap settings, display and daemon controls, and config and display parameters for system behavior tuning.
+---
+
 (ubuntu-frame-configuration-options)=
 
 # Ubuntu Frame configuration options
