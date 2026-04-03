@@ -1,0 +1,23 @@
+# Client-side page redirects. Each mapping takes the format:
+#
+#     "<old path>" "<current path>"
+#
+# Paths must be represented as source files relative to the root of the docs directory.
+# The old path must be a file that doesn"t exist in the source. The current path must be
+# a file that does exist in the source.
+
+"explanation/the-gpu-2404-snap-interface" "how-to/use-snap-graphics"
+"explanation/the-graphics-core20-snap-interface" "https://canonical-ubuntu-frame-documentation.readthedocs-hosted.com/20/how-to/use-snap-graphics/"
+"explanation/the-graphics-core22-snap-interface" "how-to/use-snap-graphics"
+"how-to/packaging-iot-gui/a-flutter-application" "how-to/packaging-iot-gui"
+"how-to/packaging-iot-gui/a-gtk3-application" "how-to/packaging-iot-gui"
+"how-to/packaging-iot-gui/a-qt5-application" "how-to/packaging-iot-gui"
+"how-to/packaging-iot-gui/a-sdl2-application" "how-to/packaging-iot-gui"
+"how-to/packaging-iot-gui/an-electron-application" "how-to/packaging-iot-gui"
+"how-to/packaging-iot-gui/an-x11-based-application" "how-to/packaging-iot-gui"
+"how-to/packaging-iot-gui/migrating-a-windows-application" "https://canonical-ubuntu-frame-documentation.readthedocs-hosted.com/22/how-to/packaging-iot-gui/migrating-a-windows-application/"
+"how-to/use-snap-graphics-on-base-core22" "how-to/use-snap-graphics"
+"how-to/use-snap-graphics-on-base-core24" "how-to/use-snap-graphics"
+"how-to/using-ubuntu-frame/use-remote-assistance" "reference/ubuntu-frame-vnc-documentation"
+"how-to/using-ubuntu-frame/use-the-diagnostic-feature" "reference/the-diagnostic-feature"
+"tutorial/developer-guide" "tutorial/deploy-graphical-application-with-frame"
