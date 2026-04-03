@@ -24,13 +24,13 @@ Follow the instructions to install Ubuntu Core/snapd and ssh into your device.
 You should now have a command prompt reading something like `<your‑user>@yourdevice:~$`. Now install Ubuntu Frame with the following command:
 
 ```
-$ snap install ubuntu-frame
+snap install ubuntu-frame
 ```
 
 If you are using Ubuntu Core, you can skip this next step. On other versions of Linux, Ubuntu Frame does not start by default. To change this default run the following command:
 
 ```
-$ snap set ubuntu-frame daemon=true
+snap set ubuntu-frame daemon=true
 ```
 
 Once Ubuntu Frame starts the display should show a graduated grey screen. This is the default Ubuntu Frame wallpaper. This can be changed using the “config” snap configuration option:
@@ -49,14 +49,14 @@ The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of co
 Still in your ssh session, install web kiosk:
 
 ```
-$ snap install wpe-webkit-mir-kiosk
+snap install wpe-webkit-mir-kiosk
 ```
 
 If you are using Ubuntu Core, you can skip this next step. On other versions of Linux, wpe-webkit-mir-kiosk does not start by default. To change this default run the following command:
 
 ```
-$ snap connect wpe-webkit-mir-kiosk:wayland
-$ snap set wpe-webkit-mir-kiosk daemon=true
+snap connect wpe-webkit-mir-kiosk:wayland
+snap set wpe-webkit-mir-kiosk daemon=true
 ```
 
 Once installed and configured the display should show the WPE website.
@@ -64,8 +64,8 @@ Once installed and configured the display should show the WPE website.
 The website can be changed using the “url” snap configuration option:
 
 ```
-$ snap set wpe-webkit-mir-kiosk url=https://mir-server.io
-$ snap start wpe-webkit-mir-kiosk
+snap set wpe-webkit-mir-kiosk url=https://mir-server.io
+snap start wpe-webkit-mir-kiosk
 ```
 
 This will show the Mir Server website.

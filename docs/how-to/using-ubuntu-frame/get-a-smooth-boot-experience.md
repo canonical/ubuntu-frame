@@ -21,13 +21,13 @@ This guide assumes that you enable the boot splash in your Ubuntu Core image, so
 If your image doesn't yet have Ubuntu Frame, you'll need to install it:
 
 ```shell
-$ sudo snap install ubuntu-frame --edge
+sudo snap install ubuntu-frame --edge
 ```
 
 And maybe a client:
 
 ```shell
-$ sudo snap install wpe-webkit-mir-kiosk
+sudo snap install wpe-webkit-mir-kiosk
 ```
 
 ## Modifying service dependencies and configuration

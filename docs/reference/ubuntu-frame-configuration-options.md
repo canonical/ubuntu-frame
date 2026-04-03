@@ -32,13 +32,13 @@ On a default installation `daemon` is only set to `true` on Ubuntu Core systems.
 You can see the value of this using the following command:
 
 ```bash
-$ snap get ubuntu-frame daemon
+snap get ubuntu-frame daemon
 ```
 
 Or set it using
 
 ```bash
-$ snap set ubuntu-frame daemon=true
+snap set ubuntu-frame daemon=true
 ```
 
 ### `launcher`
@@ -424,7 +424,7 @@ Controls the layout in use.
 Change the layout to `night`:
 
 ```bash
-$ snap set ubuntu-frame display-layout=night
+snap set ubuntu-frame display-layout=night
 ```
 
 Get the current layout:

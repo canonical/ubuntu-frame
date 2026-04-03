@@ -135,8 +135,8 @@ I find it easiest to pipe the `display` configuration to a file and make the cha
 First, pipe the above output to a file and, for reference, make a backup of the original:
 
 ```
-$ snap get ubuntu-frame display > my-uf-display-configuration
-$ cp my-uf-display-configuration{,~original}
+snap get ubuntu-frame display > my-uf-display-configuration
+cp my-uf-display-configuration{,~original}
 ```
 
 Next edit the file with your editor of choice. Now, I'm going to show changing the scale of `eDP-1` to "2" (which, because it has twice the pixels, makes the "height" of the displays the same) in both layouts. In the `side_by_side` layout it is also necessary to change the position of the `DisplayPort-1` output to match the new logical size of the first output:
@@ -179,7 +179,7 @@ You will likely have to make slightly different changes on your system, but the 
 And here's the command to apply these changes:
 
 ```sh
-$ snap set ubuntu-frame display="`cat my-uf-display-configuration`"
+snap set ubuntu-frame display="`cat my-uf-display-configuration`"
 ```
 
 ## A client window for each output
@@ -240,7 +240,7 @@ $ diff --unified my-uf-display-configuration{~original,}
 And, again, apply these changes:
 
 ```sh
-$ snap set ubuntu-frame display="`cat my-uf-display-configuration`"
+snap set ubuntu-frame display="`cat my-uf-display-configuration`"
 ```
 
 This will move the test application to the second monitor; and, if I install `mir-kiosk-kodi` that will run on the main monitor.

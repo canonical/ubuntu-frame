@@ -35,7 +35,7 @@ You'll be able to run any Wayland application that's packaged as a snap, though 
 SystemD has built-in facilities to start a user session. Let's configure one:
 
 ```
-$ sudo systemctl edit --full --force user-session.service
+sudo systemctl edit --full --force user-session.service
 ```
 
 Within the editor that opens, input these contents and exit:
@@ -69,7 +69,7 @@ Active=yes
 We can now run Frame within the session. Let's configure a basic user service that start it:
 
 ```
-$ systemctl --user edit --full --force ubuntu-frame.service
+systemctl --user edit --full --force ubuntu-frame.service
 ```
 
 As above, input the contents and close the editor:
@@ -86,7 +86,7 @@ ExecStart=/snap/bin/ubuntu-frame
 Start it, and you should see Frame's gradient background:
 
 ```
-$ systemctl --user start ubuntu-frame.service
+systemctl --user start ubuntu-frame.service
 ```
 
 ### Client applications
@@ -124,8 +124,8 @@ I'll go through a couple examples that showcase two ways to "bring" applications
   If the app you want to use does not have a `.desktop` file, or for any other reason you want to use a custom unit, you just need an `ExecStart=` line. We'll use [graphics-test-tools](https://snapcraft.io/graphics-test-tools/) for that:
 
   ```
-  $ sudo snap install graphics-test-tools
-  $ systemctl --user edit --full --force glmark2.service
+  sudo snap install graphics-test-tools
+  systemctl --user edit --full --force glmark2.service
   ```
 
   Save those contents and exit:
@@ -152,7 +152,7 @@ I'll go through a couple examples that showcase two ways to "bring" applications
 We could start the Frame service directly (instead of `tail`), but that would unnecessarily kill the user session. Instead we'll use a session target that will depend on all the pieces we want to run.
 
 ```
-$ systemctl --user edit --full --force user-session.target
+systemctl --user edit --full --force user-session.target
 ```
 
 Input these and quit the editor:
@@ -177,21 +177,21 @@ ExecStart=/usr/bin/systemctl --user start --wait user-session.target
 Restart the user session service and things should all start up:
 
 ```
-$ sudo systemctl restart user-session.service
+sudo systemctl restart user-session.service
 ```
 
 Sprinkle `Restart=always` across the `[Service]` sections so things always come back up unless stopped:
 
 ```
-$ sudo systemctl edit user-session.service
-$ systemctl edit --user 'app-flutter\x2dgallery_flutter\x2dgallery@autostart.service'
-$ systemctl edit --user --full glmark2.service
+sudo systemctl edit user-session.service
+systemctl edit --user 'app-flutter\x2dgallery_flutter\x2dgallery@autostart.service'
+systemctl edit --user --full glmark2.service
 ```
 
 To start it on boot:
 
 ```
-$ sudo systemctl add-wants graphical.target user-session.service
+sudo systemctl add-wants graphical.target user-session.service
 ```
 
 If you reboot now, the user session will start on boot, and with it Frame and the configured clients.

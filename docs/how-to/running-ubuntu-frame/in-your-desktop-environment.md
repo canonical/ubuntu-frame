@@ -22,7 +22,7 @@ There are two ways to do this, and they achieve slightly different things.
 In both cases, you first need to install Ubuntu Frame
 
 ```
-$ snap install ubuntu-frame
+snap install ubuntu-frame
 ```
 
 ### Running as the current user
@@ -32,13 +32,13 @@ This will allow you to test applications you intend to use with `ubuntu-frame` w
 This is as easy as running:
 
 ```bash
-$ WAYLAND_DISPLAY=wayland-99 ubuntu-frame
+WAYLAND_DISPLAY=wayland-99 ubuntu-frame
 ```
 
 Or, if that doesn't work (as has happened on some Nvidia enabled systems), run:
 
 ```bash
-$ WAYLAND_DISPLAY=wayland-99 ubuntu-frame --platform-display-libs mir:x11 --platform-rendering-libs mir:x11
+WAYLAND_DISPLAY=wayland-99 ubuntu-frame --platform-display-libs mir:x11 --platform-rendering-libs mir:x11
 ```
 
 This will create a "Mir on X" window on your desktop and a (new) Wayland socket in `$XDG_RUNTIME_DIR`:
@@ -54,13 +54,13 @@ This what happens on a Wayland based desktop _(we suggest `wayland-99` to avoid 
 You can connect any Wayland supporting application (for example, one you are developing) using the `WAYLAND_DISPLAY` environment variable:
 
 ```bash
-$ WAYLAND_DISPLAY=wayland-99 gnome-system-monitor
+WAYLAND_DISPLAY=wayland-99 gnome-system-monitor
 ```
 
 You can supply also configuration options (see {ref}`the reference <ubuntu-frame-configuration-options>`) on the commandline. For example, for testing multiple displays:
 
 ```bash
-$ WAYLAND_DISPLAY=wayland-99 ubuntu-frame --x11-output 800x600:800x600
+WAYLAND_DISPLAY=wayland-99 ubuntu-frame --x11-output 800x600:800x600
 ```
 
 ### Running as root
@@ -86,13 +86,13 @@ When using this you will have to authorise `sudo` so please check you're happy w
 Calling this script `fake-frame` and placing it a convenient location (such as `~/bin`) means that you just have to type:
 
 ```bash
-$ fake-frame
+fake-frame
 ```
 
 To use this you need to install and enable a suitable snap (possibly one you are working on):
 
 ```bash
-$ snap install wpe-webkit-mir-kiosk
-$ snap connect wpe-webkit-mir-kiosk:wayland
-$ snap set wpe-webkit-mir-kiosk daemon=true
+snap install wpe-webkit-mir-kiosk
+snap connect wpe-webkit-mir-kiosk:wayland
+snap set wpe-webkit-mir-kiosk daemon=true
 ```

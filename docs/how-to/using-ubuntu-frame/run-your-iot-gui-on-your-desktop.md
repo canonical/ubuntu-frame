@@ -87,8 +87,8 @@ sudo frame-it.root-on-x11
 Running your snap's daemon may take a couple of commands. Many IoT GUI snaps don't try to run their daemons by default unless installed on Ubuntu Core and use a `daemon` configuration option to control this.
 
 ```
-$ snap set wpe-webkit-mir-kiosk daemon=true
-$ snap restart wpe-webkit-mir-kiosk.daemon
+snap set wpe-webkit-mir-kiosk daemon=true
+snap restart wpe-webkit-mir-kiosk.daemon
 ```
 
 (If you're using your own snap, it probably won't have or need the `.daemon` extension. I don't know why `wpe-webkit-mir-kiosk` has that.)

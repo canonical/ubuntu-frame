@@ -15,9 +15,9 @@ This is a quick reference for running Ubuntu Frame in an Ubuntu Core virtual mac
 We need to be able to run the VM and, as the default build of qemu on Ubuntu doesn’t support graphics, we will use a handy snap that enables this:
 
 ```
-$ sudo snap install qemu-virgil
-$ sudo snap connect qemu-virgil:kvm
-$ qemu-virgil --version
+sudo snap install qemu-virgil
+sudo snap connect qemu-virgil:kvm
+qemu-virgil --version
 ```
 
 We also download an Ubuntu Core image from [https://cdimage.ubuntu.com/ubuntu-core/24/stable/current/](https://cdimage.ubuntu.com/ubuntu-core/24/stable/current/)
@@ -39,7 +39,7 @@ This will create a QEMU window on your desktop and you need to follow through th
 Connect to the VP using ssh from a terminal window (ignore the address shown in the QEMU window and use the port set in the above command):
 
 ```
-$ ssh -p 10022 <your‑user>@localhost
+ssh -p 10022 <your‑user>@localhost
 ```
 
 ## Install Ubuntu Frame
@@ -47,7 +47,7 @@ $ ssh -p 10022 <your‑user>@localhost
 You should now have a command prompt reading something like `<your‑user>@localhost:~$`. Now install Ubuntu Frame with the following command:
 
 ```
-$ snap install ubuntu-frame
+snap install ubuntu-frame
 ```
 
 Once the installation completes the QEMU window should show a graduated grey screen. This is the default Ubuntu Frame wallpaper. This can be changed using the “config” snap configuration option:
@@ -66,7 +66,7 @@ The `wallpaper-top` and `wallpaper-bottom` are RGB values. There are a lot of co
 Still in your ssh session, install web kiosk:
 
 ```
-$ snap install wpe-webkit-mir-kiosk
+snap install wpe-webkit-mir-kiosk
 ```
 
 Once the installation completes the QEMU window should show the WPE website.
@@ -74,7 +74,7 @@ Once the installation completes the QEMU window should show the WPE website.
 The website can be changed using the “url” snap configuration option:
 
 ```
-$ snap set wpe-webkit-mir-kiosk url=https://mir-server.io
+snap set wpe-webkit-mir-kiosk url=https://mir-server.io
 ```
 
 This will show the Mir Server website.
