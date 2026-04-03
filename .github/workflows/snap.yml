@@ -38,7 +38,7 @@ jobs:
         sed -i 's@rev-list --count@rev-parse --short@' snap/snapcraft.yaml
 
     - name: Build and publish the snap
-      uses: canonical/actions/build-snap@bd56f0f0934af9edbbd49378645727d7ef7a4571 # release @ 2025.06.05
+      uses: canonical/actions/build-snap@78e8dd5f693653767f2c60c4a6a421a1ebed35af # release @ 2025.06.05
       with:
         architecture: ${{ matrix.platform }}
         snapcraft-token: ${{ secrets.SNAPCRAFT_TOKEN }}

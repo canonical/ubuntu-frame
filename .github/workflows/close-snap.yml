@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: Close obsolete channels
-      uses: canonical/actions/close-snap@bd56f0f0934af9edbbd49378645727d7ef7a4571 # release @ 2025.06.05
+      uses: canonical/actions/close-snap@78e8dd5f693653767f2c60c4a6a421a1ebed35af # release @ 2025.06.05
       continue-on-error: true
       with:
         channel: 24/edge/pr${{ github.event.number }}
