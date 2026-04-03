@@ -1,0 +1,6 @@
+rules:
+  secrets-outside-env:  # repo automation doesn't yet support environments: canonical/canonical-repo-automation#364
+    ignore:
+    - close-snap.yml
+    - snap.yml
+    - tics.yml

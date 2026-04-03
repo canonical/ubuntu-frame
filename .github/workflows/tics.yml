@@ -10,12 +10,18 @@ on:
     types: [checks_requested]
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   TICS:
     # Only run if we have access to secrets.
     if: github.event_name != 'pull_request' || github.repository == github.event.pull_request.head.repo.full_name
 
     runs-on: [self-hosted, reactive, amd64, tiobe, noble]
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
 
     env:
       NEEDRESTART_SUSPEND: yes
@@ -24,10 +30,11 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       # Need history to determine changed files
       with:
         fetch-depth: 2
+        persist-credentials: false
 
     - name: Install dependencies
       run: |
@@ -55,7 +62,7 @@ jobs:
           pkg-config
 
     - name: Set up Flutter
-      uses: subosito/flutter-action@v2
+      uses: subosito/flutter-action@0ca7a949e71ae44c8e688a51c5e7e93b2c87e295 # v2.22.0
       with:
         cache: true
 
@@ -75,7 +82,7 @@ jobs:
         git diff --name-only ${{ github.sha }}~1 ${{ github.sha }} >> $TICS_CHANGED_LIST
 
     - name: Run TICS analysis
-      uses: tiobe/tics-github-action@v3
+      uses: tiobe/tics-github-action@a53037a6bb9f71b6a97cdeb0ac41632266804b9e # v3.8.0
       with:
         mode: ${{ contains(fromJSON('["pull_request", "merge_group"]'), github.event_name) && 'client' || 'qserver' }}
         project: ubuntu-frame
@@ -88,6 +95,6 @@ jobs:
 
     - if: ${{ failure() && runner.debug }}
       name: Setup tmate session
-      uses: canonical/action-tmate@main
+      uses: canonical/action-tmate@bda82e73586a62bf621881aab872a527c8a46e2d # main @ 2026.03.02
       with:
         limit-access-to-actor: true
