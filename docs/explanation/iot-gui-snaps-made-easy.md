@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame IoT GUI guide explains how to package  apps as snaps, handle  interfaces, and run fullscreen kiosk applications on Ubuntu Core.
+---
+
 (iot-gui-snaps-made-easy)=
 
 # IoT GUI snaps made easy

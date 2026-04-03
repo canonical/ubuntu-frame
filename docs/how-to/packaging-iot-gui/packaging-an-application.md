@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Package Wayland applications as snaps for Ubuntu Frame IoT GUI deployments on Ubuntu Core, from desktop testing through device packaging and deployment.
+---
+
 (packaging-an-application-iot-gui)=
 
 # Packaging an application as an IoT GUI

@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame documentation for embedded Linux display servers, with tutorials, how-to guides, and reference material for kiosks, digital signage, and IoT GUI apps.
+---
+
 # Ubuntu Frame
 
 Ubuntu Frame is a secure and reliable display server designed for embedded Linux devices. It simplifies the development and deployment of graphical applications on kiosks, digital signage and more.

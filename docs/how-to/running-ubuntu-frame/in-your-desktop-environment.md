@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Run Ubuntu Frame as a window in your Linux desktop environment for testing applications before deploying to Ubuntu Core devices.
+---
+
 (run-ubuntu-frame-in-your-desktop-environment)=
 
 # Run Ubuntu Frame in your desktop environment

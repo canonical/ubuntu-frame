@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame OSK documentation covers on-screen keyboard setup with ubuntu-frame-osk, supported text input protocols, and integration requirements for compatible apps.
+---
+
 (ubuntu-frame-osk-documentation)=
 
 # Ubuntu Frame OSK documentation

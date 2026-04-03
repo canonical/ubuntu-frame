@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame snap graphics interface guide explains how to provide userspace drivers to confined snaps using content interfaces for hardware acceleration.
+---
+
 (use-snap-graphics)=
 
 (the-gpu-2404-snap-interface)=

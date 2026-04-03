@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Build a secure Ubuntu Frame web kiosk with Ubuntu Core, Wayland, and snap confinement, including architecture, setup, and deployment steps for unattended smart displays.
+---
+
 (make-a-secure-ubuntu-web-kiosk)=
 
 # Make a secure Ubuntu web kiosk

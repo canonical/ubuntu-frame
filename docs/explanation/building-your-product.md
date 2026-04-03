@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: 'Build an Ubuntu Frame product on Ubuntu Core: choose a base, create an appliance image, and package snaps for reliable deployment on embedded devices.'
+---
+
 (building-your-product)=
 
 # Building your product

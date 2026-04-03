@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame diagnostic feature reference explains how to enable and use the diagnostic screen to surface startup and runtime issues for faster troubleshooting.
+---
+
 (how-to-use-the-diagnostic-feature)=
 
 # The diagnostic feature

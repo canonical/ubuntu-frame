@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Use alternative graphics drivers with Ubuntu Frame via gpu-2404 snap interface instead of Mesa, supporting device-specific vendor implementations.
+---
+
 (using-an-alternative-graphics-userspace)=
 
 # Using an alternative graphics userspace

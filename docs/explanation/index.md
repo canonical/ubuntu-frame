@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame explanation guides cover concepts, security, and graphics support to help you understand platform behavior and make informed design decisions.
+---
+
 (explanation-index)=
 
 # Explanation

@@ -1,3 +1,9 @@
+---
+myst:
+  html_meta:
+    description: Ubuntu Frame security explanation covers threat modeling, event logging, and hardening practices for Frame, ubuntu-frame-osk, and ubuntu-frame-vnc snaps.
+---
+
 (security)=
 
 # Security
