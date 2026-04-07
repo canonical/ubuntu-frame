@@ -6,5 +6,12 @@
     "helpers:githubDigestChangelogs",
     "group:all",
     ":enablePreCommit"
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["myst-parser"],
+      "matchFileNames": ["docs/requirements.txt"],
+      "enabled": false
+    }
   ]
 }
