@@ -24,6 +24,7 @@
 #include <miral/display_configuration.h>
 #include <miral/runner.h>
 #include <fstream>
+#include <any>
 
 using namespace testing;
 namespace mtf = mir_test_framework;
@@ -140,6 +141,16 @@ layouts:
 
     miral::DisplayConfiguration display_config;
 };
+
+TEST_F(FrameWindowManagerWithSurfaceTitleInDisplayConfig, LayoutUserdataForApplicationsIsRetained)
+{
+    auto const userdata = display_config.layout_userdata("applications");
+    ASSERT_TRUE(userdata.has_value());
+
+    auto const* layout_metadata = std::any_cast<std::shared_ptr<LayoutMetadata>>(&userdata.value());
+    ASSERT_NE(layout_metadata, nullptr);
+    ASSERT_NE(*layout_metadata, nullptr);
+}
 
 TEST_F(FrameWindowManagerWithSurfaceTitleInDisplayConfig, WindowsCanBePlacedExactlyByTitle)
 {
