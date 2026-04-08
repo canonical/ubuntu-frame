@@ -206,27 +206,22 @@ parts:
 
   launcher:
     source: launcher
-    plugin: nil
+    plugin: flutter
     build-packages:
-      - clang
       - curl
-      - git
-      - cmake
-      - ninja-build
-      - unzip
-      - libgtk-layer-shell-dev
       - libgtk-3-dev
+      - libgtk-layer-shell-dev
+      - ninja-build
     stage-packages:
       - libgtk-3-0t64
       - libgtk-layer-shell0
     override-build: |
       if [[ "${CRAFT_ARCH_BUILD_FOR}" != @(amd64|arm64) ]]; then
-        install --mode 755 -D ubuntu_frame_launcher.fake ${CRAFT_PART_INSTALL}/ubuntu-frame-launcher/ubuntu_frame_launcher
+        install --mode 755 -D ubuntu_frame_launcher.fake ${CRAFT_PART_INSTALL}/ubuntu_frame_launcher
       else
-        git clone -b stable https://github.com/flutter/flutter.git ${CRAFT_PART_BUILD}/flutter-distro
-        export PATH=${CRAFT_PART_BUILD}/flutter-distro/bin:$PATH
-        flutter config --no-enable-{web,ios,android,fuchsia,windows-desktop,macos-desktop}
-        flutter pub get
-        flutter build linux --release --verbose --target lib/main.dart
-        cp -r build/linux/*/release/bundle ${CRAFT_PART_INSTALL}/ubuntu-frame-launcher
+        craftctl default
       fi
+    organize:
+      data: ubuntu-frame-launcher/data
+      lib: ubuntu-frame-launcher/lib
+      ubuntu_frame_launcher: ubuntu-frame-launcher/ubuntu_frame_launcher
