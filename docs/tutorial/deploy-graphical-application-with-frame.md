@@ -134,7 +134,7 @@ $ git branch --list --remotes origin/26/*
 ```
 
 ```{tip}
-The "26" prefix refers to the snap bases, in this case we use `26/` for branches using to `base: core26`.
+The "26" prefix refers to the snap bases, in this case we use `26/` for branches using `base: core26`.
 ```
 
 Once you have the customised snapcraft recipe, you can snap your example toolkit applications.

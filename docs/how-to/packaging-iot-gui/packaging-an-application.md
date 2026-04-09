@@ -250,7 +250,7 @@ If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" fo
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
 ```
-$ $ git branch --list --remotes origin/26/*
+$ git branch --list --remotes origin/26/*
   origin/26/Electron-quick-start
   origin/26/Flutter-demo
   origin/26/GTK3-adventure
@@ -265,7 +265,7 @@ $ $ git branch --list --remotes origin/26/*
 ```
 
 ```{tip}
-The "26" prefix refers to the snap bases that snaps are based on, in this case we use `26` for branches using to `base: core26` which in turn refers to Ubuntu 26.04LTS. (There are collections for other bases.)
+The "26" prefix refers to the snap bases that snaps are based on; in this case, we use `26` for branches using `base: core26`, which in turn refers to Ubuntu 26.04 LTS. (There are collections for other bases.)
 ```
 
 Once you have the customised snapcraft recipe, you can snap your example applications.
