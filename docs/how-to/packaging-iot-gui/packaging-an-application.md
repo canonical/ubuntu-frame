@@ -78,7 +78,7 @@ There can be problems with both getting your application to work well with Ubunt
 
 You can use Electron, Flutter, Qt, or any other toolkit or programming language to develop your graphic application. There is no sole path for checking all of them. Instead, this guide will use some example applications using GTK, QT, and SDL2.
 
-The examples used here are game applications, such as Mastermind, Neverputt, and Bomber. We’ve chosen these applications as they are easily installable and are designed to work without a full desktop session. But they can be replaced by your kiosk application, industrial GUI, smart fridge GUI, digital sign and more.
+The examples used here are game applications, such as Mastermind, Neverputt, and Scribble. We’ve chosen these applications as they are easily installable and are designed to work without a full desktop session. But they can be replaced by your kiosk application, industrial GUI, smart fridge GUI, digital sign and more.
 
 The first step is to download the application and execute it:
 
@@ -112,8 +112,8 @@ frame-it neverputt
 ````{tab-item} Qt5
 :sync: qt5
 ```
-sudo apt install bomber
-frame-it bomber
+sudo apt install qtbase5-examples
+frame-it /usr/lib/*/qt5/examples/widgets/widgets/scribble/scribble
 ```
 ````
 
@@ -184,7 +184,7 @@ Close Neverputt (`Esc`)
 
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
-Close the Bomber (`Ctrl-Q`).
+Close Scribble (`Ctrl-Q`).
 ````
 
 ````{tab-item} Qt6
@@ -255,8 +255,8 @@ $ git branch --list --remotes origin/26/*
   origin/26/Flutter-demo
   origin/26/GTK3-adventure
   origin/26/GTK3-mastermind
-  origin/26/Qt5-bomber
-  origin/26/Qt5-bomber-first-try
+  origin/26/Qt5-example
+  origin/26/Qt5-example-first-try
   origin/26/Qt6-example
   origin/26/SDL2-neverputt
   origin/26/main
@@ -298,7 +298,7 @@ snapcraft pack
 ````{tab-item} Qt5
 :sync: qt5
 ```
-git checkout 26/Qt5-bomber
+git checkout 26/Qt5-example
 snapcraft pack
 ```
 ````
