@@ -20,6 +20,7 @@ You should make an explicit decision on which `base` to build your appliance wit
 
 | `base`   | Corresponding LTS |
 | -------- | ----------------- |
+| `core26` | Ubuntu 26.04LTS   |
 | `core24` | Ubuntu 24.04LTS   |
 | `core22` | Ubuntu 22.04LTS   |
 | `core20` | Ubuntu 20.04LTS   |
@@ -28,11 +29,11 @@ You should make an explicit decision on which `base` to build your appliance wit
 
 As well as providing more recent libraries and tools to work with, that means support for the base is limited by support for the LTS. For example, The `core20/20.04` version is supported until April 2030.
 
-Ubuntu Frame supports all `base: core20`, `base: core22` and `base: core24`.
+Ubuntu Frame supports all `base: core20`, `base: core22`, `base: core24` and `base: core26`.
 
 For `base: core20` and `base: core22` there are a `20` and `22` tracks, using the matching `graphics-coreXX` (with `mesa-coreXX` default providers). These are in maintenance mode and will only receive security updates.
 
-For `base: core24` there is a `24` track using `gpu-2404` (with a `mesa-2404` default provider). This is the basis for ongoing development.
+For `base: core24` and `base: core26` there are a `24` and `26` tracks, using the `gpu-XX04` (with `mesa-XX04` default providers). `26` is the basis for ongoing development.
 
 Your application snap can also make use of any of the above bases, and the corresponding graphics interface.
 

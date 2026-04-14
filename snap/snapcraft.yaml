@@ -3,7 +3,9 @@ adopt-info: ubuntu-frame
 summary: The foundation for many embedded graphical display implementations
 description: ubuntu-frame is a simple fullscreen shell (based on Wayland) used for kiosks, industrial displays, digital signage, smart mirrors, etc.
 confinement: strict
-base: core24
+base: core26
+build-base: devel
+grade: devel
 license: GPL-3.0
 compression: lzo
 package-repositories:
@@ -31,15 +33,13 @@ layout:
     bind: $SNAP/usr/share/icons
   /usr/share/fonts:
     bind: $SNAP/usr/share/fonts
-  /usr/share/drirc.d:  # Used by mesa-2404 for app specific workarounds
-    symlink: $SNAP_COMMON/gpu-2404/drirc.d
 
 apps:
   ubuntu-frame:
     command-chain:
     - bin/run-user
     - bin/run-frame
-    - bin/gpu-2404-wrapper
+    - bin/gpu-2604-wrapper
     command: usr/local/bin/frame
     plugs:
       - opengl                # for compositing
@@ -56,8 +56,8 @@ apps:
   launcher:
     command-chain:
       - bin/wayland-launch
-      - bin/gpu-2404-wrapper
-    command: ubuntu_frame_launcher
+      - bin/gpu-2604-wrapper
+    command: ubuntu-frame-launcher/ubuntu_frame_launcher
     daemon: simple
     restart-delay: 3s
     restart-condition: always
@@ -73,7 +73,7 @@ apps:
     command-chain:
     - bin/run-daemon
     - bin/run-frame
-    - bin/gpu-2404-wrapper
+    - bin/gpu-2604-wrapper
     command: usr/local/bin/frame
     daemon: simple
     restart-delay: 3s
@@ -94,17 +94,17 @@ apps:
     command-chain:
     - bin/anon-shm-preload
     - bin/run-client
-    - bin/gpu-2404-wrapper
+    - bin/gpu-2604-wrapper
     command: bin/screenshot
     plugs:
       - opengl
       - wayplug
 
 plugs:
-  gpu-2404:
+  gpu-2604:
     interface: content
-    target: $SNAP/gpu-2404
-    default-provider: mesa-2404
+    target: $SNAP/gpu-2604
+    # default-provider: mesa-2604
   wayplug:
     interface: wayland
 
@@ -124,7 +124,7 @@ parts:
       git config --global --add safe.directory ${CRAFT_PROJECT_DIR}
       recipe_version=`git -C ${CRAFT_PROJECT_DIR} rev-list --count HEAD`
       craftctl set version=$recipe_version-mir$mir_version
-      if echo $mir_version | grep -e '+dev' -e '~rc' -q; then craftctl set grade=devel; else craftctl set grade=stable; fi
+      #if echo $mir_version | grep -e '+dev' -e '~rc' -q; then craftctl set grade=devel; else craftctl set grade=stable; fi
     plugin: cmake
     cmake-parameters:
       - -DENABLE_TESTING=OFF
@@ -138,7 +138,7 @@ parts:
       - libapparmor-dev
       - libfreetype6-dev
     stage-packages:
-      - libboost-iostreams1.74.0
+      - libboost-iostreams1.90.0
       # Stage libmiral<n> indirectly as we cannot (since core22) do `try:/else:`
       - libmiral-dev
       - xkb-data
@@ -200,35 +200,30 @@ parts:
     plugin: dump
     override-prime: |
       craftctl default
-      ${CRAFT_PART_SRC}/bin/gpu-2404-cleanup mesa-2404
+      ${CRAFT_PART_SRC}/bin/gpu-2604-cleanup mesa-2604
       rm -rf ${CRAFT_PRIME}/usr/{doc,man,lintian,pkgconfig,X11}
 
     prime:
-      - bin/gpu-2404-wrapper
+      - bin/gpu-2604-wrapper
 
   launcher:
     source: launcher
-    plugin: nil
+    plugin: flutter
     build-packages:
-      - clang
       - curl
-      - git
-      - cmake
-      - ninja-build
-      - unzip
-      - libgtk-layer-shell-dev
       - libgtk-3-dev
+      - libgtk-layer-shell-dev
+      - ninja-build
     stage-packages:
       - libgtk-3-0t64
       - libgtk-layer-shell0
     override-build: |
       if [[ "${CRAFT_ARCH_BUILD_FOR}" != @(amd64|arm64) ]]; then
-        install --mode 755 --no-target-directory ubuntu_frame_launcher.fake ${CRAFT_PART_INSTALL}/ubuntu_frame_launcher
+        install --mode 755 -D ubuntu_frame_launcher.fake ${CRAFT_PART_INSTALL}/ubuntu_frame_launcher
       else
-        git clone -b 3.29.2 https://github.com/flutter/flutter.git ${CRAFT_PART_BUILD}/flutter-distro
-        export PATH=${CRAFT_PART_BUILD}/flutter-distro/bin:$PATH
-        flutter config --no-enable-{web,ios,android,fuchsia,windows-desktop,macos-desktop}
-        flutter pub get
-        flutter build linux --release --verbose --target lib/main.dart
-        cp -r build/linux/*/release/bundle/* ${CRAFT_PART_INSTALL}
+        craftctl default
       fi
+    organize:
+      data: ubuntu-frame-launcher/data
+      lib: ubuntu-frame-launcher/lib
+      ubuntu_frame_launcher: ubuntu-frame-launcher/ubuntu_frame_launcher

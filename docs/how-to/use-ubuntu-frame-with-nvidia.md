@@ -15,12 +15,6 @@ Nvidia only provides proprietary drivers for their GPUs, so there's additional s
 
 ## System preparation
 
-The steps and requirements differ by the operating system in use, choose the one matching your deployment:
-
-`````{tab-set}
-````{tab-item} Ubuntu
-:sync: ubuntu
-
 On classic Ubuntu, it is enough to install the drivers on the host.
 For example, to install the `570` driver version, issue the following:
 
@@ -29,24 +23,6 @@ sudo ubuntu-drivers install nvidia:570
 ```
 
 You can find out more at Ubuntu Server's {ref}`server:nvidia-drivers-installation`.
-````
-
-````{tab-item} Ubuntu Core 24
-:sync: ubuntu-core24
-
-On Ubuntu Core 24, the drivers and userspace libraries come in components of the kernel snap.
-To find out which version is available
-
-```shell
-sudo snap set pc-kernel nvidia-stream=570
-```
-
-You will need to make sure Ubuntu Frame is from the `24` track:
-```shell
-sudo snap refresh ubuntu-frame --channel 24
-```
-````
-`````
 
 ## Verification
 
@@ -77,21 +53,9 @@ $ snap logs -n1000 ubuntu-frame | grep -E "GL (vendor|renderer|version):"
 
 Finally, run [`graphics-test-tools.glmark2-es2-wayland`](https://snapcraft.io/graphics-test-tools) to check that clients can use it, too:
 
-`````{tab-set}
-````{tab-item} Ubuntu
-:sync: ubuntu
 ```shell
 sudo snap install graphics-test-tools
 ```
-````
-````{tab-item} Ubuntu Core 24
-:sync: ubuntu-core24
-
-```shell
-sudo snap install graphics-test-tools --channel 24
-```
-````
-`````
 
 ```shell
 $ sudo graphics-test-tools.glmark2-es2-wayland
@@ -107,5 +71,4 @@ $ sudo graphics-test-tools.glmark2-es2-wayland
 
 ## Conclusion
 
-Ubuntu Frame supports Nvidia GPUs across Ubuntu and Ubuntu Core,
-delivering the most value and performance out of your choice of hardware.
+Ubuntu Frame supports Nvidia GPUs, delivering the most value and performance out of your choice of hardware.
