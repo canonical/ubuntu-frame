@@ -184,7 +184,7 @@ slug = 'frame/docs'
 
 # Use RTD canonical URL to ensure duplicate pages have a specific canonical URL
 
-html_baseurl = "https://ubuntu.com/frame/docs"
+html_baseurl = "https://ubuntu.com/frame/docs/"
 
 # sphinx-sitemap uses html_baseurl to generate the full URL for each page:
 
