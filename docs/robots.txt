@@ -3,4 +3,4 @@ User-agent: *
 # Allow everything
 Disallow:
 
-Sitemap: https://ubuntu.com/frame/docs/24/sitemapindex.xml
+Sitemap: https://ubuntu.com/frame/docs/20/sitemapindex.xml
