@@ -70,7 +70,7 @@ copyright = "%s GPLv3, %s" % (datetime.date.today().year, author)
 # NOTE: The Open Graph Protocol (OGP) enhances page display in a social graph
 #       and is used by social media platforms; see https://ogp.me/
 
-ogp_site_url = "https://canonical-ubuntu-frame-documentation.readthedocs-hosted.com/"
+ogp_site_url = "https://ubuntu.com/frame/docs"
 
 
 # Preview name of the documentation website
@@ -106,7 +106,7 @@ html_context = {
     # TODO: If there's no such website,
     #       remove the {{ product_page }} link from the page header template
     #       (usually .sphinx/_templates/header.html; also, see README.rst).
-    "product_page": "https://mir-server.io/ubuntu-frame",
+    "product_page": "https://ubuntu.com/frame",
     # Product tag image; the orange part of your logo, shown in the page header
     #
     # TODO: To add a tag image, uncomment and update as needed.
@@ -176,7 +176,7 @@ html_theme_options = {
 # TODO: If your documentation is hosted on https://docs.ubuntu.com/,
 #       uncomment and update as needed.
 
-# slug = ''
+slug = 'frame/docs'
 
 #######################
 # Sitemap configuration: https://sphinx-sitemap.readthedocs.io/
@@ -184,11 +184,11 @@ html_theme_options = {
 
 # Use RTD canonical URL to ensure duplicate pages have a specific canonical URL
 
-html_baseurl = os.environ.get("READTHEDOCS_CANONICAL_URL", "/")
+html_baseurl = "https://ubuntu.com/frame/docs/"
 
 # sphinx-sitemap uses html_baseurl to generate the full URL for each page:
 
-sitemap_url_scheme = '{link}'
+sitemap_url_scheme = f"{os.environ.get('READTHEDOCS_VERSION', '')}/{{link}}"
 
 # Include `lastmod` dates in the sitemap:
 
@@ -209,7 +209,7 @@ sitemap_excludes = [
 # Template and asset locations #
 ################################
 
-# html_static_path = ["_static"]
+html_static_path = ["_static"]
 templates_path = ["_templates"]
 
 
@@ -321,6 +321,7 @@ html_css_files = [
 # Adds custom JavaScript files, located under 'html_static_path'
 
 html_js_files = [
+    "js/overwrite_links.js",
     "https://assets.ubuntu.com/v1/287a5e8f-bundle.js",
 ]
 
