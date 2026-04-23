@@ -188,7 +188,7 @@ html_baseurl = "https://ubuntu.com/frame/docs/"
 
 # sphinx-sitemap uses html_baseurl to generate the full URL for each page:
 
-sitemap_url_scheme = '{version}{link}'
+sitemap_url_scheme = f"{os.environ.get('READTHEDOCS_VERSION', '')}/{{link}}"
 
 # Include `lastmod` dates in the sitemap:
 
