@@ -29,6 +29,15 @@
 #include <miral/set_window_management_policy.h>
 #include <miral/wayland_extensions.h>
 
+#include <miral/config_aggregator.h>
+
+#include <miral/config_file_store_adapter.h>
+#include <miral/live_config_ini_file.h>
+#include <miral/cursor_scale.h>
+#include <miral/output_filter.h>
+#include <miral/magnifier.h>
+#include <miral/config_file.h>
+
 int main(int argc, char const* argv[])
 {
     using namespace miral;
@@ -44,6 +53,32 @@ int main(int argc, char const* argv[])
     runner.add_stop_callback([&] { background_client.stop(); });
     auto display_config = build_display_configuration(runner);
 
+    miral::live_config::ConfigAggregator config_aggregator{};
+    miral::ConfigFileStoreAdapter adapter{
+        config_aggregator,
+        [](std::unique_ptr<std::istream> stream, std::filesystem::path const& path)
+        {
+            auto parser = std::make_shared<miral::live_config::IniFile>();
+            return miral::live_config::ConfigAggregator::Source{
+                parser,
+                [parser, stream = std::move(stream), path]()
+                {
+                    parser->load_file(*stream, path);
+                },
+                path,
+            };
+        }};
+
+    miral::CursorScale cursor_scale{config_aggregator};
+    miral::OutputFilter output_filter{config_aggregator};
+    miral::Magnifier magnifier{config_aggregator};
+
+    miral::ConfigFile config_file{
+        runner,
+        "/home/tarek.ismail@canonical.com/.config/mir/accessibility.ini",
+        miral::ConfigFile::Mode::reload_on_change,
+        [&adapter](auto args) { adapter(args); },
+    };
     return runner.run_with(
         {
             wayland_extensions,
@@ -70,6 +105,9 @@ int main(int argc, char const* argv[])
                 window_manager_observer,
                 display_config),
             Keymap{},
-            miral::Decorations::always_csd()
+            miral::Decorations::always_csd(),
+            cursor_scale,
+            output_filter,
+            magnifier
         });
 }

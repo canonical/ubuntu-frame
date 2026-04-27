@@ -23,11 +23,17 @@ import 'package:get_it/get_it.dart';
 import 'views/dock.dart';
 import 'controllers/application_controller.dart';
 import 'package:logging/logging.dart';
+import 'package:ubuntu_frame_launcher/controllers/accessibility_controller.dart';
+import 'package:ubuntu_frame_launcher/models/accessibility_option.dart';
 
 void main() async {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
+    if (record.error != null) print('  Error: ${record.error}');
+    if (record.stackTrace != null) {
+      print('  Stack trace:\n${record.stackTrace}');
+    }
   });
 
   final logger = Logger("main");
@@ -39,13 +45,35 @@ void main() async {
   getIt.registerLazySingleton<WindowService>(
       () => WindowService(WaylandWindowWatcherService()));
   getIt.registerLazySingleton<DesktopFileManager>(() => DesktopFileManager());
-
   // Controllers
   getIt.registerLazySingleton<ApplicationController>(() =>
       ApplicationController(
           getIt.get<WindowService>(), getIt.get<DesktopFileManager>()));
   getIt.registerLazySingleton<WindowController>(
       () => WindowController(getIt.get<WindowService>()));
+  getIt.registerLazySingleton<AccessibilityController>(
+      () => AccessibilityController(options: [
+            AccessibilityOption(
+              id: 'magnifier_enable',
+              label: 'Zoom',
+              icon: Icons.zoom_in,
+              values: ['true', 'false'],
+            ),
+            AccessibilityOption(
+              id: 'output_filter',
+              label: 'Screen Filter',
+              icon: Icons.filter_b_and_w,
+              values: ['none', 'grayscale', 'invert'],
+            ),
+            AccessibilityOption(
+              id: 'cursor_scale',
+              label: 'Cursor Scale',
+              icon: Icons.mouse_outlined,
+              values: ['1', '1.5', '2'],
+            ),
+          ]));
+
+  await getIt.get<AccessibilityController>().initialize();
 
   runApp(const LauncherApp());
 }
