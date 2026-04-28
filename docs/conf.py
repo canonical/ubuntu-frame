@@ -26,6 +26,7 @@ import yaml
 
 project = "Ubuntu Frame"
 author = "Canonical Ltd."
+version = f"{os.environ.get('READTHEDOCS_VERSION', 'local')}"
 
 
 # Sidebar documentation title; best kept reasonably short
@@ -70,7 +71,7 @@ copyright = "%s GPLv3, %s" % (datetime.date.today().year, author)
 # NOTE: The Open Graph Protocol (OGP) enhances page display in a social graph
 #       and is used by social media platforms; see https://ogp.me/
 
-ogp_site_url = "https://ubuntu.com/frame/docs"
+ogp_site_url = f"https://ubuntu.com/frame/docs/{version}/"
 
 
 # Preview name of the documentation website
@@ -184,11 +185,11 @@ slug = 'frame/docs'
 
 # Use RTD canonical URL to ensure duplicate pages have a specific canonical URL
 
-html_baseurl = "https://ubuntu.com/frame/docs/"
+html_baseurl = f"https://ubuntu.com/frame/docs/{version}/"
 
 # sphinx-sitemap uses html_baseurl to generate the full URL for each page:
 
-sitemap_url_scheme = f"{os.environ.get('READTHEDOCS_VERSION', '')}/{{link}}"
+sitemap_url_scheme = "{link}"
 
 # Include `lastmod` dates in the sitemap:
 
