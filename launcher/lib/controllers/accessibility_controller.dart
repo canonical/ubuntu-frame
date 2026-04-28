@@ -38,9 +38,9 @@ class AccessibilityController {
   final _accessibilityConfigKey =
       "UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH";
 
-  /// The path at which the accessibility INI file is written.
-  /// Reads the [ACCESSIBILITY_CONFIG_PATH] environment variable; returns an
-  /// empty string (disabling file I/O) if the variable is not set.
+  /// The path at which the accessibility INI file is written. Reads the
+  /// [UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH] environment variable;
+  /// returns an empty string (disabling file I/O) if the variable is not set.
   String get _configPath => Platform.environment[_accessibilityConfigKey] ?? '';
 
   /// Reads the accessibility config file on disk and sets each option's
