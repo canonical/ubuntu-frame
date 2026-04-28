@@ -26,7 +26,7 @@ import yaml
 
 project = "Ubuntu Frame"
 author = "Canonical Ltd."
-version = f"{os.environ.get('READTHEDOCS_VERSION', 'local')}"
+version = os.getenv("READTHEDOCS_VERSION", "local")
 
 
 # Sidebar documentation title; best kept reasonably short
@@ -183,7 +183,7 @@ slug = 'frame/docs'
 # Sitemap configuration: https://sphinx-sitemap.readthedocs.io/
 #######################
 
-# Use RTD canonical URL to ensure duplicate pages have a specific canonical URL
+# Need to hardcode the RTD proxy URL, it's not known when building
 
 html_baseurl = f"https://ubuntu.com/frame/docs/{version}/"
 
