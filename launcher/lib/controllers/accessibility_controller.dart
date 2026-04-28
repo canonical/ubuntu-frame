@@ -81,47 +81,32 @@ class AccessibilityController {
             .info('Option "${option.id}" not found in config; keeping default');
         continue;
       }
-      final applied = option.setValueFromString(stored);
-      if (applied) {
-        _logger
-            .info('Option "${option.id}" initialised to "$stored" from config');
-      } else {
-        _logger.warning(
-            'Option "${option.id}" stored value "$stored" is not in the '
-            'allowed values list ${option.values}; keeping default');
-      }
+      option.setValueFromString(stored);
     }
   }
 
   void expand() {
-    _logger.info('Accessibility panel expanded');
     _isExpanded = true;
     _controller.add(true);
   }
 
   void collapse() {
-    _logger.info('Accessibility panel collapsed');
     _isExpanded = false;
     _controller.add(false);
   }
 
   void cycleForward(AccessibilityOption option) {
     option.cycleForward();
-    _logger.info(
-        'Option "${option.label}" cycled forward -> "${option.currentValue}"');
     _writeCurrentConfig();
   }
 
   void cycleBackward(AccessibilityOption option) {
     option.cycleBackward();
-    _logger.info(
-        'Option "${option.label}" cycled backward -> "${option.currentValue}"');
     _writeCurrentConfig();
   }
 
   Future<void> _writeCurrentConfig() async {
     if (_configPath.isEmpty) {
-      _logger.warning('ACCESSIBILITY_CONFIG_PATH is not set; skipping write');
       return;
     }
 
@@ -134,7 +119,6 @@ class AccessibilityController {
       final file = File(_configPath);
       await file.parent.create(recursive: true);
       await file.writeAsString(buffer.toString());
-      _logger.info('Wrote accessibility config to $_configPath');
     } catch (e) {
       _logger.shout('Failed to write accessibility config to $_configPath: $e');
     }

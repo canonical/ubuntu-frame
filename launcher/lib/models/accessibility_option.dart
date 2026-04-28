@@ -43,11 +43,10 @@ class AccessibilityOption {
 
   /// Sets the current value by matching [value] against [values].
   /// Returns true if a match was found, false otherwise.
-  bool setValueFromString(String value) {
+  void setValueFromString(String value) {
     final index = values.indexOf(value);
-    if (index == -1) return false;
+    if (index == -1) return;
     _currentIndex = index;
-    return true;
   }
 
   void cycleForward() {
