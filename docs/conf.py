@@ -390,7 +390,7 @@ intersphinx_mapping = {
     "mir": ("https://canonical-mir.readthedocs-hosted.com/stable", None),
     "mir-latest": ("https://canonical-mir.readthedocs-hosted.com/latest", None),
     "core": ("https://documentation.ubuntu.com/core", None),
-    "frame-22": ("https://canonical-ubuntu-frame-documentation.readthedocs-hosted.com/22", None),
+    "frame-22": ("https://ubuntu.com/frame/docs/22", None),
     "server": ("https://documentation.ubuntu.com/server", None),
     "snapcraft": ("https://documentation.ubuntu.com/snapcraft/stable", None),
     "subiquity": (
