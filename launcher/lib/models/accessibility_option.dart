@@ -34,7 +34,8 @@ class AccessibilityOption {
     required this.values,
     int currentIndex = 0,
   })  : assert(values.isNotEmpty),
-        _currentIndex = currentIndex;
+        assert(currentIndex >= 0 && currentIndex < values.length),
+        _currentIndex = currentIndex.clamp(0, values.length - 1);
 
   int get currentIndex => _currentIndex;
   String get currentValue => values[_currentIndex];
