@@ -14,6 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:ubuntu_frame_launcher/services/wayland_window_watcher.dart';
 import 'package:ubuntu_frame_launcher/controllers/window_controller.dart';
@@ -51,27 +53,46 @@ void main() async {
           getIt.get<WindowService>(), getIt.get<DesktopFileManager>()));
   getIt.registerLazySingleton<WindowController>(
       () => WindowController(getIt.get<WindowService>()));
+  final allOptions = {
+    'magnifier_enable': AccessibilityOption(
+      id: 'magnifier_enable',
+      label: 'Zoom',
+      icon: Icons.zoom_in,
+      values: ['true', 'false'],
+    ),
+    'output_filter': AccessibilityOption(
+      id: 'output_filter',
+      label: 'Screen Filter',
+      icon: Icons.filter_b_and_w,
+      values: ['none', 'grayscale', 'invert'],
+    ),
+    'cursor_scale': AccessibilityOption(
+      id: 'cursor_scale',
+      label: 'Cursor Scale',
+      icon: Icons.mouse_outlined,
+      values: ['1', '1.5', '2'],
+    ),
+  };
+
+  const optionsEnvKey = 'UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_OPTIONS';
+  final optionsEnv = Platform.environment[optionsEnvKey];
+  final List<AccessibilityOption> activeOptions;
+  if (optionsEnv != null && optionsEnv.isNotEmpty) {
+    activeOptions = [];
+    for (final id in optionsEnv.split(':')) {
+      final option = allOptions[id];
+      if (option != null) {
+        activeOptions.add(option);
+      } else {
+        logger.warning('$optionsEnvKey: unknown option "$id", skipping');
+      }
+    }
+  } else {
+    activeOptions = allOptions.values.toList();
+  }
+
   getIt.registerLazySingleton<AccessibilityController>(
-      () => AccessibilityController(options: [
-            AccessibilityOption(
-              id: 'magnifier_enable',
-              label: 'Zoom',
-              icon: Icons.zoom_in,
-              values: ['true', 'false'],
-            ),
-            AccessibilityOption(
-              id: 'output_filter',
-              label: 'Screen Filter',
-              icon: Icons.filter_b_and_w,
-              values: ['none', 'grayscale', 'invert'],
-            ),
-            AccessibilityOption(
-              id: 'cursor_scale',
-              label: 'Cursor Scale',
-              icon: Icons.mouse_outlined,
-              values: ['1', '1.5', '2'],
-            ),
-          ]));
+      () => AccessibilityController(options: activeOptions));
 
   await getIt.get<AccessibilityController>().initialize();
 
