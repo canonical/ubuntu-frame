@@ -29,8 +29,10 @@
 #include <miral/set_window_management_policy.h>
 #include <miral/wayland_extensions.h>
 
-#include <miral/config_aggregator.h>
+#include <miral/version.h>
 
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 8, 0)
+#include <miral/config_aggregator.h>
 #include <miral/config_file_store_adapter.h>
 #include <miral/live_config_ini_file.h>
 #include <miral/cursor_scale.h>
@@ -40,6 +42,7 @@
 
 #include <cstdlib>
 #include <filesystem>
+#endif
 
 int main(int argc, char const* argv[])
 {
@@ -56,6 +59,7 @@ int main(int argc, char const* argv[])
     runner.add_stop_callback([&] { background_client.stop(); });
     auto display_config = build_display_configuration(runner);
 
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 8, 0)
     miral::live_config::ConfigAggregator config_aggregator{};
     miral::ConfigFileStoreAdapter adapter{
         config_aggregator,
@@ -92,6 +96,7 @@ int main(int argc, char const* argv[])
         miral::ConfigFile::Mode::reload_on_change,
         [&adapter](auto args) { adapter(args); },
     };
+#endif
     return runner.run_with(
         {
             wayland_extensions,
@@ -119,8 +124,10 @@ int main(int argc, char const* argv[])
                 display_config),
             Keymap{},
             miral::Decorations::always_csd(),
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 8, 0)
             cursor_scale,
             output_filter,
-            magnifier
+            magnifier,
+#endif
         });
 }
