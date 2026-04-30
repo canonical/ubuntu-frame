@@ -169,28 +169,34 @@ class _AccessibilityButtonState extends State<AccessibilityButton>
               parent: _panelAnim,
               curve: const Interval(0.3, 1.0, curve: Curves.easeIn),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 4),
-                ..._controller.options.asMap().entries.map((entry) {
-                  final i = entry.key;
-                  final option = entry.value;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: FadeTransition(
-                      opacity: CurvedAnimation(
-                        parent: _optionAnims[i],
-                        curve: Curves.easeIn,
-                      ),
-                      child: _OptionButton(
-                        option: option,
-                        onTap: () => _controller.cycleForward(option),
-                        onLongPress: () => _controller.cycleBackward(option),
-                      ),
-                    ),
-                  );
-                }),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 4),
+                    ..._controller.options.asMap().entries.map((entry) {
+                      final i = entry.key;
+                      final option = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: FadeTransition(
+                          opacity: CurvedAnimation(
+                            parent: _optionAnims[i],
+                            curve: Curves.easeIn,
+                          ),
+                          child: _OptionButton(
+                            option: option,
+                            onTap: () => _controller.cycleForward(option),
+                            onLongPress: () =>
+                                _controller.cycleBackward(option),
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
               ],
             ),
           ),
