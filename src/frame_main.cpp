@@ -38,6 +38,9 @@
 #include <miral/magnifier.h>
 #include <miral/config_file.h>
 
+#include <cstdlib>
+#include <filesystem>
+
 int main(int argc, char const* argv[])
 {
     using namespace miral;
@@ -73,9 +76,19 @@ int main(int argc, char const* argv[])
     miral::OutputFilter output_filter{config_aggregator};
     miral::Magnifier magnifier{config_aggregator};
 
+    auto const xdg_config_home = []() -> std::filesystem::path
+    {
+        if (auto const* xdg = std::getenv("XDG_CONFIG_HOME"); xdg && *xdg)
+            return xdg;
+        if (auto const* home = std::getenv("HOME"); home && *home)
+            return std::filesystem::path{home} / ".config";
+        return ".config";
+    }();
+    auto const accessibility_config_path = xdg_config_home / "mir" / "accessibility.ini";
+
     miral::ConfigFile config_file{
         runner,
-        "/home/tarek.ismail@canonical.com/.config/mir/accessibility.ini",
+        accessibility_config_path,
         miral::ConfigFile::Mode::reload_on_change,
         [&adapter](auto args) { adapter(args); },
     };
