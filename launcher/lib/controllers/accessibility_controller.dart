@@ -33,6 +33,10 @@ class AccessibilityController {
 
   AccessibilityController({required this.options});
 
+  /// Pending write chain — each write is appended here so they are
+  /// executed strictly in order and never overlap.
+  Future<void> _writeFuture = Future.value();
+
   Stream<bool> getStream() => _controller.stream;
 
   final _accessibilityConfigKey =
@@ -97,30 +101,45 @@ class AccessibilityController {
 
   void cycleForward(AccessibilityOption option) {
     option.cycleForward();
-    _writeCurrentConfig();
+    _enqueueWrite();
   }
 
   void cycleBackward(AccessibilityOption option) {
     option.cycleBackward();
-    _writeCurrentConfig();
+    _enqueueWrite();
   }
 
-  Future<void> _writeCurrentConfig() async {
-    if (_configPath.isEmpty) {
-      return;
-    }
+  /// Snapshot the current option values and append an atomic write to the
+  /// serial queue. Any number of rapid calls will be ordered correctly
+  /// because each write is chained onto the previous one.
+  void _enqueueWrite() {
+    // Capture the values *now*, before any await, so the write reflects
+    // the state at the moment this cycle happened.
+    final snapshot = {for (final opt in options) opt.id: opt.currentValue};
+    _writeFuture = _writeFuture.then((_) => _writeSnapshot(snapshot));
+  }
+
+  Future<void> _writeSnapshot(Map<String, String> snapshot) async {
+    if (_configPath.isEmpty) return;
 
     final buffer = StringBuffer();
-    for (final opt in options) {
-      buffer.writeln('${opt.id} = ${opt.currentValue}');
+    for (final entry in snapshot.entries) {
+      buffer.writeln('${entry.key} = ${entry.value}');
     }
 
+    final target = File(_configPath);
+    final tmp = File('$_configPath.tmp');
     try {
-      final file = File(_configPath);
-      await file.parent.create(recursive: true);
-      await file.writeAsString(buffer.toString());
-    } catch (e) {
-      _logger.shout('Failed to write accessibility config to $_configPath: $e');
+      await target.parent.create(recursive: true);
+      await tmp.writeAsString(buffer.toString());
+      await tmp.rename(_configPath);
+    } catch (e, stackTrace) {
+      _logger.shout('Failed to write accessibility config to $_configPath', e,
+          stackTrace);
+      // Best-effort cleanup of the temp file.
+      try {
+        if (await tmp.exists()) await tmp.delete();
+      } catch (_) {}
     }
   }
 }
