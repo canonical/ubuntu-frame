@@ -42,8 +42,6 @@ class AccessibilityOption {
 
   Stream<String> getStream() => _controller.stream;
 
-  /// Sets the current value by matching [value] against [values].
-  /// Returns true if a match was found, false otherwise.
   void setValueFromString(String value) {
     final index = values.indexOf(value);
     if (index == -1) return;
