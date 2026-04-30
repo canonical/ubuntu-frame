@@ -127,45 +127,6 @@ class _AccessibilityButtonState extends State<AccessibilityButton>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // The expanding panel: size + fade wraps the option list.
-        SizeTransition(
-          sizeFactor: CurvedAnimation(
-            parent: _panelAnim,
-            curve: Curves.easeInOut,
-          ),
-          axisAlignment: -1.0,
-          child: FadeTransition(
-            opacity: CurvedAnimation(
-              parent: _panelAnim,
-              curve: const Interval(0.3, 1.0, curve: Curves.easeIn),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ..._controller.options.asMap().entries.map((entry) {
-                  final i = entry.key;
-                  final option = entry.value;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: FadeTransition(
-                      opacity: CurvedAnimation(
-                        parent: _optionAnims[i],
-                        curve: Curves.easeIn,
-                      ),
-                      child: _OptionButton(
-                        option: option,
-                        onTap: () => _controller.cycleForward(option),
-                        onLongPress: () => _controller.cycleBackward(option),
-                      ),
-                    ),
-                  );
-                }),
-                const SizedBox(height: 4),
-              ],
-            ),
-          ),
-        ),
-
         // The main accessibility icon button - always visible.
         StreamBuilder(
           stream: _controller.getStream(),
@@ -192,6 +153,45 @@ class _AccessibilityButtonState extends State<AccessibilityButton>
                 color: Colors.white,
                 size: 32,
               ),
+            ),
+          ),
+        ),
+
+        // The expanding panel: size + fade wraps the option list.
+        SizeTransition(
+          sizeFactor: CurvedAnimation(
+            parent: _panelAnim,
+            curve: Curves.easeInOut,
+          ),
+          axisAlignment: -1.0,
+          child: FadeTransition(
+            opacity: CurvedAnimation(
+              parent: _panelAnim,
+              curve: const Interval(0.3, 1.0, curve: Curves.easeIn),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 4),
+                ..._controller.options.asMap().entries.map((entry) {
+                  final i = entry.key;
+                  final option = entry.value;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: FadeTransition(
+                      opacity: CurvedAnimation(
+                        parent: _optionAnims[i],
+                        curve: Curves.easeIn,
+                      ),
+                      child: _OptionButton(
+                        option: option,
+                        onTap: () => _controller.cycleForward(option),
+                        onLongPress: () => _controller.cycleBackward(option),
+                      ),
+                    ),
+                  );
+                }),
+              ],
             ),
           ),
         ),
