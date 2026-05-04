@@ -16,44 +16,76 @@
 
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:ini/ini.dart';
 import 'package:logging/logging.dart';
 import 'package:ubuntu_frame_launcher/models/accessibility_option.dart';
 
 class AccessibilityController {
-  final _logger = Logger('AccessibilityController');
+  static final optionsEnvKey = 'UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_OPTIONS';
+  static final _accessibilityConfigKey =
+      "UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH";
+  static final allOptions = [
+    AccessibilityOption(
+      id: 'magnifier_enable',
+      icon: Icons.zoom_in,
+      values: ['true', 'false'],
+    ),
+    AccessibilityOption(
+      id: 'output_filter',
+      icon: Icons.filter_b_and_w,
+      values: ['none', 'grayscale', 'invert'],
+    ),
+    AccessibilityOption(
+      id: 'cursor_scale',
+      icon: Icons.mouse_outlined,
+      values: ['1', '1.5', '2'],
+    ),
+  ];
 
+  static final _logger = Logger('AccessibilityController');
   final List<AccessibilityOption> options;
 
-  AccessibilityController({required this.options});
+  AccessibilityController._({required this.options});
+
+  static List<AccessibilityOption> _getActiveOptions() {
+    final optionsEnv = Platform.environment[optionsEnvKey];
+
+    final List<AccessibilityOption> activeOptions;
+    if (optionsEnv != null && optionsEnv.isNotEmpty) {
+      activeOptions = [];
+      for (final id in optionsEnv.split(':')) {
+        final optionIndex = allOptions.indexWhere((o) => o.id == id);
+        if (optionIndex != -1) {
+          activeOptions.add(allOptions[optionIndex]);
+        } else {
+          _logger.warning('$optionsEnvKey: unknown option "$id", skipping');
+        }
+      }
+    } else {
+      activeOptions = allOptions;
+    }
+
+    return activeOptions;
+  }
 
   /// Pending write chain — each write is appended here so they are
   /// executed strictly in order and never overlap.
   Future<void> _writeFuture = Future.value();
 
-  final _accessibilityConfigKey =
-      "UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH";
-
-  /// The path at which the accessibility INI file is written. Reads the
-  /// [UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH] environment variable;
-  /// returns an empty string (disabling file I/O) if the variable is not set.
-  String get _configPath => Platform.environment[_accessibilityConfigKey] ?? '';
-
-  /// Reads the accessibility config file on disk and sets each option's
-  /// current value. Options absent from the file, or with an unrecognised
-  /// value, are left at their default (index 0).
-  Future<void> initialize() async {
-    if (_configPath.isEmpty) {
+  static Future<List<AccessibilityOption>> _loadActiveOptionValues(
+      List<AccessibilityOption> activeOptions, String configPath) async {
+    if (configPath.isEmpty) {
       _logger.warning(
           '$_accessibilityConfigKey is not set; skipping startup read');
-      return;
+      return activeOptions;
     }
 
-    final file = File(_configPath);
+    final file = File(configPath);
     if (!await file.exists()) {
-      _logger.info('No accessibility config file found at $_configPath; '
+      _logger.info('No accessibility config file found at $configPath; '
           'all options will use their defaults');
-      return;
+      return activeOptions;
     }
 
     final Map<String, String> storedValues = {};
@@ -65,12 +97,12 @@ class AccessibilityController {
         storedValues[key] = config.get(section, key)!;
       }
     } catch (e, stackTrace) {
-      _logger.shout('Failed to read accessibility config from $_configPath', e,
+      _logger.shout('Failed to read accessibility config from $configPath', e,
           stackTrace);
-      return;
+      return activeOptions;
     }
 
-    for (final option in options) {
+    for (final option in activeOptions) {
       final stored = storedValues[option.id];
       if (stored == null) {
         _logger
@@ -79,6 +111,23 @@ class AccessibilityController {
       }
       option.setValueFromString(stored);
     }
+
+    return activeOptions;
+  }
+
+  /// The path at which the accessibility INI file is written. Reads the
+  /// [UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH] environment variable;
+  /// returns an empty string (disabling file I/O) if the variable is not set.
+  static String get _configPath =>
+      Platform.environment[_accessibilityConfigKey] ?? '';
+
+  /// Reads the accessibility config file on disk and sets each option's
+  /// current value. Options absent from the file, or with an unrecognised
+  /// value, are left at their default (index 0).
+  static Future<AccessibilityController> create() async {
+    final activeOptions = _loadActiveOptionValues(
+        AccessibilityController._getActiveOptions(), _configPath);
+    return AccessibilityController._(options: await activeOptions);
   }
 
   void cycleForward(AccessibilityOption option) {
