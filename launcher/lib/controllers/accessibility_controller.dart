@@ -14,7 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'dart:async';
 import 'dart:io';
 
 import 'package:ini/ini.dart';
@@ -24,20 +23,13 @@ import 'package:ubuntu_frame_launcher/models/accessibility_option.dart';
 class AccessibilityController {
   final _logger = Logger('AccessibilityController');
 
-  bool _isExpanded = false;
-  bool get isExpanded => _isExpanded;
-
   final List<AccessibilityOption> options;
-
-  final _controller = StreamController<bool>.broadcast();
 
   AccessibilityController({required this.options});
 
   /// Pending write chain — each write is appended here so they are
   /// executed strictly in order and never overlap.
   Future<void> _writeFuture = Future.value();
-
-  Stream<bool> getStream() => _controller.stream;
 
   final _accessibilityConfigKey =
       "UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH";
@@ -87,16 +79,6 @@ class AccessibilityController {
       }
       option.setValueFromString(stored);
     }
-  }
-
-  void expand() {
-    _isExpanded = true;
-    _controller.add(true);
-  }
-
-  void collapse() {
-    _isExpanded = false;
-    _controller.add(false);
   }
 
   void cycleForward(AccessibilityOption option) {
