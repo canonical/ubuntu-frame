@@ -24,18 +24,12 @@ import 'package:ubuntu_frame_launcher/views/stream_builder_with_future_initial_v
 const double _dockWidthPx = 70;
 const _dockPadding = EdgeInsets.fromLTRB(3, 6, 3, 6);
 
-class Dock extends StatefulWidget {
+class Dock extends StatelessWidget {
   const Dock({super.key});
 
   @override
-  State<Dock> createState() => _DockState();
-}
-
-class _DockState extends State<Dock> {
-  final _applicationController = GetIt.instance.get<ApplicationController>();
-
-  @override
   Widget build(BuildContext context) {
+    final applicationController = GetIt.instance.get<ApplicationController>();
     return Expanded(
       child: Container(
         color: Colors.black,
@@ -45,8 +39,8 @@ class _DockState extends State<Dock> {
           children: [
             Expanded(
               child: StreamBuilderWithFutureInitialValue(
-                  future: _applicationController.getOpenApplications(),
-                  stream: _applicationController.getOpenedAppsStream(),
+                  future: applicationController.getOpenApplications(),
+                  stream: applicationController.getOpenedAppsStream(),
                   loader: const Row(),
                   builder: (context, openedApps) {
                     List<Widget> dockButtons = [];
