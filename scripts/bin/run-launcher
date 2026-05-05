@@ -1,0 +1,15 @@
+#!/bin/bash
+set -eu
+
+# Prepare the accessibility config file in XDG_RUNTIME_DIR
+accessibility_config="${XDG_RUNTIME_DIR}/ubuntu-frame-launcher/accessibility.ini"
+mkdir -p "$(dirname "${accessibility_config}")"
+touch "${accessibility_config}"
+
+export UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH="${accessibility_config}"
+
+# Translate launcher.tail snap config into the env var the launcher reads
+launcher_tail="$(snapctl get launcher.tail)"
+export UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_OPTIONS="${launcher_tail}"
+
+exec "$@"

@@ -80,15 +80,13 @@ int main(int argc, char const* argv[])
     miral::OutputFilter output_filter{config_aggregator};
     miral::Magnifier magnifier{config_aggregator};
 
-    auto const xdg_config_home = []() -> std::filesystem::path
+    auto const xdg_runtime_dir = []() -> std::filesystem::path
     {
-        if (auto const* xdg = std::getenv("XDG_CONFIG_HOME"); xdg && *xdg)
+        if (auto const* xdg = std::getenv("XDG_RUNTIME_DIR"); xdg && *xdg)
             return xdg;
-        if (auto const* home = std::getenv("HOME"); home && *home)
-            return std::filesystem::path{home} / ".config";
-        return ".config";
+        return std::filesystem::temp_directory_path();
     }();
-    auto const accessibility_config_path = xdg_config_home / "mir" / "accessibility.ini";
+    auto const accessibility_config_path = xdg_runtime_dir / "ubuntu-frame-launcher" / "accessibility.ini";
 
     miral::ConfigFile config_file{
         runner,

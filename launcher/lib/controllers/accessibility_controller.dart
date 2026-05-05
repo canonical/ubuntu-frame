@@ -164,6 +164,7 @@ class AccessibilityController {
     if (_configPath.isEmpty) return;
 
     final buffer = StringBuffer();
+    buffer.writeln('[default]');
     for (final entry in snapshot.entries) {
       buffer.writeln('${entry.key} = ${entry.value}');
     }

@@ -111,6 +111,25 @@ else
   snapctl stop --disable "$SNAP_INSTANCE_NAME.daemon" 2>&1 || true
 fi
 
+# Validate launcher.tail option
+launcher_tail="$(snapctl get launcher.tail)"
+validate_launcher_tail() {
+  local tail="$1"
+  [ -z "$tail" ] && return 0
+  local IFS=','
+  for element in $tail; do
+    case "$element" in
+      magnifier|cursor-scale|output-filter) ;;
+      *) return 1 ;;
+    esac
+  done
+  return 0
+}
+if ! validate_launcher_tail "$launcher_tail"; then
+  echo "ERROR: launcher.tail must be a comma-separated list of zero or more of: magnifier, cursor-scale, output-filter"
+  exit 1
+fi
+
 # Start or stop the launcher
 if [ "$(snapctl get launcher)" = "true" ]; then
   ARCH=$(uname -m)
