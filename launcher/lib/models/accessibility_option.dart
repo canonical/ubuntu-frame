@@ -18,15 +18,22 @@ import 'package:flutter/material.dart';
 
 class AccessibilityOption {
   final String id;
+
+  /// The key used when writing/reading this option's value in the Mir
+  /// accessibility config override file. Defaults to [id] if not provided.
+  final String configKey;
+
   final IconData icon;
   final List<String> values;
   int _currentIndex = 0;
 
   AccessibilityOption({
     required this.id,
+    String? configKey,
     required this.icon,
     required this.values,
-  }) : assert(values.isNotEmpty);
+  })  : configKey = configKey ?? id,
+        assert(values.isNotEmpty);
 
   String get currentValue => values[_currentIndex];
 

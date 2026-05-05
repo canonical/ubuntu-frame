@@ -27,17 +27,20 @@ class AccessibilityController {
       "UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH";
   static final allOptions = [
     AccessibilityOption(
-      id: 'magnifier_enable',
+      id: 'magnifier',
+      configKey: 'magnifier_enable',
       icon: Icons.zoom_in,
       values: ['true', 'false'],
     ),
     AccessibilityOption(
-      id: 'output_filter',
+      id: 'output-filter',
+      configKey: 'output_filter',
       icon: Icons.filter_b_and_w,
       values: ['none', 'grayscale', 'invert'],
     ),
     AccessibilityOption(
-      id: 'cursor_scale',
+      id: 'cursor-scale',
+      configKey: 'cursor_scale',
       icon: Icons.ads_click_outlined,
       values: ['1', '1.5', '2'],
     ),
@@ -105,7 +108,7 @@ class AccessibilityController {
     }
 
     for (final option in activeOptions) {
-      final stored = storedValues[option.id];
+      final stored = storedValues[option.configKey];
       if (stored == null) {
         _logger
             .info('Option "${option.id}" not found in config; keeping default');
@@ -152,7 +155,7 @@ class AccessibilityController {
   void _enqueueWrite() {
     // Capture the values *now*, before any await, so the write reflects
     // the state at the moment this cycle happened.
-    final snapshot = {for (final opt in options) opt.id: opt.currentValue};
+    final snapshot = {for (final opt in options) opt.configKey: opt.currentValue};
     _writeFuture = _writeFuture.then((_) => _writeSnapshot(snapshot));
   }
 
