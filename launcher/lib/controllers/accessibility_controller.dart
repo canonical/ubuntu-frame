@@ -38,7 +38,7 @@ class AccessibilityController {
     ),
     AccessibilityOption(
       id: 'cursor_scale',
-      icon: Icons.mouse_outlined,
+      icon: Icons.ads_click_outlined,
       values: ['1', '1.5', '2'],
     ),
   ];
