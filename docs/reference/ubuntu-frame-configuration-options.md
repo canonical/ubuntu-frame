@@ -82,6 +82,7 @@ $ snap set ubuntu-frame launcher='{ "tail": [ "magnifier", "cursor-scale" ] }'
 ```
 
 Once set to an object, you can also access / modify it via the `launcher.tail` key as a comma-separated list:
+
 ```
 # Show all accessibility options
 $ snap set ubuntu-frame launcher.tail=magnifier,cursor-scale,output-filter
