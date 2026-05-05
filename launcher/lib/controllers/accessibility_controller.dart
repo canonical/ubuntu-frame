@@ -51,24 +51,30 @@ class AccessibilityController {
   static List<AccessibilityOption> _getActiveOptions() {
     final optionsEnv = Platform.environment[optionsEnvKey];
 
-    final List<AccessibilityOption> activeOptions;
-    if (optionsEnv != null && optionsEnv.isNotEmpty) {
-      activeOptions = [];
-      for (final id in optionsEnv.split(':')) {
-        final optionIndex = allOptions.indexWhere((o) => o.id == id);
-        if (optionIndex != -1) {
-          activeOptions.add(allOptions[optionIndex]);
-        } else {
-          _logger.warning('$optionsEnvKey: unknown option "$id", skipping');
-        }
+    // Not set, show all
+    if (optionsEnv == null) {
+      return allOptions;
+    }
+
+    // Set to be explicitly empty
+    if (optionsEnv.isEmpty) {
+      return [];
+    }
+
+    List<AccessibilityOption> activeOptions = [];
+
+    for (final id in optionsEnv.split(':')) {
+      final optionIndex = allOptions.indexWhere((o) => o.id == id);
+      if (optionIndex != -1) {
+        activeOptions.add(allOptions[optionIndex]);
+      } else {
+        _logger.warning('$optionsEnvKey: unknown option "$id", skipping');
       }
-      if (activeOptions.isEmpty) {
-        _logger.warning(
-            '$optionsEnvKey: no valid options found in "$optionsEnv", showing all options');
-        return allOptions;
-      }
-    } else {
-      activeOptions = allOptions;
+    }
+    if (activeOptions.isEmpty) {
+      _logger.warning(
+          '$optionsEnvKey: no valid options found in "$optionsEnv", showing all options');
+      return allOptions;
     }
 
     return activeOptions;
