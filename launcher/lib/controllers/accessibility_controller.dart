@@ -63,7 +63,7 @@ class AccessibilityController {
 
     List<AccessibilityOption> activeOptions = [];
 
-    for (final id in optionsEnv.split(':')) {
+    for (final id in optionsEnv.split(',')) {
       final optionIndex = allOptions.indexWhere((o) => o.id == id);
       if (optionIndex != -1) {
         activeOptions.add(allOptions[optionIndex]);
