@@ -79,12 +79,15 @@ The launcher also supports an accessibility panel at the bottom. To enable it, p
 ```bash
 # Show only the magnifier and cursor scale options
 $ snap set ubuntu-frame launcher='{ "tail": [ "magnifier", "cursor-scale" ] }'
+```
 
+Once set to an object, you can also access / modify it via the `launcher.tail` key as a comma-separated list:
+```
 # Show all accessibility options
-$ snap set ubuntu-frame launcher='{ "tail": [ "magnifier", "cursor-scale", "output-filter" ] }'
+$ snap set ubuntu-frame launcher.tail=magnifier,cursor-scale,output-filter
 
 # Disable the accessibility panel (empty tail)
-$ snap set ubuntu-frame launcher='{ "tail": [] }'
+$ snap set ubuntu-frame launcher.tail=
 ```
 
 ### `config`
