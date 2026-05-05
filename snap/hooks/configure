@@ -111,8 +111,27 @@ else
   snapctl stop --disable "$SNAP_INSTANCE_NAME.daemon" 2>&1 || true
 fi
 
-# Validate launcher.tail option
-launcher_tail="$(snapctl get launcher.tail)"
+# Validate and process launcher option
+# launcher can be: "true", "false", or a JSON object e.g. {"tail":["magnifier","cursor-scale"]}
+# When set as an object, snapctl exposes launcher.tail as a comma-separated list already.
+launcher_val="$(snapctl get launcher)"
+launcher_enabled=false
+case "$launcher_val" in
+  true)
+    launcher_enabled=true
+    ;;
+  false|"")
+    launcher_enabled=false
+    ;;
+  {*)
+    launcher_enabled=true
+    ;;
+  *)
+    echo "ERROR: launcher must be true, false, or a JSON object"
+    exit 1
+    ;;
+esac
+
 validate_launcher_tail() {
   local tail="$1"
   [ -z "$tail" ] && return 0
@@ -125,13 +144,14 @@ validate_launcher_tail() {
   done
   return 0
 }
+launcher_tail="$(snapctl get launcher.tail)"
 if ! validate_launcher_tail "$launcher_tail"; then
-  echo "ERROR: launcher.tail must be a comma-separated list of zero or more of: magnifier, cursor-scale, output-filter"
+  echo "ERROR: launcher.tail must be a list of zero or more of: magnifier, cursor-scale, output-filter"
   exit 1
 fi
 
 # Start or stop the launcher
-if [ "$(snapctl get launcher)" = "true" ]; then
+if [ "$launcher_enabled" = "true" ]; then
   ARCH=$(uname -m)
   if [[ "$ARCH" != @(x86_64*|i*86|aarch64) ]]; then
     echo "Cannot enable the launcher on $ARCH system"
