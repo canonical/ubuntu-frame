@@ -24,7 +24,7 @@ import 'package:ubuntu_frame_launcher/models/accessibility_option.dart';
 class AccessibilityController {
   static const optionsEnvKey = 'UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_OPTIONS';
   static const _accessibilityConfigKey =
-      "UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH";
+      "UBUNTU_FRAME_ACCESSIBILITY_CONFIG_PATH";
   static final allOptions = [
     AccessibilityOption(
       id: 'magnifier',
@@ -122,7 +122,7 @@ class AccessibilityController {
   }
 
   /// The path at which the accessibility INI file is written. Reads the
-  /// [UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH] environment variable;
+  /// [UBUNTU_FRAME_ACCESSIBILITY_CONFIG_PATH] environment variable;
   /// returns an empty string (disabling file I/O) if the variable is not set.
   static String get _configPath =>
       Platform.environment[_accessibilityConfigKey] ?? '';

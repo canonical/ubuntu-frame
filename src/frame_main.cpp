@@ -71,15 +71,16 @@ int main(int argc, char const* argv[])
     miral::OutputFilter output_filter{ini_files};
     miral::Magnifier magnifier{ini_files};
 
-    auto const xdg_config_home = []() -> std::filesystem::path
+    auto const accessibility_config_path = []() -> std::filesystem::path
     {
+        if (auto const* env_path = std::getenv("UBUNTU_FRAME_ACCESSIBILITY_CONFIG_PATH"); env_path && *env_path)
+            return env_path;
         if (auto const* xdg = std::getenv("XDG_CONFIG_HOME"); xdg && *xdg)
-            return xdg;
+            return std::filesystem::path{xdg} / "mir" / "accessibility.ini";
         if (auto const* home = std::getenv("HOME"); home && *home)
-            return std::filesystem::path{home} / ".config";
-        return ".config";
+            return std::filesystem::path{home} / ".config" / "mir" / "accessibility.ini";
+        return ".config/mir/accessibility.ini";
     }();
-    auto const accessibility_config_path = xdg_config_home / "mir" / "accessibility.ini";
 
     miral::ConfigFile config_file{
         runner, accessibility_config_path,
