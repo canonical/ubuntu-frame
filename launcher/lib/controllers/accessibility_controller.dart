@@ -74,10 +74,6 @@ class AccessibilityController {
     return activeOptions;
   }
 
-  /// Pending write chain — each write is appended here so they are
-  /// executed strictly in order and never overlap.
-  Future<void> _writeFuture = Future.value();
-
   static Future<List<AccessibilityOption>> _loadActiveOptionValues(
       List<AccessibilityOption> activeOptions, String configPath) async {
     if (configPath.isEmpty) {
@@ -144,6 +140,10 @@ class AccessibilityController {
     option.cycleBackward();
     _enqueueWrite();
   }
+
+  /// Pending write chain — each write is appended here so they are
+  /// executed strictly in order and never overlap.
+  Future<void> _writeFuture = Future.value();
 
   /// Snapshot the current option values and append an atomic write to the
   /// serial queue. Any number of rapid calls will be ordered correctly
