@@ -71,11 +71,6 @@ class AccessibilityController {
         _logger.warning('$optionsEnvKey: unknown option "$id", skipping');
       }
     }
-    if (activeOptions.isEmpty) {
-      _logger.warning(
-          '$optionsEnvKey: no valid options found in "$optionsEnv", showing all options');
-      return allOptions;
-    }
 
     return activeOptions;
   }
