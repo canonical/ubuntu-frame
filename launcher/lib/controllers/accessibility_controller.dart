@@ -96,6 +96,8 @@ class AccessibilityController {
     try {
       final contents = await file.readAsString();
       final config = Config.fromString(contents);
+      // The ini parsing library we use puts everything not under a section into
+      // the 'default' section. It will always exist.
       const section = 'default';
       for (final key in config.options(section)!) {
         storedValues[key] = config.get(section, key)!;
