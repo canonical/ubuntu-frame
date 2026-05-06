@@ -64,8 +64,7 @@ class AccessibilityController {
       return [];
     }
 
-    List<AccessibilityOption> activeOptions = [];
-
+    var activeOptions = <AccessibilityOption>[];
     for (final id in optionsEnv.split(',')) {
       final optionIndex = allOptions.indexWhere((o) => o.id == id);
       if (optionIndex != -1) {
