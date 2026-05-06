@@ -22,8 +22,8 @@ import 'package:logging/logging.dart';
 import 'package:ubuntu_frame_launcher/models/accessibility_option.dart';
 
 class AccessibilityController {
-  static final optionsEnvKey = 'UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_OPTIONS';
-  static final _accessibilityConfigKey =
+  static const optionsEnvKey = 'UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_OPTIONS';
+  static const _accessibilityConfigKey =
       "UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_CONFIG_PATH";
   static final allOptions = [
     AccessibilityOption(
