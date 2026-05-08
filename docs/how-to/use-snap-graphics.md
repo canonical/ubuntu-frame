@@ -60,14 +60,14 @@ Please check out the code for your specific extension [here](https://github.com/
 
 {#gpu-2404-x11-layouts}
 
-1. If your app needs X11 support, {doc}`lay out <snapcraft:reference/layouts>` these paths in your snap:
+1. If your app needs X11 support, {ref}`lay out <snapcraft:reference-layouts>` these paths in your snap:
 
    ```yaml
      /usr/share/X11/XErrorDB:
        symlink: $SNAP/gpu-2404/X11/XErrorDB
    ```
 
-1. use [`bin/gpu-2404-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-wrapper) in your <code>{doc}`command-chain <snapcraft:reference/project-file/snapcraft-yaml>`</code>s:
+1. use [`bin/gpu-2404-wrapper`](https://github.com/canonical/gpu-snap/blob/main/bin/gpu-2404-wrapper) in your <code>{ref}`command-chain <snapcraft:app.command_chain>`</code>s:
 
    ```yaml
    apps:
