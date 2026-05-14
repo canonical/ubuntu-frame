@@ -14,14 +14,14 @@ repos:
   - id: check-added-large-files
 
 - repo: https://github.com/zizmorcore/zizmor-pre-commit
-  rev: ea2eb407b4cbce87cf0d502f36578950494f5ac9  # frozen: v1.23.1
+  rev: 122913fcf3aa27fa6867c902c3e803b7bff22d28  # frozen: v1.25.0
   hooks:
   - id: zizmor
     args:
     - --fix
 
 - repo: https://github.com/executablebooks/mdformat
-  rev: 2d496dbc18e31b83a1596685347ffe0b6041daf0  # frozen: 1.0.0
+  rev: 82912cdaea4fb830f751504486a7879c70526547  # frozen: 1.0.0
   hooks:
   - id: mdformat
     additional_dependencies:
@@ -32,7 +32,7 @@ repos:
     - setuptools # Necessary until beautysh fix their stuff, see: https://github.com/hukkin/mdformat/issues/442
 
 - repo: https://github.com/jackdewinter/pymarkdown
-  rev: 6d3c1b70d44ea2202b23552af93aca3b5017ee83  # frozen: v0.9.36
+  rev: 491b8945442244c6b03028a96e9a8bde9ad63400  # frozen: v0.9.37
   hooks:
   - id: pymarkdown
     alias: pymarkdown-fix
