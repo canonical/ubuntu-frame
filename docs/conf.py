@@ -246,6 +246,7 @@ linkcheck_ignore = [
     "https://www.freedesktop.org/", # has bot protections in place
     "https://www.winehq.org/", # has bot protections in place
     "https://gitlab.gnome.org/",
+    "https://registry.khronos.org/", # 403, likely bot protections
     ]
 
 
