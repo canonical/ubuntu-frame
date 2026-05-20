@@ -64,7 +64,7 @@ $ snap connect ubuntu-frame:desktop-launch
 $ snap set ubuntu-frame launcher=true
 ```
 
-Make sure that the applications you want to run are annotated with metadata and icons appropriately, see Snapcraft's {doc}`snapcraft:how-to/crafting/configure-package-information` documentation to get your app icons to display.
+Make sure that the applications you want to run are annotated with metadata and icons appropriately, see Snapcraft's {ref}`snapcraft:how-to-configure-package-information` documentation to get your app icons to display.
 
 ```{tip}
 Since version **211**, you can use `Mir` or `UbuntuFrame` in [`OnlyShowIn=` and `NotShowIn=`](https://specifications.freedesktop.org/desktop-entry-spec/latest/recognized-keys.html) to control visibility of the icon on different environments. This is useful to hide the daemon app in snaps that are also useful outside of the Frame ecosystem.
