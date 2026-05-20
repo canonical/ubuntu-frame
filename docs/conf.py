@@ -246,6 +246,7 @@ linkcheck_ignore = [
     "https://www.freedesktop.org/", # has bot protections in place
     "https://www.winehq.org/", # has bot protections in place
     "https://gitlab.gnome.org/",
+    "https://registry.khronos.org/", # 403, likely bot protections
     ]
 
 
@@ -391,7 +392,7 @@ intersphinx_mapping = {
     "mir-latest": ("https://canonical.com/mir/docs/latest", None),
     "core": ("https://documentation.ubuntu.com/core", None),
     "frame-22": ("https://ubuntu.com/frame/docs/22", None),
-    "server": ("https://documentation.ubuntu.com/server", None),
+    "server": ("https://ubuntu.com/server/docs", None),
     "snapcraft": ("https://documentation.ubuntu.com/snapcraft/stable", None),
     "subiquity": (
         "https://canonical-subiquity.readthedocs-hosted.com/en/latest",
