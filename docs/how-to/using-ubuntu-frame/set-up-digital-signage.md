@@ -48,7 +48,7 @@ sudo snap install ubuntu-frame wpe-webkit-mir-kiosk
    Now, let's hide the cursor and point the renderer at Dashkiosk:
 
    ```shell
-   sudo snap set ubuntu-frame "cursor=null"
+   sudo snap set ubuntu-frame config="cursor=null"
    sudo snap set wpe-webkit-mir-kiosk url=http://localhost:9400/receiver
    ```
 
