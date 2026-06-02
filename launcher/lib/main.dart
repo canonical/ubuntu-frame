@@ -23,11 +23,16 @@ import 'package:get_it/get_it.dart';
 import 'views/dock.dart';
 import 'controllers/application_controller.dart';
 import 'package:logging/logging.dart';
+import 'package:ubuntu_frame_launcher/controllers/accessibility_controller.dart';
 
 void main() async {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
   Logger.root.onRecord.listen((record) {
     print('${record.level.name}: ${record.time}: ${record.message}');
+    if (record.error != null) print('  Error: ${record.error}');
+    if (record.stackTrace != null) {
+      print('  Stack trace:\n${record.stackTrace}');
+    }
   });
 
   final logger = Logger("main");
@@ -47,6 +52,10 @@ void main() async {
   getIt.registerLazySingleton<WindowController>(
       () => WindowController(getIt.get<WindowService>()));
 
+  getIt.registerSingletonAsync<AccessibilityController>(
+      () => AccessibilityController.create());
+
+  await getIt.allReady();
   runApp(const LauncherApp());
 }
 
