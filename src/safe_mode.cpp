@@ -36,9 +36,11 @@ namespace
         bool diagnostic_written = false;
         if(std::ofstream diagnostic{diagnostic_path})
         {
-            diagnostic << "Ubuntu Frame is running in safe mode after error:\n\n"
+            diagnostic << "Safe mode: This device could not start normally due to a configuration error:\n\n"
                     << error_message << "\n\n"
-                    << "Please contact support";
+                    << "To restore normal operation please:\n"
+                    << "  * correct the configuration; or,\n"
+                    << "  * contact the person who manages this device.";
             diagnostic_written = true;
         }
         else
