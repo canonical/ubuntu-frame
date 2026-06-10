@@ -20,6 +20,7 @@
 #include "frame_authorization.h"
 #include "frame_window_manager.h"
 #include "display_configuration_builder.h"
+#include "safe_mode.h"
 
 #include <miral/configuration_option.h>
 #include <miral/decorations.h>
@@ -32,9 +33,14 @@
 int main(int argc, char const* argv[])
 {
     using namespace miral;
-    MirRunner runner{argc, argv};
+    // In safe mode use a known-good minimal config
+    // to avoid re-parsing the broken config file
+    MirRunner runner = getenv(safe_mode_env) ?
+    MirRunner{argc, argv, "frame.safe-config"} :
+    MirRunner{argc, argv};
     WindowManagerObserver window_manager_observer{};
 
+    enable_safe_mode(argv, runner);
 
     WaylandExtensions wayland_extensions;
     init_authorization(wayland_extensions, auth_model);

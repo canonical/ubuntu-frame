@@ -41,6 +41,7 @@ pkg_check_modules(APPARMOR libapparmor REQUIRED IMPORTED_TARGET)
 pkg_check_modules(FREETYPE freetype2 REQUIRED IMPORTED_TARGET)
 
 add_library(frame-implementation
+    safe_mode.cpp safe_mode.h
     frame_authorization.cpp frame_authorization.h
     frame_window_manager.cpp frame_window_manager.h
     egfullscreenclient.cpp egfullscreenclient.h
