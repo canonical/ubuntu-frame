@@ -30,6 +30,20 @@
 #include <miral/set_window_management_policy.h>
 #include <miral/wayland_extensions.h>
 
+#include <miral/version.h>
+
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 9, 0)
+#include <miral/live_config_ini_file.h>
+#include <miral/cursor_scale.h>
+#include <miral/output_filter.h>
+#include <miral/magnifier.h>
+#include <miral/config_file.h>
+#include <miral/live_config_ini_file_with_overrides.h>
+
+#include <cstdlib>
+#include <filesystem>
+#endif
+
 int main(int argc, char const* argv[])
 {
     using namespace miral;
@@ -50,6 +64,32 @@ int main(int argc, char const* argv[])
     runner.add_stop_callback([&] { background_client.stop(); });
     auto display_config = build_display_configuration(runner);
 
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 9, 0)
+    miral::live_config::IniFileWithOverrides ini_files;
+
+    miral::CursorScale cursor_scale{ini_files};
+    miral::OutputFilter output_filter{ini_files};
+    miral::Magnifier magnifier{ini_files};
+
+    auto const accessibility_config_path = []() -> std::filesystem::path
+    {
+        if (auto const* env_path = std::getenv("UBUNTU_FRAME_ACCESSIBILITY_CONFIG_PATH"); env_path && *env_path)
+            return env_path;
+        if (auto const* xdg = std::getenv("XDG_CONFIG_HOME"); xdg && *xdg)
+            return std::filesystem::path{xdg} / "mir" / "accessibility.ini";
+        if (auto const* home = std::getenv("HOME"); home && *home)
+            return std::filesystem::path{home} / ".config" / "mir" / "accessibility.ini";
+        return ".config/mir/accessibility.ini";
+    }();
+
+    miral::ConfigFile config_file{
+        runner, accessibility_config_path,
+        miral::ConfigFile::Mode::reload_on_change,
+        [&ini_files](miral::live_config::OverridesList const &overrides) {
+          ini_files.load(overrides);
+        },
+        ".ini"};
+#endif
     return runner.run_with(
         {
             wayland_extensions,
@@ -76,6 +116,11 @@ int main(int argc, char const* argv[])
                 window_manager_observer,
                 display_config),
             Keymap{},
-            miral::Decorations::always_csd()
+            miral::Decorations::always_csd(),
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 9, 0)
+            cursor_scale,
+            output_filter,
+            magnifier,
+#endif
         });
 }

@@ -19,7 +19,11 @@ ______________________________________________________________________
 There are four snap configuration options:
 
 - `daemon=[true|false]` enables the daemon (defaults to true on Ubuntu Core and false on classic systems)
-- `launcher=[true|false]` enables a side bar application switcher if your solution calls for that
+- `launcher=[true|false|<object>]` enables a side bar application switcher if your solution calls for that;
+  if set to an object, the following will add one or more accessibility options at the bottom of it:
+  ```json
+  { "tail": ["magnifier", "cursor-scale", "output-filter"] }
+  ```
 - `config=<contents for frame.config>`
 - `display=<contents for frame.display>`
 
@@ -68,6 +72,23 @@ Make sure that the applications you want to run are annotated with metadata and 
 
 ```{tip}
 Since version **211**, you can use `Mir` or `UbuntuFrame` in [`OnlyShowIn=` and `NotShowIn=`](https://specifications.freedesktop.org/desktop-entry-spec/latest/recognized-keys.html) to control visibility of the icon on different environments. This is useful to hide the daemon app in snaps that are also useful outside of the Frame ecosystem.
+```
+
+The launcher also supports an accessibility panel at the bottom. To enable it, pass a JSON object with a `tail` array containing any combination of `magnifier`, `cursor-scale`, and `output-filter`:
+
+```bash
+# Show only the magnifier and cursor scale options
+$ snap set ubuntu-frame launcher='{ "tail": [ "magnifier", "cursor-scale" ] }'
+```
+
+Once set to an object, you can also access / modify it via the `launcher.tail` key as a comma-separated list:
+
+```
+# Show all accessibility options
+$ snap set ubuntu-frame launcher.tail=magnifier,cursor-scale,output-filter
+
+# Disable the accessibility panel (empty tail)
+$ snap set ubuntu-frame launcher.tail=
 ```
 
 ### `config`

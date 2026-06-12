@@ -25,6 +25,8 @@ environment:
   # Setup diagnostic
   MIR_SERVER_DIAGNOSTIC_PATH: $SNAP_COMMON/diagnostic/diagnostic.txt
   XDG_CURRENT_DESKTOP: UbuntuFrame:Mir
+  # Shared accessibility config path between frame and launcher
+  UBUNTU_FRAME_ACCESSIBILITY_CONFIG_PATH: $SNAP_COMMON/accessibility.ini
 
 layout:
   /usr/share/icons:
@@ -55,6 +57,7 @@ apps:
 
   launcher:
     command-chain:
+      - bin/run-launcher
       - bin/wayland-launch
       - bin/gpu-2404-wrapper
     command: ubuntu_frame_launcher
