@@ -1,0 +1,9 @@
+#!/bin/bash
+set -eu
+
+# Translate launcher.tail snap config into the env var the launcher reads.
+# snapctl get launcher.tail already returns a comma-separated list.
+launcher_tail="$(snapctl get launcher.tail)"
+export UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_OPTIONS="${launcher_tail}"
+
+exec "$@"

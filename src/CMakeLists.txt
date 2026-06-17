@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.24)
 project(ubuntu-frame)
 include(FindPkgConfig)
 include(CMakeDependentOption)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
@@ -41,6 +41,7 @@ pkg_check_modules(APPARMOR libapparmor REQUIRED IMPORTED_TARGET)
 pkg_check_modules(FREETYPE freetype2 REQUIRED IMPORTED_TARGET)
 
 add_library(frame-implementation
+    safe_mode.cpp safe_mode.h
     frame_authorization.cpp frame_authorization.h
     frame_window_manager.cpp frame_window_manager.h
     egfullscreenclient.cpp egfullscreenclient.h

@@ -25,6 +25,8 @@ environment:
   # Setup diagnostic
   MIR_SERVER_DIAGNOSTIC_PATH: $SNAP_COMMON/diagnostic/diagnostic.txt
   XDG_CURRENT_DESKTOP: UbuntuFrame:Mir
+  # Shared accessibility config path between frame and launcher
+  UBUNTU_FRAME_ACCESSIBILITY_CONFIG_PATH: $SNAP_COMMON/accessibility.ini
 
 layout:
   /usr/share/icons:
@@ -53,6 +55,7 @@ apps:
 
   launcher:
     command-chain:
+      - bin/run-launcher
       - bin/wayland-launch
       - bin/gpu-2604-wrapper
     command: ubuntu-frame-launcher/ubuntu_frame_launcher
@@ -121,7 +124,7 @@ parts:
       # work around https://github.com/diddlesnaps/snapcraft-multiarch-action/issues/22
       git config --global --add safe.directory ${CRAFT_PROJECT_DIR}
       recipe_version=`git -C ${CRAFT_PROJECT_DIR} rev-list --count HEAD`
-      craftctl set version=$recipe_version-mir$mir_version
+      craftctl set version=frame$recipe_version-mir$mir_version
       if echo $mir_version | grep -e '+dev' -e '~rc' -q; then craftctl set grade=devel; else craftctl set grade=stable; fi
     plugin: cmake
     cmake-parameters:

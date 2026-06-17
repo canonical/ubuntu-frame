@@ -57,7 +57,7 @@ opengl               ubuntu-frame:opengl            :opengl               -
 wayland              -                              ubuntu-frame:wayland  -
 ```
 
-Refer to {doc}`snapcraft:explanation/interfaces` and {ref}`Frame snap interfaces <ubuntu-frame-snap-interfaces>` documentation for more information.
+Refer to {ref}`snapcraft:explanation-interfaces` and {ref}`Frame snap interfaces <ubuntu-frame-snap-interfaces>` documentation for more information.
 
 ### Wayland extensions
 
