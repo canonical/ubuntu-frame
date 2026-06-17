@@ -3,7 +3,7 @@ name: Refresh downstreams
 on:
   push:
     branches:
-    - main
+    - core26
   workflow_dispatch:
 
 permissions: {}
@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         ref:
-        - mir-libs-build
+        - 26/mir-libs-build
 
     steps:
     - name: Drop LFS
@@ -32,7 +32,7 @@ jobs:
       with:
         # so that we know what to cherry-pick from
         fetch-depth: 2
-        persist-credentials: false
+        persist-credentials: true
 
     - name: Update `${{ matrix.ref }}`
       env:
@@ -43,4 +43,4 @@ jobs:
         git fetch origin ${{ matrix.ref }}
         git cherry-pick HEAD..origin/${{ matrix.ref }}
 
-        git push --force https://${{ github.token }}@github.com/${{ github.repository }}.git HEAD:${{ matrix.ref }}
+        git push --force origin HEAD:${{ matrix.ref }}
