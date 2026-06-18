@@ -57,6 +57,7 @@ Please check out the code for your specific extension [here](https://github.com/
        target: $SNAP/gpu-2404
        default-provider: mesa-2404
    ```
+Note: this section must be inserted before 'parts:' and 'apps:'.
 
 {#gpu-2404-x11-layouts}
 
