@@ -57,7 +57,8 @@ Please check out the code for your specific extension [here](https://github.com/
        target: $SNAP/gpu-2404
        default-provider: mesa-2404
    ```
-Note: this section must be inserted before 'parts:' and 'apps:'.
+
+   Note: this must be inserted as a {ref}`top-level plugs: entry <snapcraft:project.plugs>`.
 
 {#gpu-2404-x11-layouts}
 
