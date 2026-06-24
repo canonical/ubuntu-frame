@@ -58,6 +58,8 @@ Please check out the code for your specific extension [here](https://github.com/
        default-provider: mesa-2404
    ```
 
+   Note: this must be inserted as a {ref}`top-level plugs: entry <snapcraft:project.plugs>`.
+
 {#gpu-2404-x11-layouts}
 
 1. If your app needs X11 support, {ref}`lay out <snapcraft:reference-layouts>` these paths in your snap:
