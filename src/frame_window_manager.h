@@ -20,6 +20,7 @@
 #include <miral/minimal_window_manager.h>
 #include <miral/output.h>
 #include <miral/display_configuration.h>
+#include <miral/version.h>
 
 #include <memory>
 #include <vector>
@@ -122,7 +123,11 @@ private:
         void update(miral::Output const& output);
         void clear(miral::Output const& output);
 
+#if MIRAL_VERSION < MIR_VERSION_NUMBER(6, 0, 0)
         bool set_output_for_surface(miral::WindowSpecification& specification, mir::optional_value<std::string> const& title) const;
+#else
+        bool set_output_for_surface(miral::WindowSpecification& specification, std::optional<std::string> const& title) const;
+#endif
         bool set_output_for_snap(miral::WindowSpecification& specification, std::string_view name) const;
 
     private:
@@ -141,7 +146,11 @@ private:
     /// \returns true if successfully assigned, otherwise false
     bool assign_to_output(
         miral::WindowSpecification& specification,
+#if MIRAL_VERSION < MIR_VERSION_NUMBER(6, 0, 0)
         mir::optional_value<std::string> const& title,
+#else
+        std::optional<std::string> const& title,
+#endif
         std::string_view snap_name);
 
     void apply_bespoke_fullscreen_placement(

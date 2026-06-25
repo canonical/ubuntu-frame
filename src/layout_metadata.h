@@ -35,7 +35,11 @@ public:
     /// Try to assign the window to a positition and size based on its title and snap name.
     /// \returns true if successfully assigned, otherwise false
     bool try_layout(miral::WindowSpecification& specification,
+#if MIRAL_VERSION < MIR_VERSION_NUMBER(6, 0, 0)
         mir::optional_value<std::string> const& title,
+#else
+        std::optional<std::string> const& title,
+#endif
         std::string_view snap_name) const;
 
 private:
