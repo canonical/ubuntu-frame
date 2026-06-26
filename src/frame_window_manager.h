@@ -24,6 +24,10 @@
 #include <memory>
 #include <vector>
 
+// FIXME Remove this once mir::optional_value is unavailable in any supported Mir version
+#ifndef MIR_OPTIONAL_VALUE_H_
+namespace mir { template<class T> using optional_value = std::optional<T>; }
+#endif
 using namespace mir::geometry;
 
 class LayoutMetadata;

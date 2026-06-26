@@ -17,8 +17,6 @@
 #ifndef LAYOUT_METADATA_H
 #define LAYOUT_METADATA_H
 
-#include <miral/version.h>
-
 #include <optional>
 #include <string>
 #include <vector>
@@ -26,6 +24,11 @@
 #include <mir/geometry/size.h>
 #include <miral/window_specification.h>
 #include <miral/display_configuration.h>
+
+// FIXME Remove this once mir::optional_value is unavailable in any supported Mir version
+#ifndef MIR_OPTIONAL_VALUE_H_
+namespace mir { template<class T> using optional_value = std::optional<T>; }
+#endif
 
 class LayoutMetadata
 {
