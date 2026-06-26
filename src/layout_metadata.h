@@ -17,8 +17,6 @@
 #ifndef LAYOUT_METADATA_H
 #define LAYOUT_METADATA_H
 
-#include <miral/version.h>
-
 #include <optional>
 #include <string>
 #include <vector>
@@ -26,6 +24,11 @@
 #include <mir/geometry/size.h>
 #include <miral/window_specification.h>
 #include <miral/display_configuration.h>
+
+// FIXME Remove this once mir::optional_value is unavailable in any supported Mir version
+#ifndef MIR_OPTIONAL_VALUE_H_
+namespace mir { template<class T> using optional_value = std::optional<T>; }
+#endif
 
 class LayoutMetadata
 {
@@ -35,11 +38,7 @@ public:
     /// Try to assign the window to a positition and size based on its title and snap name.
     /// \returns true if successfully assigned, otherwise false
     bool try_layout(miral::WindowSpecification& specification,
-#if MIRAL_VERSION < MIR_VERSION_NUMBER(6, 0, 0)
         mir::optional_value<std::string> const& title,
-#else
-        std::optional<std::string> const& title,
-#endif
         std::string_view snap_name) const;
 
 private:

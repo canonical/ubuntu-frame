@@ -51,7 +51,7 @@ bool can_position_be_overridden(WindowSpecification& spec, WindowInfo const& win
     }
 
     // Only override behavior of windows without a parent
-#if MIRAL_VERSION < MIR_VERSION_NUMBER(6, 0, 0)
+#ifdef MIR_OPTIONAL_VALUE_H_
     if (spec.parent().is_set() ? spec.parent().value().lock() : window_info.parent())
 #else
     if (spec.parent().has_value() ? spec.parent().value().lock() : window_info.parent())
@@ -78,7 +78,7 @@ void apply_fullscreen(WindowSpecification& spec)
 {
     spec.state() = mir_window_state_fullscreen;
 
-#if MIRAL_VERSION < MIR_VERSION_NUMBER(6, 0, 0)
+#ifdef MIR_OPTIONAL_VALUE_H_
     spec.size() = mir::optional_value<Size>{};      // Ignore requested size (if any) when we fullscreen
     spec.top_left() = mir::optional_value<Point>{}; // Ignore requested position (if any) when we fullscreen
 #else
@@ -286,11 +286,7 @@ void FrameWindowManagerPolicy::handle_window_ready(WindowInfo& window_info)
 
 bool FrameWindowManagerPolicy::assign_to_output(
     WindowSpecification& specification,
-#if MIRAL_VERSION < MIR_VERSION_NUMBER(6, 0, 0)
     mir::optional_value<std::string> const& title,
-#else
-    std::optional<std::string> const& title,
-#endif
     std::string_view snap_name)
 {
     return placement_mapping.set_output_for_surface(specification, title)
@@ -506,11 +502,7 @@ void FrameWindowManagerPolicy::PlacementMapping::clear(Output const& output)
 
 bool FrameWindowManagerPolicy::PlacementMapping::set_output_for_surface(
     WindowSpecification& specification,
-#if MIRAL_VERSION < MIR_VERSION_NUMBER(6, 0, 0)
     mir::optional_value<std::string> const& title) const
-#else
-    std::optional<std::string> const& title) const
-#endif
 {
     for (auto const& t2o : surface_title_to_output_id)
     {
