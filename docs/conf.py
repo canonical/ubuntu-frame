@@ -394,7 +394,6 @@ intersphinx_mapping = {
     "frame-22": ("https://ubuntu.com/frame/docs/22", None),
     "server": ("https://ubuntu.com/server/docs", None),
     "snapcraft": ("https://documentation.ubuntu.com/snapcraft/stable", None),
-    "snap": ("https://snapcraft.io/docs/", None),
     "subiquity": (
         "https://canonical-subiquity.readthedocs-hosted.com/en/latest",
         None,
