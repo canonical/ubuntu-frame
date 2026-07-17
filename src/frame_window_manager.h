@@ -17,7 +17,15 @@
 #ifndef FRAME_WINDOW_MANAGER_H
 #define FRAME_WINDOW_MANAGER_H
 
+#include <miral/version.h>
+
+#if MIRAL_VERSION >= MIR_VERSION_NUMBER(6, 0, 0)
+#include <miral/kiosk_window_manager.h>
+#else
 #include <miral/minimal_window_manager.h>
+namespace miral { using KioskWindowManagerPolicy = MinimalWindowManager; }
+#endif
+
 #include <miral/output.h>
 #include <miral/display_configuration.h>
 
@@ -74,11 +82,9 @@ private:
     std::weak_ptr<WindowCount> weak_window_count;
 };
 
-class FrameWindowManagerPolicy : public miral::MinimalWindowManager
+class FrameWindowManagerPolicy : public miral::KioskWindowManagerPolicy
 {
 public:
-    using miral::MinimalWindowManager::MinimalWindowManager;
-
     static std::string const surface_title;
     static std::string const snap_name;
 
