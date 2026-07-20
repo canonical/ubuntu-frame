@@ -19,6 +19,7 @@
 #include "snap_name_of.h"
 
 #include <mir/log.h>
+#include <mir/fatal.h>
 #include <miral/application_info.h>
 #include <miral/output.h>
 #include <miral/toolkit_event.h>
@@ -54,7 +55,7 @@ bool can_position_be_overridden(WindowSpecification& spec, WindowInfo const& win
 #ifdef MIR_OPTIONAL_VALUE_H_
     if (spec.parent().is_set() ? spec.parent().value().lock() : window_info.parent())
 #else
-    if (spec.parent().has_value() ? spec.parent().value().lock() : window_info.parent())
+    if (spec.parent().transform([](auto const& parent) { return parent.lock(); }).value_or(window_info.parent()))
 #endif
     {
         return false;
@@ -98,6 +99,25 @@ auto is_application(WindowInfo const& window_info)
     default:
         return false;
     }
+}
+
+// precondition: there is a top_left and size
+// returns: the window rect
+auto get_rect_by_force(WindowSpecification const& spec) -> Rectangle
+{
+    if (auto const top_left = spec.top_left())
+    {
+        if (auto const size = spec.size())
+        {
+            return Rectangle{top_left.value(), size.value()};
+        }
+    }
+
+#ifdef MIR_FATAL_ERROR
+    MIR_FATAL_ERROR("WindowSpecification must have both top_left and size set to get a rectangle");
+#else
+    mir::fatal_error("WindowSpecification must have both top_left and size set to get a rectangle");
+#endif
 }
 }
 
@@ -195,7 +215,7 @@ void FrameWindowManagerPolicy::handle_layout(
     if (try_position_exactly(specification, window_info, application))
     {
         // Let's warn if the user is placing their surface beyond the extents of all outputs
-        Rectangle const extents(specification.top_left().value(), specification.size().value());
+        auto const extents{get_rect_by_force(specification)};
         bool found = false;
         for (auto const& output : active_outputs)
         {
@@ -206,7 +226,7 @@ void FrameWindowManagerPolicy::handle_layout(
         if (!found)
             mir::log_warning(R"(Surface for snap="%s" with title="%s" was placed such that it overlaps no outputs)",
                               snap_instance_name.c_str(),
-                              surface_title ? surface_title.value().c_str() : "");
+                              surface_title.transform([](auto const& title) { return title.c_str(); }).value_or(""));
 
         // Let's also warn if the user has also mapped this surface to a specific output
         WindowSpecification throwaway_spec;
@@ -214,7 +234,7 @@ void FrameWindowManagerPolicy::handle_layout(
             mir::log_warning(R"(Surface for snap="%s" with title="%s" is mapped to both a specific position)"
                               " and a specific card. The card mapping will be ignored.",
                               snap_instance_name.c_str(),
-                              surface_title ? surface_title.value().c_str() : "");
+                              surface_title.transform([](auto const& title) { return title.c_str(); }).value_or(""));
 
         if (window_info.window())
             window_info.clip_area(extents);
@@ -230,12 +250,12 @@ void FrameWindowManagerPolicy::handle_layout(
             {
                 mir::log_info(R"(Surface for snap="%s" with title="%s")",
                               snap_instance_name.c_str(),
-                              specification.name().value().c_str());
+                              specification.name().transform([](auto const& name) { return name.c_str(); }).value_or(""));
             }
             else
             {
                 mir::log_info("Surface with title=\"%s\"",
-                              specification.name().value().c_str());
+                              specification.name().transform([](auto const& name) { return name.c_str(); }).value_or(""));
             }
         }
 
@@ -277,8 +297,7 @@ void FrameWindowManagerPolicy::handle_window_ready(WindowInfo& window_info)
     WindowSpecification specification;
     if (try_position_exactly(specification, window_info, application))
     {
-        Rectangle const extents(specification.top_left().value(), specification.size().value());
-        window_info.clip_area(extents);
+        window_info.clip_area(get_rect_by_force(specification));
     }
 
     MinimalWindowManager::handle_window_ready(window_info);
@@ -341,7 +360,7 @@ auto FrameWindowManagerPolicy::confirm_placement_on_display(
         WindowSpecification specification;
         specification.state() = mir_window_state_maximized;
         tools.place_and_size_for_state(specification, window_info);
-        return {specification.top_left().value(), specification.size().value()};
+        return get_rect_by_force(specification);
     }
     return new_placement;
 }
