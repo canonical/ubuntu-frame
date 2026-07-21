@@ -31,6 +31,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <utility>
 
 namespace ms = mir::scene;
 using namespace miral;
@@ -118,6 +119,7 @@ auto get_rect_by_force(WindowSpecification const& spec) -> Rectangle
 #else
     mir::fatal_error("WindowSpecification must have both top_left and size set to get a rectangle");
 #endif
+    std::unreachable();
 }
 }
 
