@@ -31,6 +31,7 @@
 #include <unistd.h>
 
 #include <algorithm>
+#include <utility>
 
 namespace ms = mir::scene;
 using namespace miral;
@@ -118,6 +119,7 @@ auto get_rect_by_force(WindowSpecification const& spec) -> Rectangle
 #else
     mir::fatal_error("WindowSpecification must have both top_left and size set to get a rectangle");
 #endif
+    std::unreachable();
 }
 }
 
@@ -188,7 +190,7 @@ FrameWindowManagerPolicy::FrameWindowManagerPolicy(
     WindowManagerTools const& tools,
     WindowManagerObserver& window_manager_observer,
     miral::DisplayConfiguration const& display_config)
-    : MinimalWindowManager{tools},
+    : KioskWindowManagerPolicy{tools},
       window_manager_observer{window_manager_observer},
       display_config{display_config}
 {
@@ -273,7 +275,7 @@ void FrameWindowManagerPolicy::handle_layout(
 auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info, WindowSpecification const& request)
 -> WindowSpecification
 {
-    WindowSpecification specification = MinimalWindowManager::place_new_window(app_info, request);
+    WindowSpecification specification = KioskWindowManagerPolicy::place_new_window(app_info, request);
     WindowInfo window_info{};
     handle_layout(specification, app_info.application(), window_info);
 
@@ -300,7 +302,7 @@ void FrameWindowManagerPolicy::handle_window_ready(WindowInfo& window_info)
         window_info.clip_area(get_rect_by_force(specification));
     }
 
-    MinimalWindowManager::handle_window_ready(window_info);
+    KioskWindowManagerPolicy::handle_window_ready(window_info);
 }
 
 bool FrameWindowManagerPolicy::assign_to_output(
@@ -314,7 +316,7 @@ bool FrameWindowManagerPolicy::assign_to_output(
 
 void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& window_info)
 {
-    MinimalWindowManager::advise_delete_window(window_info);
+    KioskWindowManagerPolicy::advise_delete_window(window_info);
     if (is_application(window_info))
     {
         window_count->increment_closed();
@@ -334,7 +336,7 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
         handle_layout(specification, window_info.window().application(), window_info);
     }
 
-    MinimalWindowManager::handle_modify_window(window_info, specification);
+    KioskWindowManagerPolicy::handle_modify_window(window_info, specification);
 }
 
 void FrameWindowManagerPolicy::apply_bespoke_fullscreen_placement(
@@ -461,7 +463,7 @@ void FrameWindowManagerPolicy::advise_output_delete(miral::Output const& output)
 
 void FrameWindowManagerPolicy::advise_new_window(WindowInfo const& window_info)
 {
-    MinimalWindowManager::advise_new_window(window_info);
+    KioskWindowManagerPolicy::advise_new_window(window_info);
     if (is_application(window_info))
     {
         window_manager_observer.process_window_opened_callbacks();
