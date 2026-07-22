@@ -32,7 +32,6 @@
 
 #include <miral/version.h>
 
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 9, 0)
 #include <miral/live_config_ini_file.h>
 #include <miral/cursor_scale.h>
 #include <miral/output_filter.h>
@@ -42,7 +41,6 @@
 
 #include <cstdlib>
 #include <filesystem>
-#endif
 
 int main(int argc, char const* argv[])
 {
@@ -64,7 +62,6 @@ int main(int argc, char const* argv[])
     runner.add_stop_callback([&] { background_client.stop(); });
     auto display_config = build_display_configuration(runner);
 
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 9, 0)
     miral::live_config::IniFileWithOverrides ini_files;
 
     miral::CursorScale cursor_scale{ini_files};
@@ -89,7 +86,7 @@ int main(int argc, char const* argv[])
           ini_files.load(overrides);
         },
         ".ini"};
-#endif
+
     return runner.run_with(
         {
             wayland_extensions,
@@ -117,10 +114,8 @@ int main(int argc, char const* argv[])
                 display_config),
             Keymap{},
             miral::Decorations::always_csd(),
-#if MIRAL_VERSION >= MIR_VERSION_NUMBER(5, 9, 0)
             cursor_scale,
             output_filter,
             magnifier,
-#endif
         });
 }
