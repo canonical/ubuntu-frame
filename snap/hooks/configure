@@ -134,6 +134,19 @@ else
   snapctl stop --disable "$SNAP_INSTANCE_NAME.daemon" 2>&1 || true
 fi
 
+validate_launcher_tail() {
+  local tail="$1"
+  [ -z "$tail" ] && return 0
+  local IFS=','
+  for element in $tail; do
+    case "$element" in
+      magnifier|cursor-scale|output-filter) ;;
+      *) return 1 ;;
+    esac
+  done
+  return 0
+}
+
 # Validate and process launcher option
 # launcher can be: "true", "false", or a JSON object e.g. {"tail":["magnifier","cursor-scale"]}
 # When set as an object, snapctl exposes launcher.tail as a comma-separated list already.
@@ -148,30 +161,17 @@ case "$launcher_val" in
     ;;
   {*)
     launcher_enabled=true
+    launcher_tail="$(snapctl get launcher.tail)"
+    if ! validate_launcher_tail "$launcher_tail"; then
+      echo "ERROR: launcher.tail must be a list of zero or more of: magnifier, cursor-scale, output-filter"
+      exit 1
+    fi
     ;;
   *)
     echo "ERROR: launcher must be true, false, or a JSON object"
     exit 1
     ;;
 esac
-
-validate_launcher_tail() {
-  local tail="$1"
-  [ -z "$tail" ] && return 0
-  local IFS=','
-  for element in $tail; do
-    case "$element" in
-      magnifier|cursor-scale|output-filter) ;;
-      *) return 1 ;;
-    esac
-  done
-  return 0
-}
-launcher_tail="$(snapctl get launcher.tail)"
-if ! validate_launcher_tail "$launcher_tail"; then
-  echo "ERROR: launcher.tail must be a list of zero or more of: magnifier, cursor-scale, output-filter"
-  exit 1
-fi
 
 # Start or stop the launcher
 if [ "$launcher_enabled" = "true" ]; then
