@@ -1,0 +1,16 @@
+cmake \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DCMAKE_INSTALL_PREFIX=$HOME/install \
+  -DCMAKE_C_COMPILER=clang \
+  -DCMAKE_CXX_COMPILER=clang++ \
+  -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+  -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+  -B $HOME/build/src \
+  -G Ninja \
+  src
+
+mkdir -p "$HOME/.config/mir/"
+
+cat <<'EOF' > ~/.profile
+export UBUNTU_FRAME_ACCESSIBILITY_CONFIG_PATH=$HOME/.config/mir/accessibility.ini
+EOF

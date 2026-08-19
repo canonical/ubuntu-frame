@@ -1,0 +1,16 @@
+apt-get install \
+  ccache \
+  clang \
+  cmake \
+  dmz-cursor-theme \
+  fonts-ubuntu \
+  inotify-tools \
+  libapparmor-dev \
+  libboost-filesystem-dev \
+  libboost-iostreams-dev \
+  libgmock-dev \
+  libgtest-dev \
+  libgtk-layer-shell-dev \
+  libmirserver-internal-dev \
+  ninja-build \
+  rsync
