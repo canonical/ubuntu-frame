@@ -77,8 +77,8 @@ actions:
   frame: |
     set -euo pipefail
 
-    if [ -z "$DISPLAY" ]; then
-      echo "Error: Connect the "desktop" plug first:" >&2
+    if [ -z "${DISPLAY:-}" ]; then
+      echo 'Error: Connect the "desktop" plug first:' >&2
       echo "  workshop connect dev/mir:desktop" >&2
       exit 1
     fi
@@ -92,11 +92,11 @@ actions:
       if [ -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]; then kill $WAITPID; else wait -n; fi
 
       "$HOME/build/launcher/build/linux/x64/debug/bundle/ubuntu_frame_launcher"
-      trap "kill $! || true" EXIT INT TERM
     }
 
     run_launcher &
-
+    LAUNCHER_JOB=$!
+    trap "kill $LAUNCHER_JOB 2>/dev/null || true" EXIT INT TERM
     $HOME/build/src/frame --add-wayland-extensions \
       ext_foreign_toplevel_list_v1:zwlr_foreign_toplevel_manager_v1:zwlr_layer_shell_v1 \
       "$@"
