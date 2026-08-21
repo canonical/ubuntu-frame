@@ -19,7 +19,7 @@ There are four snap configuration options:
 - `daemon=[true|false]` enables the daemon (defaults to false on classic systems)
 - `config=<options for the shell>`
 - `display=<options for display layout>`
-- `launcher=[true|false]`
+- `launcher=<object>` enables a side bar application switcher (defaults to `{"head":[],"tail":[]}`)
 
 The configuration options are described in detail in [the Ubuntu Frame reference](https://mir-server.io/docs/ubuntu-frame-configuration-options).
 

@@ -24,6 +24,7 @@ import 'views/dock.dart';
 import 'controllers/application_controller.dart';
 import 'package:logging/logging.dart';
 import 'package:ubuntu_frame_launcher/controllers/accessibility_controller.dart';
+import 'package:ubuntu_frame_launcher/models/launcher_config.dart';
 
 void main() async {
   Logger.root.level = Level.ALL; // defaults to Level.INFO
@@ -51,9 +52,12 @@ void main() async {
           getIt.get<WindowService>(), getIt.get<DesktopFileManager>()));
   getIt.registerLazySingleton<WindowController>(
       () => WindowController(getIt.get<WindowService>()));
+  getIt.registerLazySingleton<LauncherConfig>(
+      () => LauncherConfig.fromEnvironment());
 
-  getIt.registerSingletonAsync<AccessibilityController>(
-      () => AccessibilityController.create());
+  getIt.registerSingletonAsync<AccessibilityController>(() =>
+      AccessibilityController.create(
+          getIt.get<LauncherConfig>().accessibilityOptionIds));
 
   await getIt.allReady();
   runApp(const LauncherApp());
