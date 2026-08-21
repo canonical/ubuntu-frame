@@ -134,41 +134,37 @@ else
   snapctl stop --disable "$SNAP_INSTANCE_NAME.daemon" 2>&1 || true
 fi
 
-validate_launcher_tail() {
-  local tail="$1"
-  [ -z "$tail" ] && return 0
-  local IFS=','
-  for element in $tail; do
-    case "$element" in
-      magnifier|cursor-scale|output-filter) ;;
-      *) return 1 ;;
-    esac
-  done
-  return 0
-}
-
-# Validate and process launcher option
-# launcher can be: "true", "false", or a JSON object e.g. {"tail":["magnifier","cursor-scale"]}
-# When set as an object, snapctl exposes launcher.tail as a comma-separated list already.
+# Validate and process launcher option.
 launcher_val="$(snapctl get launcher)"
 launcher_enabled=false
 case "$launcher_val" in
-  true)
-    launcher_enabled=true
-    ;;
-  false|"")
-    launcher_enabled=false
-    ;;
   {*)
-    launcher_enabled=true
-    launcher_tail="$(snapctl get launcher.tail)"
-    if ! validate_launcher_tail "$launcher_tail"; then
-      echo "ERROR: launcher.tail must be a list of zero or more of: magnifier, cursor-scale, output-filter"
+    if ! launcher_items="$(printf '%s' "$launcher_val" | jq -er '
+      if type != "object" then error("launcher must be an object")
+      elif (.head | type) != "array" then error("launcher.head must be an array")
+      elif (.tail | type) != "array" then error("launcher.tail must be an array")
+      else .head[], .tail[] end
+    ')"; then
+      echo "ERROR: launcher must be an object with head and tail arrays"
       exit 1
     fi
+    invalid_items=""
+    if [ -n "$launcher_items" ]; then
+      invalid_items="$(printf '%s\n' "$launcher_items" | grep -vxE 'running|magnifier|cursor-scale|output-filter' || true)"
+    fi
+    if [ -n "$invalid_items" ]; then
+      echo "ERROR: launcher items must be running, magnifier, cursor-scale, or output-filter"
+      exit 1
+    fi
+    if [ -n "$launcher_items" ]; then
+      launcher_enabled=true
+    fi
+    ;;
+  "")
+    launcher_enabled=false
     ;;
   *)
-    echo "ERROR: launcher must be true, false, or a JSON object"
+    echo "ERROR: launcher must be a JSON object with head and tail arrays"
     exit 1
     ;;
 esac
@@ -179,12 +175,6 @@ if [ "$launcher_enabled" = "true" ]; then
   if [[ "$ARCH" != @(x86_64*|i*86|aarch64) ]]; then
     echo "Cannot enable the launcher on $ARCH system"
     exit 1
-  fi
-
-  if ! snapctl is-connected desktop-launch; then
-    echo "Please connect the "desktop-launch" interface:"
-    echo "  sudo snap connect $SNAP_INSTANCE_NAME:desktop-launch"
-    exit 2
   fi
 
   if snapctl services "$SNAP_INSTANCE_NAME.launcher" | grep -q inactive; then

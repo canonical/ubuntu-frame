@@ -147,6 +147,7 @@ renderer
 renderers
 runtime
 scp
+scrollable
 scummvm
 shm
 snapcraft

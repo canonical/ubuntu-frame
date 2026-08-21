@@ -1,7 +1,10 @@
 #!/bin/bash
 set -eu
 
-if UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_OPTIONS="$(snapctl get launcher.tail 2>/dev/null)"; then
-  export UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_OPTIONS
+if launcher_head="$(snapctl get launcher.head 2>/dev/null)"; then
+  export UBUNTU_FRAME_LAUNCHER_HEAD_ITEMS_JSON="$launcher_head"
+fi
+if launcher_tail="$(snapctl get launcher.tail 2>/dev/null)"; then
+  export UBUNTU_FRAME_LAUNCHER_TAIL_ITEMS_JSON="$launcher_tail"
 fi
 exec "$@"

@@ -22,7 +22,6 @@ import 'package:logging/logging.dart';
 import 'package:ubuntu_frame_launcher/models/accessibility_option.dart';
 
 class AccessibilityController {
-  static const optionsEnvKey = 'UBUNTU_FRAME_LAUNCHER_ACCESSIBILITY_OPTIONS';
   static const _accessibilityConfigKey =
       "UBUNTU_FRAME_ACCESSIBILITY_CONFIG_PATH";
   static final allOptions = [
@@ -51,30 +50,18 @@ class AccessibilityController {
 
   AccessibilityController._({required this.options});
 
-  static List<AccessibilityOption> _getActiveOptions() {
-    final optionsEnv = Platform.environment[optionsEnvKey];
-
-    // Not set, show all
-    if (optionsEnv == null) {
-      return allOptions;
-    }
-
-    // Set to be explicitly empty
-    if (optionsEnv.isEmpty) {
-      return [];
-    }
-
-    final activeOptions = <AccessibilityOption>[];
-    for (final id in optionsEnv.split(',')) {
-      final optionIndex = allOptions.indexWhere((o) => o.id == id);
-      if (optionIndex != -1) {
-        activeOptions.add(allOptions[optionIndex]);
-      } else {
-        _logger.warning('$optionsEnvKey: unknown option "$id", skipping');
-      }
-    }
-
-    return activeOptions;
+  static List<AccessibilityOption> _resolveOptions(List<String> activeOptionIds) {
+    return activeOptionIds
+        .map((id) {
+          final index = allOptions.indexWhere((o) => o.id == id);
+          if (index == -1) {
+            _logger.warning('Unknown accessibility option "$id", skipping');
+            return null;
+          }
+          return allOptions[index];
+        })
+        .whereType<AccessibilityOption>()
+        .toList();
   }
 
   static Future<List<AccessibilityOption>> _loadActiveOptionValues(
@@ -130,9 +117,9 @@ class AccessibilityController {
   /// Reads the accessibility config file on disk and sets each option's
   /// current value. Options absent from the file, or with an unrecognised
   /// value, are left at their default (index 0).
-  static Future<AccessibilityController> create() async {
+  static Future<AccessibilityController> create(List<String> activeOptionIds) async {
     final activeOptions = _loadActiveOptionValues(
-        AccessibilityController._getActiveOptions(), _configPath);
+        AccessibilityController._resolveOptions(activeOptionIds), _configPath);
     return AccessibilityController._(options: await activeOptions);
   }
 

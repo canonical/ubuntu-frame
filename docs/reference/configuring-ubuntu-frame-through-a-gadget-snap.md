@@ -26,7 +26,12 @@ defaults:
       add-wayland-extensions=zwp_pointer_constraints_v1:zwp_relative_pointer_manager_v1
     daemon: true
     launcher:
-      tail: magnifier,cursor-scale,output-filter
+      head:
+        - running
+      tail:
+        - magnifier
+        - cursor-scale
+        - output-filter
 ```
 
 See {ref}`ubuntu-frame-configuration-options` for the reference on available options.
