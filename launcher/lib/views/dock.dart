@@ -14,8 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'dart:math' show max;
-
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ubuntu_frame_launcher/controllers/application_controller.dart';
@@ -34,41 +32,29 @@ class Dock extends StatelessWidget {
   Widget build(BuildContext context) {
     final config = GetIt.instance.get<LauncherConfig>();
     return Expanded(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final fixedItemCount = [...config.headItems, ...config.tailItems]
-              .where((i) => i != 'running')
-              .length;
-          // Each accessibility button is 56px + 4px bottom padding.
-          const itemHeight = 60.0;
-          final runningMaxHeight = max(
-            0.0,
-            constraints.maxHeight - _dockPadding.vertical - fixedItemCount * itemHeight,
-          );
-          return Container(
-            color: Colors.black,
-            width: _dockWidthPx,
-            padding: _dockPadding,
-            child: Column(
-              children: [
-                ..._buildItems(config.headItems, runningMaxHeight),
-                const Spacer(),
-                ..._buildItems(config.tailItems, runningMaxHeight),
-              ],
+      child: Container(
+        color: Colors.black,
+        width: _dockWidthPx,
+        padding: _dockPadding,
+        child: Column(
+          children: [
+            ..._buildItems(config.headItems),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(children: _buildItems(config.bodyItems)),
+              ),
             ),
-          );
-        },
+            ..._buildItems(config.tailItems),
+          ],
+        ),
       ),
     );
   }
 
-  List<Widget> _buildItems(List<String> items, double runningMaxHeight) {
+  List<Widget> _buildItems(List<String> items) {
     return items.map<Widget>((item) {
       if (item == 'running') {
-        return ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: runningMaxHeight),
-          child: const _RunningAppsSection(),
-        );
+        return const _RunningAppsSection();
       }
       return AccessibilityButton(optionId: item);
     }).toList();
@@ -90,7 +76,7 @@ class _RunningAppsSection extends StatelessWidget {
             .where((app) => app.id.isNotEmpty)
             .map((app) => DockButton(desktopFile: app))
             .toList();
-        return SingleChildScrollView(child: Column(children: dockButtons));
+        return Column(children: dockButtons);
       },
     );
   }

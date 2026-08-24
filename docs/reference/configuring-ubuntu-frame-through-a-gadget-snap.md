@@ -27,9 +27,10 @@ defaults:
     daemon: true
     launcher:
       head:
+        - magnifier
+      body:
         - running
       tail:
-        - magnifier
         - cursor-scale
         - output-filter
 ```
