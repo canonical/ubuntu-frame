@@ -58,12 +58,12 @@ This controls whether a side bar application switcher ("Launcher" from Unity Des
 
 The arrays are rendered at the top (`head`), middle (`body`) and bottom (`tail`) of the sidebar. `head` and `tail` items remain static (pinned to the top and bottom respectively), while `body` items occupy the remaining space and scroll as a group when they overflow it. Each array is an ordered list of item IDs:
 
-| ID              | Description                                                        |
+| ID              | Description                                                       |
 | --------------- | ----------------------------------------------------------------- |
 | `running`       | Running applications; only valid in `body`, takes remaining space |
-| `magnifier`     | Magnifier toggle                                                   |
-| `cursor-scale`  | Cursor size cycle                                                  |
-| `output-filter` | Display colour filter cycle                                        |
+| `magnifier`     | Magnifier toggle                                                  |
+| `cursor-scale`  | Cursor size cycle                                                 |
+| `output-filter` | Display colour filter cycle                                       |
 
 ```{note}
 `running` is only supported in the `body` array, where it fills the remaining
