@@ -17,10 +17,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 class LauncherConfig {
   static const _headEnvKey = 'UBUNTU_FRAME_LAUNCHER_HEAD_ITEMS_JSON';
+  static const _bodyEnvKey = 'UBUNTU_FRAME_LAUNCHER_BODY_ITEMS_JSON';
   static const _tailEnvKey = 'UBUNTU_FRAME_LAUNCHER_TAIL_ITEMS_JSON';
   static const _accessibilityIds = {
     'magnifier',
@@ -31,19 +33,38 @@ class LauncherConfig {
   static final _logger = Logger('LauncherConfig');
 
   final List<String> headItems;
+  final List<String> bodyItems;
   final List<String> tailItems;
 
-  LauncherConfig._({required this.headItems, required this.tailItems});
+  LauncherConfig._({
+    required this.headItems,
+    required this.bodyItems,
+    required this.tailItems,
+  });
 
-  factory LauncherConfig.fromEnvironment() {
-    final head = _parseEnv(_headEnvKey);
-    final tail = _parseEnv(_tailEnvKey);
-    _logger.info('head=$head tail=$tail');
-    return LauncherConfig._(headItems: head, tailItems: tail);
+  factory LauncherConfig.fromEnvironment() =>
+      LauncherConfig.fromMap(Platform.environment);
+
+  @visibleForTesting
+  factory LauncherConfig.fromMap(Map<String, String> environment) {
+    final head = _withoutRunning(_parseEnv(environment, _headEnvKey), 'head');
+    final body = _parseEnv(environment, _bodyEnvKey);
+    final tail = _withoutRunning(_parseEnv(environment, _tailEnvKey), 'tail');
+    _logger.info('head=$head body=$body tail=$tail');
+    return LauncherConfig._(headItems: head, bodyItems: body, tailItems: tail);
   }
 
-  static List<String> _parseEnv(String key) {
-    final value = Platform.environment[key];
+  static List<String> _withoutRunning(List<String> items, String group) {
+    if (items.contains('running')) {
+      _logger.warning(
+        "'running' is only supported in body items; ignoring it in $group",
+      );
+    }
+    return items.where((item) => item != 'running').toList();
+  }
+
+  static List<String> _parseEnv(Map<String, String> environment, String key) {
+    final value = environment[key];
     if (value == null || value.isEmpty) return [];
     try {
       final decoded = jsonDecode(value);
@@ -59,6 +80,7 @@ class LauncherConfig {
 
   List<String> get accessibilityOptionIds => [
     ...headItems,
+    ...bodyItems,
     ...tailItems,
   ].where((id) => _accessibilityIds.contains(id)).toList();
 }
