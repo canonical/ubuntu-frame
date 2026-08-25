@@ -47,20 +47,11 @@ class LauncherConfig {
 
   @visibleForTesting
   factory LauncherConfig.fromMap(Map<String, String> environment) {
-    final head = _withoutRunning(_parseEnv(environment, _headEnvKey), 'head');
+    final head = _parseEnv(environment, _headEnvKey);
     final body = _parseEnv(environment, _bodyEnvKey);
-    final tail = _withoutRunning(_parseEnv(environment, _tailEnvKey), 'tail');
+    final tail = _parseEnv(environment, _tailEnvKey);
     _logger.info('head=$head body=$body tail=$tail');
     return LauncherConfig._(headItems: head, bodyItems: body, tailItems: tail);
-  }
-
-  static List<String> _withoutRunning(List<String> items, String group) {
-    if (items.contains('running')) {
-      _logger.warning(
-        "'running' is only supported in body items; ignoring it in $group",
-      );
-    }
-    return items.where((item) => item != 'running').toList();
   }
 
   static List<String> _parseEnv(Map<String, String> environment, String key) {
