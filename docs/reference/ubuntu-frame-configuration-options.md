@@ -58,16 +58,18 @@ This controls whether a side bar application switcher ("Launcher" from Unity Des
 
 The arrays are rendered at the top (`head`), middle (`body`) and bottom (`tail`) of the sidebar. `head` and `tail` items remain static (pinned to the top and bottom respectively), while `body` items occupy the remaining space and scroll as a group when they overflow it. Each array is an ordered list of item IDs:
 
-| ID              | Description                                                       |
-| --------------- | ----------------------------------------------------------------- |
-| `running`       | Running applications; only valid in `body`, takes remaining space |
-| `magnifier`     | Magnifier toggle                                                  |
-| `cursor-scale`  | Cursor size cycle                                                 |
-| `output-filter` | Display colour filter cycle                                       |
+| ID              | Description                                              |
+| --------------- | -------------------------------------------------------- |
+| `running`       | Running applications (scrollable, takes remaining space) |
+| `magnifier`     | Magnifier toggle                                         |
+| `cursor-scale`  | Cursor size cycle                                        |
+| `output-filter` | Display colour filter cycle                              |
 
 ```{note}
-`running` is only supported in the `body` array, where it fills the remaining
-space and scrolls. A `running` entry placed in `head` or `tail` is ignored.
+`running` is best placed in `body`, where it fills the remaining space and
+scrolls. You can also place it in `head` or `tail`, but those sections are not
+height-constrained, so a long list of running apps may overflow the sidebar —
+use it there at your own risk.
 ```
 
 ```bash
@@ -84,14 +86,11 @@ Make sure that the applications you want to run are annotated with metadata and 
 Since version **211**, you can use `Mir` or `UbuntuFrame` in [`OnlyShowIn=` and `NotShowIn=`](https://specifications.freedesktop.org/desktop-entry-spec/latest/recognized-keys.html) to control visibility of the icon on different environments. This is useful to hide the daemon app in snaps that are also useful outside of the Frame ecosystem.
 ```
 
-You can also place accessibility options in any section and mix them with the `running` body section:
+You can also place accessibility options in any section and mix them with `running`:
 
 ```bash
-# Running apps in the body, accessibility controls pinned at the bottom
+# Scrolling running apps in the body, accessibility controls pinned at the bottom
 $ snap set ubuntu-frame 'launcher={"head":[],"body":["running"],"tail":["magnifier","cursor-scale"]}'
-
-# Accessibility controls pinned at the top, running apps in the body
-$ snap set ubuntu-frame 'launcher={"head":["magnifier"],"body":["running"],"tail":[]}'
 
 # Static controls pinned top and bottom, scrolling running apps in the middle
 $ snap set ubuntu-frame 'launcher={"head":["magnifier"],"body":["running"],"tail":["cursor-scale"]}'

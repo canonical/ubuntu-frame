@@ -39,18 +39,6 @@ void main() {
       expect(config.tailItems, isEmpty);
     });
 
-    test('drops running from head and tail, keeping it only in body', () {
-      final config = LauncherConfig.fromMap({
-        'UBUNTU_FRAME_LAUNCHER_HEAD_ITEMS_JSON': '["running","magnifier"]',
-        'UBUNTU_FRAME_LAUNCHER_BODY_ITEMS_JSON': '["running"]',
-        'UBUNTU_FRAME_LAUNCHER_TAIL_ITEMS_JSON': '["cursor-scale","running"]',
-      });
-
-      expect(config.headItems, ['magnifier']);
-      expect(config.bodyItems, ['running']);
-      expect(config.tailItems, ['cursor-scale']);
-    });
-
     test('defaults body to empty when only head and tail are set', () {
       final config = LauncherConfig.fromMap({
         'UBUNTU_FRAME_LAUNCHER_HEAD_ITEMS_JSON': '["magnifier"]',
