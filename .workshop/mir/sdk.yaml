@@ -1,0 +1,6 @@
+name: mir
+plugs:
+  desktop:
+    interface: desktop
+  gpu:
+    interface: gpu

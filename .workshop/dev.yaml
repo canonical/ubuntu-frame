@@ -1,0 +1,115 @@
+name: dev
+base: ubuntu@26.04
+sdks:
+- name: project-mir
+- name: project-frame
+- name: copilot
+- name: flutter
+
+actions:
+  configure-frame: |
+    set -xeuo pipefail
+
+    cmake \
+      -DCMAKE_BUILD_TYPE=Debug \
+      -DCMAKE_INSTALL_PREFIX=$HOME/install \
+      -DCMAKE_C_COMPILER=clang \
+      -DCMAKE_CXX_COMPILER=clang++ \
+      -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+      -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+      -B $HOME/build/src \
+      -G Ninja \
+      src \
+      "$@"
+
+  configure-launcher: |
+    set -euo pipefail
+
+    flutter config --build-dir="$( realpath --relative-to=$PWD/launcher ~/build/launcher/ )" "$@"
+
+  configure: |
+    set -euo pipefail
+
+    if [[ $# -ne 0 ]]; then
+      echo "Use dedicated configure-frame / configure-launcher to pass arguments" >&2
+      exit 1
+    fi
+
+    cmake \
+      -DCMAKE_BUILD_TYPE=Debug \
+      -DCMAKE_INSTALL_PREFIX=$HOME/install \
+      -DCMAKE_C_COMPILER=clang \
+      -DCMAKE_CXX_COMPILER=clang++ \
+      -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+      -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+      -B $HOME/build/src \
+      -G Ninja \
+      src
+
+  build-frame: |
+    set -euo pipefail
+
+    cmake --build "$HOME/build/src" "$@"
+
+  build-launcher: |
+    set -euo pipefail
+
+    rsync --archive --delete --filter='P build' --filter='P linux/flutter/ephemeral' --filter='P .dart_tool' launcher/ "$HOME/build/launcher/"
+
+    cd "$HOME/build/launcher"
+    flutter build linux --debug "$@"
+
+  build: |
+    set -euo pipefail
+
+    if [[ $# -ne 0 ]]; then
+      echo "Use dedicated build-frame / build-launcher to pass arguments" >&2
+      exit 1
+    fi
+
+    cmake --build "$HOME/build/src"
+
+    rsync --archive --delete --filter='P build' --filter='P linux/flutter/ephemeral' --filter='P .dart_tool' launcher/ "$HOME/build/launcher/"
+
+    cd "$HOME/build/launcher"
+    flutter build linux --debug "$@"
+
+  frame: |
+    set -euo pipefail
+
+    if [ -z "${DISPLAY:-}" ]; then
+      echo 'Error: Connect the "desktop" plug first:' >&2
+      echo "  workshop connect dev/mir:desktop" >&2
+      exit 1
+    fi
+
+    export WAYLAND_DISPLAY="wayland-99"
+
+    run_launcher() {
+      inotifywait --quiet "$XDG_RUNTIME_DIR" --include "$WAYLAND_DISPLAY" &
+      WAITPID=$!
+      trap "kill $WAITPID || true" EXIT INT TERM
+      if [ -S "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY" ]; then kill $WAITPID; else wait -n; fi
+
+      "$HOME/build/launcher/build/linux/x64/debug/bundle/ubuntu_frame_launcher"
+    }
+
+    run_launcher &
+    LAUNCHER_JOB=$!
+    trap "kill $LAUNCHER_JOB 2>/dev/null || true" EXIT INT TERM
+    $HOME/build/src/frame --add-wayland-extensions \
+      ext_foreign_toplevel_list_v1:zwlr_foreign_toplevel_manager_v1:zwlr_layer_shell_v1 \
+      "$@"
+
+  app: |
+    set -euo pipefail
+
+    if [ -z "$DISPLAY" ]; then
+      echo "Error: Connect the "desktop" plug first:" >&2
+      echo "  workshop connect dev/mir:desktop" >&2
+      exit 1
+    fi
+
+    export WAYLAND_DISPLAY="wayland-99"
+
+    "$@"

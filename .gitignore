@@ -3,3 +3,6 @@
 src/build-*
 src/cmake-*
 src/build
+
+/.vscode
+/.workshop.lock
