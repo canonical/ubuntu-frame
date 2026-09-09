@@ -17,5 +17,5 @@ fi
 launcher=$(snapctl get launcher)
 if [ "$launcher" = "" ]
 then
-  snapctl set launcher='{"head":[],"tail":[]}'
+  snapctl set launcher='{"head":[],"body":[],"tail":[]}'
 fi
