@@ -20,25 +20,21 @@ import 'package:ubuntu_frame_launcher/controllers/accessibility_controller.dart'
 import 'package:ubuntu_frame_launcher/models/accessibility_option.dart';
 
 class AccessibilityButton extends StatelessWidget {
-  const AccessibilityButton({super.key});
+  final String optionId;
+
+  const AccessibilityButton({super.key, required this.optionId});
 
   @override
   Widget build(BuildContext context) {
     final controller = GetIt.instance.get<AccessibilityController>();
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ...controller.options.map(
-          (option) => Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: _OptionButton(
-              option: option,
-              onTap: () => controller.cycleForward(option),
-              onLongPress: () => controller.cycleBackward(option),
-            ),
-          ),
-        ),
-      ],
+    final option = controller.options.firstWhere((o) => o.id == optionId);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: _OptionButton(
+        option: option,
+        onTap: () => controller.cycleForward(option),
+        onLongPress: () => controller.cycleBackward(option),
+      ),
     );
   }
 }

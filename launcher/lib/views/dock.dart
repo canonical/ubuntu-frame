@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:ubuntu_frame_launcher/controllers/application_controller.dart';
+import 'package:ubuntu_frame_launcher/models/launcher_config.dart';
 import 'package:ubuntu_frame_launcher/views/accessibility_button.dart';
 import 'package:ubuntu_frame_launcher/views/dock_button.dart';
 import 'package:ubuntu_frame_launcher/views/stream_builder_with_future_initial_value.dart';
@@ -29,7 +30,7 @@ class Dock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final applicationController = GetIt.instance.get<ApplicationController>();
+    final config = GetIt.instance.get<LauncherConfig>();
     return Expanded(
       child: Container(
         color: Colors.black,
@@ -37,27 +38,46 @@ class Dock extends StatelessWidget {
         padding: _dockPadding,
         child: Column(
           children: [
+            ..._buildItems(config.headItems),
             Expanded(
-              child: StreamBuilderWithFutureInitialValue(
-                  future: applicationController.getOpenApplications(),
-                  stream: applicationController.getOpenedAppsStream(),
-                  loader: const Row(),
-                  builder: (context, openedApps) {
-                    List<Widget> dockButtons = [];
-                    for (final opened in openedApps) {
-                      if (opened.id.isEmpty) {
-                        continue;
-                      }
-                      dockButtons.add(DockButton(desktopFile: opened));
-                    }
-                    return SingleChildScrollView(
-                        child: Column(children: dockButtons));
-                  }),
+              child: SingleChildScrollView(
+                child: Column(children: _buildItems(config.bodyItems)),
+              ),
             ),
-            const AccessibilityButton(),
+            ..._buildItems(config.tailItems),
           ],
         ),
       ),
+    );
+  }
+
+  List<Widget> _buildItems(List<String> items) {
+    return items.map<Widget>((item) {
+      if (item == 'running') {
+        return const _RunningAppsSection();
+      }
+      return AccessibilityButton(optionId: item);
+    }).toList();
+  }
+}
+
+class _RunningAppsSection extends StatelessWidget {
+  const _RunningAppsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final applicationController = GetIt.instance.get<ApplicationController>();
+    return StreamBuilderWithFutureInitialValue(
+      future: applicationController.getOpenApplications(),
+      stream: applicationController.getOpenedAppsStream(),
+      loader: const Row(),
+      builder: (context, openedApps) {
+        final dockButtons = openedApps
+            .where((app) => app.id.isNotEmpty)
+            .map((app) => DockButton(desktopFile: app))
+            .toList();
+        return Column(children: dockButtons);
+      },
     );
   }
 }
