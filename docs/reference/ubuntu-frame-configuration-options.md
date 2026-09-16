@@ -19,10 +19,9 @@ ______________________________________________________________________
 There are four snap configuration options:
 
 - `daemon=[true|false]` enables the daemon (defaults to true on Ubuntu Core and false on classic systems)
-- `launcher=[true|false|<object>]` enables a side bar application switcher if your solution calls for that;
-  if set to an object, the following will add one or more accessibility options at the bottom of it:
+- `launcher=<object>` enables a side bar application switcher; the launcher is active when any of `head`, `body` or `tail` is non-empty:
   ```json
-  { "tail": ["magnifier", "cursor-scale", "output-filter"] }
+  { "head": ["magnifier"], "body": ["running"], "tail": ["cursor-scale", "output-filter"] }
   ```
 - `config=<contents for frame.config>`
 - `display=<contents for frame.display>`
@@ -55,17 +54,30 @@ This feature is only available on **Intel**, **AMD** and **ARM64** systems
 This feature is only available from Frame version **187** onward
 ```
 
-This controls whether a side bar application switcher ("Launcher" from Unity Desktop design) is displayed. If your solution requires multiple applications that the user needs to be able to switch between, this will enable that - displaying a side bar with clickable application icons.
+This controls whether a side bar application switcher ("Launcher" from Unity Desktop design) is displayed. The launcher is configured as a JSON object with `head`, `body` and `tail` arrays; it is active when any array is non-empty.
+
+The arrays are rendered at the top (`head`), middle (`body`) and bottom (`tail`) of the sidebar. `head` and `tail` items remain static (pinned to the top and bottom respectively), while `body` items occupy the remaining space and scroll as a group when they overflow it. Each array is an ordered list of item IDs:
+
+| ID              | Description                                              |
+| --------------- | -------------------------------------------------------- |
+| `running`       | Running applications (scrollable, takes remaining space) |
+| `magnifier`     | Magnifier toggle                                         |
+| `cursor-scale`  | Cursor size cycle                                        |
+| `output-filter` | Display colour filter cycle                              |
+
+```{note}
+`running` is best placed in `body`, where it fills the remaining space and
+scrolls. You can also place it in `head` or `tail`, but those sections are not
+height-constrained, so a long list of running apps may overflow the sidebar —
+use it there at your own risk.
+```
 
 ```bash
-# Until https://github.com/canonical/snapd/pull/14331 gets released
-$ snap refresh snapd --channel edge/ubuntu-core-desktop
-
 # Give Frame access to application metadata and icons
 $ snap connect ubuntu-frame:desktop-launch
 
-# Enable the launcher
-$ snap set ubuntu-frame launcher=true
+# Enable the launcher with the running apps section
+$ snap set ubuntu-frame 'launcher={"head":[],"body":["running"],"tail":[]}'
 ```
 
 Make sure that the applications you want to run are annotated with metadata and icons appropriately, see Snapcraft's {ref}`snapcraft:how-to-configure-package-information` documentation to get your app icons to display.
@@ -74,21 +86,20 @@ Make sure that the applications you want to run are annotated with metadata and 
 Since version **211**, you can use `Mir` or `UbuntuFrame` in [`OnlyShowIn=` and `NotShowIn=`](https://specifications.freedesktop.org/desktop-entry-spec/latest/recognized-keys.html) to control visibility of the icon on different environments. This is useful to hide the daemon app in snaps that are also useful outside of the Frame ecosystem.
 ```
 
-The launcher also supports an accessibility panel at the bottom. To enable it, pass a JSON object with a `tail` array containing any combination of `magnifier`, `cursor-scale`, and `output-filter`:
+You can also place accessibility options in any section and mix them with `running`:
 
 ```bash
-# Show only the magnifier and cursor scale options
-$ snap set ubuntu-frame launcher='{ "tail": [ "magnifier", "cursor-scale" ] }'
-```
+# Scrolling running apps in the body, accessibility controls pinned at the bottom
+$ snap set ubuntu-frame 'launcher={"head":[],"body":["running"],"tail":["magnifier","cursor-scale"]}'
 
-Once set to an object, you can also access / modify it via the `launcher.tail` key as a comma-separated list:
+# Static controls pinned top and bottom, scrolling running apps in the middle
+$ snap set ubuntu-frame 'launcher={"head":["magnifier"],"body":["running"],"tail":["cursor-scale"]}'
 
-```
-# Show all accessibility options
-$ snap set ubuntu-frame launcher.tail=magnifier,cursor-scale,output-filter
+# Accessibility only (no running apps section)
+$ snap set ubuntu-frame 'launcher={"head":[],"body":[],"tail":["magnifier","cursor-scale","output-filter"]}'
 
-# Disable the accessibility panel (empty tail)
-$ snap set ubuntu-frame launcher.tail=
+# Disable the launcher (all arrays empty)
+$ snap set ubuntu-frame 'launcher={"head":[],"body":[],"tail":[]}'
 ```
 
 ### `config`

@@ -177,6 +177,7 @@ parts:
     source: scripts
     stage-packages:
       - inotify-tools
+      - jq
 
   anon-shm-preload:
     source: https://github.com/MirServer/anon-shm-preload.git
