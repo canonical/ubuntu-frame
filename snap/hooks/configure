@@ -139,7 +139,7 @@ launcher_val="$(snapctl get launcher)"
 launcher_enabled=false
 case "$launcher_val" in
   {*)
-    if ! launcher_items="$(printf '%s' "$launcher_val" | jq -er '
+    if ! launcher_items="$(printf '%s' "$launcher_val" | jq -r '
       if type != "object" then error("launcher must be an object")
       elif (.head | type) != "array" then error("launcher.head must be an array")
       elif ((.body // []) | type) != "array" then error("launcher.body must be an array")
