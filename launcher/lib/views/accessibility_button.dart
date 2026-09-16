@@ -27,7 +27,12 @@ class AccessibilityButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = GetIt.instance.get<AccessibilityController>();
-    final option = controller.options.firstWhere((o) => o.id == optionId);
+    AccessibilityOption option;
+    try {
+      option = controller.options.firstWhere((o) => o.id == optionId);
+    } on StateError {
+      return const SizedBox.shrink();
+    }
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: _OptionButton(
