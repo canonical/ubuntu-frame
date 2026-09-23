@@ -27,15 +27,19 @@ class AccessibilityButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = GetIt.instance.get<AccessibilityController>();
-    final option = controller.options.firstWhere((o) => o.id == optionId);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: _OptionButton(
-        option: option,
-        onTap: () => controller.cycleForward(option),
-        onLongPress: () => controller.cycleBackward(option),
-      ),
-    );
+    try {
+      final option = controller.options.firstWhere((o) => o.id == optionId);
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 4),
+        child: _OptionButton(
+          option: option,
+          onTap: () => controller.cycleForward(option),
+          onLongPress: () => controller.cycleBackward(option),
+        ),
+      );
+    } on StateError {
+      return const SizedBox.shrink();
+    }
   }
 }
 
