@@ -388,7 +388,7 @@ intersphinx_mapping = {
         "https://canonical-example-product-documentation.readthedocs-hosted.com/en/latest",
         None,
     ),
-    "mir": ("https://canonical.com/mir/docs/stable", None),
+    "mir": ("https://canonical.com/mir/docs/page", None),
     "mir-latest": ("https://canonical.com/mir/docs/latest", None),
     "core": ("https://documentation.ubuntu.com/core", None),
     "frame-22": ("https://ubuntu.com/frame/docs/22", None),
