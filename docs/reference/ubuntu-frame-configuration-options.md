@@ -399,7 +399,7 @@ Defaults to `0xffffff`.
 
 ### `display-layout`
 
-Display configuration layout from \`frame.display'
+Display configuration layout from `frame.display`
 (Found in $XDG_CONFIG_HOME or $HOME/.config, followed by \$XDG_CONFIG_DIRS)
 
 Defaults to `default`.
@@ -486,7 +486,7 @@ Defaults to `off`.
 
 ### `key-repeat-delay`
 
-Number of millisecond to hold down a key before generating repeat events.
+Number of milliseconds to hold down a key before generating repeat events.
 
 Defaults to `600`.
 
@@ -504,7 +504,7 @@ Defaults to `25`.
 
 Keymap to use. Specified in the form `&lt;layout&gt;[+&lt;variant&gt;[+&lt;options&gt;]]`, e.g. `gb` or `cz+qwerty` or `de++compose:caps`
 
-Defaults to `pl`.
+Defaults to `us`.
 
 (global-mouse-cursor-acceleration)=
 
@@ -752,7 +752,8 @@ Colon separated list of Wayland extensions to enable. If used, default extension
 - zxdg_decoration_manager_v1
 - zxdg_output_manager_v1
 - zxdg_shell_v6
-  Additional supported extensions:
+Additional supported extensions:
+
 - ext_data_control_manager_v1
 - ext_foreign_toplevel_list_v1
 - ext_image_copy_capture_manager_v1
