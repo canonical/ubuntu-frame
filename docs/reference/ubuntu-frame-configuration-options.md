@@ -123,147 +123,7 @@ add-wayland-extensions=zwp_pointer_constraints_v1:zwp_relative_pointer_manager_v
 "
 ```
 
-A full list of the current configuration options supported by `ubuntu-frame` can be obtained by `--help`:
-
-```
-$ ubuntu-frame --help
-usage: /snap/ubuntu-frame/3926/usr/local/bin/frame [options]
-
-Command-line options (e.g. "--wayland-host=wayland-0").
-
-Environment variables capitalise long form with prefix "MIR_SERVER_" and "_" in place of "-".
-(E.g. "MIR_SERVER_WAYLAND_HOST=wayland-0")
-
-Config file entries are long form (e.g. "wayland-host=wayland-0").
-The config file (frame.config) is located via the XDG Base Directory Specification.
-($XDG_CONFIG_HOME or $HOME/.config followed by $XDG_CONFIG_DIRS)
-
-user options:
-  --arw-file                            Make socket filename globally rw
-                                        (equivalent to chmod a=rw)
-  --platform-display-libs arg           Libraries to use for platform output
-                                        support (default: autodetect)
-  --platform-rendering-libs arg         Libraries to use for platform rendering
-                                        support (default: autodetect)
-  --platform-input-lib arg              Library to use for platform input
-                                        support (default: input-stub.so)
-  --platform-path arg (=/usr/lib/aarch64-linux-gnu/mir/server-platform)
-                                        Directory to look for platform
-                                        libraries (default: /usr/lib/aarch64-li
-                                        nux-gnu/mir/server-platform)
-  -i [ --enable-input ] arg (=1)        Enable input.
-  --compositor-report arg (=off)        Compositor reporting [{log,lttng,off}]
-  --display-report arg (=off)           How to handle the Display report.
-                                        [{log,lttng,off}]
-  --input-report arg (=off)             How to handle to Input report.
-                                        [{log,lttng,off}]
-  --seat-report arg (=off)              How to handle to Seat report.
-                                        [{log,off}]
-  --scene-report arg (=off)             How to handle the scene report.
-                                        [{log,lttng,off}]
-  --shared-library-prober-report arg (=log)
-                                        How to handle the SharedLibraryProber
-                                        report. [{log,lttng,off}]
-  --shell-report arg (=off)             How to handle the Shell report.
-                                        [{log,off}]
-  --composite-delay arg (=0)            Compositor frame delay in milliseconds
-                                        (how long to wait for new frames from
-                                        clients before compositing). Higher
-                                        values result in lower latency but risk
-                                        causing frame skipping. Default: A
-                                        negative value means decide
-                                        automatically.
-  --enable-touchspots                   Display visualization of touchspots
-                                        (e.g. for screencasting).
-  --cursor arg (=auto)                  Cursor (mouse pointer) to use
-                                        [{auto,null,software}]
-  --enable-key-repeat arg (=1)          Enable server generated key repeat
-  --idle-timeout arg (=0)               Time (in seconds) Mir will remain idle
-                                        before turning off the display, or 0 to
-                                        keep display on forever.
-  --on-fatal-error-except               On "fatal error" conditions [e.g.
-                                        drivers behaving in unexpected ways]
-                                        throw an exception (instead of a core
-                                        dump)
-  --debug                               Enable extra development debugging.
-                                        This is only interesting for people
-                                        doing Mir server or client development.
-  --console-provider arg (=auto)        Console device handling
-                                        How Mir handles console-related tasks
-                                        (device handling, VT switching, etc)
-                                        Options:
-                                        logind: use logind
-                                        vt: use the Linux VT subsystem.
-                                        Requires root.
-                                        none: support no console-related tasks.
-                                        Useful for nested platforms which do
-                                        not need raw device access and which
-                                        don't have a VT concept
-                                        auto: detect the appropriate provider.
-  --vt arg (=0)                         [requires --console-provider=vt] VT to
-                                        run on or 0 to use current.
-  --bypass arg (=0)                     [platform-specific] utilize the bypass
-                                        optimization for fullscreen surfaces.
-  --driver-quirks arg                   [platform-specific] Driver quirks to
-                                        apply (may be specified multiple times;
-                                        multiple quirks are combined)
-  --x11-output arg (=1280x1024)         [mir-on-X specific] Colon separated
-                                        list of WIDTHxHEIGHT sizes for "output"
-                                        windows. ^SCALE may also be appended to
-                                        any output
-  --x11-window-title arg (=Mir on X)    [mir-on-X specific] Title for the
-                                        banner of the generated X11 window
-  --env-hacks arg                       Colon separated list of environment
-                                        variable settings
-  --wayland-extensions arg              Colon-separated list of Wayland
-                                        extensions to enable. If used, default
-                                        extensions will NOT be enabled unless
-                                        specified. Default extensions:
-                                          wl_shell
-                                          xdg_wm_base
-                                          zwp_text_input_manager_v1
-                                          zwp_text_input_manager_v2
-                                          zwp_text_input_manager_v3
-                                          zxdg_output_manager_v1
-                                          zxdg_shell_v6
-                                        Additional supported extensions:
-                                          zwlr_foreign_toplevel_manager_v1
-                                          zwlr_layer_shell_v1
-                                          zwlr_screencopy_manager_v1
-                                          zwlr_virtual_pointer_manager_v1
-                                          zwp_idle_inhibit_manager_v1
-                                          zwp_input_method_manager_v2
-                                          zwp_pointer_constraints_v1
-                                          zwp_relative_pointer_manager_v1
-                                          zwp_virtual_keyboard_manager_v1
-  --add-wayland-extensions arg          Wayland extensions to enable in
-                                        addition to default extensions. Use
-                                        `all` to enable all supported
-                                        extensions.
-  --drop-wayland-extensions arg         Wayland extensions to disable.
-  --display-layout arg (=default)       Display configuration layout from
-                                        `frame.display'
-                                        (Found in $XDG_CONFIG_HOME or
-                                        $HOME/.config, followed by
-                                        $XDG_CONFIG_DIRS)
-  --wallpaper-top arg (=0x7f7f7f)       Colour of wallpaper RGB
-  --wallpaper-bottom arg (=0x1f1f1f)    Colour of wallpaper RGB
-  --diagnostic-background arg (=0x380c24)
-                                        Colour of diagnostic screen background
-                                        RGB
-  --diagnostic-text arg (=0xffffff)     Colour of diagnostic screen text RGB
-  --diagnostic-path arg                 Path (including filename) of diagnostic
-                                        file
-  --authorise-without-apparmor arg (=0) Use /proc/<pid>/cmdline if AppArmor is
-                                        unavailable
-  --window-management-trace             log trace message
-  --keymap arg (=us)                    keymap <layout>[+<variant>[+<options>]]
-                                        , e,g, "gb" or "cz+qwerty" or
-                                        "de++compose:caps"
-  -h [ --help ]                         this help text
-```
-
-You might notice that the options are described as "command-line options", and they also can be supplied that way when running the snap from the command-line (and not as a daemon). That can be a convenient way of testing their effect. (See {ref}`run-ubuntu-frame-in-your-desktop-environment` for an example).
+A full list of the current configuration options supported by `ubuntu-frame` can be obtained by `--help`, see {ref}`options-reference` below.
 
 ### `display`
 
@@ -433,3 +293,540 @@ Get the current layout:
 $ snap get ubuntu-frame display-layout
 night
 ```
+
+(options-reference)=
+
+## Options reference
+
+(global-add-wayland-extensions)=
+
+### `add-wayland-extensions`
+
+Colon separated list of Wayland extensions to enable in addition to default extensions. Use `all` to enable all supported extensions.
+
+(global-arw-file)=
+
+### `arw-file`
+
+Make server Wayland socket readable and writeable by all users. For debugging purposes only.
+
+(global-authorise-without-apparmor)=
+
+### `authorise-without-apparmor`
+
+Use /proc/\<pid>/cmdline if AppArmor is unavailable
+
+Defaults to `0`.
+
+(global-composite-delay)=
+
+### `composite-delay`
+
+Number of milliseconds to wait for new frames from clients before compositing. Higher values result in lower latency but risk causing frame skipping.
+
+Defaults to `0`.
+
+(global-compositor-report)=
+
+### `compositor-report`
+
+Configure compositor reporting. [{off,log,lttng}]
+
+Defaults to `off`.
+
+(global-console-provider)=
+
+### `console-provider`
+
+Method used to handle console-related tasks (device handling, VT switching, etc):
+
+- `logind`: use logind.
+- `vt`: use the Linux VT subsystem. Requires root.
+- `none`: support no console-related tasks. Useful for nested platforms which do not need raw device access and which don't have a VT concept.
+- `auto`: detect the appropriate provider.
+
+Defaults to `auto`.
+
+(global-cursor)=
+
+### `cursor`
+
+Cursor type:
+
+- `auto`: use hardware if available, or fallback to software.
+- `null`: cursor disabled.
+- `software`: always use software cursor.
+
+Defaults to `auto`.
+
+(global-debug)=
+
+### `debug`
+
+Enable debugging information. Useful when developing Mir servers.
+
+(global-diagnostic-background)=
+
+### `diagnostic-background`
+
+Colour of diagnostic screen background RGB
+
+Defaults to `0x380c24`.
+
+(global-diagnostic-delay)=
+
+### `diagnostic-delay`
+
+Delay time (in seconds) before displaying diagnostic screen
+
+Defaults to `0`.
+
+(global-diagnostic-path)=
+
+### `diagnostic-path`
+
+Path (including filename) of diagnostic file
+
+(global-diagnostic-text)=
+
+### `diagnostic-text`
+
+Colour of diagnostic screen text RGB
+
+Defaults to `0xffffff`.
+
+(global-display-layout)=
+
+### `display-layout`
+
+Display configuration layout from \`frame.display'
+(Found in $XDG_CONFIG_HOME or $HOME/.config, followed by \$XDG_CONFIG_DIRS)
+
+Defaults to `default`.
+
+(global-display-report)=
+
+### `display-report`
+
+Configure display reporting. [{off,log,lttng}]
+
+Defaults to `off`.
+
+(global-drop-wayland-extensions)=
+
+### `drop-wayland-extensions`
+
+Colon separated list of Wayland extensions to disable.
+
+(global-enable-input)=
+
+### `enable-input`
+
+Enable input.
+
+Defaults to `1`.
+
+(global-enable-key-repeat)=
+
+### `enable-key-repeat`
+
+Enable server generated key repeat.
+
+Defaults to `1`.
+
+(global-enable-touchspots)=
+
+### `enable-touchspots`
+
+Enable visual feedback of touch events. Useful for screencasting.
+
+(global-env-hacks)=
+
+### `env-hacks`
+
+Colon separated list of environment variable settings.
+
+(global-help)=
+
+### `help`
+
+Show command line help.
+
+(global-help-markdown)=
+
+### `help-markdown`
+
+Show command line options in markdown format suitable for including into a document.
+
+(global-idle-timeout)=
+
+### `idle-timeout`
+
+Number of seconds Mir will remain idle before turning off the display when the session is not locked, or 0 to keep display on forever.
+
+Defaults to `0`.
+
+(global-idle-timeout-when-locked)=
+
+### `idle-timeout-when-locked`
+
+Number of seconds Mir will remain idle before turning off the display when the session is locked, or 0 to keep the display on forever.
+
+Defaults to `0`.
+
+(global-input-report)=
+
+### `input-report`
+
+Configure input reporting. [{off,log,lttng}]
+
+Defaults to `off`.
+
+(global-key-repeat-delay)=
+
+### `key-repeat-delay`
+
+Number of millisecond to hold down a key before generating repeat events.
+
+Defaults to `600`.
+
+(global-key-repeat-rate)=
+
+### `key-repeat-rate`
+
+Number of milliseconds between generated key repeat events.
+
+Defaults to `25`.
+
+(global-keymap)=
+
+### `keymap`
+
+Keymap to use. Specified in the form `&lt;layout&gt;[+&lt;variant&gt;[+&lt;options&gt;]]`, e.g. `gb` or `cz+qwerty` or `de++compose:caps`
+
+Defaults to `pl`.
+
+(global-mouse-cursor-acceleration)=
+
+### `mouse-cursor-acceleration`
+
+Acceleration profile for mice and trackballs:
+
+- `none`: no acceleration.
+- `adaptive`: cursor is accelerated.
+
+(global-mouse-cursor-acceleration-bias)=
+
+### `mouse-cursor-acceleration-bias`
+
+Pointer acceleration speed of mice. Must be within range of [-1.0, 1.0].
+
+(global-mouse-handedness)=
+
+### `mouse-handedness`
+
+Mouse laterality:
+
+- `right`: left button is primary.
+- `left`: right button is primary.
+
+(global-mouse-horizontal-scroll-speed-override)=
+
+### `mouse-horizontal-scroll-speed-override`
+
+Mouse horizontal scroll speed scaling factor. Use negative values for natural scrolling.
+
+(global-mouse-scroll-speed)=
+
+### `mouse-scroll-speed`
+
+Mouse scroll speed scaling factor. Use negative values for natural scrolling.
+
+(global-mouse-vertical-scroll-speed-override)=
+
+### `mouse-vertical-scroll-speed-override`
+
+Mouse vertical scroll speed scaling factor. Use negative values for natural scrolling.
+
+(global-on-fatal-error-except)=
+
+### `on-fatal-error-except`
+
+Throw an exception when a fatal error condition occurs. This replaces the default behaviour of dumping core and can make it easier to diagnose issues.
+
+(global-platform-display-libs)=
+
+### `platform-display-libs`
+
+Comma separated list of libraries to use for platform output support, e.g. `mir:x11,mir:wayland`. If not provided the libraries are autodetected.
+
+(global-platform-input-lib)=
+
+### `platform-input-lib`
+
+Library to use for platform input support, e.g. `mir:stub-input`. If not provided this is autodetected.
+
+(global-platform-path)=
+
+### `platform-path`
+
+Directory to look for platform libraries.
+
+Defaults to `/usr/lib/x86_64-linux-gnu/mir/server-platform`.
+
+(global-platform-rendering-libs)=
+
+### `platform-rendering-libs`
+
+Comma separated list of libraries to use for platform rendering support, e.g. `mir:egl-generic`. If not provided the libraries are autodetected.
+
+(global-scene-report)=
+
+### `scene-report`
+
+Configure scene reporting. [{off,log,lttng}]
+
+Defaults to `off`.
+
+(global-seat-report)=
+
+### `seat-report`
+
+Configure seat reporting. [{off,log}]
+
+Defaults to `off`.
+
+(global-shared-library-prober-report)=
+
+### `shared-library-prober-report`
+
+Configure shared library prober reporting. [{log,off,lttng}]
+
+Defaults to `log`.
+
+(global-shell-report)=
+
+### `shell-report`
+
+Configure shell reporting. [{off,log}]
+
+Defaults to `off`.
+
+(global-touchpad-click-mode)=
+
+### `touchpad-click-mode`
+
+Click mode for touchpad. Left, middle and right button click events generated when:
+
+- `none`: no events generated.
+- `area`: single finger tap on left, middle or right area.
+- `clickfinger`: one, two or three fingers present when touchpad pushed down.
+
+(global-touchpad-cursor-acceleration)=
+
+### `touchpad-cursor-acceleration`
+
+Acceleration profile for touchpads:
+
+- `none`: no acceleration.
+- `adaptive`: cursor accelerates.
+
+(global-touchpad-cursor-acceleration-bias)=
+
+### `touchpad-cursor-acceleration-bias`
+
+Pointer acceleration speed scaling factor for touchpads. Must be within range of [-1.0, 1.0].
+
+(global-touchpad-disable-while-typing)=
+
+### `touchpad-disable-while-typing`
+
+Disable touchpad while typing on keyboard. [true, false]
+
+(global-touchpad-disable-with-external-mouse)=
+
+### `touchpad-disable-with-external-mouse`
+
+Disable touchpad if an external pointer device is plugged in. [true, false]
+
+(global-touchpad-horizontal-scroll-speed-override)=
+
+### `touchpad-horizontal-scroll-speed-override`
+
+Touchpad horizontal scroll scaling factor. Use negative values for natural scrolling.
+
+(global-touchpad-middle-mouse-button-emulation)=
+
+### `touchpad-middle-mouse-button-emulation`
+
+Generate middle mouse button click from a simultaneous left and right button click.
+
+(global-touchpad-scroll-mode)=
+
+### `touchpad-scroll-mode`
+
+Scroll mode for touchpads. Generates scroll events when:
+
+- `edge`: single finger moves on right or bottom edges of touchpad.
+- `two-finger`: two fingers move horizontally or vertically.
+- `button-down`: mouse button held down.
+
+(global-touchpad-scroll-speed)=
+
+### `touchpad-scroll-speed`
+
+Touchpad scroll scaling factor. Use negative values for natural scrolling.
+
+(global-touchpad-tap-to-click)=
+
+### `touchpad-tap-to-click`
+
+Enable or disable tap-to-click on this device. If enabled 1, 2, and 3 finger taps are mapped to left, right, middle click events. [true, false]
+
+(global-touchpad-vertical-scroll-speed-override)=
+
+### `touchpad-vertical-scroll-speed-override`
+
+Touchpad vertical scroll scaling factor. Use negative values for natural scrolling.
+
+(global-version)=
+
+### `version`
+
+Display Mir version and exit.
+
+(global-vt)=
+
+### `vt`
+
+VT to run on or 0 to use current. Only used when `--console-provider=vt`.
+
+Defaults to `0`.
+
+(global-vt-switching)=
+
+### `vt-switching`
+
+Enable VT switching on Ctrl+Alt+F\*. Only used when `--console-provider=vt|logind`.
+
+Defaults to `1`.
+
+(global-wallpaper)=
+
+### `wallpaper`
+
+Specifies whether or not the wallpaper is enabled
+
+Defaults to `1`.
+
+(global-wallpaper-bottom)=
+
+### `wallpaper-bottom`
+
+Colour of wallpaper RGB
+
+Defaults to `0x1f1f1f`.
+
+(global-wallpaper-top)=
+
+### `wallpaper-top`
+
+Colour of wallpaper RGB
+
+Defaults to `0x7f7f7f`.
+
+(global-wayland-extensions)=
+
+### `wayland-extensions`
+
+Colon separated list of Wayland extensions to enable. If used, default extensions will NOT be enabled unless specified. Default extensions:
+
+- mir_shell_v1
+- wl_shell
+- wp_fractional_scale_manager_v1
+- xdg_activation_v1
+- xdg_wm_base
+- zwp_text_input_manager_v1
+- zwp_text_input_manager_v2
+- zwp_text_input_manager_v3
+- zxdg_decoration_manager_v1
+- zxdg_output_manager_v1
+- zxdg_shell_v6
+  Additional supported extensions:
+- ext_data_control_manager_v1
+- ext_foreign_toplevel_list_v1
+- ext_image_copy_capture_manager_v1
+- ext_input_trigger_action_manager_v1
+- ext_input_trigger_registration_manager_v1
+- ext_output_image_capture_source_manager_v1
+- ext_session_lock_manager_v1
+- zwlr_foreign_toplevel_manager_v1
+- zwlr_layer_shell_v1
+- zwlr_screencopy_manager_v1
+- zwlr_virtual_pointer_manager_v1
+- zwp_idle_inhibit_manager_v1
+- zwp_input_method_manager_v2
+- zwp_input_method_v1
+- zwp_input_panel_v1
+- zwp_pointer_constraints_v1
+- zwp_primary_selection_device_manager_v1
+- zwp_relative_pointer_manager_v1
+- zwp_virtual_keyboard_manager_v1
+
+(global-window-management-trace)=
+
+### `window-management-trace`
+
+Log trace message
+
+## Options for mir:atomic-kms platform
+
+(mir-atomic-kms-bypass)=
+
+### `bypass`
+
+Enable bypass optimization for fullscreen surfaces.
+
+Defaults to `0`.
+
+(mir-atomic-kms-driver-quirks)=
+
+### `driver-quirks`
+
+Driver quirks to apply. May be specified multiple times; multiple quirks are combined.
+
+## Options for mir:gbm-kms platform
+
+(mir-gbm-kms-bypass)=
+
+### `bypass`
+
+Enable bypass optimization for fullscreen surfaces.
+
+Defaults to `0`.
+
+(mir-gbm-kms-driver-quirks)=
+
+### `driver-quirks`
+
+Driver quirks to apply. May be specified multiple times; multiple quirks are combined.
+
+## Options for mir:x11 platform
+
+(mir-x11-x11-output)=
+
+### `x11-output`
+
+Colon separated list of outputs to use. Dimensions are in the form `WIDTHxHEIGHT[^SCALE]`, e.g. `1920x1080:3840x2160^2`.
+
+Defaults to `1280x1024`.
+
+(mir-x11-x11-window-title)=
+
+### `x11-window-title`
+
+Title of the window containing the Mir output.
+
+Defaults to `Mir on X`.
+
+You might notice that the options are described as "command-line options", and they also can be supplied that way when running the snap from the command-line (and not as a daemon). That can be a convenient way of testing their effect. (See {ref}`run-ubuntu-frame-in-your-desktop-environment` for an example).
