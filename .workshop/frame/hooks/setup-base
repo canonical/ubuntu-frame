@@ -12,5 +12,7 @@ apt-get install \
   libgtest-dev \
   libgtk-layer-shell-dev \
   libmirserver-internal-dev \
+  make \
   ninja-build \
+  python3-venv \
   rsync
