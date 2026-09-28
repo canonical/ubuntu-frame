@@ -742,36 +742,64 @@ Defaults to `0x7f7f7f`.
 Colon separated list of Wayland extensions to enable. If used, default extensions will NOT be enabled unless specified. Default extensions:
 
 - mir_shell_v1
+
 - wl_shell
+
 - wp_fractional_scale_manager_v1
+
 - xdg_activation_v1
+
 - xdg_wm_base
+
 - zwp_text_input_manager_v1
+
 - zwp_text_input_manager_v2
+
 - zwp_text_input_manager_v3
+
 - zxdg_decoration_manager_v1
+
 - zxdg_output_manager_v1
+
 - zxdg_shell_v6
-Additional supported extensions:
+  Additional supported extensions:
 
 - ext_data_control_manager_v1
+
 - ext_foreign_toplevel_list_v1
+
 - ext_image_copy_capture_manager_v1
+
 - ext_input_trigger_action_manager_v1
+
 - ext_input_trigger_registration_manager_v1
+
 - ext_output_image_capture_source_manager_v1
+
 - ext_session_lock_manager_v1
+
 - zwlr_foreign_toplevel_manager_v1
+
 - zwlr_layer_shell_v1
+
 - zwlr_screencopy_manager_v1
+
 - zwlr_virtual_pointer_manager_v1
+
 - zwp_idle_inhibit_manager_v1
+
 - zwp_input_method_manager_v2
+
 - zwp_input_method_v1
+
 - zwp_input_panel_v1
+
 - zwp_pointer_constraints_v1
+
 - zwp_primary_selection_device_manager_v1
+
 - zwp_relative_pointer_manager_v1
+
 - zwp_virtual_keyboard_manager_v1
 
 (global-window-management-trace)=
