@@ -33,7 +33,7 @@ The following events will be logged to standard error in [the OWASP JSON format]
   {"datetime": "YYYY-MM-DDThh:mm:ssZ", "appid": "frame", "event": "sys_crash", "level": "WARN", "description": "Fatal signal received" }
   ```
 
-This functionality comes from Mir's {ref}`mir-latest:security-event-logging`.
+This functionality comes from Mir's {ref}`mir:security-event-logging`.
 
 ## Cryptography
 
