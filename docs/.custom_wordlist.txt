@@ -69,6 +69,7 @@ autostart
 autostarted
 backend
 backport
+bugfix
 behaviours
 bootable
 bugfix

@@ -70,7 +70,13 @@ There can be problems with both getting your application to work well with Ubunt
 
 ### Testing your application with Frame-it
 
-You can use Electron, Flutter, Qt, or any other toolkit or programming language to develop your graphic application. There is no sole path for checking all of them. Instead, this guide will use some example applications using GTK, QT, and SDL2.
+You can use Flutter, Qt, or any other toolkit or programming language to develop your graphic application.
+There is no sole path for checking all of them.
+Instead, this guide will use example applications using Flutter, GTK, Qt5, and SDL2.
+
+```{note}
+Qt6 and Electron applications require a newer snap base than the `core20` base used in this guide.
+```
 
 The examples used here are game applications, such as Mastermind, Neverputt, and Bomber. We’ve chosen these applications as they are easily installable and are designed to work without a full desktop session. But they can be replaced by your kiosk application, industrial GUI, smart fridge GUI, digital sign and more.
 
@@ -111,29 +117,11 @@ frame-it bomber
 ```
 ````
 
-````{tab-item} Qt6
-:sync: qt6
-```
-sudo apt install explosive-c4 qt6-wayland
-frame-it explosive-c4
-```
-````
-
 ````{tab-item} X11
 :sync: x11
 ```
 sudo apt install mesa-utils mir-x11-kiosk
 frame-it.x11 glxgears
-```
-````
-
-````{tab-item} Electron
-:sync: electron
-```
-git clone https://github.com/electron/electron-quick-start.git
-cd electron-quick-start
-npm install
-frame-it npm start -- --enable-features=UseOzonePlatform --ozone-platform=wayland
 ```
 ````
 `````
@@ -181,15 +169,6 @@ If your application doesn’t appear in the Ubuntu Frame window or look right at
 Close the Bomber (`Ctrl-Q`).
 ````
 
-````{tab-item} Qt6
-:sync: qt6
-![image|690x574](explosive-c4-native.png)
-
-If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
-
-Close the window (`Alt-F4`).
-````
-
 ````{tab-item} X11
 :sync: x11
 
@@ -198,19 +177,6 @@ Close the window (`Alt-F4`).
 If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
 
 Close glxgears (`Esc`)
-````
-
-````{tab-item} Electron
-:sync: electron
-![image|690x575](3fceac9523815e0e4ebdab10adee2d5ca6a8a0e0.jpeg)
-
-If your application doesn’t appear in the Ubuntu Frame window or look right at this stage, then this is the time to work out the fix, before packaging as a snap.
-
-Close "Hello World!" (`Ctrl-Q`).
-
-Before continuing to the next section, return to your previous working directory:
-
-    cd -
 ````
 `````
 
@@ -244,14 +210,12 @@ If you look in `snap/snapcraft.yaml`, you'll see a generic "snapcraft recipe" fo
 The customised snapcraft recipe for each example described in this guide (i.e. GTK, Qt and SDL2) is on a corresponding branch in this repository:
 
 ```
-$ $ git branch --list --remotes origin/20/*
-  origin/20/Electron-quick-start
+$ git branch --list --remotes origin/20/*
   origin/20/Flutter-demo
   origin/20/GTK3-adventure
   origin/20/GTK3-mastermind
   origin/20/Qt5-bomber
   origin/20/Qt5-bomber-first-try
-  origin/20/Qt6-example
   origin/20/SDL2-neverputt
   origin/20/Wine-example
   origin/20/main
@@ -298,26 +262,10 @@ snapcraft pack
 ```
 ````
 
-````{tab-item} Qt6
-:sync: qt6
-```
-git checkout 20/Qt6-example
-snapcraft pack
-```
-````
-
 ````{tab-item} X11
 :sync: x11
 ```
 git checkout 20/x11-glxgears
-snapcraft pack
-```
-````
-
-````{tab-item} Electron
-:sync: electron
-```
-git checkout 20/Electron-quick-start
 snapcraft pack
 ```
 ````
@@ -395,23 +343,6 @@ Available platform plugins are: eglfs (from /snap/iot-example-graphical-snap/x65
 [2024-11-20 16:17:25.832791] < - debug - > mirserver: Handling Terminated from pid=1042144
 [2024-11-20 16:17:25.832961] < -warning- > mirserver: wl_surface@12 destroyed before associated role
 ```
-
-````
-
-````{tab-item} Qt6
-:sync: qt6
-```
-...
-WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
-Failed to create wl_display (Permission denied)
-qt.qpa.plugin: Could not load the Qt platform plugin "wayland" in "/snap/iot-example-graphical-snap/x1/usr/lib/x86_64-linux-gnu/qt6/plugins/platforms/" even though it was found.
-This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
-
-Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, vkkhrdisplay, wayland-egl, wayland, xcb.
-
-/snap/frame-it/x8/frame-it: line 35: 102885 Aborted                 (core dumped) WAYLAND_DISPLAY="${wayland_display}" SDL_VIDEODRIVER=wayland QT_QPA_PLATFORM=wayland GDK_BACKEND=wayland $@
-[2025-09-30 16:56:47.992021] < - debug - > mirserver: Handling Terminated from pid=102741
-```
 ````
 
 ````{tab-item} X11
@@ -431,17 +362,6 @@ Error: couldn't open display :
 
 [2024-11-20 17:46:45.733516] < - debug - > mirserver: Handling Terminated from pid=1085119
 [2024-11-20 17:46:45.733721] < -warning- > mirserver: wl_surface@12 destroyed before associated role
-```
-````
-
-````{tab-item} Electron
-:sync: electron
-```
-WARNING: wayland interface not connected! Please run: /snap/iot-example-graphical-snap/current/bin/setup.sh
-[231190:0624/162014.069287:ERROR:wayland_connection.cc(209)] Failed to connect to Wayland display
-[231190:0624/162014.069317:ERROR:ozone_platform_wayland.cc(226)] Failed to initialize Wayland platform
-[231190:0624/162014.069322:ERROR:env.cc(226)] The platform failed to initialize.  Exiting.
-The futex facility returned an unexpected error code.
 ```
 ````
 `````
@@ -484,25 +404,11 @@ Close Neverputt.
 Close the application (`Ctrl-Q`). Your application has been successfully snapped.
 ````
 
-````{tab-item} Qt6
-:sync: qt6
-![image|690x575](explosive-c4-native.png)
-
-Close the window (`Alt-F4`). Your application has been successfully snapped.
-````
-
 ````{tab-item} X11
 :sync: x11
 ![image|690x575](84c6ff6d8e535d1824380d7f3dbb53706af32c54.jpeg)
 
 Close the application (`Esc`). Your application has been successfully snapped.
-````
-
-````{tab-item} Electron
-:sync: electron
-![image|690x575](afa9dab5e889664d711a50705dc25de7b5135dae.jpeg)
-
-Close the application (`Ctrl-Q`). Your application has been successfully snapped.
 ````
 `````
 
@@ -564,19 +470,9 @@ snap install --dangerous *.snap
 ![image|690x575](f9030fbc1a10d23d4f39b8be426cc14bda398834.jpeg)
 ````
 
-````{tab-item} Qt6
-:sync: qt6
-![image|690x575](qemu-qt6.png)
-````
-
 ````{tab-item} X11
 :sync: x11
 ![image|690x575](bafbdc990c5b99cd9a9b077b42a13bcee8281ced.jpeg)
-````
-
-````{tab-item} Electron
-:sync: electron
-![image|690x575](3df16f7b1650ddd26952ff0db1d3d500a7fc84f1.jpeg)
 ````
 `````
 

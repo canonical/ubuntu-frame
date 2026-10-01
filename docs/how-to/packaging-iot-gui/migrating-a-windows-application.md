@@ -87,13 +87,11 @@ The customised snapcraft recipe for each example described in this guide (i.e. G
 
 ```
 $ git branch --list --remotes origin/20/*
-  origin/20/Electron-quick-start
   origin/20/Flutter-demo
   origin/20/GTK3-adventure
   origin/20/GTK3-mastermind
   origin/20/Qt5-bomber
   origin/20/Qt5-bomber-first-try
-  origin/20/Qt6-example
   origin/20/SDL2-neverputt
   origin/20/Wine-example
   origin/20/main
