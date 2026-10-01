@@ -28,6 +28,7 @@ jobs:
     - name: Build and publish the snap
       uses: canonical/actions/build-snap@release
       with:
+        snapcraft-channel: 8.x
         snapcraft-token: ${{ secrets.SNAPCRAFT_TOKEN }}
         publish: ${{ github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name }}
         publish-channel: 20/edge/pr${{ github.event.number }}
