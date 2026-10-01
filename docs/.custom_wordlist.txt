@@ -71,6 +71,7 @@ backend
 backport
 behaviours
 bootable
+bugfix
 cdimage
 commandline
 config
