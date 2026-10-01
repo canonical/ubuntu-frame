@@ -245,6 +245,8 @@ linkcheck_ignore = [
     "https://www.realvnc.com/.*",
     "https://www.freedesktop.org/", # has bot protections in place
     "https://www.winehq.org/", # has bot protections in place
+    "https://gitlab\\.gnome\\.org/.*", # has bot protections in place
+    "https://registry\\.khronos\\.org/.*", # rejects linkcheck requests
     ]
 
 
@@ -386,11 +388,11 @@ intersphinx_mapping = {
         "https://canonical-example-product-documentation.readthedocs-hosted.com/en/latest",
         None,
     ),
-    "mir": ("https://canonical.com/mir/docs/stable", None),
+    "mir": ("https://canonical.com/mir/docs/page", None),
     "mir-latest": ("https://canonical.com/mir/docs/latest", None),
     "core": ("https://documentation.ubuntu.com/core", None),
-    "server": ("https://documentation.ubuntu.com/server", None),
-    "snapcraft": ("https://documentation.ubuntu.com/snapcraft/stable", None),
+    "server": ("https://ubuntu.com/server/docs", None),
+    "snapcraft": ("https://ubuntu.com/docs/snapcraft/page", None),
     "subiquity": (
         "https://canonical-subiquity.readthedocs-hosted.com/en/latest",
         None,
