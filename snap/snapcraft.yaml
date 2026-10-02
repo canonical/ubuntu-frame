@@ -133,9 +133,12 @@ parts:
     build-packages:
       - libapparmor-dev
       - libboost-iostreams-dev
+      - libcec-dev
       - libfreetype6-dev
       - libmiral-dev
       - libmircommon-dev
+      - libp8-platform-dev
+      - libudev-dev
       - libwayland-dev
       - pkg-config
     stage-packages:
