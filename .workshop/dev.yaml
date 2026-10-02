@@ -51,6 +51,14 @@ actions:
 
     cmake --build "$HOME/build/src" "$@"
 
+  coverage: |
+    set -euo pipefail
+
+    cmake -S src -B "$HOME/build/src" -DENABLE_COVERAGE=ON
+    cmake --build "$HOME/build/src" --target coverage_html "$@"
+    echo
+    echo "Coverage report available at http://$( hostname -f ):8001/"
+
   build-launcher: |
     set -euo pipefail
 
