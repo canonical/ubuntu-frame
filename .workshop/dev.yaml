@@ -1,10 +1,14 @@
 name: dev
 base: ubuntu@26.04
 sdks:
-- name: project-mir
+- name: mir
 - name: project-frame
 - name: copilot
 - name: flutter
+
+connections:
+- plug: frame:mir
+  slot: mir:install
 
 actions:
   configure-frame: |
