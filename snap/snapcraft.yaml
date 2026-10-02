@@ -132,9 +132,12 @@ parts:
     source: src
     build-packages:
       - pkg-config
+      - libcec-dev
       - libmiral-dev
       - libmircommon-dev
       - libwayland-dev
+      - libp8-platform-dev
+      - libudev-dev
       - libboost-iostreams-dev
       - libapparmor-dev
       - libfreetype6-dev
