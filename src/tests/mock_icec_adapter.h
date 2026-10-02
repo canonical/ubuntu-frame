@@ -11,6 +11,7 @@ public:
     MOCK_METHOD(bool, SetActiveSource, (CEC::cec_device_type), (override));
     MOCK_METHOD(bool, StandbyDevices, (CEC::cec_logical_address), (override));
     MOCK_METHOD(bool, Open, (const char*, uint32_t), (override));
+    MOCK_METHOD(std::int8_t, DetectAdapters, (CEC::cec_adapter_descriptor*, std::uint8_t, const char*, bool), (override));
     MOCK_METHOD(void, Close, (), (override));
     MOCK_METHOD(bool, GetCurrentConfiguration, (CEC::libcec_configuration*), (override));
     MOCK_METHOD(void, InitVideoStandalone, (), (override));
@@ -87,7 +88,6 @@ public:
     uint8_t AudioMute() override { return 0; }
     uint8_t AudioUnmute() override { return 0; }
     uint8_t AudioStatus() override { return 0; }
-    int8_t DetectAdapters(CEC::cec_adapter_descriptor*, uint8_t, const char*, bool) override { return 0; }
     CEC::cec_command CommandFromString(const char*) override { return {}; }
     bool AudioEnable(bool) override { return false; }
     uint8_t SystemAudioModeStatus() override { return 0; }

@@ -27,10 +27,4 @@ public:
     virtual auto discover() -> std::vector<std::unique_ptr<CecAdapter>> = 0;
 };
 
-class LibCecAdapterFactory final : public CecAdapterFactory
-{
-public:
-    auto discover() -> std::vector<std::unique_ptr<CecAdapter>> override;
-};
-
 #endif // FRAME_CEC_ADAPTER_H
