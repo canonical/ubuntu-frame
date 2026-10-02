@@ -113,3 +113,13 @@ actions:
     export WAYLAND_DISPLAY="wayland-99"
 
     "$@"
+
+  doc: |
+    set -xeu
+
+    if [ "$#" -gt "0" ]; then
+      target="$1"
+      shift
+    fi
+
+    SPHINX_HOST=$( hostname -f ) make -C docs "${target:-run}" "$@"
