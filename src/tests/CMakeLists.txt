@@ -17,6 +17,14 @@ add_executable(ubuntu-frame-tests
     test_frame_window_manager.cpp
 )
 
+if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
+    target_sources(ubuntu-frame-tests PRIVATE
+        test_cec_manager.cpp
+        test_cec_output.cpp
+        test_libcec_adapter.cpp
+        mock_icec_adapter.h)
+endif()
+
 target_link_libraries(ubuntu-frame-tests
     frame-implementation
     PkgConfig::MIRAL

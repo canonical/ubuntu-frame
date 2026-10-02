@@ -15,6 +15,12 @@ pkg_check_modules(WAYLAND_CLIENT wayland-client REQUIRED IMPORTED_TARGET)
 pkg_check_modules(APPARMOR libapparmor REQUIRED IMPORTED_TARGET)
 pkg_check_modules(FREETYPE freetype2 REQUIRED IMPORTED_TARGET)
 
+if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
+    pkg_check_modules(LIBCEC REQUIRED IMPORTED_TARGET libcec)
+    target_compile_definitions(frame PRIVATE FRAME_HAS_CEC_OUTPUT_CONFIGURATION)
+    target_compile_definitions(frame-implementation PRIVATE FRAME_HAS_CEC_OUTPUT_CONFIGURATION)
+endif()
+
 cmake_dependent_option(ENABLE_COVERAGE "Enable code coverage" OFF ENABLE_TESTING OFF)
 if(ENABLE_COVERAGE)
     include(CodeCoverage)
@@ -55,6 +61,16 @@ add_library(frame-implementation
     layout_metadata.cpp layout_metadata.h
     display_configuration_builder.cpp display_configuration_builder.h
 )
+
+if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
+    target_sources(frame-implementation PRIVATE
+        cec_adapter.cpp cec_adapter.h
+        libcec_adapter.h
+        cec_output.cpp cec_output.h
+        cec_manager.cpp cec_manager.h
+        cec_output_configuration.cpp cec_output_configuration.h)
+    target_link_libraries(frame-implementation PUBLIC PkgConfig::LIBCEC)
+endif()
 
 add_executable(frame
     frame_main.cpp
