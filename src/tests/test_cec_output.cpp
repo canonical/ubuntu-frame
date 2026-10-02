@@ -116,3 +116,56 @@ TEST(CecOutput, suppresses_duplicate_power_request_and_stands_by_on_shutdown)
     output.request_power(false);
     output.shutdown();
 }
+
+TEST(CecOutput, exposes_output_and_adapter_identity)
+{
+    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
+    auto* const adapter_ptr = adapter.get();
+    EXPECT_CALL(*adapter_ptr, port()).WillOnce(Return("cec-test-port"));
+    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
+    EXPECT_CALL(*adapter_ptr, close()).Times(1);
+
+    CecOutput output{mg::DisplayConfigurationOutputId{7}, std::move(adapter)};
+    EXPECT_EQ(output.output_id(), mg::DisplayConfigurationOutputId{7});
+    EXPECT_EQ(output.adapter_port(), "cec-test-port");
+    output.shutdown();
+}
+
+TEST(CecOutput, ignores_power_requests_after_shutdown)
+{
+    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
+    auto* const adapter_ptr = adapter.get();
+    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
+    EXPECT_CALL(*adapter_ptr, close()).Times(1);
+
+    CecOutput output{mg::DisplayConfigurationOutputId{7}, std::move(adapter)};
+    output.shutdown();
+    output.request_power(true);
+    output.request_power(false);
+}
+
+TEST(CecOutput, suppresses_duplicate_on_request)
+{
+    std::promise<void> active_source_sent;
+    auto active_source_sent_future = active_source_sent.get_future();
+    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
+    auto* const adapter_ptr = adapter.get();
+
+    {
+        InSequence sequence;
+        EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
+        EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
+        {
+            active_source_sent.set_value();
+            return true;
+        });
+        EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
+        EXPECT_CALL(*adapter_ptr, close()).Times(1);
+    }
+
+    CecOutput output{mg::DisplayConfigurationOutputId{7}, std::move(adapter)};
+    output.request_power(true);
+    ASSERT_EQ(active_source_sent_future.wait_for(2s), std::future_status::ready);
+    output.request_power(true);
+    output.shutdown();
+}

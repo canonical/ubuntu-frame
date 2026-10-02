@@ -28,6 +28,7 @@
 #include "cec_adapter.h"
 #include "cec_manager.h"
 #include "cec_output_configuration.h"
+#include "libcec_adapter.h"
 #include <miral/output_configuration.h>
 #endif
 

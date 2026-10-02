@@ -17,7 +17,10 @@ void init_video_once(CEC::ICECAdapter& connection)
     std::call_once(libcec_video_initialization, [&] { connection.InitVideoStandalone(); });
 }
 
-auto open_adapter(std::string port) -> std::unique_ptr<CecAdapter>
+auto open_adapter(
+    std::string port,
+    LibCecAdapterFactory::Initialize initialize,
+    LibCecAdapterFactory::Destroy destroy) -> std::unique_ptr<CecAdapter>
 {
     CEC::libcec_configuration config;
     config.Clear();
@@ -25,14 +28,14 @@ auto open_adapter(std::string port) -> std::unique_ptr<CecAdapter>
     config.clientVersion = CEC::LIBCEC_VERSION_CURRENT;
     config.bActivateSource = 0;
     config.deviceTypes.Add(CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE);
-    auto* const raw_connection = CECInitialise(&config);
+    auto* const raw_connection = initialize(&config);
     if (!raw_connection)
     {
         mir::log_warning("Unable to initialize libcec for adapter %s", port.c_str());
         return {};
     }
 
-    LibCecConnection connection{raw_connection, &CECDestroy};
+    LibCecConnection connection{raw_connection, destroy};
     return LibCecAdapter::open(std::move(port), std::move(connection));
 }
 }
@@ -128,7 +131,7 @@ auto LibCecAdapterFactory::discover() -> std::vector<std::unique_ptr<CecAdapter>
     config.clientVersion = CEC::LIBCEC_VERSION_CURRENT;
     config.bActivateSource = 0;
     config.deviceTypes.Add(CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE);
-    auto* const discovery = CECInitialise(&config);
+    auto* const discovery = initialize(&config);
     if (!discovery)
     {
         mir::log_warning("Unable to initialize libcec adapter discovery");
@@ -139,7 +142,7 @@ auto LibCecAdapterFactory::discover() -> std::vector<std::unique_ptr<CecAdapter>
     constexpr std::uint8_t max_adapters = 16;
     CEC::cec_adapter_descriptor descriptors[max_adapters]{};
     auto const count = discovery->DetectAdapters(descriptors, max_adapters, nullptr, true);
-    CECDestroy(discovery);
+    destroy(discovery);
 
     if (count < 0)
     {
@@ -149,8 +152,14 @@ auto LibCecAdapterFactory::discover() -> std::vector<std::unique_ptr<CecAdapter>
 
     for (std::int8_t i = 0; i < count; ++i)
     {
-        if (auto adapter = open_adapter(descriptors[i].strComName))
+        if (auto adapter = open_adapter(descriptors[i].strComName, initialize, destroy))
             adapters.push_back(std::move(adapter));
     }
     return adapters;
+}
+
+LibCecAdapterFactory::LibCecAdapterFactory(Initialize initialize, Destroy destroy)
+        : initialize{initialize ? std::move(initialize) : Initialize{&CECInitialise}},
+            destroy{destroy}
+{
 }
