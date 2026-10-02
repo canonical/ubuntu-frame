@@ -94,3 +94,25 @@ TEST(LibCecAdapter, does_not_query_configuration_when_open_fails)
     LibCecConnection owned{connection.release(), &destroy_mock};
     EXPECT_THAT(LibCecAdapter::open("cec-test-port", std::move(owned)), IsNull());
 }
+
+TEST(LibCecAdapter, null_connection_returns_empty)
+{
+    LibCecConnection empty{nullptr, &destroy_mock};
+    EXPECT_THAT(LibCecAdapter::open("cec-test-port", std::move(empty)), IsNull());
+}
+
+TEST(LibCecAdapter, configuration_query_failure_leaves_address_unknown)
+{
+    auto connection = std::make_unique<StrictMock<MockICECAdapter>>();
+    auto* const mock = connection.get();
+    EXPECT_CALL(*mock, InitVideoStandalone()).Times(AnyNumber());
+    EXPECT_CALL(*mock, Open(StrEq("cec-test-port"), _)).WillOnce(Return(true));
+    EXPECT_CALL(*mock, GetCurrentConfiguration(_)).WillOnce(Return(false));
+    EXPECT_CALL(*mock, Close()).Times(1);
+
+    LibCecConnection owned{connection.release(), &destroy_mock};
+    auto adapter = LibCecAdapter::open("cec-test-port", std::move(owned));
+
+    ASSERT_THAT(adapter, NotNull());
+    EXPECT_EQ(adapter->physical_address(), std::nullopt);
+}

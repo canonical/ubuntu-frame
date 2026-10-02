@@ -21,7 +21,9 @@ if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
     target_sources(ubuntu-frame-tests PRIVATE
         test_cec_manager.cpp
         test_cec_output.cpp
+        test_cec_output_configuration.cpp
         test_libcec_adapter.cpp
+        test_libcec_adapter_factory.cpp
         mock_icec_adapter.h)
 endif()
 
