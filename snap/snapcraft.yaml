@@ -131,17 +131,18 @@ parts:
       - -DENABLE_TESTING=OFF
     source: src
     build-packages:
-      - pkg-config
+      - libapparmor-dev
+      - libboost-iostreams-dev
       - libcec-dev
+      - libfreetype6-dev
+      - libglm-dev
       - libmiral-dev
       - libmircommon-dev
-      - libwayland-dev
       - libp8-platform-dev
       - libudev-dev
-      - libboost-iostreams-dev
-      - libapparmor-dev
-      - libfreetype6-dev
+      - libwayland-dev
     stage-packages:
+      - libcec7
       - libboost-iostreams1.90.0
       # Stage libmiral<n> indirectly as we cannot (since core22) do `try:/else:`
       - libmiral-dev
