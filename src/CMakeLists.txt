@@ -15,12 +15,6 @@ pkg_check_modules(WAYLAND_CLIENT wayland-client REQUIRED IMPORTED_TARGET)
 pkg_check_modules(APPARMOR libapparmor REQUIRED IMPORTED_TARGET)
 pkg_check_modules(FREETYPE freetype2 REQUIRED IMPORTED_TARGET)
 
-if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
-    pkg_check_modules(LIBCEC REQUIRED IMPORTED_TARGET libcec)
-    target_compile_definitions(frame PRIVATE FRAME_HAS_CEC_OUTPUT_CONFIGURATION)
-    target_compile_definitions(frame-implementation PRIVATE FRAME_HAS_CEC_OUTPUT_CONFIGURATION)
-endif()
-
 cmake_dependent_option(ENABLE_COVERAGE "Enable code coverage" OFF ENABLE_TESTING OFF)
 if(ENABLE_COVERAGE)
     include(CodeCoverage)
@@ -81,6 +75,12 @@ find_package(Boost 1.48.0 COMPONENTS iostreams REQUIRED)
 
 target_compile_definitions(frame PRIVATE MIR_LOG_COMPONENT="frame")
 target_compile_definitions(frame-implementation PRIVATE MIR_LOG_COMPONENT="frame")
+
+if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
+    pkg_check_modules(LIBCEC REQUIRED IMPORTED_TARGET libcec)
+    target_compile_definitions(frame PRIVATE FRAME_HAS_CEC_OUTPUT_CONFIGURATION)
+    target_compile_definitions(frame-implementation PRIVATE FRAME_HAS_CEC_OUTPUT_CONFIGURATION)
+endif()
 
 target_link_libraries(frame-implementation
     PUBLIC

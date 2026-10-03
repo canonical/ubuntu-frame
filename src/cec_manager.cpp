@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <map>
+#include <mir/log.h>
 #include <optional>
 #include <utility>
 
@@ -9,6 +10,7 @@ namespace mg = mir::graphics;
 
 namespace
 {
+constexpr char const* log_component = "frame-cec";
 constexpr std::uint16_t invalid_physical_address = 0xFFFF;
 }
 
@@ -40,11 +42,15 @@ void CecManager::start()
             adapter->close();
         return;
     }
+    mir::log(mir::logging::Severity::informational, log_component,
+             "CEC manager discovered %zu adapter(s)", discovered.size());
     locked->available_adapters = std::move(discovered);
 }
 
 void CecManager::configuration_confirmed(std::span<mg::DisplayConfigurationOutput const> outputs)
 {
+    mir::log(mir::logging::Severity::debug, log_component,
+             "Received confirmed display configuration with %zu output(s)", outputs.size());
     auto locked = state.lock();
     if (!locked->started || locked->stopping)
         return;
@@ -71,6 +77,8 @@ void CecManager::shutdown()
         auto locked = state.lock();
         if (locked->stopping)
             return;
+        mir::log(mir::logging::Severity::informational, log_component,
+                 "Stopping CEC manager with %zu mapped output(s)", locked->outputs.size());
         locked->stopping = true;
         outputs = std::move(locked->outputs);
         adapters = std::move(locked->available_adapters);
@@ -140,6 +148,10 @@ void CecManager::complete_unambiguous_matches(
             continue;
 
         auto& mapping = state.outputs.at(output_ids.front());
+        mir::log(mir::logging::Severity::informational, log_component,
+                 "Mapped Mir output %d to CEC adapter at physical address %04x",
+             output_ids.front().as_value(),
+             address);
         mapping = std::make_unique<CecOutput>(
             output_ids.front(), std::move(state.available_adapters[adapter_index]));
         adapter_consumed[adapter_index] = true;
