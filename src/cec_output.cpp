@@ -1,6 +1,13 @@
 #include "cec_output.h"
 
+#include <mir/log.h>
+
 #include <utility>
+
+namespace
+{
+constexpr char const* log_component = "frame-cec";
+}
 
 CecOutput::CecOutput(
     mir::graphics::DisplayConfigurationOutputId output_id,
@@ -9,6 +16,8 @@ CecOutput::CecOutput(
       adapter{std::move(adapter)},
       worker{[this] { run(); }}
 {
+    mir::log(mir::logging::Severity::debug, log_component,
+             "CEC worker created for output %d", id.as_value());
 }
 
 CecOutput::~CecOutput()
@@ -35,6 +44,9 @@ void CecOutput::request_power(bool on)
         locked->desired_power = on;
         locked->work_pending = true;
     }
+    mir::log(mir::logging::Severity::debug, log_component,
+             "Queued CEC power state %s for output %d",
+             on ? "on" : "off", id.as_value());
     wake_worker.notify_one();
 }
 
@@ -43,6 +55,9 @@ void CecOutput::shutdown()
     std::lock_guard shutdown_lock{shutdown_mutex};
     if (adapter_closed)
         return;
+
+    mir::log(mir::logging::Severity::informational, log_component,
+             "Shutting down CEC output %d", id.as_value());
 
     {
         auto locked = state.lock();
@@ -77,7 +92,12 @@ void CecOutput::run()
             desired = locked->desired_power.value_or(false);
             locked->work_pending = false;
             if (locked->last_commanded_power == desired)
+            {
+                mir::log(mir::logging::Severity::debug, log_component,
+                         "CEC output %d already has requested state %s",
+                         id.as_value(), desired ? "on" : "off");
                 continue;
+            }
 
             locked.drop();
         }
