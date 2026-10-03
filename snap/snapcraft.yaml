@@ -135,6 +135,7 @@ parts:
       - libboost-iostreams-dev
       - libcec-dev
       - libfreetype6-dev
+      - libglm-dev
       - libmiral-dev
       - libmircommon-dev
       - libp8-platform-dev
@@ -142,6 +143,7 @@ parts:
       - libwayland-dev
       - pkg-config
     stage-packages:
+      - libcec7
       - libboost-iostreams1.90.0
       # Stage libmiral<n> indirectly as we cannot (since core22) do `try:/else:`
       - libmiral-dev
