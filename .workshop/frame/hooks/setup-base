@@ -4,7 +4,11 @@ apt-get install \
   cmake \
   dmz-cursor-theme \
   fonts-ubuntu \
+  gcovr \
   inotify-tools \
+  lcov \
+  libclang-rt-dev \
+  llvm \
   libapparmor-dev \
   libboost-filesystem-dev \
   libboost-iostreams-dev \
@@ -15,4 +19,37 @@ apt-get install \
   make \
   ninja-build \
   python3-venv \
+  python3-livereload \
   rsync
+
+cat <<'EOF' > /usr/local/bin/gcov
+#!/bin/sh
+exec llvm-cov gcov "$@"
+EOF
+chmod +x /usr/local/bin/gcov
+
+cat <<'EOF' > /etc/systemd/system/frame-coverage.service
+[Unit]
+Description=Frame test coverage report
+After=network.target
+
+[Service]
+Type=simple
+ExecStartPre=/bin/bash -c 'until [ -d /home/workshop/build/src/coverage_html ]; do sleep 2; done'
+ExecStart=/bin/bash -c '\
+  /usr/bin/livereload --host 0 --port 8001 /home/workshop/build/src/coverage_html & \
+  LR_PID=$$!; \
+  inotifywait -qq -e delete_self -e move_self /home/workshop/build/src/coverage_html & \
+  IN_PID=$$!; \
+  wait -n; \
+  kill $$LR_PID $$IN_PID 2>/dev/null; \
+  exit 1'
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl enable --now --no-block frame-coverage.service

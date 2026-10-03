@@ -9,36 +9,41 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 option(ENABLE_TESTING "Specifies whether or not we should build the tests" ON)
 
+pkg_check_modules(MIRAL miral REQUIRED IMPORTED_TARGET)
+pkg_check_modules(MIRCOMMON mircommon REQUIRED IMPORTED_TARGET)
+pkg_check_modules(WAYLAND_CLIENT wayland-client REQUIRED IMPORTED_TARGET)
+pkg_check_modules(APPARMOR libapparmor REQUIRED IMPORTED_TARGET)
+pkg_check_modules(FREETYPE freetype2 REQUIRED IMPORTED_TARGET)
+
 cmake_dependent_option(ENABLE_COVERAGE "Enable code coverage" OFF ENABLE_TESTING OFF)
 if(ENABLE_COVERAGE)
     include(CodeCoverage)
     append_coverage_compiler_flags()
+    set(COVERAGE_INCLUDE_EXCLUDES ${MIRAL_INCLUDE_DIRS} ${MIRCOMMON_INCLUDE_DIRS})
+    list(TRANSFORM COVERAGE_INCLUDE_EXCLUDES APPEND "/**")
     setup_target_for_coverage_lcov(
         NAME coverage_html
         BASE_DIRECTORY ${CMAKE_SOURCE_DIR}
         EXECUTABLE ctest --test-dir ${CMAKE_BINARY_DIR} --output-on-failure
         DEPENDENCIES ubuntu-frame-tests
-        EXCLUDE "tests/*" "/usr/include/**"
-        LCOV_ARGS --ignore-errors inconsistent --ignore-errors mismatch
+        EXCLUDE "tests/*" "/usr/include/**" ${COVERAGE_INCLUDE_EXCLUDES}
+        LCOV_ARGS --ignore-errors inconsistent --ignore-errors mismatch --ignore-errors format --ignore-errors unused
+        GENHTML_ARGS --ignore-errors inconsistent --ignore-errors corrupt --ignore-errors category
     )
 
+    set(COVERAGE_INCLUDE_EXCLUDES ${MIRAL_INCLUDE_DIRS} ${MIRCOMMON_INCLUDE_DIRS})
+    list(TRANSFORM COVERAGE_INCLUDE_EXCLUDES APPEND "/.*")
     setup_target_for_coverage_gcovr_xml(
         NAME coverage_xml
         EXECUTABLE ctest --test-dir ${CMAKE_BINARY_DIR} --output-on-failure
         DEPENDENCIES ubuntu-frame-tests
-        EXCLUDE "tests/*"
+        EXCLUDE "tests/*" ${COVERAGE_INCLUDE_EXCLUDES}
     )
 
     add_custom_target(coverage
         DEPENDS coverage_html coverage_xml
     )
 endif()
-
-pkg_check_modules(MIRAL miral REQUIRED IMPORTED_TARGET)
-pkg_check_modules(MIRCOMMON mircommon REQUIRED IMPORTED_TARGET)
-pkg_check_modules(WAYLAND_CLIENT wayland-client REQUIRED IMPORTED_TARGET)
-pkg_check_modules(APPARMOR libapparmor REQUIRED IMPORTED_TARGET)
-pkg_check_modules(FREETYPE freetype2 REQUIRED IMPORTED_TARGET)
 
 add_library(frame-implementation
     safe_mode.cpp safe_mode.h
