@@ -10,11 +10,16 @@
 
 namespace
 {
+constexpr char const* log_component = "frame-cec";
 std::once_flag libcec_video_initialization;
 
 void init_video_once(CEC::ICECAdapter& connection)
 {
-    std::call_once(libcec_video_initialization, [&] { connection.InitVideoStandalone(); });
+    std::call_once(libcec_video_initialization, [&]
+    {
+        mir::log(mir::logging::Severity::debug, log_component, "Initializing libcec host services");
+        connection.InitVideoStandalone();
+    });
 }
 
 auto open_adapter(
@@ -31,11 +36,14 @@ auto open_adapter(
     auto* const raw_connection = initialize(&config);
     if (!raw_connection)
     {
-        mir::log_warning("Unable to initialize libcec for adapter %s", port.c_str());
+        mir::log(mir::logging::Severity::warning, log_component,
+                 "Unable to initialize libcec for adapter %s", port.c_str());
         return {};
     }
 
     LibCecConnection connection{raw_connection, destroy};
+    mir::log(mir::logging::Severity::debug, log_component,
+             "Opening libcec adapter %s", port.c_str());
     return LibCecAdapter::open(std::move(port), std::move(connection));
 }
 }
@@ -49,7 +57,8 @@ auto LibCecAdapter::open(std::string port, LibCecConnection connection)
     init_video_once(*connection);
     if (!connection->Open(port.c_str()))
     {
-        mir::log_warning("Unable to open libcec adapter %s", port.c_str());
+        mir::log(mir::logging::Severity::warning, log_component,
+                 "Unable to open libcec adapter %s", port.c_str());
         return {};
     }
 
@@ -62,8 +71,13 @@ auto LibCecAdapter::open(std::string port, LibCecConnection connection)
         physical_address = current.iPhysicalAddress;
     }
 
-    return std::unique_ptr<LibCecAdapter>{
+    auto adapter = std::unique_ptr<LibCecAdapter>{
         new LibCecAdapter{std::move(port), std::move(connection), physical_address}};
+    mir::log(mir::logging::Severity::informational, log_component,
+             "Opened CEC adapter %s at physical address %s",
+             adapter->port().data(),
+             physical_address ? std::format("{:04x}", *physical_address).c_str() : "unknown");
+    return adapter;
 }
 
 LibCecAdapter::LibCecAdapter(
@@ -91,25 +105,34 @@ auto LibCecAdapter::physical_address() const -> std::optional<std::uint16_t>
 
 auto LibCecAdapter::power_on_tv() -> bool
 {
+    mir::log(mir::logging::Severity::debug, log_component,
+             "Sending TV power-on on adapter %s", port_name.c_str());
     bool const sent = connection && connection->PowerOnDevices(CEC::CECDEVICE_TV);
     if (!sent)
-        mir::log_warning("CEC TV power-on command failed on adapter %s", port_name.c_str());
+        mir::log(mir::logging::Severity::warning, log_component,
+                 "CEC TV power-on command failed on adapter %s", port_name.c_str());
     return sent;
 }
 
 auto LibCecAdapter::make_active_source() -> bool
 {
+    mir::log(mir::logging::Severity::debug, log_component,
+             "Announcing active source on adapter %s", port_name.c_str());
     bool const sent = connection && connection->SetActiveSource(CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE);
     if (!sent)
-        mir::log_warning("CEC active-source command failed on adapter %s", port_name.c_str());
+        mir::log(mir::logging::Severity::warning, log_component,
+                 "CEC active-source command failed on adapter %s", port_name.c_str());
     return sent;
 }
 
 auto LibCecAdapter::standby_tv() -> bool
 {
+    mir::log(mir::logging::Severity::debug, log_component,
+             "Sending TV standby on adapter %s", port_name.c_str());
     bool const sent = connection && connection->StandbyDevices(CEC::CECDEVICE_TV);
     if (!sent)
-        mir::log_warning("CEC TV standby command failed on adapter %s", port_name.c_str());
+        mir::log(mir::logging::Severity::warning, log_component,
+                 "CEC TV standby command failed on adapter %s", port_name.c_str());
     return sent;
 }
 
@@ -117,6 +140,8 @@ void LibCecAdapter::close()
 {
     if (connection)
     {
+        mir::log(mir::logging::Severity::debug, log_component,
+                 "Closing CEC adapter %s", port_name.c_str());
         connection->Close();
         connection.reset();
     }
@@ -125,6 +150,7 @@ void LibCecAdapter::close()
 auto LibCecAdapterFactory::discover() -> std::vector<std::unique_ptr<CecAdapter>>
 {
     std::vector<std::unique_ptr<CecAdapter>> adapters;
+    mir::log(mir::logging::Severity::debug, log_component, "Discovering CEC adapters");
     CEC::libcec_configuration config;
     config.Clear();
     std::snprintf(config.strDeviceName, sizeof(config.strDeviceName), "Ubuntu Frame");
@@ -134,7 +160,8 @@ auto LibCecAdapterFactory::discover() -> std::vector<std::unique_ptr<CecAdapter>
     auto* const discovery = initialize(&config);
     if (!discovery)
     {
-        mir::log_warning("Unable to initialize libcec adapter discovery");
+        mir::log(mir::logging::Severity::warning, log_component,
+                 "Unable to initialize libcec adapter discovery");
         return adapters;
     }
 
@@ -146,9 +173,13 @@ auto LibCecAdapterFactory::discover() -> std::vector<std::unique_ptr<CecAdapter>
 
     if (count < 0)
     {
-        mir::log_warning("libcec adapter discovery failed");
+        mir::log(mir::logging::Severity::warning, log_component,
+                 "libcec adapter discovery failed");
         return adapters;
     }
+
+    mir::log(mir::logging::Severity::informational, log_component,
+             "Discovered %d CEC adapter(s)", count);
 
     for (std::int8_t i = 0; i < count; ++i)
     {
