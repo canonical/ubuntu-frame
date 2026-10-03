@@ -32,11 +32,6 @@ jobs:
         fetch-depth: 0  # needed for version determination
         persist-credentials: false
 
-    - name: Patch PPA and version
-      run: |
-        sed -i 's@mir-team/release@mir-team/dev@' snap/snapcraft.yaml
-        sed -i 's@rev-list --count@rev-parse --short@' snap/snapcraft.yaml
-
     - name: Build and publish the snap
       uses: canonical/actions/build-snap@78e8dd5f693653767f2c60c4a6a421a1ebed35af # release @ 2025.06.05
       with:
