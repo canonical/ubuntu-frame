@@ -94,6 +94,9 @@ public:
 #if CEC_LIB_VERSION_MAJOR >= 5
     bool GetStats(CEC::cec_adapter_stats*) override { return false; }
 #endif
+#if CEC_LIB_VERSION_MAJOR > 8 || (CEC_LIB_VERSION_MAJOR == 8 && CEC_LIB_VERSION_MINOR >= 1)
+    bool SendPlay(CEC::cec_logical_address, CEC::cec_play_mode) override { return false; }
+#endif
 };
 
 #endif // FRAME_TESTS_MOCK_ICEC_ADAPTER_H
