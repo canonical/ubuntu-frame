@@ -18,5 +18,5 @@ jobs:
       uses: canonical/actions/close-snap@78e8dd5f693653767f2c60c4a6a421a1ebed35af # release @ 2025.06.05
       continue-on-error: true
       with:
-        channel: 24/edge/pr${{ github.event.number }}
+        channel: 26/edge/pr${{ github.event.number }}
         snapcraft-token: ${{ secrets.SNAPCRAFT_TOKEN }}
