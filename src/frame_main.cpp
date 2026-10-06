@@ -70,7 +70,8 @@ int main(int argc, char const* argv[])
     runner.add_stop_callback([&] { background_client.stop(); });
 #ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
     std::shared_ptr<CecManager> cec_manager;
-    miral::OutputConfiguration cec_output_configuration;
+    auto cec_strategy = std::make_shared<CecOutputConfiguration>();
+    miral::OutputConfiguration cec_output_configuration{cec_strategy};
     runner.add_stop_callback([&]
     {
         if (cec_manager)
@@ -113,9 +114,8 @@ int main(int argc, char const* argv[])
 
             cec_manager = std::make_shared<CecManager>(
                 std::make_unique<LibCecAdapterFactory>());
+            cec_strategy->set_manager(cec_manager);
             cec_manager->start();
-            cec_output_configuration.update_strategy(
-                std::make_shared<CecOutputConfiguration>(cec_manager));
         },
         "cec-control",
         "Use HDMI-CEC to control display power and input",

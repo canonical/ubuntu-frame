@@ -10,8 +10,16 @@ constexpr char const* log_component = "frame-cec";
 }
 
 CecOutputConfiguration::CecOutputConfiguration(std::shared_ptr<CecManager> manager)
-    : manager{std::move(manager)}
 {
+    set_manager(std::move(manager));
+}
+
+void CecOutputConfiguration::set_manager(std::shared_ptr<CecManager> manager)
+{
+    auto locked = state.lock();
+    locked->manager = std::move(manager);
+    if (locked->manager && locked->confirmed_outputs)
+        locked->manager->configuration_confirmed(*locked->confirmed_outputs);
 }
 
 void CecOutputConfiguration::apply_configuration(
@@ -23,7 +31,12 @@ void CecOutputConfiguration::apply_configuration(
 void CecOutputConfiguration::confirm_configuration(
     std::span<mir::graphics::DisplayConfigurationOutput const> outputs)
 {
+    auto locked = state.lock();
+    locked->confirmed_outputs.emplace(outputs.begin(), outputs.end());
+    if (!locked->manager)
+        return;
+
     mir::log(mir::logging::Severity::debug, log_component,
              "Forwarding %zu confirmed output(s) to CEC manager", outputs.size());
-    manager->configuration_confirmed(outputs);
+    locked->manager->configuration_confirmed(outputs);
 }

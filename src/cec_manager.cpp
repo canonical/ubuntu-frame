@@ -54,12 +54,13 @@ void CecManager::configuration_confirmed(std::span<mg::DisplayConfigurationOutpu
     mir::log(mir::logging::Severity::debug, log_component,
              "Received confirmed display configuration with %zu output(s)", outputs.size());
     auto locked = state.lock();
-    if (!locked->started || locked->stopping)
+    if (locked->stopping)
         return;
 
     locked->confirmed_outputs.assign(outputs.begin(), outputs.end());
     locked->has_confirmed_configuration = true;
-    reconcile_configuration(outputs, *locked);
+    if (locked->started)
+        reconcile_configuration(outputs, *locked);
 }
 
 void CecManager::reconcile_configuration(
