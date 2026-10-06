@@ -45,6 +45,8 @@ void CecManager::start()
     mir::log(mir::logging::Severity::informational, log_component,
              "CEC manager discovered %zu adapter(s)", discovered.size());
     locked->available_adapters = std::move(discovered);
+    if (locked->has_confirmed_configuration)
+        reconcile_configuration(locked->confirmed_outputs, *locked);
 }
 
 void CecManager::configuration_confirmed(std::span<mg::DisplayConfigurationOutput const> outputs)
@@ -55,13 +57,22 @@ void CecManager::configuration_confirmed(std::span<mg::DisplayConfigurationOutpu
     if (!locked->started || locked->stopping)
         return;
 
-    add_initial_outputs(outputs, *locked);
-    complete_unambiguous_matches(outputs, *locked);
+    locked->confirmed_outputs.assign(outputs.begin(), outputs.end());
+    locked->has_confirmed_configuration = true;
+    reconcile_configuration(outputs, *locked);
+}
+
+void CecManager::reconcile_configuration(
+    std::span<mg::DisplayConfigurationOutput const> outputs,
+    State& state)
+{
+    add_initial_outputs(outputs, state);
+    complete_unambiguous_matches(outputs, state);
 
     for (auto const& output : outputs)
     {
-        auto const it = locked->outputs.find(output.id);
-        if (it != locked->outputs.end() && it->second)
+        auto const it = state.outputs.find(output.id);
+        if (it != state.outputs.end() && it->second)
         {
             it->second->request_power(
                 output.connected && output.used && output.power_mode == mir_power_mode_on);

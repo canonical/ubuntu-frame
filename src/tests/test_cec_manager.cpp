@@ -83,6 +83,39 @@ TEST(CecManager, matches_physical_address_and_applies_on_state)
     manager->shutdown();
 }
 
+TEST(CecManager, reconciles_configuration_confirmed_during_discovery)
+{
+    std::promise<void> on_applied;
+    auto on_applied_future = on_applied.get_future();
+    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
+    auto* const adapter_ptr = adapter.get();
+    EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
+    EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
+    EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
+    {
+        on_applied.set_value();
+        return true;
+    });
+    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
+    EXPECT_CALL(*adapter_ptr, close()).Times(1);
+
+    auto factory = std::make_unique<StrictMock<MockCecAdapterFactory>>();
+    auto* const factory_ptr = factory.get();
+    CecManager manager{std::move(factory)};
+    auto display = output(1, 0x3400);
+    std::vector<std::unique_ptr<CecAdapter>> adapters;
+    adapters.push_back(std::move(adapter));
+    EXPECT_CALL(*factory_ptr, discover()).WillOnce([&]
+    {
+        manager.configuration_confirmed(std::span{&display, 1});
+        return std::move(adapters);
+    });
+
+    manager.start();
+    ASSERT_EQ(on_applied_future.wait_for(2s), std::future_status::ready);
+    manager.shutdown();
+}
+
 TEST(CecManager, retries_unmatched_output_when_display_info_becomes_available)
 {
     std::promise<void> on_applied;
