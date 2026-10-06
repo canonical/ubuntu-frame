@@ -91,21 +91,12 @@ void CecOutput::run()
 
             desired = locked->desired_power.value_or(false);
             locked->work_pending = false;
-            if (locked->last_commanded_power == desired)
-            {
-                mir::log(mir::logging::Severity::debug, log_component,
-                         "CEC output %d already has requested state %s",
-                         id.as_value(), desired ? "on" : "off");
-                continue;
-            }
-
             locked.drop();
         }
 
         apply_power_state(desired);
 
         auto locked = state.lock();
-        locked->last_commanded_power = desired;
         if (locked->desired_power != desired)
             locked->work_pending = true;
     }
