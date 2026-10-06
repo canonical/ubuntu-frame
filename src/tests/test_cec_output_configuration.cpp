@@ -43,9 +43,7 @@ private:
 
 TEST(CecOutputConfiguration, apply_does_not_modify_outputs)
 {
-    auto manager = std::make_shared<CecManager>(std::make_unique<FakeCecAdapterFactory>(
-        std::vector<std::unique_ptr<CecAdapter>>{}));
-    CecOutputConfiguration strategy{manager};
+    CecOutputConfiguration strategy;
     mg::DisplayConfigurationOutput output{};
     output.type = mg::DisplayConfigurationOutputType::hdmia;
     output.connected = true;
@@ -57,10 +55,9 @@ TEST(CecOutputConfiguration, apply_does_not_modify_outputs)
 
     EXPECT_TRUE(output.used);
     EXPECT_EQ(output.power_mode, mir_power_mode_on);
-    manager->shutdown();
 }
 
-TEST(CecOutputConfiguration, confirm_forwards_configuration_to_manager)
+TEST(CecOutputConfiguration, replays_latest_confirmation_when_manager_is_attached)
 {
     std::promise<void> active_source_sent;
     auto active_source_sent_future = active_source_sent.get_future();
@@ -80,18 +77,31 @@ TEST(CecOutputConfiguration, confirm_forwards_configuration_to_manager)
     adapters.push_back(std::move(adapter));
     auto manager = std::make_shared<CecManager>(
         std::make_unique<FakeCecAdapterFactory>(std::move(adapters)));
-    manager->start();
-    CecOutputConfiguration strategy{manager};
+    CecOutputConfiguration strategy;
 
     mg::DisplayConfigurationOutput output{};
     output.id = mg::DisplayConfigurationOutputId{3};
     output.type = mg::DisplayConfigurationOutputType::hdmia;
     output.connected = true;
     output.used = true;
-    output.power_mode = mir_power_mode_on;
+    output.power_mode = mir_power_mode_off;
     output.display_info.physical_address = 0x3400;
     strategy.confirm_configuration(std::span<mg::DisplayConfigurationOutput const>{&output, 1});
+    output.power_mode = mir_power_mode_on;
+    strategy.confirm_configuration(std::span<mg::DisplayConfigurationOutput const>{&output, 1});
+    strategy.set_manager(manager);
+    manager->start();
 
     ASSERT_EQ(active_source_sent_future.wait_for(std::chrono::seconds{2}), std::future_status::ready);
+    std::promise<void> forwarded_active_source_sent;
+    auto forwarded_active_source_sent_future = forwarded_active_source_sent.get_future();
+    EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
+    EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
+    {
+        forwarded_active_source_sent.set_value();
+        return true;
+    });
+    strategy.confirm_configuration(std::span<mg::DisplayConfigurationOutput const>{&output, 1});
+    ASSERT_EQ(forwarded_active_source_sent_future.wait_for(std::chrono::seconds{2}), std::future_status::ready);
     manager->shutdown();
 }
