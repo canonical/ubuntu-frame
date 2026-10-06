@@ -191,7 +191,7 @@ TEST(CecManager, does_not_guess_when_output_physical_addresses_are_ambiguous)
     manager->shutdown();
 }
 
-TEST(CecManager, starts_discovery_once_and_ignores_configuration_outside_lifetime)
+TEST(CecManager, replays_pre_start_configuration_discovers_once_and_ignores_configuration_after_shutdown)
 {
     std::promise<void> on_applied;
     auto on_applied_future = on_applied.get_future();
@@ -219,11 +219,21 @@ TEST(CecManager, starts_discovery_once_and_ignores_configuration_outside_lifetim
     manager.configuration_confirmed(std::span{&display, 1});
     manager.start();
     manager.start();
-    manager.configuration_confirmed(std::span{&display, 1});
     ASSERT_EQ(on_applied_future.wait_for(2s), std::future_status::ready);
     manager.shutdown();
 
     manager.configuration_confirmed(std::span{&display, 1});
+}
+
+TEST(CecManager, does_not_discover_or_send_commands_without_start)
+{
+    auto factory = std::make_unique<StrictMock<MockCecAdapterFactory>>();
+    EXPECT_CALL(*factory, discover()).Times(0);
+    CecManager manager{std::move(factory)};
+    auto display = output(1, 0x3400);
+
+    manager.configuration_confirmed(std::span{&display, 1});
+    manager.shutdown();
 }
 
 TEST(CecManager, ignores_disconnected_and_non_hdmi_outputs)
