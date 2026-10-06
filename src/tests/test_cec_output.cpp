@@ -91,10 +91,12 @@ TEST(CecOutput, powers_on_and_announces_active_source)
     output.shutdown();
 }
 
-TEST(CecOutput, suppresses_duplicate_power_request_and_stands_by_on_shutdown)
+TEST(CecOutput, resends_duplicate_power_request_and_stands_by_on_shutdown)
 {
     std::promise<void> first_standby_sent;
+    std::promise<void> repeated_standby_sent;
     auto first_standby_sent_future = first_standby_sent.get_future();
+    auto repeated_standby_sent_future = repeated_standby_sent.get_future();
     auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
     auto* const adapter_ptr = adapter.get();
 
@@ -103,6 +105,11 @@ TEST(CecOutput, suppresses_duplicate_power_request_and_stands_by_on_shutdown)
         EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce([&]
         {
             first_standby_sent.set_value();
+            return true;
+        });
+        EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce([&]
+        {
+            repeated_standby_sent.set_value();
             return true;
         });
         EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
@@ -114,6 +121,7 @@ TEST(CecOutput, suppresses_duplicate_power_request_and_stands_by_on_shutdown)
     ASSERT_EQ(first_standby_sent_future.wait_for(2s), std::future_status::ready);
 
     output.request_power(false);
+    ASSERT_EQ(repeated_standby_sent_future.wait_for(2s), std::future_status::ready);
     output.shutdown();
 }
 
@@ -144,10 +152,12 @@ TEST(CecOutput, ignores_power_requests_after_shutdown)
     output.request_power(false);
 }
 
-TEST(CecOutput, suppresses_duplicate_on_request)
+TEST(CecOutput, resends_duplicate_on_request)
 {
     std::promise<void> active_source_sent;
+    std::promise<void> repeated_active_source_sent;
     auto active_source_sent_future = active_source_sent.get_future();
+    auto repeated_active_source_sent_future = repeated_active_source_sent.get_future();
     auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
     auto* const adapter_ptr = adapter.get();
 
@@ -159,6 +169,12 @@ TEST(CecOutput, suppresses_duplicate_on_request)
             active_source_sent.set_value();
             return true;
         });
+        EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
+        EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
+        {
+            repeated_active_source_sent.set_value();
+            return true;
+        });
         EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
         EXPECT_CALL(*adapter_ptr, close()).Times(1);
     }
@@ -167,5 +183,6 @@ TEST(CecOutput, suppresses_duplicate_on_request)
     output.request_power(true);
     ASSERT_EQ(active_source_sent_future.wait_for(2s), std::future_status::ready);
     output.request_power(true);
+    ASSERT_EQ(repeated_active_source_sent_future.wait_for(2s), std::future_status::ready);
     output.shutdown();
 }

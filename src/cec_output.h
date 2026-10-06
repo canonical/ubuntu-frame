@@ -32,7 +32,6 @@ private:
     struct State
     {
         std::optional<bool> desired_power;
-        std::optional<bool> last_commanded_power;
         bool work_pending{false};
         bool stopping{false};
     };
