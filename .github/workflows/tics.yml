@@ -48,6 +48,7 @@ jobs:
           libboost-filesystem-dev \
           libboost-iostreams-dev \
           libboost-system-dev \
+          libcec-dev \
           libgtest-dev \
           libgmock-dev \
           libfreetype6-dev \
@@ -55,6 +56,8 @@ jobs:
           libmirserver-dev \
           libmirserver-internal-dev \
           libmircommon-dev \
+          libp8-platform-dev \
+          libudev-dev \
           mirtest-dev \
           mir-wlcs-integration \
           libwayland-dev \
