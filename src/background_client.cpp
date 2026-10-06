@@ -456,9 +456,14 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
 
 void BackgroundClient::stop()
 {
+    // Hold the mutex while this thread owns a strong reference: the client thread
+    // takes the same mutex before dropping its own reference, so it is always the
+    // last owner and Self is destroyed on the client thread before the runner
+    // calls wl_display_disconnect(). Releasing the reference after the unlock let
+    // the woken client thread disconnect first on single-core systems (#354).
+    std::lock_guard<decltype(mutex)> lock{mutex};
     if (auto ss = self.lock())
     {
-        std::lock_guard<decltype(mutex)> lock{mutex};
         ss->stop();
     }
 }
