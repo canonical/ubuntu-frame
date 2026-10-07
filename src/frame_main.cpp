@@ -118,7 +118,7 @@ int main(int argc, char const* argv[])
             cec_manager->start();
         },
         "cec-control",
-        "Use HDMI-CEC to control display power and input",
+        "Use HDMI-CEC to control compatible displays' power state and input",
         false};
 #endif
 
