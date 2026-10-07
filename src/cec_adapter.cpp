@@ -4,17 +4,19 @@
 #include <mir/log.h>
 
 #include <cstdio>
+#include <cstddef>
 #include <mutex>
 #include <optional>
+#include <span>
 #include <string>
 
 namespace
 {
 constexpr char const* log_component = "frame-cec";
-std::once_flag libcec_video_initialization;
 
 void init_video_once(CEC::ICECAdapter& connection)
 {
+    static std::once_flag libcec_video_initialization;
     std::call_once(libcec_video_initialization, [&]
     {
         mir::log(mir::logging::Severity::debug, log_component, "Initializing libcec host services");
@@ -75,7 +77,7 @@ auto LibCecAdapter::open(std::string port, LibCecConnection connection)
         new LibCecAdapter{std::move(port), std::move(connection), physical_address}};
     mir::log(mir::logging::Severity::informational, log_component,
              "Opened CEC adapter %s at physical address %s",
-             adapter->port().data(),
+             adapter->port_name.c_str(),
              physical_address ? std::format("{:04x}", *physical_address).c_str() : "unknown");
     return adapter;
 }
@@ -181,9 +183,9 @@ auto LibCecAdapterFactory::discover() -> std::vector<std::unique_ptr<CecAdapter>
     mir::log(mir::logging::Severity::informational, log_component,
              "Discovered %d CEC adapter(s)", count);
 
-    for (std::int8_t i = 0; i < count; ++i)
+    for (auto const& descriptor : std::span{descriptors}.first(static_cast<std::size_t>(count)))
     {
-        if (auto adapter = open_adapter(descriptors[i].strComName, initialize, destroy))
+        if (auto adapter = open_adapter(descriptor.strComName, initialize, destroy))
             adapters.push_back(std::move(adapter));
     }
     return adapters;
