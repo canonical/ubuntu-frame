@@ -145,6 +145,36 @@ TEST(CecManager, retries_unmatched_output_when_display_info_becomes_available)
     manager->shutdown();
 }
 
+TEST(CecManager, maps_output_hotplugged_with_a_new_id)
+{
+    std::promise<void> on_applied;
+    auto on_applied_future = on_applied.get_future();
+    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
+    auto* const adapter_ptr = adapter.get();
+    EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
+    EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
+    EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
+    {
+        on_applied.set_value();
+        return true;
+    });
+    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
+    EXPECT_CALL(*adapter_ptr, close()).Times(1);
+    std::vector<std::unique_ptr<CecAdapter>> adapters;
+    adapters.push_back(std::move(adapter));
+    auto manager = manager_with(std::move(adapters));
+    auto disconnected = output(1, 0x3400);
+    disconnected.connected = false;
+
+    manager->start();
+    manager->configuration_confirmed(std::span{&disconnected, 1});
+
+    auto hotplugged = output(2, 0x3400);
+    manager->configuration_confirmed(std::span{&hotplugged, 1});
+    ASSERT_EQ(on_applied_future.wait_for(2s), std::future_status::ready);
+    manager->shutdown();
+}
+
 TEST(CecManager, confirmed_power_off_sends_standby)
 {
     auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();

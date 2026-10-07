@@ -67,7 +67,7 @@ void CecManager::reconcile_configuration(
     std::span<mg::DisplayConfigurationOutput const> outputs,
     State& state)
 {
-    add_initial_outputs(outputs, state);
+    refresh_outputs(outputs, state);
     complete_unambiguous_matches(outputs, state);
 
     for (auto const& output : outputs)
@@ -109,17 +109,13 @@ auto CecManager::is_hdmi(mg::DisplayConfigurationOutputType type) -> bool
         type == mg::DisplayConfigurationOutputType::hdmib;
 }
 
-void CecManager::add_initial_outputs(
+void CecManager::refresh_outputs(
     std::span<mg::DisplayConfigurationOutput const> outputs,
     State& state)
 {
-    if (state.output_inventory_initialized)
-        return;
-
     for (auto const& output : outputs)
         if (output.connected && is_hdmi(output.type))
             state.outputs.try_emplace(output.id, nullptr);
-    state.output_inventory_initialized = true;
 }
 
 void CecManager::complete_unambiguous_matches(
