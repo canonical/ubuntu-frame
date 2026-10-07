@@ -89,14 +89,34 @@ TEST_F(CecOutputTest, powers_on_and_announces_active_source)
     output.shutdown();
 }
 
-TEST_F(CecOutputTest, resends_duplicate_power_request_and_stands_by_on_shutdown)
+TEST_F(CecOutputTest, resends_duplicate_power_requests_for_on_and_off)
 {
+    std::promise<void> first_power_on_sent;
+    std::promise<void> repeated_power_on_sent;
     std::promise<void> first_standby_sent;
     std::promise<void> repeated_standby_sent;
+    auto first_power_on_sent_future = first_power_on_sent.get_future();
+    auto repeated_power_on_sent_future = repeated_power_on_sent.get_future();
     auto first_standby_sent_future = first_standby_sent.get_future();
     auto repeated_standby_sent_future = repeated_standby_sent.get_future();
     {
         InSequence sequence;
+        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, make_active_source())
+            .WillOnce(
+                [&]
+                {
+                    first_power_on_sent.set_value();
+                    return true;
+                });
+        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, make_active_source())
+            .WillOnce(
+                [&]
+                {
+                    repeated_power_on_sent.set_value();
+                    return true;
+                });
         EXPECT_CALL(mock_adapter, standby_tv())
             .WillOnce(
                 [&]
@@ -115,6 +135,12 @@ TEST_F(CecOutputTest, resends_duplicate_power_request_and_stands_by_on_shutdown)
     }
 
     CecOutput output{mg::DisplayConfigurationOutputId{1}, std::move(adapter)};
+    output.request_power(true);
+    ASSERT_EQ(first_power_on_sent_future.wait_for(2s), std::future_status::ready);
+
+    output.request_power(true);
+    ASSERT_EQ(repeated_power_on_sent_future.wait_for(2s), std::future_status::ready);
+
     output.request_power(false);
     ASSERT_EQ(first_standby_sent_future.wait_for(2s), std::future_status::ready);
 
@@ -131,39 +157,4 @@ TEST_F(CecOutputTest, ignores_power_requests_after_shutdown)
     output.shutdown();
     output.request_power(true);
     output.request_power(false);
-}
-
-TEST_F(CecOutputTest, resends_duplicate_on_request)
-{
-    std::promise<void> active_source_sent;
-    std::promise<void> repeated_active_source_sent;
-    auto active_source_sent_future = active_source_sent.get_future();
-    auto repeated_active_source_sent_future = repeated_active_source_sent.get_future();
-    {
-        InSequence sequence;
-        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
-        EXPECT_CALL(mock_adapter, make_active_source())
-            .WillOnce(
-                [&]
-                {
-                    active_source_sent.set_value();
-                    return true;
-                });
-        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
-        EXPECT_CALL(mock_adapter, make_active_source())
-            .WillOnce(
-                [&]
-                {
-                    repeated_active_source_sent.set_value();
-                    return true;
-                });
-        expect_shutdown();
-    }
-
-    CecOutput output{mg::DisplayConfigurationOutputId{7}, std::move(adapter)};
-    output.request_power(true);
-    ASSERT_EQ(active_source_sent_future.wait_for(2s), std::future_status::ready);
-    output.request_power(true);
-    ASSERT_EQ(repeated_active_source_sent_future.wait_for(2s), std::future_status::ready);
-    output.shutdown();
 }
