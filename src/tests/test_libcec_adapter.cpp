@@ -15,47 +15,51 @@ void destroy_mock(CEC::ICECAdapter* adapter)
     delete adapter;
 }
 
-auto open_mock_adapter(
-    std::unique_ptr<MockICECAdapter> connection,
-    std::optional<std::uint16_t> physical_address = 0x3400)
-    -> std::unique_ptr<LibCecAdapter>
+class LibCecAdapterTest : public Test
 {
-    auto* const mock = connection.get();
-    EXPECT_CALL(*mock, InitVideoStandalone()).Times(AnyNumber());
-    EXPECT_CALL(*mock, Open(StrEq("cec-test-port"), _)).WillOnce(Return(true));
-    EXPECT_CALL(*mock, GetCurrentConfiguration(_)).WillOnce([physical_address](CEC::libcec_configuration* config)
+protected:
+    LibCecAdapterTest()
     {
-        config->iPhysicalAddress = physical_address.value_or(CEC_INVALID_PHYSICAL_ADDRESS);
-        return true;
-    });
+        EXPECT_CALL(mock, InitVideoStandalone()).Times(AnyNumber());
+        ON_CALL(mock, Open(_, _)).WillByDefault(Return(true));
+        ON_CALL(mock, GetCurrentConfiguration(_)).WillByDefault([this](CEC::libcec_configuration* config)
+        {
+            config->iPhysicalAddress = physical_address.value_or(CEC_INVALID_PHYSICAL_ADDRESS);
+            return true;
+        });
+    }
 
-    LibCecConnection owned{connection.release(), &destroy_mock};
-    return LibCecAdapter::open("cec-test-port", std::move(owned));
-}
+    auto open_adapter(bool succeeds = true) -> std::unique_ptr<LibCecAdapter>
+    {
+        EXPECT_CALL(mock, Open(StrEq("cec-test-port"), _)).Times(1);
+        EXPECT_CALL(mock, GetCurrentConfiguration(_)).Times(succeeds ? 1 : 0);
+        EXPECT_CALL(mock, Close()).Times(succeeds ? 1 : 0);
+        LibCecConnection owned{connection.release(), &destroy_mock};
+        return LibCecAdapter::open("cec-test-port", std::move(owned));
+    }
+
+    std::unique_ptr<MockICECAdapter> connection = std::make_unique<StrictMock<MockICECAdapter>>();
+    MockICECAdapter& mock = *connection;
+    std::optional<std::uint16_t> physical_address = 0x3400;
+};
 }
 
-TEST(LibCecAdapter, exposes_port_and_physical_address)
+TEST_F(LibCecAdapterTest, exposes_port_and_physical_address)
 {
-    auto connection = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto* const mock = connection.get();
-    EXPECT_CALL(*mock, Close()).Times(1);
-    auto adapter = open_mock_adapter(std::move(connection));
+    auto adapter = open_adapter();
 
     ASSERT_THAT(adapter, NotNull());
     EXPECT_EQ(adapter->port(), "cec-test-port");
     EXPECT_EQ(adapter->physical_address(), 0x3400);
 }
 
-TEST(LibCecAdapter, sends_tv_power_commands_using_expected_roles)
+TEST_F(LibCecAdapterTest, sends_tv_power_commands_using_expected_roles)
 {
-    auto connection = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto* const mock = connection.get();
-    EXPECT_CALL(*mock, PowerOnDevices(CEC::CECDEVICE_TV)).WillOnce(Return(true));
-    EXPECT_CALL(*mock, SetActiveSource(CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE)).WillOnce(Return(true));
-    EXPECT_CALL(*mock, StandbyDevices(CEC::CECDEVICE_TV)).WillOnce(Return(true));
-    EXPECT_CALL(*mock, Close()).Times(1);
+    EXPECT_CALL(mock, PowerOnDevices(CEC::CECDEVICE_TV)).WillOnce(Return(true));
+    EXPECT_CALL(mock, SetActiveSource(CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE)).WillOnce(Return(true));
+    EXPECT_CALL(mock, StandbyDevices(CEC::CECDEVICE_TV)).WillOnce(Return(true));
 
-    auto adapter = open_mock_adapter(std::move(connection));
+    auto adapter = open_adapter();
 
     ASSERT_THAT(adapter, NotNull());
     EXPECT_TRUE(adapter->power_on_tv());
@@ -65,16 +69,14 @@ TEST(LibCecAdapter, sends_tv_power_commands_using_expected_roles)
     adapter->close();
 }
 
-TEST(LibCecAdapter, propagates_command_failures)
+TEST_F(LibCecAdapterTest, propagates_command_failures)
 {
-    auto connection = std::make_unique<NiceMock<MockICECAdapter>>();
-    auto* const mock = connection.get();
-    EXPECT_CALL(*mock, PowerOnDevices(CEC::CECDEVICE_TV)).WillOnce(Return(false));
-    EXPECT_CALL(*mock, SetActiveSource(CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE)).WillOnce(Return(false));
-    EXPECT_CALL(*mock, StandbyDevices(CEC::CECDEVICE_TV)).WillOnce(Return(false));
-    EXPECT_CALL(*mock, Close()).Times(1);
+    EXPECT_CALL(mock, PowerOnDevices(CEC::CECDEVICE_TV)).WillOnce(Return(false));
+    EXPECT_CALL(mock, SetActiveSource(CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE)).WillOnce(Return(false));
+    EXPECT_CALL(mock, StandbyDevices(CEC::CECDEVICE_TV)).WillOnce(Return(false));
 
-    auto adapter = open_mock_adapter(std::move(connection), std::nullopt);
+    physical_address = std::nullopt;
+    auto adapter = open_adapter();
 
     ASSERT_THAT(adapter, NotNull());
     EXPECT_FALSE(adapter->power_on_tv());
@@ -83,16 +85,11 @@ TEST(LibCecAdapter, propagates_command_failures)
     adapter->close();
 }
 
-TEST(LibCecAdapter, does_not_query_configuration_when_open_fails)
+TEST_F(LibCecAdapterTest, does_not_query_configuration_when_open_fails)
 {
-    auto connection = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto* const mock = connection.get();
-    EXPECT_CALL(*mock, InitVideoStandalone()).Times(AnyNumber());
-    EXPECT_CALL(*mock, Open(StrEq("cec-test-port"), _)).WillOnce(Return(false));
-    EXPECT_CALL(*mock, GetCurrentConfiguration(_)).Times(0);
+    ON_CALL(mock, Open(_, _)).WillByDefault(Return(false));
 
-    LibCecConnection owned{connection.release(), &destroy_mock};
-    EXPECT_THAT(LibCecAdapter::open("cec-test-port", std::move(owned)), IsNull());
+    EXPECT_THAT(open_adapter(false), IsNull());
 }
 
 TEST(LibCecAdapter, null_connection_returns_empty)
@@ -101,17 +98,11 @@ TEST(LibCecAdapter, null_connection_returns_empty)
     EXPECT_THAT(LibCecAdapter::open("cec-test-port", std::move(empty)), IsNull());
 }
 
-TEST(LibCecAdapter, configuration_query_failure_leaves_address_unknown)
+TEST_F(LibCecAdapterTest, configuration_query_failure_leaves_address_unknown)
 {
-    auto connection = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto* const mock = connection.get();
-    EXPECT_CALL(*mock, InitVideoStandalone()).Times(AnyNumber());
-    EXPECT_CALL(*mock, Open(StrEq("cec-test-port"), _)).WillOnce(Return(true));
-    EXPECT_CALL(*mock, GetCurrentConfiguration(_)).WillOnce(Return(false));
-    EXPECT_CALL(*mock, Close()).Times(1);
+    ON_CALL(mock, GetCurrentConfiguration(_)).WillByDefault(Return(false));
 
-    LibCecConnection owned{connection.release(), &destroy_mock};
-    auto adapter = LibCecAdapter::open("cec-test-port", std::move(owned));
+    auto adapter = open_adapter();
 
     ASSERT_THAT(adapter, NotNull());
     EXPECT_EQ(adapter->physical_address(), std::nullopt);
