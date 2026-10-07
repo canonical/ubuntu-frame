@@ -18,8 +18,9 @@ void CecOutputConfiguration::set_manager(std::shared_ptr<CecManager> manager)
 {
     auto locked = state.lock();
     locked->manager = std::move(manager);
-    if (locked->manager && locked->confirmed_outputs)
-        locked->manager->configuration_confirmed(*locked->confirmed_outputs);
+    auto const& confirmed_outputs = locked->confirmed_outputs;
+    if (locked->manager && confirmed_outputs)
+        locked->manager->configuration_confirmed(confirmed_outputs.value());
 }
 
 void CecOutputConfiguration::apply_configuration(
