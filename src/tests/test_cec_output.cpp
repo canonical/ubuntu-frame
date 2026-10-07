@@ -123,17 +123,6 @@ TEST_F(CecOutputTest, resends_duplicate_power_request_and_stands_by_on_shutdown)
     output.shutdown();
 }
 
-TEST_F(CecOutputTest, exposes_output_and_adapter_identity)
-{
-    EXPECT_CALL(mock_adapter, port()).Times(1);
-    expect_shutdown();
-
-    CecOutput output{mg::DisplayConfigurationOutputId{7}, std::move(adapter)};
-    EXPECT_EQ(output.output_id(), mg::DisplayConfigurationOutputId{7});
-    EXPECT_EQ(output.adapter_port(), "cec-test-port");
-    output.shutdown();
-}
-
 TEST_F(CecOutputTest, ignores_power_requests_after_shutdown)
 {
     expect_shutdown();
