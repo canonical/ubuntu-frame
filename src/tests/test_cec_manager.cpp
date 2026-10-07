@@ -1,4 +1,5 @@
 #include "../cec_manager.h"
+#include "mock_cec_adapter.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -16,66 +17,50 @@ namespace mg = mir::graphics;
 
 namespace
 {
-class MockCecAdapter : public CecAdapter
+class CecManagerTest : public Test
 {
-public:
-    MOCK_METHOD(std::string_view, port, (), (const, override));
-    MOCK_METHOD(std::optional<std::uint16_t>, physical_address, (), (const, override));
-    MOCK_METHOD(bool, power_on_tv, (), (override));
-    MOCK_METHOD(bool, make_active_source, (), (override));
-    MOCK_METHOD(bool, standby_tv, (), (override));
-    MOCK_METHOD(void, close, (), (override));
-};
+protected:
+    CecManagerTest()
+    {
+        ON_CALL(mock_factory, discover()).WillByDefault([this] { return std::move(adapters); });
+        EXPECT_CALL(mock_factory, discover()).Times(1);
+    }
 
-class MockCecAdapterFactory : public CecAdapterFactory
-{
-public:
-    using AdapterList = std::vector<std::unique_ptr<CecAdapter>>;
-    MOCK_METHOD(AdapterList, discover, (), (override));
-};
+    auto add_adapter() -> MockCecAdapter&
+    {
+        auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
+        auto& mock = *adapter;
+        EXPECT_CALL(mock, physical_address()).Times(AnyNumber());
+        EXPECT_CALL(mock, close()).Times(1);
+        adapters.push_back(std::move(adapter));
+        return mock;
+    }
 
-auto output(int id, std::optional<std::uint16_t> address) -> mg::DisplayConfigurationOutput
-{
-    mg::DisplayConfigurationOutput value{};
-    value.id = mg::DisplayConfigurationOutputId{id};
-    value.type = mg::DisplayConfigurationOutputType::hdmia;
-    value.connected = true;
-    value.used = true;
-    value.power_mode = mir_power_mode_on;
-    value.display_info.physical_address = address;
-    return value;
-}
+    void expect_on_state()
+    {
+        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, make_active_source()).WillOnce([this]
+        {
+            on_applied.set_value();
+            return true;
+        });
+        EXPECT_CALL(mock_adapter, standby_tv()).Times(1);
+    }
 
-auto manager_with(std::vector<std::unique_ptr<CecAdapter>> adapters) -> std::unique_ptr<CecManager>
-{
-    auto factory = std::make_unique<StrictMock<MockCecAdapterFactory>>();
-    EXPECT_CALL(*factory, discover()).WillOnce(Return(ByMove(std::move(adapters))));
-    return std::make_unique<CecManager>(std::move(factory));
-}
-}
-
-TEST(CecManager, matches_physical_address_and_applies_on_state)
-{
     std::promise<void> on_applied;
-    auto on_applied_future = on_applied.get_future();
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-    EXPECT_CALL(*adapter_ptr, port()).WillRepeatedly(Return("adapter-a"));
-    EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
-    EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source())
-        .WillOnce(
-            [&]
-            {
-                on_applied.set_value();
-                return true;
-            });
-    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, close()).Times(1);
+    std::future<void> on_applied_future = on_applied.get_future();
     std::vector<std::unique_ptr<CecAdapter>> adapters;
-    adapters.push_back(std::move(adapter));
-    auto manager = manager_with(std::move(adapters));
-    auto display = output(1, 0x3400);
+    MockCecAdapter& mock_adapter = add_adapter();
+    std::unique_ptr<MockCecAdapterFactory> factory = std::make_unique<StrictMock<MockCecAdapterFactory>>();
+    MockCecAdapterFactory& mock_factory = *factory;
+    std::unique_ptr<CecManager> manager = std::make_unique<CecManager>(std::move(factory));
+    mg::DisplayConfigurationOutput display = cec_display_output();
+};
+}
+
+TEST_F(CecManagerTest, matches_physical_address_and_applies_on_state)
+{
+    expect_on_state();
 
     manager->start();
     manager->configuration_confirmed(std::span{&display, 1});
@@ -83,64 +68,26 @@ TEST(CecManager, matches_physical_address_and_applies_on_state)
     manager->shutdown();
 }
 
-TEST(CecManager, reconciles_configuration_confirmed_during_discovery)
+TEST_F(CecManagerTest, reconciles_configuration_confirmed_during_discovery)
 {
-    std::promise<void> on_applied;
-    auto on_applied_future = on_applied.get_future();
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-    EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
-    EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source())
-        .WillOnce(
+    expect_on_state();
+    ON_CALL(mock_factory, discover())
+        .WillByDefault(
             [&]
             {
-                on_applied.set_value();
-                return true;
-            });
-    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, close()).Times(1);
-
-    auto factory = std::make_unique<StrictMock<MockCecAdapterFactory>>();
-    auto* const factory_ptr = factory.get();
-    CecManager manager{std::move(factory)};
-    auto display = output(1, 0x3400);
-    std::vector<std::unique_ptr<CecAdapter>> adapters;
-    adapters.push_back(std::move(adapter));
-    EXPECT_CALL(*factory_ptr, discover())
-        .WillOnce(
-            [&]
-            {
-                manager.configuration_confirmed(std::span{&display, 1});
+                manager->configuration_confirmed(std::span{&display, 1});
                 return std::move(adapters);
             });
 
-    manager.start();
+    manager->start();
     ASSERT_EQ(on_applied_future.wait_for(2s), std::future_status::ready);
-    manager.shutdown();
+    manager->shutdown();
 }
 
-TEST(CecManager, retries_unmatched_output_when_display_info_becomes_available)
+TEST_F(CecManagerTest, retries_unmatched_output_when_display_info_becomes_available)
 {
-    std::promise<void> on_applied;
-    auto on_applied_future = on_applied.get_future();
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-    EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
-    EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source())
-        .WillOnce(
-            [&]
-            {
-                on_applied.set_value();
-                return true;
-            });
-    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, close()).Times(1);
-    std::vector<std::unique_ptr<CecAdapter>> adapters;
-    adapters.push_back(std::move(adapter));
-    auto manager = manager_with(std::move(adapters));
-    auto display = output(1, std::nullopt);
+    expect_on_state();
+    display.display_info.physical_address = std::nullopt;
 
     manager->start();
     manager->configuration_confirmed(std::span{&display, 1});
@@ -151,51 +98,25 @@ TEST(CecManager, retries_unmatched_output_when_display_info_becomes_available)
     manager->shutdown();
 }
 
-TEST(CecManager, maps_output_hotplugged_with_a_new_id)
+TEST_F(CecManagerTest, maps_output_hotplugged_with_a_new_id)
 {
-    std::promise<void> on_applied;
-    auto on_applied_future = on_applied.get_future();
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-    EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
-    EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source())
-        .WillOnce(
-            [&]
-            {
-                on_applied.set_value();
-                return true;
-            });
-    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, close()).Times(1);
-    std::vector<std::unique_ptr<CecAdapter>> adapters;
-    adapters.push_back(std::move(adapter));
-    auto manager = manager_with(std::move(adapters));
-    auto disconnected = output(1, 0x3400);
-    disconnected.connected = false;
+    expect_on_state();
+    display.connected = false;
 
     manager->start();
-    manager->configuration_confirmed(std::span{&disconnected, 1});
+    manager->configuration_confirmed(std::span{&display, 1});
 
-    auto hotplugged = output(2, 0x3400);
+    auto hotplugged = cec_display_output(2);
     manager->configuration_confirmed(std::span{&hotplugged, 1});
     ASSERT_EQ(on_applied_future.wait_for(2s), std::future_status::ready);
     manager->shutdown();
 }
 
-TEST(CecManager, confirmed_power_off_sends_standby)
+TEST_F(CecManagerTest, confirmed_power_off_sends_standby)
 {
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-    EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
-    EXPECT_CALL(*adapter_ptr, power_on_tv()).Times(AtMost(1)).WillRepeatedly(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source()).Times(AtMost(1)).WillRepeatedly(Return(true));
-    EXPECT_CALL(*adapter_ptr, standby_tv()).Times(AtLeast(1)).WillRepeatedly(Return(true));
-    EXPECT_CALL(*adapter_ptr, close()).Times(1);
-    std::vector<std::unique_ptr<CecAdapter>> adapters;
-    adapters.push_back(std::move(adapter));
-    auto manager = manager_with(std::move(adapters));
-    auto display = output(1, 0x3400);
+    EXPECT_CALL(mock_adapter, power_on_tv()).Times(AtMost(1));
+    EXPECT_CALL(mock_adapter, make_active_source()).Times(AtMost(1));
+    EXPECT_CALL(mock_adapter, standby_tv()).Times(AtLeast(1));
 
     manager->start();
     manager->configuration_confirmed(std::span{&display, 1});
@@ -205,60 +126,27 @@ TEST(CecManager, confirmed_power_off_sends_standby)
     manager->shutdown();
 }
 
-TEST(CecManager, does_not_guess_when_output_physical_addresses_are_ambiguous)
+TEST_F(CecManagerTest, does_not_guess_when_output_physical_addresses_are_ambiguous)
 {
-    auto first_adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto second_adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const first_adapter_ptr = first_adapter.get();
-    auto* const second_adapter_ptr = second_adapter.get();
-    EXPECT_CALL(*first_adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
-    EXPECT_CALL(*second_adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
-    // StrictMock makes any CEC power command fail this ambiguous-mapping test.
-    EXPECT_CALL(*first_adapter_ptr, close()).Times(1);
-    EXPECT_CALL(*second_adapter_ptr, close()).Times(1);
-    std::vector<std::unique_ptr<CecAdapter>> adapters;
-    adapters.push_back(std::move(first_adapter));
-    adapters.push_back(std::move(second_adapter));
-    auto manager = manager_with(std::move(adapters));
-    std::vector<mg::DisplayConfigurationOutput> displays{output(1, 0x3400), output(2, 0x3400)};
+    add_adapter();
+    std::vector<mg::DisplayConfigurationOutput> displays{display, cec_display_output(2)};
 
     manager->start();
     manager->configuration_confirmed(displays);
     manager->shutdown();
 }
 
-TEST(CecManager, replays_pre_start_configuration_discovers_once_and_ignores_configuration_after_shutdown)
+TEST_F(CecManagerTest, replays_pre_start_configuration_discovers_once_and_ignores_configuration_after_shutdown)
 {
-    std::promise<void> on_applied;
-    auto on_applied_future = on_applied.get_future();
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-    EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
-    EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source())
-        .WillOnce(
-            [&]
-            {
-                on_applied.set_value();
-                return true;
-            });
-    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, close()).Times(1);
-    std::vector<std::unique_ptr<CecAdapter>> adapters;
-    adapters.push_back(std::move(adapter));
-    auto factory = std::make_unique<StrictMock<MockCecAdapterFactory>>();
-    auto* const factory_ptr = factory.get();
-    EXPECT_CALL(*factory_ptr, discover()).Times(1).WillOnce(Return(ByMove(std::move(adapters))));
-    CecManager manager{std::move(factory)};
-    auto display = output(1, 0x3400);
+    expect_on_state();
 
-    manager.configuration_confirmed(std::span{&display, 1});
-    manager.start();
-    manager.start();
+    manager->configuration_confirmed(std::span{&display, 1});
+    manager->start();
+    manager->start();
     ASSERT_EQ(on_applied_future.wait_for(2s), std::future_status::ready);
-    manager.shutdown();
+    manager->shutdown();
 
-    manager.configuration_confirmed(std::span{&display, 1});
+    manager->configuration_confirmed(std::span{&display, 1});
 }
 
 TEST(CecManager, does_not_discover_or_send_commands_without_start)
@@ -266,42 +154,29 @@ TEST(CecManager, does_not_discover_or_send_commands_without_start)
     auto factory = std::make_unique<StrictMock<MockCecAdapterFactory>>();
     EXPECT_CALL(*factory, discover()).Times(0);
     CecManager manager{std::move(factory)};
-    auto display = output(1, 0x3400);
+    auto display = cec_display_output();
 
     manager.configuration_confirmed(std::span{&display, 1});
     manager.shutdown();
 }
 
-TEST(CecManager, ignores_disconnected_and_non_hdmi_outputs)
+TEST_F(CecManagerTest, ignores_disconnected_and_non_hdmi_outputs)
 {
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-    EXPECT_CALL(*adapter_ptr, physical_address()).WillOnce(Return(std::nullopt));
-    EXPECT_CALL(*adapter_ptr, close()).Times(1);
-    std::vector<std::unique_ptr<CecAdapter>> adapters;
-    adapters.push_back(std::move(adapter));
-    auto manager = manager_with(std::move(adapters));
-    auto disconnected = output(1, 0x3400);
-    disconnected.connected = false;
-    auto displayport = output(2, 0x3400);
+    EXPECT_CALL(mock_adapter, physical_address()).WillOnce(Return(std::nullopt));
+    display.connected = false;
+    auto displayport = cec_display_output(2);
     displayport.type = mg::DisplayConfigurationOutputType::displayport;
-    std::vector<mg::DisplayConfigurationOutput> displays{disconnected, displayport};
+    std::vector<mg::DisplayConfigurationOutput> displays{display, displayport};
 
     manager->start();
     manager->configuration_confirmed(displays);
     manager->shutdown();
 }
 
-TEST(CecManager, ignores_invalid_adapter_and_display_physical_addresses)
+TEST_F(CecManagerTest, ignores_invalid_adapter_and_display_physical_addresses)
 {
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-    EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0xFFFF));
-    EXPECT_CALL(*adapter_ptr, close()).Times(1);
-    std::vector<std::unique_ptr<CecAdapter>> adapters;
-    adapters.push_back(std::move(adapter));
-    auto manager = manager_with(std::move(adapters));
-    auto display = output(1, 0xFFFF);
+    ON_CALL(mock_adapter, physical_address()).WillByDefault(Return(0xFFFF));
+    display.display_info.physical_address = 0xFFFF;
 
     manager->start();
     manager->configuration_confirmed(std::span{&display, 1});

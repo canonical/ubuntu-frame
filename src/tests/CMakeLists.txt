@@ -24,6 +24,7 @@ if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
         test_cec_output_configuration.cpp
         test_libcec_adapter.cpp
         test_libcec_adapter_factory.cpp
+        mock_cec_adapter.h
         mock_icec_adapter.h)
 endif()
 

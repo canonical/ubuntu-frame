@@ -22,58 +22,74 @@ void destroy_mock(CEC::ICECAdapter* adapter)
 {
     delete adapter;
 }
-}
 
-TEST(LibCecAdapterFactory, discovers_opens_and_returns_each_adapter)
+class LibCecAdapterFactoryTest : public Test
 {
-    auto discovery = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto first = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto second = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto* const discovery_ptr = discovery.get();
-    auto* const first_ptr = first.get();
-    auto* const second_ptr = second.get();
+protected:
+    auto expect_discovery(std::vector<std::string> ports = {"cec-a"}) -> MockICECAdapter&
+    {
+        auto connection = std::make_unique<StrictMock<MockICECAdapter>>();
+        auto& mock = *connection;
+        EXPECT_CALL(mock, InitVideoStandalone()).Times(AnyNumber());
+        ON_CALL(mock, DetectAdapters(_, _, _, _)).WillByDefault(
+            [ports](CEC::cec_adapter_descriptor* descriptors, std::uint8_t, const char*, bool)
+            {
+                for (std::size_t index = 0; index < ports.size(); ++index)
+                    std::snprintf(
+                        descriptors[index].strComName,
+                        sizeof(descriptors[index].strComName),
+                        "%s",
+                        ports[index].c_str());
+                return static_cast<std::int8_t>(ports.size());
+            });
+        EXPECT_CALL(mock, DetectAdapters(_, 16, IsNull(), true)).Times(1);
+        EXPECT_CALL(initializer, initialize(_))
+            .InSequence(initialization)
+            .WillOnce([connection = std::move(connection)](CEC::libcec_configuration* config) mutable
+            {
+                EXPECT_EQ(config->bActivateSource, 0);
+                EXPECT_EQ(config->deviceTypes.types[0], CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE);
+                return connection.release();
+            });
+        return mock;
+    }
 
-    EXPECT_CALL(*discovery_ptr, InitVideoStandalone()).Times(AnyNumber());
-    EXPECT_CALL(*discovery_ptr, DetectAdapters(_, 16, IsNull(), true))
-        .WillOnce(Invoke([](CEC::cec_adapter_descriptor* descriptors, std::uint8_t, const char*, bool)
+    auto expect_adapter(std::string port = "cec-a", std::uint16_t address = 0x3400, bool opens = true)
+        -> MockICECAdapter&
+    {
+        auto connection = std::make_unique<StrictMock<MockICECAdapter>>();
+        auto& mock = *connection;
+        EXPECT_CALL(mock, InitVideoStandalone()).Times(AnyNumber());
+        EXPECT_CALL(mock, Open(StrEq(port), _)).WillOnce(Return(opens));
+        EXPECT_CALL(mock, GetCurrentConfiguration(_)).Times(opens ? 1 : 0);
+        ON_CALL(mock, GetCurrentConfiguration(_)).WillByDefault([address](CEC::libcec_configuration* config)
         {
-            std::snprintf(descriptors[0].strComName, sizeof(descriptors[0].strComName), "cec-a");
-            std::snprintf(descriptors[1].strComName, sizeof(descriptors[1].strComName), "cec-b");
-            return 2;
-        }));
-
-    EXPECT_CALL(*first_ptr, InitVideoStandalone()).Times(AnyNumber());
-    EXPECT_CALL(*first_ptr, Open(StrEq("cec-a"), _)).WillOnce(Return(true));
-    EXPECT_CALL(*first_ptr, GetCurrentConfiguration(_)).WillOnce(Invoke([](CEC::libcec_configuration* config)
-    {
-        config->iPhysicalAddress = 0x3400;
-        return true;
-    }));
-    EXPECT_CALL(*first_ptr, Close()).Times(1);
-
-    EXPECT_CALL(*second_ptr, InitVideoStandalone()).Times(AnyNumber());
-    EXPECT_CALL(*second_ptr, Open(StrEq("cec-b"), _)).WillOnce(Return(true));
-    EXPECT_CALL(*second_ptr, GetCurrentConfiguration(_)).WillOnce(Invoke([](CEC::libcec_configuration* config)
-    {
-        config->iPhysicalAddress = 0x1200;
-        return true;
-    }));
-    EXPECT_CALL(*second_ptr, Close()).Times(1);
+            config->iPhysicalAddress = address;
+            return true;
+        });
+        EXPECT_CALL(mock, Close()).Times(opens ? 1 : 0);
+        EXPECT_CALL(initializer, initialize(_))
+            .InSequence(initialization)
+            .WillOnce([connection = std::move(connection)](CEC::libcec_configuration*) mutable
+            {
+                return connection.release();
+            });
+        return mock;
+    }
 
     StrictMock<MockInitializer> initializer;
-    EXPECT_CALL(initializer, initialize(_))
-        .WillOnce(Invoke([&](CEC::libcec_configuration* config)
-        {
-            EXPECT_EQ(config->bActivateSource, 0);
-            EXPECT_EQ(config->deviceTypes.types[0], CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE);
-            return discovery.release();
-        }))
-        .WillOnce(Return(first.release()))
-        .WillOnce(Return(second.release()));
-
+    Sequence initialization;
     LibCecAdapterFactory factory{
-        [&](CEC::libcec_configuration* config) { return initializer.initialize(config); },
+        [this](CEC::libcec_configuration* config) { return initializer.initialize(config); },
         &destroy_mock};
+};
+}
+
+TEST_F(LibCecAdapterFactoryTest, discovers_opens_and_returns_each_adapter)
+{
+    expect_discovery({"cec-a", "cec-b"});
+    expect_adapter();
+    expect_adapter("cec-b", 0x1200);
 
     auto adapters = factory.discover();
 
@@ -86,81 +102,33 @@ TEST(LibCecAdapterFactory, discovers_opens_and_returns_each_adapter)
     adapters.clear();
 }
 
-TEST(LibCecAdapterFactory, returns_empty_when_libcec_initialization_fails)
+TEST_F(LibCecAdapterFactoryTest, returns_empty_when_libcec_initialization_fails)
 {
-    StrictMock<MockInitializer> initializer;
     EXPECT_CALL(initializer, initialize(_)).WillOnce(Return(nullptr));
-    LibCecAdapterFactory factory{
-        [&](CEC::libcec_configuration* config) { return initializer.initialize(config); },
-        &destroy_mock};
 
     EXPECT_THAT(factory.discover(), IsEmpty());
 }
 
-TEST(LibCecAdapterFactory, returns_empty_when_adapter_detection_fails)
+TEST_F(LibCecAdapterFactoryTest, returns_empty_when_adapter_detection_fails)
 {
-    auto discovery = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto* const discovery_ptr = discovery.get();
-    EXPECT_CALL(*discovery_ptr, InitVideoStandalone()).Times(AnyNumber());
-    EXPECT_CALL(*discovery_ptr, DetectAdapters(_, 16, IsNull(), true)).WillOnce(Return(-1));
-
-    StrictMock<MockInitializer> initializer;
-    EXPECT_CALL(initializer, initialize(_)).WillOnce(Return(discovery.release()));
-    LibCecAdapterFactory factory{
-        [&](CEC::libcec_configuration* config) { return initializer.initialize(config); },
-        &destroy_mock};
+    auto& discovery = expect_discovery();
+    ON_CALL(discovery, DetectAdapters(_, _, _, _)).WillByDefault(Return(-1));
 
     EXPECT_THAT(factory.discover(), IsEmpty());
 }
 
-TEST(LibCecAdapterFactory, skips_an_adapter_that_fails_to_open)
+TEST_F(LibCecAdapterFactoryTest, skips_an_adapter_that_fails_to_open)
 {
-    auto discovery = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto failed_adapter = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto* const discovery_ptr = discovery.get();
-    auto* const failed_adapter_ptr = failed_adapter.get();
-
-    EXPECT_CALL(*discovery_ptr, InitVideoStandalone()).Times(AnyNumber());
-    EXPECT_CALL(*discovery_ptr, DetectAdapters(_, 16, IsNull(), true))
-        .WillOnce(Invoke([](CEC::cec_adapter_descriptor* descriptors, std::uint8_t, const char*, bool)
-        {
-            std::snprintf(descriptors[0].strComName, sizeof(descriptors[0].strComName), "cec-fail");
-            return 1;
-        }));
-    EXPECT_CALL(*failed_adapter_ptr, InitVideoStandalone()).Times(AnyNumber());
-    EXPECT_CALL(*failed_adapter_ptr, Open(StrEq("cec-fail"), _)).WillOnce(Return(false));
-    EXPECT_CALL(*failed_adapter_ptr, Close()).Times(0);
-
-    StrictMock<MockInitializer> initializer;
-    EXPECT_CALL(initializer, initialize(_))
-        .WillOnce(Return(discovery.release()))
-        .WillOnce(Return(failed_adapter.release()));
-    LibCecAdapterFactory factory{
-        [&](CEC::libcec_configuration* config) { return initializer.initialize(config); },
-        &destroy_mock};
+    expect_discovery({"cec-fail"});
+    expect_adapter("cec-fail", 0x3400, false);
 
     EXPECT_THAT(factory.discover(), IsEmpty());
 }
 
-TEST(LibCecAdapterFactory, skips_adapter_when_session_initialization_fails)
+TEST_F(LibCecAdapterFactoryTest, skips_adapter_when_session_initialization_fails)
 {
-    auto discovery = std::make_unique<StrictMock<MockICECAdapter>>();
-    auto* const discovery_ptr = discovery.get();
-    EXPECT_CALL(*discovery_ptr, InitVideoStandalone()).Times(AnyNumber());
-    EXPECT_CALL(*discovery_ptr, DetectAdapters(_, 16, IsNull(), true))
-        .WillOnce(Invoke([](CEC::cec_adapter_descriptor* descriptors, std::uint8_t, const char*, bool)
-        {
-            std::snprintf(descriptors[0].strComName, sizeof(descriptors[0].strComName), "cec-unavailable");
-            return 1;
-        }));
-
-    StrictMock<MockInitializer> initializer;
-    EXPECT_CALL(initializer, initialize(_))
-        .WillOnce(Return(discovery.release()))
-        .WillOnce(Return(nullptr));
-    LibCecAdapterFactory factory{
-        [&](CEC::libcec_configuration* config) { return initializer.initialize(config); },
-        &destroy_mock};
+    expect_discovery({"cec-unavailable"});
+    EXPECT_CALL(initializer, initialize(_)).InSequence(initialization).WillOnce(Return(nullptr));
 
     EXPECT_THAT(factory.discover(), IsEmpty());
 }

@@ -1,4 +1,5 @@
 #include "../cec_output.h"
+#include "mock_cec_adapter.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -13,31 +14,30 @@ namespace mg = mir::graphics;
 
 namespace
 {
-class MockCecAdapter : public CecAdapter
+class CecOutputTest : public Test
 {
-public:
-    MOCK_METHOD(std::string_view, port, (), (const, override));
-    MOCK_METHOD(std::optional<std::uint16_t>, physical_address, (), (const, override));
-    MOCK_METHOD(bool, power_on_tv, (), (override));
-    MOCK_METHOD(bool, make_active_source, (), (override));
-    MOCK_METHOD(bool, standby_tv, (), (override));
-    MOCK_METHOD(void, close, (), (override));
+protected:
+    void expect_shutdown()
+    {
+        EXPECT_CALL(mock_adapter, standby_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, close()).Times(1);
+    }
+
+    std::unique_ptr<MockCecAdapter> adapter = std::make_unique<StrictMock<MockCecAdapter>>();
+    MockCecAdapter& mock_adapter = *adapter;
 };
 }
 
-TEST(CecOutput, applies_latest_power_request_after_in_flight_command)
+TEST_F(CecOutputTest, applies_latest_power_request_after_in_flight_command)
 {
     std::promise<void> entered;
     std::promise<void> release;
     std::promise<void> off_applied;
     auto release_future = release.get_future();
     auto off_applied_future = off_applied.get_future();
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-
     {
         InSequence sequence;
-        EXPECT_CALL(*adapter_ptr, power_on_tv())
+        EXPECT_CALL(mock_adapter, power_on_tv())
             .WillOnce(
                 [&]
                 {
@@ -45,16 +45,15 @@ TEST(CecOutput, applies_latest_power_request_after_in_flight_command)
                     release_future.wait();
                     return true;
                 });
-        EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, standby_tv())
+        EXPECT_CALL(mock_adapter, make_active_source()).Times(1);
+        EXPECT_CALL(mock_adapter, standby_tv())
             .WillOnce(
                 [&]
                 {
                     off_applied.set_value();
                     return true;
                 });
-        EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, close()).Times(1);
+        expect_shutdown();
     }
 
     CecOutput output{mg::DisplayConfigurationOutputId{1}, std::move(adapter)};
@@ -69,25 +68,21 @@ TEST(CecOutput, applies_latest_power_request_after_in_flight_command)
     output.shutdown();
 }
 
-TEST(CecOutput, powers_on_and_announces_active_source)
+TEST_F(CecOutputTest, powers_on_and_announces_active_source)
 {
     std::promise<void> active_source_sent;
     auto active_source_sent_future = active_source_sent.get_future();
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-
     {
         InSequence sequence;
-        EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, make_active_source())
+        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, make_active_source())
             .WillOnce(
                 [&]
                 {
                     active_source_sent.set_value();
                     return true;
                 });
-        EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, close()).Times(1);
+        expect_shutdown();
     }
 
     CecOutput output{mg::DisplayConfigurationOutputId{1}, std::move(adapter)};
@@ -97,33 +92,29 @@ TEST(CecOutput, powers_on_and_announces_active_source)
     output.shutdown();
 }
 
-TEST(CecOutput, resends_duplicate_power_request_and_stands_by_on_shutdown)
+TEST_F(CecOutputTest, resends_duplicate_power_request_and_stands_by_on_shutdown)
 {
     std::promise<void> first_standby_sent;
     std::promise<void> repeated_standby_sent;
     auto first_standby_sent_future = first_standby_sent.get_future();
     auto repeated_standby_sent_future = repeated_standby_sent.get_future();
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-
     {
         InSequence sequence;
-        EXPECT_CALL(*adapter_ptr, standby_tv())
+        EXPECT_CALL(mock_adapter, standby_tv())
             .WillOnce(
                 [&]
                 {
                     first_standby_sent.set_value();
                     return true;
                 });
-        EXPECT_CALL(*adapter_ptr, standby_tv())
+        EXPECT_CALL(mock_adapter, standby_tv())
             .WillOnce(
                 [&]
                 {
                     repeated_standby_sent.set_value();
                     return true;
                 });
-        EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, close()).Times(1);
+        expect_shutdown();
     }
 
     CecOutput output{mg::DisplayConfigurationOutputId{1}, std::move(adapter)};
@@ -135,13 +126,10 @@ TEST(CecOutput, resends_duplicate_power_request_and_stands_by_on_shutdown)
     output.shutdown();
 }
 
-TEST(CecOutput, exposes_output_and_adapter_identity)
+TEST_F(CecOutputTest, exposes_output_and_adapter_identity)
 {
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-    EXPECT_CALL(*adapter_ptr, port()).WillOnce(Return("cec-test-port"));
-    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, close()).Times(1);
+    EXPECT_CALL(mock_adapter, port()).Times(1);
+    expect_shutdown();
 
     CecOutput output{mg::DisplayConfigurationOutputId{7}, std::move(adapter)};
     EXPECT_EQ(output.output_id(), mg::DisplayConfigurationOutputId{7});
@@ -149,12 +137,9 @@ TEST(CecOutput, exposes_output_and_adapter_identity)
     output.shutdown();
 }
 
-TEST(CecOutput, ignores_power_requests_after_shutdown)
+TEST_F(CecOutputTest, ignores_power_requests_after_shutdown)
 {
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-    EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, close()).Times(1);
+    expect_shutdown();
 
     CecOutput output{mg::DisplayConfigurationOutputId{7}, std::move(adapter)};
     output.shutdown();
@@ -162,35 +147,31 @@ TEST(CecOutput, ignores_power_requests_after_shutdown)
     output.request_power(false);
 }
 
-TEST(CecOutput, resends_duplicate_on_request)
+TEST_F(CecOutputTest, resends_duplicate_on_request)
 {
     std::promise<void> active_source_sent;
     std::promise<void> repeated_active_source_sent;
     auto active_source_sent_future = active_source_sent.get_future();
     auto repeated_active_source_sent_future = repeated_active_source_sent.get_future();
-    auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
-    auto* const adapter_ptr = adapter.get();
-
     {
         InSequence sequence;
-        EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, make_active_source())
+        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, make_active_source())
             .WillOnce(
                 [&]
                 {
                     active_source_sent.set_value();
                     return true;
                 });
-        EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, make_active_source())
+        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, make_active_source())
             .WillOnce(
                 [&]
                 {
                     repeated_active_source_sent.set_value();
                     return true;
                 });
-        EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, close()).Times(1);
+        expect_shutdown();
     }
 
     CecOutput output{mg::DisplayConfigurationOutputId{7}, std::move(adapter)};
