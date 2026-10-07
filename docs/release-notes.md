@@ -6,10 +6,11 @@ This page lists notable changes in Ubuntu Frame releases.
 
 ## Latest release
 
+- {doc}`release-notes/snap553-mir2.31-0` (in development)
+
+## `24` track releases
+
 - {doc}`release-notes/snap457-mir2-26-0`
-
-## Past releases
-
 - {doc}`release-notes/snap406-mir2-25-2`
 - {doc}`release-notes/snap393-mir2-23-0`
 - {doc}`release-notes/snap211-mir2-20-1`
