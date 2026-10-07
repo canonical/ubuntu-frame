@@ -16,10 +16,6 @@ CecOutput::CecOutput(mir::graphics::DisplayConfigurationOutputId output_id, std:
 
 CecOutput::~CecOutput() { shutdown(); }
 
-auto CecOutput::output_id() const -> mir::graphics::DisplayConfigurationOutputId { return id; }
-
-auto CecOutput::adapter_port() const -> std::string_view { return adapter->port(); }
-
 void CecOutput::request_power(bool on)
 {
     {

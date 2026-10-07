@@ -20,9 +20,6 @@ public:
     CecOutput(CecOutput const&) = delete;
     auto operator=(CecOutput const&) -> CecOutput& = delete;
 
-    auto output_id() const -> mir::graphics::DisplayConfigurationOutputId;
-    auto adapter_port() const -> std::string_view;
-
     void request_power(bool on);
     void shutdown();
 
