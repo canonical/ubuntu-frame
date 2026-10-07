@@ -58,7 +58,7 @@ add_library(frame-implementation
 
 if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
     target_sources(frame-implementation PRIVATE
-        cec_adapter.cpp cec_adapter.h
+        libcec_adapter.cpp cec_adapter.h
         libcec_adapter.h
         cec_output.cpp cec_output.h
         cec_manager.cpp cec_manager.h
