@@ -32,7 +32,6 @@ private:
         std::vector<std::unique_ptr<CecAdapter>> available_adapters;
         std::map<mir::graphics::DisplayConfigurationOutputId, std::unique_ptr<CecOutput>> outputs;
         std::vector<mir::graphics::DisplayConfigurationOutput> confirmed_outputs;
-        bool output_inventory_initialized{false};
         bool has_confirmed_configuration{false};
         bool started{false};
         bool stopping{false};
@@ -42,7 +41,9 @@ private:
     void reconcile_configuration(
         std::span<mir::graphics::DisplayConfigurationOutput const> outputs,
         State& state);
-    void add_initial_outputs(std::span<mir::graphics::DisplayConfigurationOutput const> outputs, State& state);
+    void refresh_outputs(
+        std::span<mir::graphics::DisplayConfigurationOutput const> outputs,
+        State& state);
     void complete_unambiguous_matches(
         std::span<mir::graphics::DisplayConfigurationOutput const> outputs,
         State& state);
