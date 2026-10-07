@@ -30,19 +30,19 @@ protected:
 
 TEST_F(CecOutputTest, applies_latest_power_request_after_in_flight_command)
 {
-    std::promise<void> entered;
-    std::promise<void> release;
-    std::promise<void> off_applied;
-    auto release_future = release.get_future();
-    auto off_applied_future = off_applied.get_future();
+    std::promise<void> power_on_entered;
+    std::promise<void> release_power_on;
+    std::promise<void> standby_applied;
+    auto release_power_on_future = release_power_on.get_future();
+    auto standby_applied_future = standby_applied.get_future();
     {
         InSequence sequence;
         EXPECT_CALL(mock_adapter, power_on_tv())
             .WillOnce(
                 [&]
                 {
-                    entered.set_value();
-                    release_future.wait();
+                    power_on_entered.set_value();
+                    release_power_on_future.wait();
                     return true;
                 });
         EXPECT_CALL(mock_adapter, make_active_source()).Times(1);
@@ -50,7 +50,7 @@ TEST_F(CecOutputTest, applies_latest_power_request_after_in_flight_command)
             .WillOnce(
                 [&]
                 {
-                    off_applied.set_value();
+                    standby_applied.set_value();
                     return true;
                 });
         expect_shutdown();
@@ -59,13 +59,10 @@ TEST_F(CecOutputTest, applies_latest_power_request_after_in_flight_command)
     CecOutput output{mg::DisplayConfigurationOutputId{1}, std::move(adapter)};
 
     output.request_power(true);
-    ASSERT_EQ(entered.get_future().wait_for(2s), std::future_status::ready);
+    ASSERT_EQ(power_on_entered.get_future().wait_for(2s), std::future_status::ready);
     output.request_power(false);
-    release.set_value();
-    ASSERT_EQ(off_applied_future.wait_for(2s), std::future_status::ready);
-
-    output.shutdown();
-    output.shutdown();
+    release_power_on.set_value();
+    ASSERT_EQ(standby_applied_future.wait_for(2s), std::future_status::ready);
 }
 
 TEST_F(CecOutputTest, powers_on_and_announces_active_source)
