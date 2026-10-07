@@ -72,11 +72,12 @@ int main(int argc, char const* argv[])
     std::shared_ptr<CecManager> cec_manager;
     auto cec_strategy = std::make_shared<CecOutputConfiguration>();
     miral::OutputConfiguration cec_output_configuration{cec_strategy};
-    runner.add_stop_callback([&]
-    {
-        if (cec_manager)
-            cec_manager->shutdown();
-    });
+    runner.add_stop_callback(
+        [&]
+        {
+            if (cec_manager)
+                cec_manager->shutdown();
+        });
 #endif
     auto display_config = build_display_configuration(runner);
 
@@ -112,8 +113,7 @@ int main(int argc, char const* argv[])
             if (!enabled || cec_manager)
                 return;
 
-            cec_manager = std::make_shared<CecManager>(
-                std::make_unique<LibCecAdapterFactory>());
+            cec_manager = std::make_shared<CecManager>(std::make_unique<LibCecAdapterFactory>());
             cec_strategy->set_manager(cec_manager);
             cec_manager->start();
         },

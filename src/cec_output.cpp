@@ -4,36 +4,21 @@
 
 #include <utility>
 
-namespace
+namespace { constexpr char const* log_component = "frame-cec"; }
+
+CecOutput::CecOutput(mir::graphics::DisplayConfigurationOutputId output_id, std::unique_ptr<CecAdapter> adapter) :
+    id{output_id},
+    adapter{std::move(adapter)},
+    worker{[this] { run(); }}
 {
-constexpr char const* log_component = "frame-cec";
+    mir::log(mir::logging::Severity::debug, log_component, "CEC worker created for output %d", id.as_value());
 }
 
-CecOutput::CecOutput(
-    mir::graphics::DisplayConfigurationOutputId output_id,
-    std::unique_ptr<CecAdapter> adapter)
-    : id{output_id},
-      adapter{std::move(adapter)},
-      worker{[this] { run(); }}
-{
-    mir::log(mir::logging::Severity::debug, log_component,
-             "CEC worker created for output %d", id.as_value());
-}
+CecOutput::~CecOutput() { shutdown(); }
 
-CecOutput::~CecOutput()
-{
-    shutdown();
-}
+auto CecOutput::output_id() const -> mir::graphics::DisplayConfigurationOutputId { return id; }
 
-auto CecOutput::output_id() const -> mir::graphics::DisplayConfigurationOutputId
-{
-    return id;
-}
-
-auto CecOutput::adapter_port() const -> std::string_view
-{
-    return adapter->port();
-}
+auto CecOutput::adapter_port() const -> std::string_view { return adapter->port(); }
 
 void CecOutput::request_power(bool on)
 {
@@ -44,9 +29,12 @@ void CecOutput::request_power(bool on)
         locked->desired_power = on;
         locked->work_pending = true;
     }
-    mir::log(mir::logging::Severity::debug, log_component,
-             "Queued CEC power state %s for output %d",
-             on ? "on" : "off", id.as_value());
+    mir::log(
+        mir::logging::Severity::debug,
+        log_component,
+        "Queued CEC power state %s for output %d",
+        on ? "on" : "off",
+        id.as_value());
     wake_worker.notify_one();
 }
 
@@ -56,8 +44,7 @@ void CecOutput::shutdown()
     if (adapter_closed)
         return;
 
-    mir::log(mir::logging::Severity::informational, log_component,
-             "Shutting down CEC output %d", id.as_value());
+    mir::log(mir::logging::Severity::informational, log_component, "Shutting down CEC output %d", id.as_value());
 
     {
         auto locked = state.lock();
@@ -77,10 +64,7 @@ void CecOutput::run()
         bool desired{};
         {
             auto locked = state.lock();
-            locked.wait(wake_worker, [&]
-            {
-                return locked->stopping || locked->work_pending;
-            });
+            locked.wait(wake_worker, [&] { return locked->stopping || locked->work_pending; });
 
             if (locked->stopping)
             {

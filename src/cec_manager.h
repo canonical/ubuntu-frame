@@ -22,8 +22,7 @@ public:
     auto operator=(CecManager const&) -> CecManager& = delete;
 
     void start();
-    void configuration_confirmed(
-        std::span<mir::graphics::DisplayConfigurationOutput const> outputs);
+    void configuration_confirmed(std::span<mir::graphics::DisplayConfigurationOutput const> outputs);
     void shutdown();
 
 private:
@@ -38,15 +37,9 @@ private:
     };
 
     static auto is_hdmi(mir::graphics::DisplayConfigurationOutputType type) -> bool;
-    void reconcile_configuration(
-        std::span<mir::graphics::DisplayConfigurationOutput const> outputs,
-        State& state);
-    void refresh_outputs(
-        std::span<mir::graphics::DisplayConfigurationOutput const> outputs,
-        State& state);
-    void complete_unambiguous_matches(
-        std::span<mir::graphics::DisplayConfigurationOutput const> outputs,
-        State& state);
+    void reconcile_configuration(std::span<mir::graphics::DisplayConfigurationOutput const> outputs, State& state);
+    void refresh_outputs(std::span<mir::graphics::DisplayConfigurationOutput const> outputs, State& state);
+    void complete_unambiguous_matches(std::span<mir::graphics::DisplayConfigurationOutput const> outputs, State& state);
 
     std::unique_ptr<CecAdapterFactory> const adapter_factory;
     mir::Synchronised<State> state{State{}};

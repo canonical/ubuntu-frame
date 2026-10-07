@@ -14,15 +14,10 @@ constexpr char const* log_component = "frame-cec";
 constexpr std::uint16_t invalid_physical_address = 0xFFFF;
 }
 
-CecManager::CecManager(std::unique_ptr<CecAdapterFactory> adapter_factory)
-    : adapter_factory{std::move(adapter_factory)}
-{
-}
+CecManager::CecManager(std::unique_ptr<CecAdapterFactory> adapter_factory) : adapter_factory{std::move(adapter_factory)}
+{}
 
-CecManager::~CecManager()
-{
-    shutdown();
-}
+CecManager::~CecManager() { shutdown(); }
 
 void CecManager::start()
 {
@@ -42,8 +37,11 @@ void CecManager::start()
             adapter->close();
         return;
     }
-    mir::log(mir::logging::Severity::informational, log_component,
-             "CEC manager discovered %zu adapter(s)", discovered.size());
+    mir::log(
+        mir::logging::Severity::informational,
+        log_component,
+        "CEC manager discovered %zu adapter(s)",
+        discovered.size());
     locked->available_adapters = std::move(discovered);
     if (locked->has_confirmed_configuration)
         reconcile_configuration(locked->confirmed_outputs, *locked);
@@ -51,8 +49,11 @@ void CecManager::start()
 
 void CecManager::configuration_confirmed(std::span<mg::DisplayConfigurationOutput const> outputs)
 {
-    mir::log(mir::logging::Severity::debug, log_component,
-             "Received confirmed display configuration with %zu output(s)", outputs.size());
+    mir::log(
+        mir::logging::Severity::debug,
+        log_component,
+        "Received confirmed display configuration with %zu output(s)",
+        outputs.size());
     auto locked = state.lock();
     if (locked->stopping)
         return;
@@ -63,9 +64,7 @@ void CecManager::configuration_confirmed(std::span<mg::DisplayConfigurationOutpu
         reconcile_configuration(outputs, *locked);
 }
 
-void CecManager::reconcile_configuration(
-    std::span<mg::DisplayConfigurationOutput const> outputs,
-    State& state)
+void CecManager::reconcile_configuration(std::span<mg::DisplayConfigurationOutput const> outputs, State& state)
 {
     refresh_outputs(outputs, state);
     complete_unambiguous_matches(outputs, state);
@@ -75,8 +74,7 @@ void CecManager::reconcile_configuration(
         auto const it = state.outputs.find(output.id);
         if (it != state.outputs.end() && it->second)
         {
-            it->second->request_power(
-                output.connected && output.used && output.power_mode == mir_power_mode_on);
+            it->second->request_power(output.connected && output.used && output.power_mode == mir_power_mode_on);
         }
     }
 }
@@ -89,8 +87,11 @@ void CecManager::shutdown()
         auto locked = state.lock();
         if (locked->stopping)
             return;
-        mir::log(mir::logging::Severity::informational, log_component,
-                 "Stopping CEC manager with %zu mapped output(s)", locked->outputs.size());
+        mir::log(
+            mir::logging::Severity::informational,
+            log_component,
+            "Stopping CEC manager with %zu mapped output(s)",
+            locked->outputs.size());
         locked->stopping = true;
         outputs = std::move(locked->outputs);
         adapters = std::move(locked->available_adapters);
@@ -105,22 +106,17 @@ void CecManager::shutdown()
 
 auto CecManager::is_hdmi(mg::DisplayConfigurationOutputType type) -> bool
 {
-    return type == mg::DisplayConfigurationOutputType::hdmia ||
-        type == mg::DisplayConfigurationOutputType::hdmib;
+    return type == mg::DisplayConfigurationOutputType::hdmia || type == mg::DisplayConfigurationOutputType::hdmib;
 }
 
-void CecManager::refresh_outputs(
-    std::span<mg::DisplayConfigurationOutput const> outputs,
-    State& state)
+void CecManager::refresh_outputs(std::span<mg::DisplayConfigurationOutput const> outputs, State& state)
 {
     for (auto const& output : outputs)
         if (output.connected && is_hdmi(output.type))
             state.outputs.try_emplace(output.id, nullptr);
 }
 
-void CecManager::complete_unambiguous_matches(
-    std::span<mg::DisplayConfigurationOutput const> outputs,
-    State& state)
+void CecManager::complete_unambiguous_matches(std::span<mg::DisplayConfigurationOutput const> outputs, State& state)
 {
     std::map<std::uint16_t, std::vector<mg::DisplayConfigurationOutputId>> output_candidates;
     std::map<std::uint16_t, std::vector<std::size_t>> adapter_candidates;
@@ -130,8 +126,7 @@ void CecManager::complete_unambiguous_matches(
         auto const mapping = state.outputs.find(output.id);
         if (mapping == state.outputs.end() || mapping->second || !output.connected || !is_hdmi(output.type))
             continue;
-        if (output.display_info.physical_address &&
-            *output.display_info.physical_address != invalid_physical_address)
+        if (output.display_info.physical_address && *output.display_info.physical_address != invalid_physical_address)
         {
             output_candidates[*output.display_info.physical_address].push_back(output.id);
         }
@@ -156,12 +151,13 @@ void CecManager::complete_unambiguous_matches(
             continue;
 
         auto& mapping = state.outputs.at(output_ids.front());
-        mir::log(mir::logging::Severity::informational, log_component,
-                 "Mapped Mir output %d to CEC adapter at physical address %04x",
-             output_ids.front().as_value(),
-             address);
-        mapping = std::make_unique<CecOutput>(
-            output_ids.front(), std::move(state.available_adapters[adapter_index]));
+        mir::log(
+            mir::logging::Severity::informational,
+            log_component,
+            "Mapped Mir output %d to CEC adapter at physical address %04x",
+            output_ids.front().as_value(),
+            address);
+        mapping = std::make_unique<CecOutput>(output_ids.front(), std::move(state.available_adapters[adapter_index]));
         adapter_consumed[adapter_index] = true;
     }
 

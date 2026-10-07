@@ -15,8 +15,7 @@ using LibCecConnection = std::unique_ptr<CEC::ICECAdapter, void (*)(CEC::ICECAda
 class LibCecAdapter final : public CecAdapter
 {
 public:
-    static auto open(std::string port, LibCecConnection connection)
-        -> std::unique_ptr<LibCecAdapter>;
+    static auto open(std::string port, LibCecConnection connection) -> std::unique_ptr<LibCecAdapter>;
     ~LibCecAdapter() override;
 
     auto port() const -> std::string_view override;
@@ -27,10 +26,7 @@ public:
     void close() override;
 
 private:
-    LibCecAdapter(
-        std::string port,
-        LibCecConnection connection,
-        std::optional<std::uint16_t> physical_address);
+    LibCecAdapter(std::string port, LibCecConnection connection, std::optional<std::uint16_t> physical_address);
 
     std::string const port_name;
     LibCecConnection connection;
@@ -43,9 +39,7 @@ public:
     using Initialize = std::function<CEC::ICECAdapter*(CEC::libcec_configuration*)>;
     using Destroy = void (*)(CEC::ICECAdapter*);
 
-    explicit LibCecAdapterFactory(
-        Initialize initialize = {},
-        Destroy destroy = &CECDestroy);
+    explicit LibCecAdapterFactory(Initialize initialize = {}, Destroy destroy = &CECDestroy);
 
     auto discover() -> std::vector<std::unique_ptr<CecAdapter>> override;
 
