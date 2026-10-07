@@ -139,7 +139,6 @@ void CecManager::complete_unambiguous_matches(std::span<mg::DisplayConfiguration
             adapter_candidates[*address].push_back(i);
     }
 
-    std::vector<bool> adapter_consumed(state.available_adapters.size(), false);
     for (auto const& [address, output_ids] : output_candidates)
     {
         auto const adapters = adapter_candidates.find(address);
@@ -147,9 +146,6 @@ void CecManager::complete_unambiguous_matches(std::span<mg::DisplayConfiguration
             continue;
 
         auto const adapter_index = adapters->second.front();
-        if (adapter_consumed[adapter_index])
-            continue;
-
         auto& mapping = state.outputs.at(output_ids.front());
         mir::log(
             mir::logging::Severity::informational,
@@ -158,17 +154,7 @@ void CecManager::complete_unambiguous_matches(std::span<mg::DisplayConfiguration
             output_ids.front().as_value(),
             address);
         mapping = std::make_unique<CecOutput>(output_ids.front(), std::move(state.available_adapters[adapter_index]));
-        adapter_consumed[adapter_index] = true;
     }
 
-    auto adapter = state.available_adapters.begin();
-    std::size_t index = 0;
-    while (adapter != state.available_adapters.end())
-    {
-        if (adapter_consumed[index])
-            adapter = state.available_adapters.erase(adapter);
-        else
-            ++adapter;
-        ++index;
-    }
+    std::erase_if(state.available_adapters, [](auto const& adapter) { return !adapter; });
 }
