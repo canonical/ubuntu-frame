@@ -26,15 +26,9 @@ public:
 class FakeCecAdapterFactory : public CecAdapterFactory
 {
 public:
-    explicit FakeCecAdapterFactory(std::vector<std::unique_ptr<CecAdapter>> adapters)
-        : adapters{std::move(adapters)}
-    {
-    }
+    explicit FakeCecAdapterFactory(std::vector<std::unique_ptr<CecAdapter>> adapters) : adapters{std::move(adapters)} {}
 
-    auto discover() -> std::vector<std::unique_ptr<CecAdapter>> override
-    {
-        return std::move(adapters);
-    }
+    auto discover() -> std::vector<std::unique_ptr<CecAdapter>> override { return std::move(adapters); }
 
 private:
     std::vector<std::unique_ptr<CecAdapter>> adapters;
@@ -65,18 +59,19 @@ TEST(CecOutputConfiguration, replays_latest_confirmation_when_manager_is_attache
     auto* const adapter_ptr = adapter.get();
     EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
     EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
-    {
-        active_source_sent.set_value();
-        return true;
-    });
+    EXPECT_CALL(*adapter_ptr, make_active_source())
+        .WillOnce(
+            [&]
+            {
+                active_source_sent.set_value();
+                return true;
+            });
     EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
     EXPECT_CALL(*adapter_ptr, close()).Times(1);
 
     std::vector<std::unique_ptr<CecAdapter>> adapters;
     adapters.push_back(std::move(adapter));
-    auto manager = std::make_shared<CecManager>(
-        std::make_unique<FakeCecAdapterFactory>(std::move(adapters)));
+    auto manager = std::make_shared<CecManager>(std::make_unique<FakeCecAdapterFactory>(std::move(adapters)));
     CecOutputConfiguration strategy;
 
     mg::DisplayConfigurationOutput output{};
@@ -96,11 +91,13 @@ TEST(CecOutputConfiguration, replays_latest_confirmation_when_manager_is_attache
     std::promise<void> forwarded_active_source_sent;
     auto forwarded_active_source_sent_future = forwarded_active_source_sent.get_future();
     EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
-    {
-        forwarded_active_source_sent.set_value();
-        return true;
-    });
+    EXPECT_CALL(*adapter_ptr, make_active_source())
+        .WillOnce(
+            [&]
+            {
+                forwarded_active_source_sent.set_value();
+                return true;
+            });
     strategy.confirm_configuration(std::span<mg::DisplayConfigurationOutput const>{&output, 1});
     ASSERT_EQ(forwarded_active_source_sent_future.wait_for(std::chrono::seconds{2}), std::future_status::ready);
     manager->shutdown();

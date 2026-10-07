@@ -34,8 +34,7 @@ public:
     MOCK_METHOD(AdapterList, discover, (), (override));
 };
 
-auto output(int id, std::optional<std::uint16_t> address)
-    -> mg::DisplayConfigurationOutput
+auto output(int id, std::optional<std::uint16_t> address) -> mg::DisplayConfigurationOutput
 {
     mg::DisplayConfigurationOutput value{};
     value.id = mg::DisplayConfigurationOutputId{id};
@@ -47,8 +46,7 @@ auto output(int id, std::optional<std::uint16_t> address)
     return value;
 }
 
-auto manager_with(std::vector<std::unique_ptr<CecAdapter>> adapters)
-    -> std::unique_ptr<CecManager>
+auto manager_with(std::vector<std::unique_ptr<CecAdapter>> adapters) -> std::unique_ptr<CecManager>
 {
     auto factory = std::make_unique<StrictMock<MockCecAdapterFactory>>();
     EXPECT_CALL(*factory, discover()).WillOnce(Return(ByMove(std::move(adapters))));
@@ -65,11 +63,13 @@ TEST(CecManager, matches_physical_address_and_applies_on_state)
     EXPECT_CALL(*adapter_ptr, port()).WillRepeatedly(Return("adapter-a"));
     EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
     EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
-    {
-        on_applied.set_value();
-        return true;
-    });
+    EXPECT_CALL(*adapter_ptr, make_active_source())
+        .WillOnce(
+            [&]
+            {
+                on_applied.set_value();
+                return true;
+            });
     EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
     EXPECT_CALL(*adapter_ptr, close()).Times(1);
     std::vector<std::unique_ptr<CecAdapter>> adapters;
@@ -91,11 +91,13 @@ TEST(CecManager, reconciles_configuration_confirmed_during_discovery)
     auto* const adapter_ptr = adapter.get();
     EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
     EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
-    {
-        on_applied.set_value();
-        return true;
-    });
+    EXPECT_CALL(*adapter_ptr, make_active_source())
+        .WillOnce(
+            [&]
+            {
+                on_applied.set_value();
+                return true;
+            });
     EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
     EXPECT_CALL(*adapter_ptr, close()).Times(1);
 
@@ -105,11 +107,13 @@ TEST(CecManager, reconciles_configuration_confirmed_during_discovery)
     auto display = output(1, 0x3400);
     std::vector<std::unique_ptr<CecAdapter>> adapters;
     adapters.push_back(std::move(adapter));
-    EXPECT_CALL(*factory_ptr, discover()).WillOnce([&]
-    {
-        manager.configuration_confirmed(std::span{&display, 1});
-        return std::move(adapters);
-    });
+    EXPECT_CALL(*factory_ptr, discover())
+        .WillOnce(
+            [&]
+            {
+                manager.configuration_confirmed(std::span{&display, 1});
+                return std::move(adapters);
+            });
 
     manager.start();
     ASSERT_EQ(on_applied_future.wait_for(2s), std::future_status::ready);
@@ -124,11 +128,13 @@ TEST(CecManager, retries_unmatched_output_when_display_info_becomes_available)
     auto* const adapter_ptr = adapter.get();
     EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
     EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
-    {
-        on_applied.set_value();
-        return true;
-    });
+    EXPECT_CALL(*adapter_ptr, make_active_source())
+        .WillOnce(
+            [&]
+            {
+                on_applied.set_value();
+                return true;
+            });
     EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
     EXPECT_CALL(*adapter_ptr, close()).Times(1);
     std::vector<std::unique_ptr<CecAdapter>> adapters;
@@ -153,11 +159,13 @@ TEST(CecManager, maps_output_hotplugged_with_a_new_id)
     auto* const adapter_ptr = adapter.get();
     EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
     EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
-    {
-        on_applied.set_value();
-        return true;
-    });
+    EXPECT_CALL(*adapter_ptr, make_active_source())
+        .WillOnce(
+            [&]
+            {
+                on_applied.set_value();
+                return true;
+            });
     EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
     EXPECT_CALL(*adapter_ptr, close()).Times(1);
     std::vector<std::unique_ptr<CecAdapter>> adapters;
@@ -212,9 +220,7 @@ TEST(CecManager, does_not_guess_when_output_physical_addresses_are_ambiguous)
     adapters.push_back(std::move(first_adapter));
     adapters.push_back(std::move(second_adapter));
     auto manager = manager_with(std::move(adapters));
-    std::vector<mg::DisplayConfigurationOutput> displays{
-        output(1, 0x3400),
-        output(2, 0x3400)};
+    std::vector<mg::DisplayConfigurationOutput> displays{output(1, 0x3400), output(2, 0x3400)};
 
     manager->start();
     manager->configuration_confirmed(displays);
@@ -229,20 +235,20 @@ TEST(CecManager, replays_pre_start_configuration_discovers_once_and_ignores_conf
     auto* const adapter_ptr = adapter.get();
     EXPECT_CALL(*adapter_ptr, physical_address()).WillRepeatedly(Return(0x3400));
     EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-    EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
-    {
-        on_applied.set_value();
-        return true;
-    });
+    EXPECT_CALL(*adapter_ptr, make_active_source())
+        .WillOnce(
+            [&]
+            {
+                on_applied.set_value();
+                return true;
+            });
     EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
     EXPECT_CALL(*adapter_ptr, close()).Times(1);
     std::vector<std::unique_ptr<CecAdapter>> adapters;
     adapters.push_back(std::move(adapter));
     auto factory = std::make_unique<StrictMock<MockCecAdapterFactory>>();
     auto* const factory_ptr = factory.get();
-    EXPECT_CALL(*factory_ptr, discover())
-        .Times(1)
-        .WillOnce(Return(ByMove(std::move(adapters))));
+    EXPECT_CALL(*factory_ptr, discover()).Times(1).WillOnce(Return(ByMove(std::move(adapters))));
     CecManager manager{std::move(factory)};
     auto display = output(1, 0x3400);
 

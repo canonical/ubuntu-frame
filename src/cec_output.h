@@ -14,9 +14,7 @@
 class CecOutput
 {
 public:
-    CecOutput(
-        mir::graphics::DisplayConfigurationOutputId output_id,
-        std::unique_ptr<CecAdapter> adapter);
+    CecOutput(mir::graphics::DisplayConfigurationOutputId output_id, std::unique_ptr<CecAdapter> adapter);
     ~CecOutput();
 
     CecOutput(CecOutput const&) = delete;

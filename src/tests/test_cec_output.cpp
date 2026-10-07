@@ -37,18 +37,22 @@ TEST(CecOutput, applies_latest_power_request_after_in_flight_command)
 
     {
         InSequence sequence;
-        EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce([&]
-        {
-            entered.set_value();
-            release_future.wait();
-            return true;
-        });
+        EXPECT_CALL(*adapter_ptr, power_on_tv())
+            .WillOnce(
+                [&]
+                {
+                    entered.set_value();
+                    release_future.wait();
+                    return true;
+                });
         EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce([&]
-        {
-            off_applied.set_value();
-            return true;
-        });
+        EXPECT_CALL(*adapter_ptr, standby_tv())
+            .WillOnce(
+                [&]
+                {
+                    off_applied.set_value();
+                    return true;
+                });
         EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
         EXPECT_CALL(*adapter_ptr, close()).Times(1);
     }
@@ -75,11 +79,13 @@ TEST(CecOutput, powers_on_and_announces_active_source)
     {
         InSequence sequence;
         EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
-        {
-            active_source_sent.set_value();
-            return true;
-        });
+        EXPECT_CALL(*adapter_ptr, make_active_source())
+            .WillOnce(
+                [&]
+                {
+                    active_source_sent.set_value();
+                    return true;
+                });
         EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
         EXPECT_CALL(*adapter_ptr, close()).Times(1);
     }
@@ -102,16 +108,20 @@ TEST(CecOutput, resends_duplicate_power_request_and_stands_by_on_shutdown)
 
     {
         InSequence sequence;
-        EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce([&]
-        {
-            first_standby_sent.set_value();
-            return true;
-        });
-        EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce([&]
-        {
-            repeated_standby_sent.set_value();
-            return true;
-        });
+        EXPECT_CALL(*adapter_ptr, standby_tv())
+            .WillOnce(
+                [&]
+                {
+                    first_standby_sent.set_value();
+                    return true;
+                });
+        EXPECT_CALL(*adapter_ptr, standby_tv())
+            .WillOnce(
+                [&]
+                {
+                    repeated_standby_sent.set_value();
+                    return true;
+                });
         EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
         EXPECT_CALL(*adapter_ptr, close()).Times(1);
     }
@@ -164,17 +174,21 @@ TEST(CecOutput, resends_duplicate_on_request)
     {
         InSequence sequence;
         EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
-        {
-            active_source_sent.set_value();
-            return true;
-        });
+        EXPECT_CALL(*adapter_ptr, make_active_source())
+            .WillOnce(
+                [&]
+                {
+                    active_source_sent.set_value();
+                    return true;
+                });
         EXPECT_CALL(*adapter_ptr, power_on_tv()).WillOnce(Return(true));
-        EXPECT_CALL(*adapter_ptr, make_active_source()).WillOnce([&]
-        {
-            repeated_active_source_sent.set_value();
-            return true;
-        });
+        EXPECT_CALL(*adapter_ptr, make_active_source())
+            .WillOnce(
+                [&]
+                {
+                    repeated_active_source_sent.set_value();
+                    return true;
+                });
         EXPECT_CALL(*adapter_ptr, standby_tv()).WillOnce(Return(true));
         EXPECT_CALL(*adapter_ptr, close()).Times(1);
     }
