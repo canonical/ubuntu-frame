@@ -1,0 +1,160 @@
+#include "../cec_output.h"
+#include "mock_cec_adapter.h"
+
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
+#include <chrono>
+#include <future>
+#include <memory>
+
+using namespace testing;
+using namespace std::chrono_literals;
+namespace mg = mir::graphics;
+
+namespace
+{
+class CecOutputTest : public Test
+{
+protected:
+    void expect_shutdown()
+    {
+        EXPECT_CALL(mock_adapter, standby_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, close()).Times(1);
+    }
+
+    std::unique_ptr<MockCecAdapter> adapter = std::make_unique<StrictMock<MockCecAdapter>>();
+    MockCecAdapter& mock_adapter = *adapter;
+};
+}
+
+TEST_F(CecOutputTest, applies_latest_power_request_after_in_flight_command)
+{
+    std::promise<void> power_on_entered;
+    std::promise<void> release_power_on;
+    std::promise<void> standby_applied;
+    auto release_power_on_future = release_power_on.get_future();
+    auto standby_applied_future = standby_applied.get_future();
+    {
+        InSequence sequence;
+        EXPECT_CALL(mock_adapter, power_on_tv())
+            .WillOnce(
+                [&]
+                {
+                    power_on_entered.set_value();
+                    release_power_on_future.wait();
+                    return true;
+                });
+        EXPECT_CALL(mock_adapter, make_active_source()).Times(1);
+        EXPECT_CALL(mock_adapter, standby_tv())
+            .WillOnce(
+                [&]
+                {
+                    standby_applied.set_value();
+                    return true;
+                });
+        expect_shutdown();
+    }
+
+    CecOutput output{mg::DisplayConfigurationOutputId{1}, std::move(adapter)};
+
+    output.request_power(true);
+    ASSERT_EQ(power_on_entered.get_future().wait_for(2s), std::future_status::ready);
+    output.request_power(false);
+    release_power_on.set_value();
+    ASSERT_EQ(standby_applied_future.wait_for(2s), std::future_status::ready);
+}
+
+TEST_F(CecOutputTest, powers_on_and_announces_active_source)
+{
+    std::promise<void> active_source_sent;
+    auto active_source_sent_future = active_source_sent.get_future();
+    {
+        InSequence sequence;
+        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, make_active_source())
+            .WillOnce(
+                [&]
+                {
+                    active_source_sent.set_value();
+                    return true;
+                });
+        expect_shutdown();
+    }
+
+    CecOutput output{mg::DisplayConfigurationOutputId{1}, std::move(adapter)};
+    output.request_power(true);
+
+    ASSERT_EQ(active_source_sent_future.wait_for(2s), std::future_status::ready);
+    output.shutdown();
+}
+
+TEST_F(CecOutputTest, resends_duplicate_power_requests_for_on_and_off)
+{
+    std::promise<void> first_power_on_sent;
+    std::promise<void> repeated_power_on_sent;
+    std::promise<void> first_standby_sent;
+    std::promise<void> repeated_standby_sent;
+    auto first_power_on_sent_future = first_power_on_sent.get_future();
+    auto repeated_power_on_sent_future = repeated_power_on_sent.get_future();
+    auto first_standby_sent_future = first_standby_sent.get_future();
+    auto repeated_standby_sent_future = repeated_standby_sent.get_future();
+    {
+        InSequence sequence;
+        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, make_active_source())
+            .WillOnce(
+                [&]
+                {
+                    first_power_on_sent.set_value();
+                    return true;
+                });
+        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, make_active_source())
+            .WillOnce(
+                [&]
+                {
+                    repeated_power_on_sent.set_value();
+                    return true;
+                });
+        EXPECT_CALL(mock_adapter, standby_tv())
+            .WillOnce(
+                [&]
+                {
+                    first_standby_sent.set_value();
+                    return true;
+                });
+        EXPECT_CALL(mock_adapter, standby_tv())
+            .WillOnce(
+                [&]
+                {
+                    repeated_standby_sent.set_value();
+                    return true;
+                });
+        expect_shutdown();
+    }
+
+    CecOutput output{mg::DisplayConfigurationOutputId{1}, std::move(adapter)};
+    output.request_power(true);
+    ASSERT_EQ(first_power_on_sent_future.wait_for(2s), std::future_status::ready);
+
+    output.request_power(true);
+    ASSERT_EQ(repeated_power_on_sent_future.wait_for(2s), std::future_status::ready);
+
+    output.request_power(false);
+    ASSERT_EQ(first_standby_sent_future.wait_for(2s), std::future_status::ready);
+
+    output.request_power(false);
+    ASSERT_EQ(repeated_standby_sent_future.wait_for(2s), std::future_status::ready);
+    output.shutdown();
+}
+
+TEST_F(CecOutputTest, ignores_power_requests_after_shutdown)
+{
+    expect_shutdown();
+
+    CecOutput output{mg::DisplayConfigurationOutputId{7}, std::move(adapter)};
+    output.shutdown();
+    output.request_power(true);
+    output.request_power(false);
+}

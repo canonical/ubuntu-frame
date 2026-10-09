@@ -117,8 +117,45 @@ slots:
       - $SNAP_COMMON/diagnostic
 
 parts:
-  ubuntu-frame:
+  libcec:
+    plugin: cmake
+    source: https://git.launchpad.net/~git-ubuntu-import/ubuntu/+source/libcec
+    source-type: git
+    source-branch: applied/debian/sid
     override-pull: |
+      # https://git.launchpad.net/ubuntu/+source/libcec/tree/debian/rules?h=applied/debian/sid#n20
+      craftctl default
+      cp --verbose \
+        debian/src/libcec/platform/adl/adl_defines.h \
+        debian/src/libcec/platform/adl/adl_sdk.h \
+        debian/src/libcec/platform/adl/adl_structures.h \
+        src/libcec/platform/adl/
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DDISABLE_CLIENT=ON
+      - -DDISABLE_STATIC=ON
+      - -DDISABLE_BUILDINFO=ON
+      - -DSKIP_PYTHON_WRAPPER=1
+      - -DHAVE_LINUX_API=ON
+      - -DHAVE_EXYNOS_API=ON
+      - -DHAVE_TEGRA_API=ON
+      - -DHAVE_AOCEC_API=ON
+    build-packages:
+      - libudev-dev
+    stage-packages:
+      - libudev1
+    override-stage: |
+      craftctl default
+      sed -i -E 's!^(libdir|includedir)=/usr!\1=${prefix}!' ${CRAFT_STAGE}/usr/lib/*/pkgconfig/libcec.pc
+    prime:
+      - -usr/include
+      - -usr/lib/*/pkgconfig
+      - -usr/lib/*/cmake
+
+  ubuntu-frame:
+    after: [libcec]
+    override-build: |
       craftctl default
       mir_version=`LANG=C apt-cache policy mir-graphics-drivers-desktop | sed -rne 's/^\s+Candidate:\s+([^-]*)-.+$/\1/p'`
       # work around https://github.com/diddlesnaps/snapcraft-multiarch-action/issues/22
@@ -134,8 +171,10 @@ parts:
       - libapparmor-dev
       - libboost-iostreams-dev
       - libfreetype6-dev
+      - libglm-dev
       - libmiral-dev
       - libmircommon-dev
+      - libudev-dev
       - libwayland-dev
       - pkg-config
     stage-packages:

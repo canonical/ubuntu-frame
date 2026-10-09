@@ -22,6 +22,16 @@
 #include "display_configuration_builder.h"
 #include "safe_mode.h"
 
+#include <miral/version.h>
+
+#ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
+#include "cec_adapter.h"
+#include "cec_manager.h"
+#include "cec_output_configuration.h"
+#include "libcec_adapter.h"
+#include <miral/output_configuration.h>
+#endif
+
 #include <miral/configuration_option.h>
 #include <miral/decorations.h>
 #include <miral/internal_client.h>
@@ -29,8 +39,6 @@
 #include <miral/runner.h>
 #include <miral/set_window_management_policy.h>
 #include <miral/wayland_extensions.h>
-
-#include <miral/version.h>
 
 #include <miral/live_config_ini_file.h>
 #include <miral/cursor_scale.h>
@@ -60,6 +68,16 @@ int main(int argc, char const* argv[])
     BackgroundClient background_client(&runner, &window_manager_observer);
 
     runner.add_stop_callback([&] { background_client.stop(); });
+#ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
+    std::shared_ptr<CecManager> cec_manager;
+    miral::OutputConfiguration cec_output_configuration;
+    runner.add_stop_callback(
+        [&]
+        {
+            if (cec_manager)
+                cec_manager->shutdown();
+        });
+#endif
     auto display_config = build_display_configuration(runner);
 
     miral::live_config::IniFileWithOverrides ini_files;
@@ -87,11 +105,33 @@ int main(int argc, char const* argv[])
         },
         ".ini"};
 
+#ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
+    ConfigurationOption cec_option{
+        [&](bool enabled)
+        {
+            if (!enabled || cec_manager)
+                return;
+
+            cec_manager = std::make_shared<CecManager>(
+                std::make_unique<LibCecAdapterFactory>());
+            cec_manager->start();
+            cec_output_configuration.update_strategy(
+                std::make_shared<CecOutputConfiguration>(cec_manager));
+        },
+        "cec-control",
+        "Use HDMI-CEC to control compatible displays' power state and input",
+        false};
+#endif
+
     return runner.run_with(
         {
             wayland_extensions,
             display_config,
             display_config.layout_option(),
+#ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
+            cec_option,
+            cec_output_configuration,
+#endif
             ConfigurationOption{[&](bool option) { background_client.set_wallpaper_enabled(option); },
                                "wallpaper", "Specifies whether or not the wallpaper is enabled", true},
             ConfigurationOption{[&](auto& option) { background_client.set_wallpaper_top_colour(option);},
