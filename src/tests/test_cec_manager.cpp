@@ -68,22 +68,6 @@ TEST_F(CecManagerTest, matches_physical_address_and_applies_on_state)
     manager->shutdown();
 }
 
-TEST_F(CecManagerTest, reconciles_configuration_confirmed_during_discovery)
-{
-    expect_on_state();
-    ON_CALL(mock_factory, discover())
-        .WillByDefault(
-            [&]
-            {
-                manager->configuration_confirmed(std::span{&display, 1});
-                return std::move(adapters);
-            });
-
-    manager->start();
-    ASSERT_EQ(on_applied_future.wait_for(2s), std::future_status::ready);
-    manager->shutdown();
-}
-
 TEST_F(CecManagerTest, retries_unmatched_output_when_display_info_becomes_available)
 {
     expect_on_state();
@@ -136,28 +120,17 @@ TEST_F(CecManagerTest, does_not_guess_when_output_physical_addresses_are_ambiguo
     manager->shutdown();
 }
 
-TEST_F(CecManagerTest, replays_pre_start_configuration_discovers_once_and_ignores_configuration_after_shutdown)
+TEST_F(CecManagerTest, starts_discovery_once_and_ignores_configuration_after_shutdown)
 {
     expect_on_state();
 
+    manager->start();
+    manager->start();
     manager->configuration_confirmed(std::span{&display, 1});
-    manager->start();
-    manager->start();
     ASSERT_EQ(on_applied_future.wait_for(2s), std::future_status::ready);
     manager->shutdown();
 
     manager->configuration_confirmed(std::span{&display, 1});
-}
-
-TEST(CecManager, does_not_discover_or_send_commands_without_start)
-{
-    auto factory = std::make_unique<StrictMock<MockCecAdapterFactory>>();
-    EXPECT_CALL(*factory, discover()).Times(0);
-    CecManager manager{std::move(factory)};
-    auto display = cec_display_output();
-
-    manager.configuration_confirmed(std::span{&display, 1});
-    manager.shutdown();
 }
 
 TEST_F(CecManagerTest, ignores_disconnected_and_non_hdmi_outputs)

@@ -43,8 +43,6 @@ void CecManager::start()
         "CEC manager discovered %zu adapter(s)",
         discovered.size());
     locked->available_adapters = std::move(discovered);
-    if (locked->has_confirmed_configuration)
-        reconcile_configuration(locked->confirmed_outputs, *locked);
 }
 
 void CecManager::configuration_confirmed(std::span<mg::DisplayConfigurationOutput const> outputs)
@@ -55,24 +53,16 @@ void CecManager::configuration_confirmed(std::span<mg::DisplayConfigurationOutpu
         "Received confirmed display configuration with %zu output(s)",
         outputs.size());
     auto locked = state.lock();
-    if (locked->stopping)
+    if (!locked->started || locked->stopping)
         return;
 
-    locked->confirmed_outputs.assign(outputs.begin(), outputs.end());
-    locked->has_confirmed_configuration = true;
-    if (locked->started)
-        reconcile_configuration(outputs, *locked);
-}
-
-void CecManager::reconcile_configuration(std::span<mg::DisplayConfigurationOutput const> outputs, State& state)
-{
-    refresh_outputs(outputs, state);
-    complete_unambiguous_matches(outputs, state);
+    refresh_outputs(outputs, *locked);
+    complete_unambiguous_matches(outputs, *locked);
 
     for (auto const& output : outputs)
     {
-        auto const it = state.outputs.find(output.id);
-        if (it != state.outputs.end() && it->second)
+        auto const it = locked->outputs.find(output.id);
+        if (it != locked->outputs.end() && it->second)
         {
             it->second->request_power(output.connected && output.used && output.power_mode == mir_power_mode_on);
         }
