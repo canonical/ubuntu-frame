@@ -9,6 +9,8 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 option(ENABLE_TESTING "Specifies whether or not we should build the tests" ON)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS on)
+
 pkg_check_modules(MIRAL miral REQUIRED IMPORTED_TARGET)
 pkg_check_modules(MIRCOMMON mircommon REQUIRED IMPORTED_TARGET)
 pkg_check_modules(WAYLAND_CLIENT wayland-client REQUIRED IMPORTED_TARGET)
