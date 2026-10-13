@@ -1,5 +1,8 @@
 name: frame
 plugs:
+  mir:
+    interface: mount
+    workshop-target: /opt/mir
   build:
     interface: mount
     workshop-target: /home/workshop/build
