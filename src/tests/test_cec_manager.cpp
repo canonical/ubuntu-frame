@@ -137,11 +137,17 @@ TEST_F(CecManagerTest, does_not_guess_when_output_physical_addresses_are_ambiguo
     manager->shutdown();
 }
 
-TEST_F(CecManagerTest, starts_discovery_once_and_ignores_configuration_after_shutdown)
+TEST_F(CecManagerTest, discovers_once)
+{
+    manager->start();
+    manager->start();
+    manager->shutdown();
+}
+
+TEST_F(CecManagerTest, ignores_configuration_after_shutdown)
 {
     expect_on_state();
 
-    manager->start();
     manager->start();
     manager->configuration_confirmed(std::span{&display, 1});
     ASSERT_EQ(on_applied_future.wait_for(2s), std::future_status::ready);
