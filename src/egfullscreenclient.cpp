@@ -45,8 +45,8 @@ void egmde::FullscreenClient::Output::geometry(
     int32_t /*physical_width*/,
     int32_t /*physical_height*/,
     int32_t /*subpixel*/,
-    const char */*make*/,
-    const char */*model*/,
+    char const* /*make*/,
+    char const* /*model*/,
     int32_t transform)
 {
     auto const output = static_cast<Output*>(data);
@@ -56,9 +56,8 @@ void egmde::FullscreenClient::Output::geometry(
     output->transform = transform;
 }
 
-
 void egmde::FullscreenClient::Output::mode(
-    void *data,
+    void* data,
     struct wl_output* /*wl_output*/,
     uint32_t flags,
     int32_t width,
@@ -84,13 +83,15 @@ void egmde::FullscreenClient::Output::scale(void* data, wl_output* /*wl_output*/
 egmde::FullscreenClient::Output::Output(
     wl_output* output,
     std::function<void(Output const&)> on_constructed,
-    std::function<void(Output const&)> on_change)
-    : output{output},
-      on_done{[this, on_constructed = std::move(on_constructed), on_change=std::move(on_change)]
-      (Output const& o) mutable { on_constructed(o); on_done = std::move(on_change); }}
-{
-    wl_output_add_listener(output, &output_listener, this);
-}
+    std::function<void(Output const&)> on_change) :
+    output{output},
+    on_done{
+        [this, on_constructed = std::move(on_constructed), on_change = std::move(on_change)](Output const& o) mutable
+        {
+            on_constructed(o);
+            on_done = std::move(on_change);
+        }}
+{ wl_output_add_listener(output, &output_listener, this); }
 
 egmde::FullscreenClient::Output::~Output()
 {
@@ -105,16 +106,9 @@ wl_output_listener const egmde::FullscreenClient::Output::output_listener = {
     &scale,
 };
 
-egmde::FullscreenClient::SurfaceInfo::SurfaceInfo(Output const* output) :
-    output{output}
-{
+egmde::FullscreenClient::SurfaceInfo::SurfaceInfo(Output const* output) : output{output} {}
 
-}
-
-egmde::FullscreenClient::SurfaceInfo::~SurfaceInfo()
-{
-    clear_window();
-}
+egmde::FullscreenClient::SurfaceInfo::~SurfaceInfo() { clear_window(); }
 
 void egmde::FullscreenClient::SurfaceInfo::clear_window()
 {
@@ -125,7 +119,6 @@ void egmde::FullscreenClient::SurfaceInfo::clear_window()
 
     if (surface)
         wl_surface_destroy(surface);
-
 
     shell_surface = nullptr;
     surface = nullptr;
@@ -149,20 +142,25 @@ void egmde::FullscreenClient::Output::done(void* data, struct wl_output* /*wl_ou
     output->on_done(*output);
 }
 
-egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Path> diagnostic_path, uint diagnostic_delay, miral::MirRunner* runner, WindowManagerObserver* window_manager_observer) :
+egmde::FullscreenClient::FullscreenClient(
+    wl_display* display,
+    std::optional<Path> diagnostic_path,
+    uint diagnostic_delay,
+    miral::MirRunner* runner,
+    WindowManagerObserver* window_manager_observer) :
     draw_signal{::eventfd(0, EFD_SEMAPHORE)},
     shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
     diagnostic_signal{inotify_init()},
-    registry{nullptr, [](auto){}},
+    registry{nullptr, [](auto) {}},
     diagnostic_path{diagnostic_path},
     diagnostic_delay{diagnostic_delay},
     runner{runner},
     window_manager_observer{window_manager_observer}
 {
     fds[display_fd] = {wl_display_get_fd(display), POLLIN, 0};
-    fds[draw_fd]    = {draw_signal,                POLLIN, 0};
-    fds[diagnostic] = {diagnostic_signal,          POLLIN, 0};
-    fds[shutdown]   = {shutdown_signal,            POLLIN, 0};
+    fds[draw_fd] = {draw_signal, POLLIN, 0};
+    fds[diagnostic] = {diagnostic_signal, POLLIN, 0};
+    fds[shutdown] = {shutdown_signal, POLLIN, 0};
 
     // Check inotify initializaiton
     if (diagnostic_signal < 0)
@@ -174,10 +172,7 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     if (diagnostic_path.has_value())
     {
         diagnostic_wd = inotify_add_watch(
-            diagnostic_signal,
-            diagnostic_path->parent_path().c_str(),
-            IN_CLOSE_WRITE | IN_CREATE | IN_DELETE
-        );
+            diagnostic_signal, diagnostic_path->parent_path().c_str(), IN_CLOSE_WRITE | IN_CREATE | IN_DELETE);
 
         diagnostic_exists = true;
     }
@@ -199,7 +194,12 @@ egmde::FullscreenClient::FullscreenClient(wl_display* display, std::optional<Pat
     wl_registry_add_listener(registry.get(), &registry_listener, this);
 
     set_diagnostic_delay_alarm();
-    window_manager_observer->add_window_opened_callback([this]() { diagnostic_wants_to_draw = false; draw(); });
+    window_manager_observer->add_window_opened_callback(
+        [this]()
+        {
+            diagnostic_wants_to_draw = false;
+            draw();
+        });
     window_manager_observer->add_window_closed_callback([this]() { set_diagnostic_delay_alarm(); });
 }
 
@@ -231,38 +231,33 @@ void egmde::FullscreenClient::set_diagnostic_delay_alarm()
 
         if (timer_fd == -1)
         {
-            BOOST_THROW_EXCEPTION(std::runtime_error(
-                "Initializing diagnostic delay timer failed"));
+            BOOST_THROW_EXCEPTION(std::runtime_error("Initializing diagnostic delay timer failed"));
         }
 
-        auto const spec = itimerspec
-        {
-            { 0, 0 },               // Timer interval
-            { diagnostic_delay, 0 } // Initial expiration
+        auto const spec = itimerspec{
+            {0, 0},               // Timer interval
+            {diagnostic_delay, 0} // Initial expiration
         };
 
         if (timerfd_settime(timer_fd, 0, &spec, NULL) == -1)
         {
-            BOOST_THROW_EXCEPTION(std::runtime_error(
-                "Setting diagnostic delay timer failed"));
+            BOOST_THROW_EXCEPTION(std::runtime_error("Setting diagnostic delay timer failed"));
         }
 
         if (runner)
         {
-            diagnostic_timer_handle = runner->register_fd_handler(mir::Fd{timer_fd}, [this](int){ notify_diagnostic_delay_expired(); });
+            diagnostic_timer_handle =
+                runner->register_fd_handler(mir::Fd{timer_fd}, [this](int) { notify_diagnostic_delay_expired(); });
         }
         else
         {
-            BOOST_THROW_EXCEPTION(std::runtime_error(
-                "MirRunner expired before creation of diagnostic delay alarm."));
+            BOOST_THROW_EXCEPTION(std::runtime_error("MirRunner expired before creation of diagnostic delay alarm."));
         }
     }
 }
 
 auto inline egmde::FullscreenClient::should_draw_crash() -> bool
-{
-    return diagnostic_wants_to_draw && diagnostic_exists;
-}
+{ return diagnostic_wants_to_draw && diagnostic_exists; }
 
 void egmde::FullscreenClient::on_output_changed(Output const* output)
 {
@@ -337,9 +332,7 @@ void egmde::FullscreenClient::on_new_output(Output const* output)
     {
         std::lock_guard const lock{outputs_mutex};
 
-        mir::geometry::Rectangle const screen_rect{
-                {output->x,    output->y},
-                {output->width,output->height}};
+        mir::geometry::Rectangle const screen_rect{{output->x, output->y}, {output->width, output->height}};
 
         if (!display_area.bounding_rectangle().overlaps(screen_rect))
         {
@@ -354,23 +347,20 @@ void egmde::FullscreenClient::on_new_output(Output const* output)
     flush_display();
 }
 
-void egmde::FullscreenClient::draw() const
-{
-    eventfd_write(draw_signal, 1);
-}
+void egmde::FullscreenClient::draw() const { eventfd_write(draw_signal, 1); }
 
 auto egmde::FullscreenClient::make_shm_pool(size_t size, void** data) const
--> std::unique_ptr<wl_shm_pool, std::function<void(wl_shm_pool*)>>
+    -> std::unique_ptr<wl_shm_pool, std::function<void(wl_shm_pool*)>>
 {
-    static auto (*open_shm_file)() -> mir::Fd = []
+    static auto (*open_shm_file)()->mir::Fd = []
     {
         static char const* shm_dir;
-        open_shm_file = []{ return mir::Fd{open(shm_dir, O_TMPFILE | O_RDWR | O_EXCL, S_IRWXU)}; };
+        open_shm_file = [] { return mir::Fd{open(shm_dir, O_TMPFILE | O_RDWR | O_EXCL, S_IRWXU)}; };
 
         // Wayland based toolkits typically use $XDG_RUNTIME_DIR to open shm pools
         // so we try that before "/dev/shm". But confined snaps can't access "/dev/shm"
         // so we try "/tmp" if both of the above fail.
-        for (auto dir : {const_cast<const char*>(getenv("XDG_RUNTIME_DIR")), "/dev/shm", "/tmp" })
+        for (auto dir : {const_cast<char const*>(getenv("XDG_RUNTIME_DIR")), "/dev/shm", "/tmp"})
         {
             if (dir)
             {
@@ -385,7 +375,8 @@ auto egmde::FullscreenClient::make_shm_pool(size_t size, void** data) const
 
     auto fd = open_shm_file();
 
-    if (fd < 0) {
+    if (fd < 0)
+    {
         BOOST_THROW_EXCEPTION((std::system_error{errno, std::system_category(), "Failed to open shm buffer"}));
     }
 
@@ -399,12 +390,7 @@ auto egmde::FullscreenClient::make_shm_pool(size_t size, void** data) const
         BOOST_THROW_EXCEPTION((std::system_error{errno, std::system_category(), "Failed to mmap buffer"}));
     }
 
-    return {
-        wl_shm_create_pool(shm, fd, size),
-        [](auto* shm)
-        {
-            wl_shm_pool_destroy(shm);
-        }};
+    return {wl_shm_create_pool(shm, fd, size), [](auto* shm) { wl_shm_pool_destroy(shm); }};
 }
 
 egmde::FullscreenClient::~FullscreenClient()
@@ -424,14 +410,17 @@ egmde::FullscreenClient::~FullscreenClient()
     wl_display_roundtrip(display);
 }
 
-void egmde::FullscreenClient::new_global(struct wl_registry* registry, uint32_t id, char const* interface, uint32_t version)
+void egmde::FullscreenClient::new_global(
+    struct wl_registry* registry,
+    uint32_t id,
+    char const* interface,
+    uint32_t version)
 {
     (void)version;
 
     if (strcmp(interface, "wl_compositor") == 0)
     {
-        compositor =
-            static_cast<decltype(compositor)>(wl_registry_bind(registry, id, &wl_compositor_interface, 3));
+        compositor = static_cast<decltype(compositor)>(wl_registry_bind(registry, id, &wl_compositor_interface, 3));
     }
     else if (strcmp(interface, "wl_shm") == 0)
     {
@@ -442,11 +431,10 @@ void egmde::FullscreenClient::new_global(struct wl_registry* registry, uint32_t 
     else if (strcmp(interface, "wl_seat") == 0)
     {
         seat = static_cast<decltype(seat)>(wl_registry_bind(registry, id, &wl_seat_interface, 4));
-        static struct wl_seat_listener seatListener =
-            {
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->seat_capabilities(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->seat_name(args...); },
-            };
+        static struct wl_seat_listener seatListener = {
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->seat_capabilities(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->seat_name(args...); },
+        };
 
         wl_seat_add_listener(seat, &seatListener, this);
     }
@@ -469,9 +457,7 @@ void egmde::FullscreenClient::new_global(struct wl_registry* registry, uint32_t 
     }
 }
 
-void egmde::FullscreenClient::remove_global(
-    struct wl_registry* /*registry*/,
-    uint32_t id)
+void egmde::FullscreenClient::remove_global(struct wl_registry* /*registry*/, uint32_t id)
 {
     auto const output = bound_outputs.find(id);
     if (output != bound_outputs.end())
@@ -492,7 +478,8 @@ void egmde::FullscreenClient::run(wl_display* display)
         {
             if (wl_display_dispatch_pending(display) == -1)
             {
-                BOOST_THROW_EXCEPTION((std::system_error{errno, std::system_category(), "Failed to dispatch Wayland events"}));
+                BOOST_THROW_EXCEPTION(
+                    (std::system_error{errno, std::system_category(), "Failed to dispatch Wayland events"}));
             }
         }
 
@@ -511,7 +498,8 @@ void egmde::FullscreenClient::run(wl_display* display)
         {
             if (wl_display_read_events(display))
             {
-                BOOST_THROW_EXCEPTION((std::system_error{errno, std::system_category(), "Failed to read Wayland events"}));
+                BOOST_THROW_EXCEPTION(
+                    (std::system_error{errno, std::system_category(), "Failed to read Wayland events"}));
             }
         }
         else
@@ -534,14 +522,12 @@ void egmde::FullscreenClient::run(wl_display* display)
 
             auto ib = reinterpret_cast<inotify_event*>(inotify_buffer);
 
-            if (ib->mask & (IN_CLOSE_WRITE | IN_CREATE)
-                && ib->name == diagnostic_path.value_or("").filename().string())
+            if (ib->mask & (IN_CLOSE_WRITE | IN_CREATE) && ib->name == diagnostic_path.value_or("").filename().string())
             {
                 diagnostic_exists = true;
                 redraw = true;
             }
-            else if (ib->mask & IN_DELETE
-                && ib->name == diagnostic_path.value_or("").filename().string())
+            else if (ib->mask & IN_DELETE && ib->name == diagnostic_path.value_or("").filename().string())
             {
                 diagnostic_exists = false;
                 redraw = true;
@@ -571,21 +557,21 @@ void egmde::FullscreenClient::stop()
     }
 }
 
-void egmde::FullscreenClient::keyboard_keymap(wl_keyboard* /*keyboard*/, uint32_t /*format*/, int32_t /*fd*/, uint32_t /*size*/)
-{
-}
+void egmde::FullscreenClient::keyboard_keymap(
+    wl_keyboard* /*keyboard*/,
+    uint32_t /*format*/,
+    int32_t /*fd*/,
+    uint32_t /*size*/)
+{}
 
 void egmde::FullscreenClient::keyboard_enter(
     wl_keyboard* /*keyboard*/,
     uint32_t /*serial*/,
-    wl_surface*/*surface*/,
+    wl_surface* /*surface*/,
     wl_array* /*keys*/)
-{
-}
+{}
 
-void egmde::FullscreenClient::keyboard_leave(wl_keyboard* /*keyboard*/, uint32_t /*serial*/, wl_surface* /*surface*/)
-{
-}
+void egmde::FullscreenClient::keyboard_leave(wl_keyboard* /*keyboard*/, uint32_t /*serial*/, wl_surface* /*surface*/) {}
 
 void egmde::FullscreenClient::keyboard_key(
     wl_keyboard* /*keyboard*/,
@@ -593,22 +579,18 @@ void egmde::FullscreenClient::keyboard_key(
     uint32_t /*time*/,
     uint32_t /*key*/,
     uint32_t /*state*/)
-{
-}
+{}
 
 void egmde::FullscreenClient::keyboard_modifiers(
-    wl_keyboard */*keyboard*/,
+    wl_keyboard* /*keyboard*/,
     uint32_t /*serial*/,
     uint32_t /*mods_depressed*/,
     uint32_t /*mods_latched*/,
     uint32_t /*mods_locked*/,
     uint32_t /*group*/)
-{
-}
+{}
 
-void egmde::FullscreenClient::keyboard_repeat_info(wl_keyboard* /*wl_keyboard*/, int32_t /*rate*/, int32_t /*delay*/)
-{
-}
+void egmde::FullscreenClient::keyboard_repeat_info(wl_keyboard* /*wl_keyboard*/, int32_t /*rate*/, int32_t /*delay*/) {}
 
 void egmde::FullscreenClient::pointer_enter(
     wl_pointer* /*pointer*/,
@@ -616,16 +598,16 @@ void egmde::FullscreenClient::pointer_enter(
     wl_surface* /*surface*/,
     wl_fixed_t /*x*/,
     wl_fixed_t /*y*/)
-{
-}
+{}
 
-void egmde::FullscreenClient::pointer_leave(wl_pointer* /*pointer*/, uint32_t /*serial*/, wl_surface* /*surface*/)
-{
-}
+void egmde::FullscreenClient::pointer_leave(wl_pointer* /*pointer*/, uint32_t /*serial*/, wl_surface* /*surface*/) {}
 
-void egmde::FullscreenClient::pointer_motion(wl_pointer* /*pointer*/, uint32_t /*time*/, wl_fixed_t /*x*/, wl_fixed_t /*y*/)
-{
-}
+void egmde::FullscreenClient::pointer_motion(
+    wl_pointer* /*pointer*/,
+    uint32_t /*time*/,
+    wl_fixed_t /*x*/,
+    wl_fixed_t /*y*/)
+{}
 
 void egmde::FullscreenClient::pointer_button(
     wl_pointer* /*pointer*/,
@@ -633,32 +615,22 @@ void egmde::FullscreenClient::pointer_button(
     uint32_t /*time*/,
     uint32_t /*button*/,
     uint32_t /*state*/)
-{
-}
+{}
 
 void egmde::FullscreenClient::pointer_axis(
     wl_pointer* /*pointer*/,
     uint32_t /*time*/,
     uint32_t /*axis*/,
     wl_fixed_t /*value*/)
-{
-}
+{}
 
-void egmde::FullscreenClient::pointer_frame(wl_pointer* /*pointer*/)
-{
-}
+void egmde::FullscreenClient::pointer_frame(wl_pointer* /*pointer*/) {}
 
-void egmde::FullscreenClient::pointer_axis_source(wl_pointer* /*pointer*/, uint32_t /*axis_source*/)
-{
-}
+void egmde::FullscreenClient::pointer_axis_source(wl_pointer* /*pointer*/, uint32_t /*axis_source*/) {}
 
-void egmde::FullscreenClient::pointer_axis_stop(wl_pointer* /*pointer*/, uint32_t /*time*/, uint32_t /*axis*/)
-{
-}
+void egmde::FullscreenClient::pointer_axis_stop(wl_pointer* /*pointer*/, uint32_t /*time*/, uint32_t /*axis*/) {}
 
-void egmde::FullscreenClient::pointer_axis_discrete(wl_pointer* /*pointer*/, uint32_t /*axis*/, int32_t /*discrete*/)
-{
-}
+void egmde::FullscreenClient::pointer_axis_discrete(wl_pointer* /*pointer*/, uint32_t /*axis*/, int32_t /*discrete*/) {}
 
 void egmde::FullscreenClient::touch_down(
     wl_touch* /*touch*/,
@@ -668,16 +640,9 @@ void egmde::FullscreenClient::touch_down(
     int32_t /*id*/,
     wl_fixed_t /*x*/,
     wl_fixed_t /*y*/)
-{
-}
+{}
 
-void egmde::FullscreenClient::touch_up(
-    wl_touch* /*touch*/,
-    uint32_t /*serial*/,
-    uint32_t /*time*/,
-    int32_t /*id*/)
-{
-}
+void egmde::FullscreenClient::touch_up(wl_touch* /*touch*/, uint32_t /*serial*/, uint32_t /*time*/, int32_t /*id*/) {}
 
 void egmde::FullscreenClient::touch_motion(
     wl_touch* /*touch*/,
@@ -685,31 +650,20 @@ void egmde::FullscreenClient::touch_motion(
     int32_t /*id*/,
     wl_fixed_t /*x*/,
     wl_fixed_t /*y*/)
-{
-}
+{}
 
-void egmde::FullscreenClient::touch_frame(wl_touch* /*touch*/)
-{
-}
+void egmde::FullscreenClient::touch_frame(wl_touch* /*touch*/) {}
 
-void egmde::FullscreenClient::touch_cancel(wl_touch* /*touch*/)
-{
-}
+void egmde::FullscreenClient::touch_cancel(wl_touch* /*touch*/) {}
 
 void egmde::FullscreenClient::touch_shape(
     wl_touch* /*touch*/,
     int32_t /*id*/,
     wl_fixed_t /*major*/,
     wl_fixed_t /*minor*/)
-{
-}
+{}
 
-void egmde::FullscreenClient::touch_orientation(
-    wl_touch* /*touch*/,
-    int32_t /*id*/,
-    wl_fixed_t /*orientation*/)
-{
-}
+void egmde::FullscreenClient::touch_orientation(wl_touch* /*touch*/, int32_t /*id*/, wl_fixed_t /*orientation*/) {}
 
 void egmde::FullscreenClient::flush_display()
 {
@@ -736,43 +690,41 @@ void egmde::FullscreenClient::flush_display()
 
 void egmde::FullscreenClient::seat_capabilities(wl_seat* seat, uint32_t capabilities)
 {
-    if (capabilities & WL_SEAT_CAPABILITY_POINTER) {
-        static wl_pointer_listener pointer_listener =
-            {
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_enter(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_leave(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_motion(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_button(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_axis(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_frame(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_axis_source(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_axis_stop(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_axis_discrete(args...); },
-            };
+    if (capabilities & WL_SEAT_CAPABILITY_POINTER)
+    {
+        static wl_pointer_listener pointer_listener = {
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_enter(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_leave(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_motion(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_button(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_axis(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_frame(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_axis_source(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_axis_stop(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->pointer_axis_discrete(args...); },
+        };
 
-        struct wl_pointer *pointer = wl_seat_get_pointer(seat);
-        wl_pointer_add_listener (pointer, &pointer_listener, this);
+        struct wl_pointer* pointer = wl_seat_get_pointer(seat);
+        wl_pointer_add_listener(pointer, &pointer_listener, this);
     }
 
     if (capabilities & WL_SEAT_CAPABILITY_KEYBOARD)
     {
-        static struct wl_keyboard_listener keyboard_listener =
-            {
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_keymap(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_enter(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_leave(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_key(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_modifiers(args...); },
-                [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_repeat_info(args...); },
-            };
+        static struct wl_keyboard_listener keyboard_listener = {
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_keymap(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_enter(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_leave(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_key(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_modifiers(args...); },
+            [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->keyboard_repeat_info(args...); },
+        };
 
         wl_keyboard_add_listener(wl_seat_get_keyboard(seat), &keyboard_listener, this);
     }
 
     if (capabilities & WL_SEAT_CAPABILITY_TOUCH)
     {
-        static struct wl_touch_listener touch_listener =
-        {
+        static struct wl_touch_listener touch_listener = {
             [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->touch_down(args...); },
             [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->touch_up(args...); },
             [](void* self, auto... args) { static_cast<FullscreenClient*>(self)->touch_motion(args...); },
@@ -790,6 +742,4 @@ void egmde::FullscreenClient::seat_capabilities(wl_seat* seat, uint32_t capabili
     }
 }
 
-void egmde::FullscreenClient::seat_name(wl_seat* /*seat*/, const char */*name*/)
-{
-}
+void egmde::FullscreenClient::seat_name(wl_seat* /*seat*/, char const* /*name*/) {}

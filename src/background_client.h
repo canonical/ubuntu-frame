@@ -59,11 +59,7 @@ public:
         Colour const& bottom_colour,
         Colour const& top_colour);
 
-    static void render_background(
-        uint32_t width,
-        uint32_t height,
-        unsigned char* buffer,
-        Colour const& colour);
+    static void render_background(uint32_t width, uint32_t height, unsigned char* buffer, Colour const& colour);
 
     void operator()(wl_display* display);
     void operator()(std::weak_ptr<mir::scene::Session> const& session);

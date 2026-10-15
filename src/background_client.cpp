@@ -52,16 +52,15 @@ struct TextRenderer::DiagnosticText
 {
     auto static from(Path const& path) -> DiagnosticText;
 
-    explicit DiagnosticText(std::vector<std::string> && lines) : lines{std::move(lines)} {}
+    explicit DiagnosticText(std::vector<std::string>&& lines) : lines{std::move(lines)} {}
 
     std::vector<std::string> const lines;
 };
 
 auto TextRenderer::DiagnosticText::from(Path const& path) -> DiagnosticText
 {
-    static const int max_lines = 150;
-    static const int max_line_length = 250;
-
+    static int const max_lines = 150;
+    static int const max_line_length = 250;
 
     std::ifstream in{path};
     std::vector<std::string> lines;
@@ -82,11 +81,10 @@ auto TextRenderer::DiagnosticText::from(Path const& path) -> DiagnosticText
     return DiagnosticText{std::move(lines)};
 }
 
-BackgroundClient::BackgroundClient(miral::MirRunner* runner, WindowManagerObserver* window_manager_observer)
-: runner{runner},
-  window_manager_observer{window_manager_observer}
-{
-}
+BackgroundClient::BackgroundClient(miral::MirRunner* runner, WindowManagerObserver* window_manager_observer) :
+    runner{runner},
+    window_manager_observer{window_manager_observer}
+{}
 
 struct BackgroundClient::Self : egmde::FullscreenClient
 {
@@ -114,37 +112,36 @@ public:
     Colour const& crash_text_colour;
 
     TextRenderer text_renderer;
-    const std::optional<Path> diagnostic_path;
+    std::optional<Path> const diagnostic_path;
 
 private:
     miral::MirRunner* const runner;
 
-    const uint x_margin_percent = 5;
-    const uint y_margin_percent = 5;
+    uint const x_margin_percent = 5;
+    uint const y_margin_percent = 5;
 
     std::mutex mutable buffer_mutex;
 };
 
-TextRenderer::TextRenderer(Path font_path)
-    : font_path{font_path}
+TextRenderer::TextRenderer(Path font_path) : font_path{font_path}
 {
     if (auto const error = FT_Init_FreeType(&library))
     {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Initializing freetype library failed with error " + std::to_string(error)));
+        BOOST_THROW_EXCEPTION(
+            std::runtime_error("Initializing freetype library failed with error " + std::to_string(error)));
     }
 
     if (auto const error = FT_New_Face(library, font_path.c_str(), 0, &face))
     {
         if (error == FT_Err_Unknown_File_Format)
         {
-            BOOST_THROW_EXCEPTION(std::runtime_error(
-                "Font " + font_path.string() + " has unsupported format"));
+            BOOST_THROW_EXCEPTION(std::runtime_error("Font " + font_path.string() + " has unsupported format"));
         }
 
         else
         {
-            auto const error_str = "Loading font from " + font_path.string() + " failed with error " + std::to_string(error);
+            auto const error_str =
+                "Loading font from " + font_path.string() + " failed with error " + std::to_string(error);
             mir::fatal_error(error_str.c_str());
         }
     }
@@ -180,35 +177,21 @@ void BackgroundClient::set_colour(std::string const& option, Colour& colour)
     }
     else
     {
-        throw(mir::AbnormalExit(
-            "Invalid colour (" + option + ") given in program argument"));
+        throw(mir::AbnormalExit("Invalid colour (" + option + ") given in program argument"));
     }
 }
 
-void BackgroundClient::set_wallpaper_enabled(bool option)
-{
-    wallpaper_enabled = option;
-}
+void BackgroundClient::set_wallpaper_enabled(bool option) { wallpaper_enabled = option; }
 
-void BackgroundClient::set_wallpaper_top_colour(std::string const& option)
-{
-    set_colour(option, wallpaper_top_colour);
-}
+void BackgroundClient::set_wallpaper_top_colour(std::string const& option) { set_colour(option, wallpaper_top_colour); }
 
 void BackgroundClient::set_wallpaper_bottom_colour(std::string const& option)
-{
-    set_colour(option, wallpaper_bottom_colour);
-}
+{ set_colour(option, wallpaper_bottom_colour); }
 
 void BackgroundClient::set_crash_background_colour(std::string const& option)
-{
-    set_colour(option, crash_background_colour);
-}
+{ set_colour(option, crash_background_colour); }
 
-void BackgroundClient::set_crash_text_colour(std::string const& option)
-{
-    set_colour(option, crash_text_colour);
-}
+void BackgroundClient::set_crash_text_colour(std::string const& option) { set_colour(option, crash_text_colour); }
 
 void BackgroundClient::set_diagnostic_path(std::string const& option)
 {
@@ -228,20 +211,17 @@ void BackgroundClient::set_diagnostic_path(std::string const& option)
 
     if (!exists(path.parent_path()))
     {
-        throw(mir::AbnormalExit(
-            "Parent of diagnostic path does not exist." + formatted_path_error));
+        throw(mir::AbnormalExit("Parent of diagnostic path does not exist." + formatted_path_error));
     }
 
     if (!is_directory(path.parent_path()))
     {
-        throw(mir::AbnormalExit(
-            "Parent of diagnostic path is not a directory." + formatted_path_error));
+        throw(mir::AbnormalExit("Parent of diagnostic path is not a directory." + formatted_path_error));
     }
 
     if (!is_regular_file(path) && exists(path))
     {
-        throw(mir::AbnormalExit(
-            "Target of diagnostic path is not a file." + formatted_path_error));
+        throw(mir::AbnormalExit("Target of diagnostic path is not a file." + formatted_path_error));
     }
 
     diagnostic_path = path;
@@ -255,8 +235,7 @@ void BackgroundClient::set_diagnostic_delay(int delay)
     }
     else
     {
-        throw(mir::AbnormalExit(
-            "Diagnostic delay time (" + std::to_string(delay) + ") must not be negative"));
+        throw(mir::AbnormalExit("Diagnostic delay time (" + std::to_string(delay) + ") must not be negative"));
     }
 }
 
@@ -286,14 +265,12 @@ void BackgroundClient::render_background(
         }
 
         // Move pointer to next pixel
-        buffer += 4*width;
+        buffer += 4 * width;
     }
 }
 
 void BackgroundClient::render_background(uint32_t width, uint32_t height, unsigned char* buffer, Colour const& colour)
-{
-    render_background(width, height, buffer, colour, colour);
-}
+{ render_background(width, height, buffer, colour, colour); }
 
 void BackgroundClient::operator()(wl_display* display)
 {
@@ -320,9 +297,7 @@ void BackgroundClient::operator()(wl_display* display)
     client.reset();
 }
 
-void BackgroundClient::operator()(std::weak_ptr<mir::scene::Session> const& /*session*/)
-{
-}
+void BackgroundClient::operator()(std::weak_ptr<mir::scene::Session> const& /*session*/) {}
 
 BackgroundClient::Self::Self(
     wl_display* display,
@@ -334,25 +309,22 @@ BackgroundClient::Self::Self(
     Colour const& crash_background_colour,
     Colour const& crash_text_colour,
     std::optional<Path> diagnostic_path,
-    uint diagnostic_delay)
-    : FullscreenClient(display, diagnostic_path, diagnostic_delay, runner, window_manager_observer),
-      runner{runner},
-      wallpaper_enabled{wallpaper_enabled},
-      wallpaper_top_colour{wallpaper_top_colour},
-      wallpaper_bottom_colour{wallpaper_bottom_colour},
-      crash_background_colour{crash_background_colour},
-      crash_text_colour{crash_text_colour},
-      text_renderer{TextRenderer(get_font_path())},
-      diagnostic_path{diagnostic_path}
+    uint diagnostic_delay) :
+    FullscreenClient(display, diagnostic_path, diagnostic_delay, runner, window_manager_observer),
+    runner{runner},
+    wallpaper_enabled{wallpaper_enabled},
+    wallpaper_top_colour{wallpaper_top_colour},
+    wallpaper_bottom_colour{wallpaper_bottom_colour},
+    crash_background_colour{crash_background_colour},
+    crash_text_colour{crash_text_colour},
+    text_renderer{TextRenderer(get_font_path())},
+    diagnostic_path{diagnostic_path}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);
 }
 
-void BackgroundClient::Self::render_text(
-    uint32_t width,
-    uint32_t height,
-    unsigned char* buffer) const
+void BackgroundClient::Self::render_text(uint32_t width, uint32_t height, unsigned char* buffer) const
 {
     auto size = geom::Size{width, height};
 
@@ -389,7 +361,8 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
     std::lock_guard lock{buffer_mutex};
 
     // Don't draw diagnostic background if file is empty or font not found
-    bool const have_diagnostic = diagnostic_path && fs::exists(diagnostic_path.value()) && fs::file_size(diagnostic_path.value());
+    bool const have_diagnostic =
+        diagnostic_path && fs::exists(diagnostic_path.value()) && fs::file_size(diagnostic_path.value());
     bool const should_show_diagnostic = draws_crash && have_diagnostic;
     if (!wallpaper_enabled && !should_show_diagnostic)
     {
@@ -403,7 +376,7 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
     if (width <= 0 || height <= 0)
         return;
 
-    auto const stride = 4*width;
+    auto const stride = 4 * width;
 
     if (!info.surface)
     {
@@ -414,10 +387,7 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
     {
         info.shell_surface = wl_shell_get_shell_surface(shell, info.surface);
         wl_shell_surface_set_fullscreen(
-            info.shell_surface,
-            WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT,
-            0,
-            info.output->output);
+            info.shell_surface, WL_SHELL_SURFACE_FULLSCREEN_METHOD_DEFAULT, 0, info.output->output);
     }
 
     if (info.buffer && info.buffer_size != stride * height)
@@ -429,11 +399,7 @@ void BackgroundClient::Self::draw_screen(SurfaceInfo& info, bool draws_crash) co
     {
         auto const shm_pool = make_shm_pool(stride * height, &info.content_area);
 
-        info.buffer = wl_shm_pool_create_buffer(
-            shm_pool.get(),
-            0,
-            width, height, stride,
-            WL_SHM_FORMAT_ARGB8888);
+        info.buffer = wl_shm_pool_create_buffer(shm_pool.get(), 0, width, height, stride, WL_SHM_FORMAT_ARGB8888);
         info.buffer_size = stride * height;
     }
 
@@ -465,9 +431,8 @@ void BackgroundClient::stop()
 
 inline auto area(geom::Size size) -> size_t
 {
-    return (size.width > geom::Width{} && size.height > geom::Height{})
-        ? size.width.as_int() * size.height.as_int()
-        : 0;
+    return (size.width > geom::Width{} && size.height > geom::Height{}) ? size.width.as_int() * size.height.as_int() :
+                                                                          0;
 }
 
 auto TextRenderer::convert_utf8_to_utf32(std::string const& text) -> std::u32string
@@ -478,7 +443,7 @@ auto TextRenderer::convert_utf8_to_utf32(std::string const& text) -> std::u32str
     {
         utf32_text = converter.from_bytes(text);
     }
-    catch(const std::range_error& e)
+    catch (std::range_error const& e)
     {
         mir::log_warning("Window title %s is not valid UTF-8", text.c_str());
         // fall back to ASCII
@@ -539,14 +504,10 @@ void TextRenderer::render(
 
             geom::Point glyph_top_left =
                 top_left +
-                geom::Displacement{
-                    face->glyph->bitmap_left,
-                    height_pixels.as_int() - face->glyph->bitmap_top};
+                geom::Displacement{face->glyph->bitmap_left, height_pixels.as_int() - face->glyph->bitmap_top};
             render_glyph(buf, buf_size, &face->glyph->bitmap, glyph_top_left, colour);
 
-            top_left += geom::Displacement{
-                face->glyph->advance.x / 64,
-                face->glyph->advance.y / 64};
+            top_left += geom::Displacement{face->glyph->advance.x / 64, face->glyph->advance.y / 64};
         }
         catch (std::runtime_error const& error)
         {
@@ -559,8 +520,7 @@ void TextRenderer::set_char_size(uint32_t height) const
 {
     if (auto const error = FT_Set_Pixel_Sizes(face, 0, height))
     {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Setting char size failed with error " + std::to_string(error)));
+        BOOST_THROW_EXCEPTION(std::runtime_error("Setting char size failed with error " + std::to_string(error)));
     }
 }
 
@@ -570,14 +530,12 @@ void TextRenderer::rasterize_glyph(char32_t glyph) const
 
     if (auto const error = FT_Load_Glyph(face, glyph_index, 0))
     {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Failed to load glyph " + std::to_string(glyph_index)));
+        BOOST_THROW_EXCEPTION(std::runtime_error("Failed to load glyph " + std::to_string(glyph_index)));
     }
 
     if (auto const error = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL))
     {
-        BOOST_THROW_EXCEPTION(std::runtime_error(
-            "Failed to render glyph " + std::to_string(glyph_index)));
+        BOOST_THROW_EXCEPTION(std::runtime_error("Failed to render glyph " + std::to_string(glyph_index)));
     }
 }
 
@@ -609,14 +567,13 @@ void TextRenderer::render_glyph(
         for (geom::X buffer_x = buffer_left; buffer_x < buffer_right; buffer_x += geom::DeltaX{1})
         {
             geom::X const glyph_x = buffer_x - glyph_offset.dx;
-            unsigned char const glyph_alpha = (static_cast<unsigned char>(glyph_row[glyph_x.as_int()]) * colour_alpha) / 255;
+            unsigned char const glyph_alpha =
+                (static_cast<unsigned char>(glyph_row[glyph_x.as_int()]) * colour_alpha) / 255;
             auto* const buffer_pixels = reinterpret_cast<unsigned char*>(buffer_row + buffer_x.as_int());
             for (int i = 0; i < 3; i++)
             {
                 // Blend colour with the previous buffer colour based on the glyph's alpha
-                buffer_pixels[i] =
-                    (buffer_pixels[i] * (255 - glyph_alpha)) / 255 +
-                    (colour[i] * glyph_alpha) / 255;
+                buffer_pixels[i] = (buffer_pixels[i] * (255 - glyph_alpha)) / 255 + (colour[i] * glyph_alpha) / 255;
             }
         }
     }
@@ -654,21 +611,22 @@ auto TextRenderer::get_max_font_height_by_width(DiagnosticText const& diagnostic
     auto estimate_font_height = 50;
     auto const width_from_estimate = get_max_line_width(diagnostic, estimate_font_height);
 
-    auto const final_font_height = uint32_t(estimate_font_height * (static_cast<double>(max_width) / width_from_estimate));
+    auto const final_font_height =
+        uint32_t(estimate_font_height * (static_cast<double>(max_width) / width_from_estimate));
     return final_font_height;
 }
 
-auto TextRenderer::get_max_font_height_by_height(DiagnosticText const& diagnostic, uint32_t max_height) const -> uint32_t
+auto TextRenderer::get_max_font_height_by_height(DiagnosticText const& diagnostic, uint32_t max_height) const
+    -> uint32_t
 {
     auto num_lines = diagnostic.lines.size();
     auto estimate_font_height = 50;
     auto const height_from_estimate = get_total_height(num_lines, estimate_font_height);
 
-    auto const final_font_height = uint32_t(estimate_font_height * (static_cast<double>(max_height) / height_from_estimate));
+    auto const final_font_height =
+        uint32_t(estimate_font_height * (static_cast<double>(max_height) / height_from_estimate));
     return final_font_height;
 }
 
 auto TextRenderer::get_total_height(uint32_t num_lines, uint32_t height_pixels) const -> uint32_t
-{
-    return (height_pixels + (height_pixels / y_kerning)) * num_lines;
-}
+{ return (height_pixels + (height_pixels / y_kerning)) * num_lines; }
