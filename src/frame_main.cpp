@@ -55,7 +55,7 @@ int main(int argc, char const* argv[])
     enable_safe_mode(argv, runner);
 
     WaylandExtensions wayland_extensions;
-    init_authorization(wayland_extensions, auth_model);
+    AuthModel auth_model{default_auth_model};
 
     BackgroundClient background_client(&runner, &window_manager_observer);
 
@@ -89,7 +89,6 @@ int main(int argc, char const* argv[])
 
     return runner.run_with(
         {
-            wayland_extensions,
             display_config,
             display_config.layout_option(),
             ConfigurationOption{[&](bool option) { background_client.set_wallpaper_enabled(option); },
@@ -107,8 +106,20 @@ int main(int argc, char const* argv[])
             ConfigurationOption{[&] (int option) { background_client.set_diagnostic_delay(option);},
                                 "diagnostic-delay", "Delay time (in seconds) before displaying diagnostic screen", 0},
             StartupInternalClient{std::ref(background_client)},
-            ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
-                               "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
+            miral::pre_init(ConfigurationOption{[&](bool option) { auth_model.set_authorise_without_apparmor(option); },
+                               "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false }),
+            miral::pre_init(ConfigurationOption{
+                [&](std::vector<std::string> const& privileged_clients) {
+                    for (auto const& privileged_client : privileged_clients) {
+                        auth_model.add_privileged_client(privileged_client);
+                    }
+                },
+               "privileged-client",
+               "Add a privileged client (snap:<snap-name>:<wayland-protocol>), can be provided multiple times. Omitting the protocol (snap:<snap-name>:) will clear the protocol list for a snap."}),
+            miral::pre_init([&]() {
+                auth_model.apply_to(wayland_extensions);
+            }),
+            wayland_extensions,
             set_window_management_policy<FrameWindowManagerPolicy>(
                 window_manager_observer,
                 display_config),
