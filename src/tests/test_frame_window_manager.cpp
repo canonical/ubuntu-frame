@@ -29,43 +29,28 @@ using namespace testing;
 namespace mtf = mir_test_framework;
 namespace geom = mir::geometry;
 
-namespace
-{
-auto constexpr DISPLAY_RECT = geom::Rectangle({0, 0}, {800, 600});
-}
+namespace { auto constexpr DISPLAY_RECT = geom::Rectangle({0, 0}, {800, 600}); }
 
 class FrameWindowManagerTest : public mtf::WindowManagementTestHarness
 {
 public:
-    FrameWindowManagerTest() : runner(argc, argv)
-    {
-    }
+    FrameWindowManagerTest() : runner(argc, argv) {}
 
     auto get_builder() -> mir_test_framework::WindowManagementPolicyBuilder override
     {
         return [&](miral::WindowManagerTools const& tools)
-        {
-            return std::make_unique<FrameWindowManagerPolicy>(
-                tools,
-                observer,
-                get_display_config());
-        };
+        { return std::make_unique<FrameWindowManagerPolicy>(tools, observer, get_display_config()); };
     }
 
     auto get_initial_output_configs() -> std::vector<mir::graphics::DisplayConfigurationOutput> override
-    {
-        return output_configs_from_output_rectangles({DISPLAY_RECT});
-    }
+    { return output_configs_from_output_rectangles({DISPLAY_RECT}); }
 
 protected:
-    virtual miral::DisplayConfiguration get_display_config()
-    {
-        return miral::DisplayConfiguration(runner);
-    }
+    virtual miral::DisplayConfiguration get_display_config() { return miral::DisplayConfiguration(runner); }
 
     WindowManagerObserver observer;
     int const argc = 1;
-    const char* argv[2] = {"test", nullptr};
+    char const* argv[2] = {"test", nullptr};
     miral::MirRunner runner;
 };
 
@@ -90,7 +75,7 @@ TEST_F(FrameWindowManagerTest, NewWindowsTakeUpFullSizeOfDisplay)
 namespace
 {
 miral::DisplayConfiguration write_and_build_display_config(
-    const char* path,
+    char const* path,
     std::string const& yaml,
     miral::MirRunner const& runner)
 {
@@ -109,8 +94,8 @@ miral::DisplayConfiguration write_and_build_display_config(
 class FrameWindowManagerWithSurfaceTitleInDisplayConfig : public FrameWindowManagerTest
 {
 protected:
-    FrameWindowManagerWithSurfaceTitleInDisplayConfig()
-        : display_config(write_and_build_display_config(
+    FrameWindowManagerWithSurfaceTitleInDisplayConfig() :
+        display_config(write_and_build_display_config(
             "/tmp/test.display",
             R"(
 layouts:
@@ -128,15 +113,11 @@ layouts:
     - surface-title: test
       position: [ 100, 100 ]
       size: [ 50, 50 ]
-)", runner))
-    {
-        display_config.operator()(server);
-    }
+)",
+            runner))
+    { display_config.operator()(server); }
 
-    miral::DisplayConfiguration get_display_config() override
-    {
-        return display_config;
-    }
+    miral::DisplayConfiguration get_display_config() override { return display_config; }
 
     miral::DisplayConfiguration display_config;
 };
