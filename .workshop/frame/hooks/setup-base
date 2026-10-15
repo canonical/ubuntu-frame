@@ -10,12 +10,15 @@ apt-get install \
   libclang-rt-dev \
   llvm \
   libapparmor-dev \
+  libcec-dev \
   libboost-filesystem-dev \
   libboost-iostreams-dev \
   libgmock-dev \
   libgtest-dev \
   libgtk-layer-shell-dev \
   libmirserver-internal-dev \
+  libp8-platform-dev \
+  libudev-dev \
   make \
   ninja-build \
   python3-venv \
