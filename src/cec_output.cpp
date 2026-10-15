@@ -81,7 +81,7 @@ void CecOutput::run()
             if (locked->stopping)
             {
                 locked.drop();
-                adapter->standby_tv();
+                adapter->send_standby_tv();
                 return;
             }
 
@@ -102,11 +102,11 @@ void CecOutput::apply_power_state(bool on)
 {
     if (on)
     {
-        adapter->power_on_tv();
-        adapter->make_active_source();
+        adapter->send_power_on_tv();
+        adapter->send_make_active_source();
     }
     else
     {
-        adapter->standby_tv();
+        adapter->send_standby_tv();
     }
 }

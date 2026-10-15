@@ -78,9 +78,9 @@ TEST_F(LibCecAdapterTest, sends_tv_power_commands_using_expected_roles)
     auto adapter = open_adapter();
 
     ASSERT_THAT(adapter, NotNull());
-    EXPECT_TRUE(adapter->power_on_tv());
-    EXPECT_TRUE(adapter->make_active_source());
-    EXPECT_TRUE(adapter->standby_tv());
+    EXPECT_TRUE(adapter->send_power_on_tv());
+    EXPECT_TRUE(adapter->send_make_active_source());
+    EXPECT_TRUE(adapter->send_standby_tv());
     adapter->close();
     adapter->close();
 }
@@ -95,9 +95,9 @@ TEST_F(LibCecAdapterTest, propagates_command_failures)
     auto adapter = open_adapter();
 
     ASSERT_THAT(adapter, NotNull());
-    EXPECT_FALSE(adapter->power_on_tv());
-    EXPECT_FALSE(adapter->make_active_source());
-    EXPECT_FALSE(adapter->standby_tv());
+    EXPECT_FALSE(adapter->send_power_on_tv());
+    EXPECT_FALSE(adapter->send_make_active_source());
+    EXPECT_FALSE(adapter->send_standby_tv());
     adapter->close();
 }
 

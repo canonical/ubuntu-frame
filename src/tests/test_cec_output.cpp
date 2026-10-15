@@ -35,7 +35,7 @@ class CecOutputTest : public Test
 protected:
     void expect_shutdown()
     {
-        EXPECT_CALL(mock_adapter, standby_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, send_standby_tv()).Times(1);
         EXPECT_CALL(mock_adapter, close()).Times(1);
     }
 
@@ -53,7 +53,7 @@ TEST_F(CecOutputTest, applies_latest_power_request_after_in_flight_command)
     auto standby_applied_future = standby_applied.get_future();
     {
         InSequence sequence;
-        EXPECT_CALL(mock_adapter, power_on_tv())
+        EXPECT_CALL(mock_adapter, send_power_on_tv())
             .WillOnce(
                 [&]
                 {
@@ -61,8 +61,8 @@ TEST_F(CecOutputTest, applies_latest_power_request_after_in_flight_command)
                     release_power_on_future.wait();
                     return true;
                 });
-        EXPECT_CALL(mock_adapter, make_active_source()).Times(1);
-        EXPECT_CALL(mock_adapter, standby_tv())
+        EXPECT_CALL(mock_adapter, send_make_active_source()).Times(1);
+        EXPECT_CALL(mock_adapter, send_standby_tv())
             .WillOnce(
                 [&]
                 {
@@ -87,8 +87,8 @@ TEST_F(CecOutputTest, powers_on_and_announces_active_source)
     auto active_source_sent_future = active_source_sent.get_future();
     {
         InSequence sequence;
-        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
-        EXPECT_CALL(mock_adapter, make_active_source())
+        EXPECT_CALL(mock_adapter, send_power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, send_make_active_source())
             .WillOnce(
                 [&]
                 {
@@ -117,30 +117,30 @@ TEST_F(CecOutputTest, resends_duplicate_power_requests_for_on_and_off)
     auto repeated_standby_sent_future = repeated_standby_sent.get_future();
     {
         InSequence sequence;
-        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
-        EXPECT_CALL(mock_adapter, make_active_source())
+        EXPECT_CALL(mock_adapter, send_power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, send_make_active_source())
             .WillOnce(
                 [&]
                 {
                     first_power_on_sent.set_value();
                     return true;
                 });
-        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
-        EXPECT_CALL(mock_adapter, make_active_source())
+        EXPECT_CALL(mock_adapter, send_power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, send_make_active_source())
             .WillOnce(
                 [&]
                 {
                     repeated_power_on_sent.set_value();
                     return true;
                 });
-        EXPECT_CALL(mock_adapter, standby_tv())
+        EXPECT_CALL(mock_adapter, send_standby_tv())
             .WillOnce(
                 [&]
                 {
                     first_standby_sent.set_value();
                     return true;
                 });
-        EXPECT_CALL(mock_adapter, standby_tv())
+        EXPECT_CALL(mock_adapter, send_standby_tv())
             .WillOnce(
                 [&]
                 {

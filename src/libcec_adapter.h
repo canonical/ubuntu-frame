@@ -36,9 +36,9 @@ public:
 
     auto port() const -> std::string_view override;
     auto physical_address() const -> std::optional<std::uint16_t> override;
-    auto power_on_tv() -> bool override;
-    auto make_active_source() -> bool override;
-    auto standby_tv() -> bool override;
+    auto send_power_on_tv() -> bool override;
+    auto send_make_active_source() -> bool override;
+    auto send_standby_tv() -> bool override;
     void close() override;
 
 private:

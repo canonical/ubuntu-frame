@@ -111,7 +111,7 @@ auto LibCecAdapter::port() const -> std::string_view { return port_name; }
 
 auto LibCecAdapter::physical_address() const -> std::optional<std::uint16_t> { return address; }
 
-auto LibCecAdapter::power_on_tv() -> bool
+auto LibCecAdapter::send_power_on_tv() -> bool
 {
     mir::log(mir::logging::Severity::debug, log_component, "Sending TV power-on on adapter %s", port_name.c_str());
     bool const sent = connection && connection->PowerOnDevices(CEC::CECDEVICE_TV);
@@ -124,7 +124,7 @@ auto LibCecAdapter::power_on_tv() -> bool
     return sent;
 }
 
-auto LibCecAdapter::make_active_source() -> bool
+auto LibCecAdapter::send_make_active_source() -> bool
 {
     mir::log(mir::logging::Severity::debug, log_component, "Announcing active source on adapter %s", port_name.c_str());
     bool const sent = connection && connection->SetActiveSource(CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE);
@@ -137,7 +137,7 @@ auto LibCecAdapter::make_active_source() -> bool
     return sent;
 }
 
-auto LibCecAdapter::standby_tv() -> bool
+auto LibCecAdapter::send_standby_tv() -> bool
 {
     mir::log(mir::logging::Severity::debug, log_component, "Sending TV standby on adapter %s", port_name.c_str());
     bool const sent = connection && connection->StandbyDevices(CEC::CECDEVICE_TV);

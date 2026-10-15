@@ -30,9 +30,9 @@ public:
 
     virtual auto port() const -> std::string_view = 0;
     virtual auto physical_address() const -> std::optional<std::uint16_t> = 0;
-    virtual auto power_on_tv() -> bool = 0;
-    virtual auto make_active_source() -> bool = 0;
-    virtual auto standby_tv() -> bool = 0;
+    virtual auto send_power_on_tv() -> bool = 0;
+    virtual auto send_make_active_source() -> bool = 0;
+    virtual auto send_standby_tv() -> bool = 0;
     virtual void close() = 0;
 };
 

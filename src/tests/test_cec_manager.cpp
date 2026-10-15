@@ -54,13 +54,13 @@ protected:
 
     void expect_on_state()
     {
-        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
-        EXPECT_CALL(mock_adapter, make_active_source()).WillOnce([this]
+        EXPECT_CALL(mock_adapter, send_power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, send_make_active_source()).WillOnce([this]
         {
             on_applied.set_value();
             return true;
         });
-        EXPECT_CALL(mock_adapter, standby_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, send_standby_tv()).Times(1);
     }
 
     std::promise<void> on_applied;
@@ -114,9 +114,9 @@ TEST_F(CecManagerTest, maps_output_hotplugged_with_a_new_id)
 
 TEST_F(CecManagerTest, confirmed_power_off_sends_standby)
 {
-    EXPECT_CALL(mock_adapter, power_on_tv()).Times(AtMost(1));
-    EXPECT_CALL(mock_adapter, make_active_source()).Times(AtMost(1));
-    EXPECT_CALL(mock_adapter, standby_tv()).Times(AtLeast(1));
+    EXPECT_CALL(mock_adapter, send_power_on_tv()).Times(AtMost(1));
+    EXPECT_CALL(mock_adapter, send_make_active_source()).Times(AtMost(1));
+    EXPECT_CALL(mock_adapter, send_standby_tv()).Times(AtLeast(1));
 
     manager->start();
     manager->configuration_confirmed(std::span{&display, 1});

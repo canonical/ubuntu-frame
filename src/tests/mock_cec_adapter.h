@@ -29,16 +29,16 @@ public:
     {
         ON_CALL(*this, port()).WillByDefault(testing::Return("cec-test-port"));
         ON_CALL(*this, physical_address()).WillByDefault(testing::Return(0x3400));
-        ON_CALL(*this, power_on_tv()).WillByDefault(testing::Return(true));
-        ON_CALL(*this, make_active_source()).WillByDefault(testing::Return(true));
-        ON_CALL(*this, standby_tv()).WillByDefault(testing::Return(true));
+        ON_CALL(*this, send_power_on_tv()).WillByDefault(testing::Return(true));
+        ON_CALL(*this, send_make_active_source()).WillByDefault(testing::Return(true));
+        ON_CALL(*this, send_standby_tv()).WillByDefault(testing::Return(true));
     }
 
     MOCK_METHOD(std::string_view, port, (), (const, override));
     MOCK_METHOD(std::optional<std::uint16_t>, physical_address, (), (const, override));
-    MOCK_METHOD(bool, power_on_tv, (), (override));
-    MOCK_METHOD(bool, make_active_source, (), (override));
-    MOCK_METHOD(bool, standby_tv, (), (override));
+    MOCK_METHOD(bool, send_power_on_tv, (), (override));
+    MOCK_METHOD(bool, send_make_active_source, (), (override));
+    MOCK_METHOD(bool, send_standby_tv, (), (override));
     MOCK_METHOD(void, close, (), (override));
 };
 

@@ -35,7 +35,7 @@ protected:
     auto create_manager() -> std::shared_ptr<CecManager>
     {
         EXPECT_CALL(mock_adapter, physical_address()).Times(AnyNumber());
-        EXPECT_CALL(mock_adapter, standby_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, send_standby_tv()).Times(1);
         EXPECT_CALL(mock_adapter, close()).Times(1);
 
         std::vector<std::unique_ptr<CecAdapter>> adapters;
@@ -47,8 +47,8 @@ protected:
 
     void expect_active_source(std::promise<void>& sent)
     {
-        EXPECT_CALL(mock_adapter, power_on_tv()).Times(1);
-        EXPECT_CALL(mock_adapter, make_active_source()).WillOnce([&sent]
+        EXPECT_CALL(mock_adapter, send_power_on_tv()).Times(1);
+        EXPECT_CALL(mock_adapter, send_make_active_source()).WillOnce([&sent]
         {
             sent.set_value();
             return true;
