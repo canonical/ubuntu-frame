@@ -32,6 +32,7 @@ constexpr char const* log_component = "frame-cec";
 
 void init_video_once(CEC::ICECAdapter& connection)
 {
+    // libCEC host video services are process-wide, so initialize them only once across adapters.
     static std::once_flag libcec_video_initialization;
     std::call_once(
         libcec_video_initialization,

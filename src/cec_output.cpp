@@ -71,6 +71,7 @@ void CecOutput::shutdown()
 
 void CecOutput::run()
 {
+    // Process queued power changes on one worker, then reconcile with the latest request.
     for (;;)
     {
         bool desired{};

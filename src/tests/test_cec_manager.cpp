@@ -44,6 +44,7 @@ protected:
 
     auto add_adapter() -> MockCecAdapter&
     {
+        // A StrictMock ensures we only see expected calls
         auto adapter = std::make_unique<StrictMock<MockCecAdapter>>();
         auto& mock = *adapter;
         EXPECT_CALL(mock, physical_address()).Times(AnyNumber());

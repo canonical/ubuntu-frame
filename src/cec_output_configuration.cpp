@@ -29,6 +29,7 @@ CecOutputConfiguration::CecOutputConfiguration(std::shared_ptr<CecManager> manag
 
 void CecOutputConfiguration::apply_configuration(std::span<mir::graphics::UserDisplayConfigurationOutput> outputs)
 {
+    // CEC commands are sent only after confirmation; applying user settings stays untouched.
     (void)outputs;
 }
 

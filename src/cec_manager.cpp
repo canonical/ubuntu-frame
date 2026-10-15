@@ -124,6 +124,7 @@ void CecManager::refresh_outputs(std::span<mg::DisplayConfigurationOutput const>
 
 void CecManager::complete_unambiguous_matches(std::span<mg::DisplayConfigurationOutput const> outputs, State& state)
 {
+    // Match only unique physical addresses on both sides; guessing could control the wrong display.
     std::map<std::uint16_t, std::vector<mg::DisplayConfigurationOutputId>> output_candidates;
     std::map<std::uint16_t, std::vector<std::size_t>> adapter_candidates;
 
