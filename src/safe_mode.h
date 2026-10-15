@@ -17,10 +17,7 @@
 #ifndef UBUNTU_FRAME_SAFE_MODE_H
 #define UBUNTU_FRAME_SAFE_MODE_H
 
-namespace miral
-{
-    class MirRunner;
-}
+namespace miral { class MirRunner; }
 
 extern char const* const safe_mode_env;
 void enable_safe_mode(char const* argv[], miral::MirRunner& runner);

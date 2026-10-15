@@ -47,9 +47,7 @@ int main(int argc, char const* argv[])
     using namespace miral;
     // In safe mode use a known-good minimal config
     // to avoid re-parsing the broken config file
-    MirRunner runner = getenv(safe_mode_env) ?
-    MirRunner{argc, argv, "frame.safe-config"} :
-    MirRunner{argc, argv};
+    MirRunner runner = getenv(safe_mode_env) ? MirRunner{argc, argv, "frame.safe-config"} : MirRunner{argc, argv};
     WindowManagerObserver window_manager_observer{};
 
     enable_safe_mode(argv, runner);
@@ -80,42 +78,62 @@ int main(int argc, char const* argv[])
     }();
 
     miral::ConfigFile config_file{
-        runner, accessibility_config_path,
+        runner,
+        accessibility_config_path,
         miral::ConfigFile::Mode::reload_on_change,
-        [&ini_files](miral::live_config::OverridesList const &overrides) {
-          ini_files.load(overrides);
-        },
+        [&ini_files](miral::live_config::OverridesList const& overrides) { ini_files.load(overrides); },
         ".ini"};
 
-    return runner.run_with(
-        {
-            wayland_extensions,
-            display_config,
-            display_config.layout_option(),
-            ConfigurationOption{[&](bool option) { background_client.set_wallpaper_enabled(option); },
-                               "wallpaper", "Specifies whether or not the wallpaper is enabled", true},
-            ConfigurationOption{[&](auto& option) { background_client.set_wallpaper_top_colour(option);},
-                               "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
-            ConfigurationOption{[&](auto& option) { background_client.set_wallpaper_bottom_colour(option);},
-                               "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
-            ConfigurationOption{[&](auto& option) { background_client.set_crash_background_colour(option);},
-                               "diagnostic-background", "Colour of diagnostic screen background RGB", "0x380c24"},
-            ConfigurationOption{[&](auto& option) { background_client.set_crash_text_colour(option);},
-                               "diagnostic-text",       "Colour of diagnostic screen text RGB", "0xffffff"},
-            ConfigurationOption{[&] (auto& option) { background_client.set_diagnostic_path(option);},
-                               "diagnostic-path",  "Path (including filename) of diagnostic file", ""},
-            ConfigurationOption{[&] (int option) { background_client.set_diagnostic_delay(option);},
-                                "diagnostic-delay", "Delay time (in seconds) before displaying diagnostic screen", 0},
-            StartupInternalClient{std::ref(background_client)},
-            ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
-                               "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
-            set_window_management_policy<FrameWindowManagerPolicy>(
-                window_manager_observer,
-                display_config),
-            Keymap{},
-            miral::Decorations::always_csd(),
-            cursor_scale,
-            output_filter,
-            magnifier,
-        });
+    return runner.run_with({
+        wayland_extensions,
+        display_config,
+        display_config.layout_option(),
+        ConfigurationOption{
+            [&](bool option) { background_client.set_wallpaper_enabled(option); },
+            "wallpaper",
+            "Specifies whether or not the wallpaper is enabled",
+            true},
+        ConfigurationOption{
+            [&](auto& option) { background_client.set_wallpaper_top_colour(option); },
+            "wallpaper-top",
+            "Colour of wallpaper RGB",
+            "0x7f7f7f"},
+        ConfigurationOption{
+            [&](auto& option) { background_client.set_wallpaper_bottom_colour(option); },
+            "wallpaper-bottom",
+            "Colour of wallpaper RGB",
+            "0x1f1f1f"},
+        ConfigurationOption{
+            [&](auto& option) { background_client.set_crash_background_colour(option); },
+            "diagnostic-background",
+            "Colour of diagnostic screen background RGB",
+            "0x380c24"},
+        ConfigurationOption{
+            [&](auto& option) { background_client.set_crash_text_colour(option); },
+            "diagnostic-text",
+            "Colour of diagnostic screen text RGB",
+            "0xffffff"},
+        ConfigurationOption{
+            [&](auto& option) { background_client.set_diagnostic_path(option); },
+            "diagnostic-path",
+            "Path (including filename) of diagnostic file",
+            ""},
+        ConfigurationOption{
+            [&](int option) { background_client.set_diagnostic_delay(option); },
+            "diagnostic-delay",
+            "Delay time (in seconds) before displaying diagnostic screen",
+            0},
+        StartupInternalClient{std::ref(background_client)},
+        ConfigurationOption{
+            [&](bool option) { init_authorise_without_apparmor(option); },
+            "authorise-without-apparmor",
+            "Use /proc/<pid>/cmdline if AppArmor is unavailable",
+            false},
+        set_window_management_policy<FrameWindowManagerPolicy>(window_manager_observer, display_config),
+        Keymap{},
+        miral::Decorations::always_csd(),
+        cursor_scale,
+        output_filter,
+        magnifier,
+    });
 }

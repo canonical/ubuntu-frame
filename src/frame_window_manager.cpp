@@ -44,12 +44,12 @@ bool can_position_be_overridden(WindowSpecification& spec, WindowInfo const& win
     // Only override behavior of windows of type normal and freestyle
     switch (spec.type().value_or(window_info.type()))
     {
-        case mir_window_type_normal:
-        case mir_window_type_freestyle:
-            break;
+    case mir_window_type_normal:
+    case mir_window_type_freestyle:
+        break;
 
-        default:
-            return false;
+    default:
+        return false;
     }
 
     // Only override behavior of windows without a parent
@@ -65,12 +65,12 @@ bool can_position_be_overridden(WindowSpecification& spec, WindowInfo const& win
     // Only override behavior if the (new) state is something other than minimized, hidden or attached
     switch (spec.state().value_or(window_info.state()))
     {
-        case mir_window_state_minimized:
-        case mir_window_state_hidden:
-        case mir_window_state_attached:
-            return false;
-        default:
-            break;
+    case mir_window_state_minimized:
+    case mir_window_state_hidden:
+    case mir_window_state_attached:
+        return false;
+    default:
+        break;
     }
 
     return true;
@@ -84,7 +84,7 @@ void apply_fullscreen(WindowSpecification& spec)
     spec.size() = mir::optional_value<Size>{};      // Ignore requested size (if any) when we fullscreen
     spec.top_left() = mir::optional_value<Point>{}; // Ignore requested position (if any) when we fullscreen
 #else
-    spec.size() = std::nullopt;      // Ignore requested size (if any) when we fullscreen
+    spec.size() = std::nullopt;     // Ignore requested size (if any) when we fullscreen
     spec.top_left() = std::nullopt; // Ignore requested position (if any) when we fullscreen
 #endif
 }
@@ -123,39 +123,22 @@ auto get_rect_by_force(WindowSpecification const& spec) -> Rectangle
 }
 }
 
-auto WindowCount::increment_opened() -> unsigned short
-{
-    return total_opened++;
-}
+auto WindowCount::increment_opened() -> unsigned short { return total_opened++; }
 
-auto WindowCount::increment_closed() -> unsigned short
-{
-    return total_closed++;
-}
+auto WindowCount::increment_closed() -> unsigned short { return total_closed++; }
 
-auto WindowCount::currently_open() const -> unsigned short
-{
-    return total_opened - total_closed;
-}
+auto WindowCount::currently_open() const -> unsigned short { return total_opened - total_closed; }
 
-WindowManagerObserver::WindowManagerObserver()
-{
-}
+WindowManagerObserver::WindowManagerObserver() {}
 
 void WindowManagerObserver::add_window_opened_callback(std::function<void()> const& callback)
-{
-    window_opened_callbacks.push_back(callback);
-}
+{ window_opened_callbacks.push_back(callback); }
 
 void WindowManagerObserver::add_window_closed_callback(std::function<void()> const& callback)
-{
-    window_closed_callbacks.push_back(callback);
-}
+{ window_closed_callbacks.push_back(callback); }
 
 void WindowManagerObserver::set_weak_window_count(std::shared_ptr<WindowCount> window_count)
-{
-    weak_window_count = window_count;
-}
+{ weak_window_count = window_count; }
 
 auto WindowManagerObserver::get_currently_open_windows() const -> unsigned int
 {
@@ -189,18 +172,13 @@ std::string const FrameWindowManagerPolicy::snap_name = "snap-name";
 FrameWindowManagerPolicy::FrameWindowManagerPolicy(
     WindowManagerTools const& tools,
     WindowManagerObserver& window_manager_observer,
-    miral::DisplayConfiguration const& display_config)
-    : KioskWindowManagerPolicy{tools},
-      window_manager_observer{window_manager_observer},
-      display_config{display_config}
-{
-    window_manager_observer.set_weak_window_count(window_count);
-}
+    miral::DisplayConfiguration const& display_config) :
+    KioskWindowManagerPolicy{tools},
+    window_manager_observer{window_manager_observer},
+    display_config{display_config}
+{ window_manager_observer.set_weak_window_count(window_count); }
 
-bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* event)
-{
-    return false;
-}
+bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* event) { return false; }
 
 void FrameWindowManagerPolicy::handle_layout(
     WindowSpecification& specification,
@@ -226,17 +204,19 @@ void FrameWindowManagerPolicy::handle_layout(
         }
 
         if (!found)
-            mir::log_warning(R"(Surface for snap="%s" with title="%s" was placed such that it overlaps no outputs)",
-                              snap_instance_name.c_str(),
-                              surface_title.transform([](auto const& title) { return title.c_str(); }).value_or(""));
+            mir::log_warning(
+                R"(Surface for snap="%s" with title="%s" was placed such that it overlaps no outputs)",
+                snap_instance_name.c_str(),
+                surface_title.transform([](auto const& title) { return title.c_str(); }).value_or(""));
 
         // Let's also warn if the user has also mapped this surface to a specific output
         WindowSpecification throwaway_spec;
         if (assign_to_output(throwaway_spec, surface_title, snap_instance_name))
-            mir::log_warning(R"(Surface for snap="%s" with title="%s" is mapped to both a specific position)"
-                              " and a specific card. The card mapping will be ignored.",
-                              snap_instance_name.c_str(),
-                              surface_title.transform([](auto const& title) { return title.c_str(); }).value_or(""));
+            mir::log_warning(
+                R"(Surface for snap="%s" with title="%s" is mapped to both a specific position)"
+                " and a specific card. The card mapping will be ignored.",
+                snap_instance_name.c_str(),
+                surface_title.transform([](auto const& title) { return title.c_str(); }).value_or(""));
 
         if (window_info.window())
             window_info.clip_area(extents);
@@ -250,14 +230,16 @@ void FrameWindowManagerPolicy::handle_layout(
         {
             if (!snap_instance_name.empty())
             {
-                mir::log_info(R"(Surface for snap="%s" with title="%s")",
-                              snap_instance_name.c_str(),
-                              specification.name().transform([](auto const& name) { return name.c_str(); }).value_or(""));
+                mir::log_info(
+                    R"(Surface for snap="%s" with title="%s")",
+                    snap_instance_name.c_str(),
+                    specification.name().transform([](auto const& name) { return name.c_str(); }).value_or(""));
             }
             else
             {
-                mir::log_info("Surface with title=\"%s\"",
-                              specification.name().transform([](auto const& name) { return name.c_str(); }).value_or(""));
+                mir::log_info(
+                    "Surface with title=\"%s\"",
+                    specification.name().transform([](auto const& name) { return name.c_str(); }).value_or(""));
             }
         }
 
@@ -273,7 +255,7 @@ void FrameWindowManagerPolicy::handle_layout(
 }
 
 auto FrameWindowManagerPolicy::place_new_window(ApplicationInfo const& app_info, WindowSpecification const& request)
--> WindowSpecification
+    -> WindowSpecification
 {
     WindowSpecification specification = KioskWindowManagerPolicy::place_new_window(app_info, request);
     WindowInfo window_info{};
@@ -310,8 +292,8 @@ bool FrameWindowManagerPolicy::assign_to_output(
     mir::optional_value<std::string> const& title,
     std::string_view snap_name)
 {
-    return placement_mapping.set_output_for_surface(specification, title)
-        || placement_mapping.set_output_for_snap(specification, snap_name);
+    return placement_mapping.set_output_for_surface(specification, title) ||
+           placement_mapping.set_output_for_snap(specification, snap_name);
 }
 
 void FrameWindowManagerPolicy::advise_delete_window(WindowInfo const& window_info)
@@ -340,7 +322,8 @@ void FrameWindowManagerPolicy::handle_modify_window(WindowInfo& window_info, Win
 }
 
 void FrameWindowManagerPolicy::apply_bespoke_fullscreen_placement(
-    WindowSpecification& specification, WindowInfo const& window_info) const
+    WindowSpecification& specification,
+    WindowInfo const& window_info) const
 {
     specification.state() = mir_window_state_maximized;
     tools.place_and_size_for_state(specification, window_info);
@@ -354,8 +337,7 @@ auto FrameWindowManagerPolicy::confirm_placement_on_display(
 {
     auto const application = window_info.window().application();
     WindowSpecification throwaway_specification;
-    auto const is_positioned_exactly = try_position_exactly(
-        throwaway_specification, window_info, application);
+    auto const is_positioned_exactly = try_position_exactly(throwaway_specification, window_info, application);
 
     if (!is_positioned_exactly && new_state == mir_window_state_fullscreen)
     {
@@ -367,10 +349,7 @@ auto FrameWindowManagerPolicy::confirm_placement_on_display(
     return new_placement;
 }
 
-void FrameWindowManagerPolicy::advise_begin()
-{
-    WindowManagementPolicy::advise_begin();
-}
+void FrameWindowManagerPolicy::advise_begin() { WindowManagementPolicy::advise_begin(); }
 
 void FrameWindowManagerPolicy::advise_end()
 {
@@ -378,44 +357,46 @@ void FrameWindowManagerPolicy::advise_end()
 
     if (display_layout_has_changed)
     {
-        tools.for_each_application([this](auto& app)
+        tools.for_each_application(
+            [this](auto& app)
             {
-               for (auto& window : app.windows())
-               {
-                   if (window)
-                   {
-                       auto& info = tools.info_for(window);
-                       WindowSpecification specification;
-                       handle_layout(specification, app.application(), info);
-                       tools.modify_window(info, specification);
-                   }
-               }
+                for (auto& window : app.windows())
+                {
+                    if (window)
+                    {
+                        auto& info = tools.info_for(window);
+                        WindowSpecification specification;
+                        handle_layout(specification, app.application(), info);
+                        tools.modify_window(info, specification);
+                    }
+                }
             });
         display_layout_has_changed = false;
     }
 
     if (application_zones_have_changed)
     {
-        tools.for_each_application([this](auto& app)
+        tools.for_each_application(
+            [this](auto& app)
             {
-               for (auto& window : app.windows())
-               {
-                   if (window)
-                   {
-                       auto& info = tools.info_for(window);
-                       WindowSpecification specification;
-                       auto const is_positioned_exactly = try_position_exactly(specification, info, app.application());
+                for (auto& window : app.windows())
+                {
+                    if (window)
+                    {
+                        auto& info = tools.info_for(window);
+                        WindowSpecification specification;
+                        auto const is_positioned_exactly = try_position_exactly(specification, info, app.application());
 
-                       if (!is_positioned_exactly && info.state() == mir_window_state_fullscreen)
-                       {
-                           WindowSpecification specification;
-                           specification.state() = mir_window_state_maximized;
-                           tools.place_and_size_for_state(specification, info);
-                           specification.state() = mir_window_state_fullscreen;
-                           tools.modify_window(info, specification);
-                       }
-                   }
-               }
+                        if (!is_positioned_exactly && info.state() == mir_window_state_fullscreen)
+                        {
+                            WindowSpecification specification;
+                            specification.state() = mir_window_state_maximized;
+                            tools.place_and_size_for_state(specification, info);
+                            specification.state() = mir_window_state_fullscreen;
+                            tools.modify_window(info, specification);
+                        }
+                    }
+                }
             });
 
         application_zones_have_changed = false;
@@ -440,7 +421,7 @@ void FrameWindowManagerPolicy::advise_application_zone_delete(Zone const& applic
     application_zones_have_changed = true;
 }
 
-void FrameWindowManagerPolicy::advise_output_create(miral::Output const &output)
+void FrameWindowManagerPolicy::advise_output_create(miral::Output const& output)
 {
     WindowManagementPolicy::advise_output_create(output);
 
@@ -454,10 +435,12 @@ void FrameWindowManagerPolicy::advise_output_delete(miral::Output const& output)
     WindowManagementPolicy::advise_output_delete(output);
 
     placement_mapping.clear(output);
-    active_outputs.erase(std::remove_if(active_outputs.begin(), active_outputs.end(), [&output](miral::Output const& other)
-    {
-        return other.id() == output.id();
-    }), active_outputs.end());
+    active_outputs.erase(
+        std::remove_if(
+            active_outputs.begin(),
+            active_outputs.end(),
+            [&output](miral::Output const& other) { return other.id() == output.id(); }),
+        active_outputs.end());
     display_layout_has_changed = true;
 }
 

@@ -31,79 +31,78 @@ char const* const safe_mode_env = "FRAME_SAFE_MODE";
 
 namespace
 {
-    void reexec_in_safe_mode(std::string const& error_message, std::string const& diagnostic_path, char const* argv[])
+void reexec_in_safe_mode(std::string const& error_message, std::string const& diagnostic_path, char const* argv[])
+{
+    bool diagnostic_written = false;
+    if (std::ofstream diagnostic{diagnostic_path})
     {
-        bool diagnostic_written = false;
-        if(std::ofstream diagnostic{diagnostic_path})
-        {
-            diagnostic << "Safe mode: This device could not start normally due to a configuration error:\n\n"
-                    << error_message << "\n\n"
-                    << "To restore normal operation please:\n"
-                    << "  * correct the configuration; or,\n"
-                    << "  * contact the person who manages this device.";
-            diagnostic_written = true;
-        }
-        else
-        {
-            mir::log_warning("Failed to write diagnostic file: %s", diagnostic_path.c_str());
-        }
-
-        std::map<std::string, std::string> safe_env_map;
-
-        for(char** env = environ; *env; env++)
-        {
-            std::string entry{*env};
-            auto const pos = entry.find('=');
-            if (pos != std::string::npos)
-            {
-                safe_env_map[entry.substr(0, pos)] = entry.substr(pos + 1);
-            }
-        }
-
-        for (auto it = safe_env_map.begin(); it != safe_env_map.end();)
-        {
-            if (it->first.find("MIR_SERVER_") == 0 &&
-                it->first != "MIR_SERVER_PLATFORM_PATH")
-                it = safe_env_map.erase(it);
-            else
-                ++it;
-        }
-
-        safe_env_map[safe_mode_env] = "1";
-        safe_env_map["WAYLAND_DISPLAY"] = "wayland-66";
-
-        std::vector<std::string> safe_env_strings;
-        for(auto const& [key, value] : safe_env_map)
-        {
-            safe_env_strings.push_back(key + "=" + value);
-        }
-
-        std::vector<char const*> safe_env;
-        for(auto const& e: safe_env_strings)
-        {
-            safe_env.push_back(e.c_str());
-        }
-
-        safe_env.push_back(nullptr);
-
-        std::string const diagnostic_opt = "--diagnostic-path=" + diagnostic_path;
-        std::vector<char const*> safe_argv;
-        safe_argv.push_back(argv[0]);
-        if (diagnostic_written)
-        {
-            safe_argv.push_back(diagnostic_opt.c_str());
-        }
-        safe_argv.push_back(nullptr);
-
-        execvpe(argv[0], const_cast<char**>(safe_argv.data()), const_cast<char**>(safe_env.data()));
-
-        mir::log_critical("Failed to re-exec in safe mode: %s", strerror(errno));
+        diagnostic << "Safe mode: This device could not start normally due to a configuration error:\n\n"
+                   << error_message << "\n\n"
+                   << "To restore normal operation please:\n"
+                   << "  * correct the configuration; or,\n"
+                   << "  * contact the person who manages this device.";
+        diagnostic_written = true;
     }
+    else
+    {
+        mir::log_warning("Failed to write diagnostic file: %s", diagnostic_path.c_str());
+    }
+
+    std::map<std::string, std::string> safe_env_map;
+
+    for (char** env = environ; *env; env++)
+    {
+        std::string entry{*env};
+        auto const pos = entry.find('=');
+        if (pos != std::string::npos)
+        {
+            safe_env_map[entry.substr(0, pos)] = entry.substr(pos + 1);
+        }
+    }
+
+    for (auto it = safe_env_map.begin(); it != safe_env_map.end();)
+    {
+        if (it->first.find("MIR_SERVER_") == 0 && it->first != "MIR_SERVER_PLATFORM_PATH")
+            it = safe_env_map.erase(it);
+        else
+            ++it;
+    }
+
+    safe_env_map[safe_mode_env] = "1";
+    safe_env_map["WAYLAND_DISPLAY"] = "wayland-66";
+
+    std::vector<std::string> safe_env_strings;
+    for (auto const& [key, value] : safe_env_map)
+    {
+        safe_env_strings.push_back(key + "=" + value);
+    }
+
+    std::vector<char const*> safe_env;
+    for (auto const& e : safe_env_strings)
+    {
+        safe_env.push_back(e.c_str());
+    }
+
+    safe_env.push_back(nullptr);
+
+    std::string const diagnostic_opt = "--diagnostic-path=" + diagnostic_path;
+    std::vector<char const*> safe_argv;
+    safe_argv.push_back(argv[0]);
+    if (diagnostic_written)
+    {
+        safe_argv.push_back(diagnostic_opt.c_str());
+    }
+    safe_argv.push_back(nullptr);
+
+    execvpe(argv[0], const_cast<char**>(safe_argv.data()), const_cast<char**>(safe_env.data()));
+
+    mir::log_critical("Failed to re-exec in safe mode: %s", strerror(errno));
+}
 }
 
 void enable_safe_mode(char const* argv[], miral::MirRunner& runner)
 {
-    if  (getenv(safe_mode_env))
+    if (getenv(safe_mode_env))
     {
         return;
     }
@@ -112,19 +111,20 @@ void enable_safe_mode(char const* argv[], miral::MirRunner& runner)
 
     auto const diagnostics_path = (std::filesystem::temp_directory_path() / diagnostics_filename).string();
 
-    runner.set_exception_handler([argv, diagnostics_path]()
-    {
-        try
+    runner.set_exception_handler(
+        [argv, diagnostics_path]()
         {
-            std::rethrow_exception(std::current_exception());
-        }
-        catch (mir::ExitWithOutput const&)
-        {
-            throw;
-        }
-        catch (std::exception const& e)
-        {
-            reexec_in_safe_mode(e.what(), diagnostics_path, argv);
-        }
-    });
+            try
+            {
+                std::rethrow_exception(std::current_exception());
+            }
+            catch (mir::ExitWithOutput const&)
+            {
+                throw;
+            }
+            catch (std::exception const& e)
+            {
+                reexec_in_safe_mode(e.what(), diagnostics_path, argv);
+            }
+        });
 }
