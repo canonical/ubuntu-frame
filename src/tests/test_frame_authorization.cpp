@@ -27,8 +27,7 @@ class AuthModelTest : public Test
 TEST_F(AuthModelTest, True)
 {
     std::vector<std::pair<std::string, std::vector<std::string>>> const protocols_for_snaps{
-        std::pair("my-snap", std::vector<std::string>{ "zwlr_screencopy_manager_v1", "zwlr_layer_shell_v1" })
-    };
+        std::pair("my-snap", std::vector<std::string>{"zwlr_screencopy_manager_v1", "zwlr_layer_shell_v1"})};
     AuthModel model(protocols_for_snaps);
     EXPECT_THAT(model.snaps_for_protocols.size(), Eq(2));
     EXPECT_THAT(model.snaps_for_protocols.at("zwlr_screencopy_manager_v1").size(), Eq(1));

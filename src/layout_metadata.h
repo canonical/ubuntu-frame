@@ -27,7 +27,11 @@
 
 // FIXME Remove this once mir::optional_value is unavailable in any supported Mir version
 #ifndef MIR_OPTIONAL_VALUE_H_
-namespace mir { template<class T> using optional_value = std::optional<T>; }
+namespace mir
+{
+template<class T>
+using optional_value = std::optional<T>;
+}
 #endif
 
 class LayoutMetadata
@@ -37,7 +41,8 @@ public:
 
     /// Try to assign the window to a positition and size based on its title and snap name.
     /// \returns true if successfully assigned, otherwise false
-    bool try_layout(miral::WindowSpecification& specification,
+    bool try_layout(
+        miral::WindowSpecification& specification,
         mir::optional_value<std::string> const& title,
         std::string_view snap_name) const;
 
@@ -50,7 +55,8 @@ private:
             std::optional<std::string> const& surface_title,
             mir::geometry::Point const& position,
             mir::geometry::Size const& size);
-        static std::optional<LayoutApplicationPlacementStrategy> from_node(miral::DisplayConfiguration::Node const& node);
+        static std::optional<LayoutApplicationPlacementStrategy> from_node(
+            miral::DisplayConfiguration::Node const& node);
 
         std::optional<std::string> const snap_name;
         std::optional<std::string> const surface_title;
@@ -59,8 +65,6 @@ private:
     };
 
     std::vector<LayoutApplicationPlacementStrategy> applications;
-
 };
-
 
 #endif //LAYOUT_METADATA_H
