@@ -17,6 +17,13 @@ Use /proc/&lt;pid&gt;/cmdline if AppArmor is unavailable
 
 Defaults to `0`.
 
+(global-cec-control)=
+### `cec-control`
+
+Use HDMI-CEC to control compatible displays&apos; power state and input
+
+Defaults to `0`.
+
 (global-composite-delay)=
 ### `composite-delay`
 

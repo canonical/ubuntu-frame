@@ -24,6 +24,7 @@ hardware-observe       ubuntu-frame:hardware-observe       :hardware-observe    
 login-session-control  ubuntu-frame:login-session-control  -                                     -
 network-bind           ubuntu-frame:network-bind           :network-bind                         -
 opengl                 ubuntu-frame:opengl                 :opengl                               -
+serial-port            ubuntu-frame:serial-port            -                                     -
 wayland                -                                   ubuntu-frame:wayland                  -
 wayland                ubuntu-frame:wayplug                -                                     -
 x11                    ubuntu-frame:x11                    :x11                                  -
@@ -55,6 +56,7 @@ The interface connections serve the following purposes:
 | [login-session-control](https://snapcraft.io/docs/login-session-control-interface) | Running as a user from a Linux Virtual Terminal                           | Not auto-connected, as the primary way to run Frame is as a system service |
 | [network-bind](https://snapcraft.io/docs/network-bind-interface)                   | Operate as a X11 server                                                   |                                                                            |
 | [opengl](https://snapcraft.io/docs/opengl-interface)                               | Access the GPU for hardware acceleration                                  |                                                                            |
+| [serial-port](https://snapcraft.io/docs/serial-port-interface)                     | Access USB-based HDMI-CEC adapters for power and input control            |                                                                            |
 | [wayland](https://snapcraft.io/docs/wayland-interface)                             | Act as a Wayland compositor                                               |                                                                            |
 | [wayplug](https://snapcraft.io/docs/wayland-interface)                             | Supports the {ref}`launcher feature <ubuntu-frame-configuration-options>` |                                                                            |
 | [x11](https://snapcraft.io/docs/x11-interface)                                     | Run nested on a X11 session                                               |                                                                            |
