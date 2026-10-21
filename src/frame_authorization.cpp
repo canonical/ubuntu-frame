@@ -50,8 +50,8 @@ AuthModel::AuthModel(
 
 void AuthModel::add_privileged_client(std::string const &policy) {
   auto const first_colon = policy.find(':');
-  auto const second_colon = policy.find(':', first_colon + 1);
-  auto const extra_colon = policy.find(':', second_colon + 1);
+  auto const second_colon = first_colon == std::string::npos ? std::string::npos : policy.find(':', first_colon + 1);
+  auto const extra_colon = second_colon == std::string::npos ? std::string::npos : policy.find(':', second_colon + 1);
   if (first_colon == std::string::npos || second_colon == std::string::npos ||
       extra_colon != std::string::npos) {
     throw mir::AbnormalExit("Invalid privileged client, must be in form "
