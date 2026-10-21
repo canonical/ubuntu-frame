@@ -19,30 +19,22 @@
 #ifndef FRAME_AUTHORIZATION_H
 #define FRAME_AUTHORIZATION_H
 
-#include <map>
 #include <miral/wayland_extensions.h>
 #include <set>
+#include <map>
 
-class AuthModel {
+class AuthModel
+{
 public:
-  explicit AuthModel(std::map<std::string, std::set<std::string>> const
-                         &privileged_clients = {});
+    AuthModel(
+        std::vector<std::pair<std::string, std::vector<std::string>>> const& protocols_for_snaps);
 
-  AuthModel(const AuthModel &) = default;
-
-  /// Add a privileged client, in the form `kind:value:protocol`.
-  ///
-  /// Currently, only `snap` is supported, where `value` is a snap name. If
-  /// `protocol` is empty, it will clear any previous policies for that snap.
-  void add_privileged_client(std::string const &policy);
-  void set_authorise_without_apparmor(bool value);
-
-  void apply_to(miral::WaylandExtensions &extensions) const;
-
-protected:
-  std::map<std::string, std::set<std::string>> privileged_clients;
-  bool authorise_without_apparmor;
+    std::map<std::string, std::set<std::string>> const snaps_for_protocols;
 };
 
-extern AuthModel const default_auth_model;
+extern AuthModel const auth_model;
+
+void init_authorization(miral::WaylandExtensions& extensions, AuthModel const& model);
+void init_authorise_without_apparmor(bool enable_fallback);
+
 #endif // FRAME_AUTHORIZATION_H

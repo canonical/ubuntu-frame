@@ -13,11 +13,11 @@ pkg_check_modules(MIRSERVER_INTERNAL REQUIRED mirserver-internal IMPORTED_TARGET
 find_package(GTest REQUIRED)
 
 add_executable(ubuntu-frame-tests
-    test_frame_authorization.cpp
     test_frame_window_manager.cpp
 )
 
 if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
+    # CEC support
     target_sources(ubuntu-frame-tests PRIVATE
         test_cec_manager.cpp
         test_cec_output.cpp
@@ -26,6 +26,18 @@ if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
         test_libcec_adapter_factory.cpp
         mock_cec_adapter.h
         mock_icec_adapter.h)
+    # --privileged-client support
+    target_sources(
+      ubuntu-frame-tests
+      PRIVATE
+        new_test_frame_authorization.cpp
+    )
+else()
+    target_sources(
+      ubuntu-frame-tests
+      PRIVATE
+        test_frame_authorization.cpp
+    )
 endif()
 
 target_link_libraries(ubuntu-frame-tests

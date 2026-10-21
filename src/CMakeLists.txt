@@ -49,7 +49,6 @@ endif()
 
 add_library(frame-implementation
     safe_mode.cpp safe_mode.h
-    frame_authorization.cpp frame_authorization.h
     frame_window_manager.cpp frame_window_manager.h
     egfullscreenclient.cpp egfullscreenclient.h
     background_client.cpp background_client.h
@@ -59,6 +58,7 @@ add_library(frame-implementation
 )
 
 if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
+    # CEC Support
     target_sources(frame-implementation PRIVATE
         libcec_adapter.cpp cec_adapter.h
         libcec_adapter.h
@@ -66,6 +66,23 @@ if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
         cec_manager.cpp cec_manager.h
         cec_output_configuration.cpp cec_output_configuration.h)
     target_link_libraries(frame-implementation PUBLIC PkgConfig::LIBCEC)
+    # --privileged-client implementation
+    target_sources(
+        frame-implementation
+        PRIVATE
+        new_frame_authorization.cpp new_frame_authorization.h
+    )
+    target_compile_definitions(
+        frame-implementation
+        PRIVATE
+        USE_NEW_FRAME_AUTHORIZATION
+    )
+else()
+    target_sources(
+        frame-implementation
+        PRIVATE
+        frame_authorization.cpp frame_authorization.h
+    )
 endif()
 
 add_executable(frame

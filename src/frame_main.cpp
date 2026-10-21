@@ -17,7 +17,13 @@
  */
 
 #include "background_client.h"
+
+#if defined(USE_NEW_FRAME_AUTHORIZATION)
+#include "new_frame_authorization.h"
+#else
 #include "frame_authorization.h"
+#endif
+
 #include "frame_window_manager.h"
 #include "display_configuration_builder.h"
 #include "safe_mode.h"
@@ -63,7 +69,12 @@ int main(int argc, char const* argv[])
     enable_safe_mode(argv, runner);
 
     WaylandExtensions wayland_extensions;
+
+#if defined(USE_NEW_FRAME_AUTHORIZATION)
     AuthModel auth_model{default_auth_model};
+#else
+    init_authorization(wayland_extensions, auth_model);
+#endif
 
     BackgroundClient background_client(&runner, &window_manager_observer);
 
@@ -146,6 +157,7 @@ int main(int argc, char const* argv[])
             ConfigurationOption{[&] (int option) { background_client.set_diagnostic_delay(option);},
                                 "diagnostic-delay", "Delay time (in seconds) before displaying diagnostic screen", 0},
             StartupInternalClient{std::ref(background_client)},
+#if defined(USE_NEW_FRAME_AUTHORIZATION)
             miral::pre_init(ConfigurationOption{[&](bool option) { auth_model.set_authorise_without_apparmor(option); },
                                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false }),
             miral::pre_init(ConfigurationOption{
@@ -159,6 +171,10 @@ int main(int argc, char const* argv[])
             miral::pre_init([&]() {
                 auth_model.apply_to(wayland_extensions);
             }),
+#else
+            ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
+                               "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
+#endif
             wayland_extensions,
             set_window_management_policy<FrameWindowManagerPolicy>(
                 window_manager_observer,

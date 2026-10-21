@@ -1,5 +1,5 @@
 /*
- * Copyright © Canonical Ltd.
+* Copyright © Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 or 3 as
@@ -15,51 +15,24 @@
  */
 
 #include "frame_authorization.h"
-
-#include <mir/abnormal_exit.h>
-
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 using namespace testing;
 
-class AuthModelTest : public AuthModel, public Test {};
+class AuthModelTest : public Test
+{
+};
 
-TEST_F(AuthModelTest, add_new_snap) {
-  add_privileged_client("snap:my-snap:some-protocol");
-  add_privileged_client("snap:different-snap:some-protocol");
-
-  std::map<std::string, std::set<std::string>> expected{
-      {"my-snap", {"some-protocol"}}, {"different-snap", {"some-protocol"}}};
-  EXPECT_THAT(privileged_clients, Eq(expected));
-}
-TEST_F(AuthModelTest, merge_with_existing_snap) {
-  add_privileged_client("snap:my-snap:some-protocol");
-  add_privileged_client("snap:my-snap:another-protocol");
-
-  std::map<std::string, std::set<std::string>> expected{
-      {"my-snap", {"some-protocol", "another-protocol"}}};
-  EXPECT_THAT(privileged_clients, Eq(expected));
-}
-TEST_F(AuthModelTest, empty_protocol_clears_previous_policies) {
-  add_privileged_client("snap:my-snap:some-protocol");
-  add_privileged_client("snap:my-snap:");
-
-  std::map<std::string, std::set<std::string>> expected{{"my-snap", {}}};
-  EXPECT_THAT(privileged_clients, Eq(expected));
-}
-TEST_F(AuthModelTest, reject_non_snap_client) {
-  EXPECT_THROW(
-      { add_privileged_client("not-snap:thing:protocol"); }, mir::AbnormalExit);
-}
-TEST_F(AuthModelTest, reject_empty_snap_name) {
-  EXPECT_THROW({ add_privileged_client("snap::protocol"); }, mir::AbnormalExit);
-}
-TEST_F(AuthModelTest, reject_missing_parts) {
-  EXPECT_THROW({ add_privileged_client("snap:my-snap"); }, mir::AbnormalExit);
-}
-TEST_F(AuthModelTest, reject_too_many_parts) {
-  EXPECT_THROW(
-      { add_privileged_client("snap:my-snap:protocol:bonus-things"); },
-      mir::AbnormalExit);
+TEST_F(AuthModelTest, True)
+{
+    std::vector<std::pair<std::string, std::vector<std::string>>> const protocols_for_snaps{
+        std::pair("my-snap", std::vector<std::string>{ "zwlr_screencopy_manager_v1", "zwlr_layer_shell_v1" })
+    };
+    AuthModel model(protocols_for_snaps);
+    EXPECT_THAT(model.snaps_for_protocols.size(), Eq(2));
+    EXPECT_THAT(model.snaps_for_protocols.at("zwlr_screencopy_manager_v1").size(), Eq(1));
+    EXPECT_THAT(*model.snaps_for_protocols.at("zwlr_screencopy_manager_v1").begin(), Eq("my-snap"));
+    EXPECT_THAT(model.snaps_for_protocols.at("zwlr_layer_shell_v1").size(), Eq(1));
+    EXPECT_THAT(*model.snaps_for_protocols.at("zwlr_layer_shell_v1").begin(), Eq("my-snap"));
 }
