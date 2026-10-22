@@ -44,5 +44,5 @@ protected:
   bool authorise_without_apparmor;
 };
 
-extern AuthModel const default_auth_model;
+auto default_auth_model() -> AuthModel const&;
 #endif // NEW_FRAME_AUTHORIZATION_H

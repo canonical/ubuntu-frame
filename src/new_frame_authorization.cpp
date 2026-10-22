@@ -24,24 +24,32 @@
 
 using namespace miral;
 
-AuthModel const default_auth_model{{
-    {"ubuntu-frame-osk",
-     {
-         WaylandExtensions::zwlr_layer_shell_v1,
-         WaylandExtensions::zwp_virtual_keyboard_manager_v1,
-         WaylandExtensions::zwp_input_method_manager_v2,
-     }},
-    {"ubuntu-frame-vnc",
-     {
-         WaylandExtensions::zwlr_screencopy_manager_v1,
-         WaylandExtensions::zwlr_virtual_pointer_manager_v1,
-         WaylandExtensions::zwp_virtual_keyboard_manager_v1,
-     }},
-    {"ubuntu-frame",
-     {WaylandExtensions::zwlr_screencopy_manager_v1,
-      WaylandExtensions::zwlr_layer_shell_v1,
-      WaylandExtensions::zwlr_foreign_toplevel_manager_v1}},
-}};
+
+auto default_auth_model() -> AuthModel const&
+{
+    // A function-local static to ensure the WaylandExtension::* globals are known to be initialised
+    // before we read them here.
+    static AuthModel const default_auth_model{{
+        {"ubuntu-frame-osk",
+         {
+             WaylandExtensions::zwlr_layer_shell_v1,
+             WaylandExtensions::zwp_virtual_keyboard_manager_v1,
+             WaylandExtensions::zwp_input_method_manager_v2,
+         }},
+        {"ubuntu-frame-vnc",
+         {
+             WaylandExtensions::zwlr_screencopy_manager_v1,
+             WaylandExtensions::zwlr_virtual_pointer_manager_v1,
+             WaylandExtensions::zwp_virtual_keyboard_manager_v1,
+         }},
+        {"ubuntu-frame",
+         {WaylandExtensions::zwlr_screencopy_manager_v1,
+          WaylandExtensions::zwlr_layer_shell_v1,
+          WaylandExtensions::zwlr_foreign_toplevel_manager_v1}},
+    }};
+
+    return default_auth_model;
+}
 
 AuthModel::AuthModel(
     std::map<std::string, std::set<std::string>> const& privileged_clients)

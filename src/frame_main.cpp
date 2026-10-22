@@ -71,7 +71,7 @@ int main(int argc, char const* argv[])
     WaylandExtensions wayland_extensions;
 
 #if defined(USE_NEW_FRAME_AUTHORIZATION)
-    AuthModel auth_model{default_auth_model};
+    AuthModel auth_model{default_auth_model()};
 #else
     init_authorization(wayland_extensions, auth_model);
 #endif
