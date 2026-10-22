@@ -57,6 +57,10 @@ add_library(frame-implementation
     display_configuration_builder.cpp display_configuration_builder.h
 )
 
+add_executable(frame
+    frame_main.cpp
+)
+
 if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
     # CEC Support
     target_sources(frame-implementation PRIVATE
@@ -72,6 +76,7 @@ if(MIRAL_VERSION VERSION_GREATER_EQUAL "6.1.0")
         PRIVATE
         new_frame_authorization.cpp new_frame_authorization.h
     )
+    target_compile_definitions(frame PRIVATE USE_NEW_FRAME_AUTHORIZATION)
     target_compile_definitions(
         frame-implementation
         PRIVATE
@@ -84,10 +89,6 @@ else()
         frame_authorization.cpp frame_authorization.h
     )
 endif()
-
-add_executable(frame
-    frame_main.cpp
-)
 
 # Check for boost
 find_package(Boost 1.48.0 COMPONENTS iostreams REQUIRED)

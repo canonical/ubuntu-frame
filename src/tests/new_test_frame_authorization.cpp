@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "frame_authorization.h"
+#include "new_frame_authorization.h"
 
 #include <mir/abnormal_exit.h>
 
