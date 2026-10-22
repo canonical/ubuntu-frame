@@ -29,6 +29,10 @@ public:
                          &privileged_clients = {});
 
   AuthModel(const AuthModel &) = default;
+  auto operator=(const AuthModel &) -> AuthModel & = default;
+
+  AuthModel(AuthModel &&) = default;
+  auto operator=(AuthModel &&) -> AuthModel & = default;
 
   /// Add a privileged client, in the form `kind:value:protocol`.
   ///
