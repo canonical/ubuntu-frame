@@ -5,6 +5,7 @@ apt-get install \
   dmz-cursor-theme \
   fonts-ubuntu \
   gcovr \
+  git-lfs \
   inotify-tools \
   lcov \
   libclang-rt-dev \
