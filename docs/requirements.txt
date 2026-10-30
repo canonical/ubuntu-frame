@@ -1,7 +1,12 @@
-# Canonical theme (still needed for Furo theme and custom templates)
-canonical-sphinx~=0.6
+# Ulwazi theme and Sphinx build tools
+sphinx
+build
+sphinx-basic-ng
+beautifulsoup4
+ulwazi
+sphinx-modern-pdf-style
 
-# Extensions previously auto-loaded by canonical-sphinx
+# Sphinx extensions used by the documentation
 myst-parser~=4.0    # v5.0.0 causes version conflicts
 sphinx-autobuild
 sphinx-design
