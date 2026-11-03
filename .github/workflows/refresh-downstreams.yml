@@ -20,7 +20,7 @@ jobs:
       fail-fast: false
       matrix:
         ref:
-        - mir-libs-build
+        - 24/mir-libs-build
 
     steps:
     - name: Drop LFS
