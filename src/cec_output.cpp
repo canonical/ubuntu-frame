@@ -26,9 +26,7 @@ CecOutput::CecOutput(mir::graphics::DisplayConfigurationOutputId output_id, std:
     id{output_id},
     adapter{std::move(adapter)},
     worker{[this] { run(); }}
-{
-    mir::log(mir::logging::Severity::debug, log_component, "CEC worker created for output %d", id.as_value());
-}
+{ mir::log(mir::logging::Severity::debug, log_component, "CEC worker created for output %d", id.as_value()); }
 
 CecOutput::~CecOutput() { shutdown(); }
 

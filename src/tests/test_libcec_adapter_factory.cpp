@@ -34,10 +34,7 @@ public:
     MOCK_METHOD(CEC::ICECAdapter*, initialize, (CEC::libcec_configuration*));
 };
 
-void destroy_mock(CEC::ICECAdapter* adapter)
-{
-    delete adapter;
-}
+void destroy_mock(CEC::ICECAdapter* adapter) { delete adapter; }
 
 class LibCecAdapterFactoryTest : public Test
 {
@@ -47,26 +44,28 @@ protected:
         auto connection = std::make_unique<StrictMock<MockICECAdapter>>();
         auto& mock = *connection;
         EXPECT_CALL(mock, InitVideoStandalone()).Times(AnyNumber());
-        ON_CALL(mock, DetectAdapters(_, _, _, _)).WillByDefault(
-            [ports](CEC::cec_adapter_descriptor* descriptors, std::uint8_t, const char*, bool)
-            {
-                for (std::size_t index = 0; index < ports.size(); ++index)
-                    std::snprintf(
-                        descriptors[index].strComName,
-                        sizeof(descriptors[index].strComName),
-                        "%s",
-                        ports[index].c_str());
-                return static_cast<std::int8_t>(ports.size());
-            });
+        ON_CALL(mock, DetectAdapters(_, _, _, _))
+            .WillByDefault(
+                [ports](CEC::cec_adapter_descriptor* descriptors, std::uint8_t, char const*, bool)
+                {
+                    for (std::size_t index = 0; index < ports.size(); ++index)
+                        std::snprintf(
+                            descriptors[index].strComName,
+                            sizeof(descriptors[index].strComName),
+                            "%s",
+                            ports[index].c_str());
+                    return static_cast<std::int8_t>(ports.size());
+                });
         EXPECT_CALL(mock, DetectAdapters(_, 16, IsNull(), true)).Times(1);
         EXPECT_CALL(initializer, initialize(_))
             .InSequence(initialization)
-            .WillOnce([connection = std::move(connection)](CEC::libcec_configuration* config) mutable
-            {
-                EXPECT_EQ(config->bActivateSource, 0);
-                EXPECT_EQ(config->deviceTypes.types[0], CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE);
-                return connection.release();
-            });
+            .WillOnce(
+                [connection = std::move(connection)](CEC::libcec_configuration* config) mutable
+                {
+                    EXPECT_EQ(config->bActivateSource, 0);
+                    EXPECT_EQ(config->deviceTypes.types[0], CEC::CEC_DEVICE_TYPE_PLAYBACK_DEVICE);
+                    return connection.release();
+                });
         return mock;
     }
 
@@ -78,18 +77,18 @@ protected:
         EXPECT_CALL(mock, InitVideoStandalone()).Times(AnyNumber());
         EXPECT_CALL(mock, Open(StrEq(port), _)).WillOnce(Return(opens));
         EXPECT_CALL(mock, GetCurrentConfiguration(_)).Times(opens ? 1 : 0);
-        ON_CALL(mock, GetCurrentConfiguration(_)).WillByDefault([address](CEC::libcec_configuration* config)
-        {
-            config->iPhysicalAddress = address;
-            return true;
-        });
+        ON_CALL(mock, GetCurrentConfiguration(_))
+            .WillByDefault(
+                [address](CEC::libcec_configuration* config)
+                {
+                    config->iPhysicalAddress = address;
+                    return true;
+                });
         EXPECT_CALL(mock, Close()).Times(opens ? 1 : 0);
         EXPECT_CALL(initializer, initialize(_))
             .InSequence(initialization)
             .WillOnce([connection = std::move(connection)](CEC::libcec_configuration*) mutable
-            {
-                return connection.release();
-            });
+                      { return connection.release(); });
         return mock;
     }
 

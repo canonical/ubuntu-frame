@@ -24,7 +24,6 @@
 
 using namespace miral;
 
-
 auto default_auth_model() -> AuthModel const&
 {
     // A function-local static to ensure the WaylandExtension::* globals are known to be initialised
@@ -51,70 +50,76 @@ auto default_auth_model() -> AuthModel const&
     return default_auth_model;
 }
 
-AuthModel::AuthModel(
-    std::map<std::string, std::set<std::string>> const& privileged_clients)
-    : privileged_clients{privileged_clients},
-      authorise_without_apparmor{false} {}
+AuthModel::AuthModel(std::map<std::string, std::set<std::string>> const& privileged_clients) :
+    privileged_clients{privileged_clients},
+    authorise_without_apparmor{false}
+{}
 
-void AuthModel::add_privileged_client(std::string const &policy) {
-  auto const first_colon = policy.find(':');
-  auto const second_colon = first_colon == std::string::npos ? std::string::npos : policy.find(':', first_colon + 1);
-  auto const extra_colon = second_colon == std::string::npos ? std::string::npos : policy.find(':', second_colon + 1);
-  if (first_colon == std::string::npos || second_colon == std::string::npos ||
-      extra_colon != std::string::npos) {
-    throw mir::AbnormalExit("Invalid privileged client, must be in form "
-                            "`snap:<snap-name>:<protocol>` (`protocol` can be omitted to clear protocol list): " +
-                            policy);
-  }
-
-  auto const policy_kind = policy.substr(0, first_colon);
-  auto const policy_value =
-      policy.substr(first_colon + 1, second_colon - (first_colon + 1));
-  auto const protocol = policy.substr(second_colon + 1);
-
-  if (policy_kind != "snap") {
-    throw mir::AbnormalExit(
-        "Invalid privileged client, only `snap` clients supported: " + policy);
-  }
-
-  if (policy_value == "") {
-    throw mir::AbnormalExit(
-        "Invalid privileged client, empty snap name is invalid: " + policy);
-  }
-
-  auto &snap_protocols =
-      privileged_clients.insert({policy_value, {}}).first->second;
-  if (protocol == "") {
-    snap_protocols.clear();
-  } else {
-    snap_protocols.insert(protocol);
-  }
-}
-
-void AuthModel::set_authorise_without_apparmor(bool value) {
-  authorise_without_apparmor = value;
-}
-
-void AuthModel::apply_to(miral::WaylandExtensions &extensions) const {
-  std::map<std::string, std::set<std::string>> protocols{};
-  for (auto const &[snap, snap_protocols] : privileged_clients) {
-    for (auto const &protocol : snap_protocols) {
-      auto const snaps = protocols.insert({protocol, {}}).first;
-      snaps->second.insert(snap);
+void AuthModel::add_privileged_client(std::string const& policy)
+{
+    auto const first_colon = policy.find(':');
+    auto const second_colon = first_colon == std::string::npos ? std::string::npos : policy.find(':', first_colon + 1);
+    auto const extra_colon = second_colon == std::string::npos ? std::string::npos : policy.find(':', second_colon + 1);
+    if (first_colon == std::string::npos || second_colon == std::string::npos || extra_colon != std::string::npos)
+    {
+        throw mir::AbnormalExit(
+            "Invalid privileged client, must be in form "
+            "`snap:<snap-name>:<protocol>` (`protocol` can be omitted to clear protocol list): " +
+            policy);
     }
-  }
 
-  for (auto const &[protocol, snaps] : protocols) {
-    extensions.conditionally_enable(
-        protocol, [snaps, authorise_without_apparmor =
-                              authorise_without_apparmor](auto const &info) {
-          if (info.user_preference()) {
-            return info.user_preference().value();
-          }
+    auto const policy_kind = policy.substr(0, first_colon);
+    auto const policy_value = policy.substr(first_colon + 1, second_colon - (first_colon + 1));
+    auto const protocol = policy.substr(second_colon + 1);
 
-          auto const snap_name =
-              snap_name_of(info.app(), authorise_without_apparmor);
-          return snaps.find(snap_name) != snaps.end();
-        });
-  }
+    if (policy_kind != "snap")
+    {
+        throw mir::AbnormalExit("Invalid privileged client, only `snap` clients supported: " + policy);
+    }
+
+    if (policy_value == "")
+    {
+        throw mir::AbnormalExit("Invalid privileged client, empty snap name is invalid: " + policy);
+    }
+
+    auto& snap_protocols = privileged_clients.insert({policy_value, {}}).first->second;
+    if (protocol == "")
+    {
+        snap_protocols.clear();
+    }
+    else
+    {
+        snap_protocols.insert(protocol);
+    }
+}
+
+void AuthModel::set_authorise_without_apparmor(bool value) { authorise_without_apparmor = value; }
+
+void AuthModel::apply_to(miral::WaylandExtensions& extensions) const
+{
+    std::map<std::string, std::set<std::string>> protocols{};
+    for (auto const& [snap, snap_protocols] : privileged_clients)
+    {
+        for (auto const& protocol : snap_protocols)
+        {
+            auto const snaps = protocols.insert({protocol, {}}).first;
+            snaps->second.insert(snap);
+        }
+    }
+
+    for (auto const& [protocol, snaps] : protocols)
+    {
+        extensions.conditionally_enable(
+            protocol,
+            [snaps, authorise_without_apparmor = authorise_without_apparmor](auto const& info)
+            {
+                if (info.user_preference())
+                {
+                    return info.user_preference().value();
+                }
+
+                auto const snap_name = snap_name_of(info.app(), authorise_without_apparmor);
+                return snaps.find(snap_name) != snaps.end();
+            });
+    }
 }

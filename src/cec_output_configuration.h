@@ -29,10 +29,8 @@ class CecOutputConfiguration final : public miral::OutputConfiguration::Strategy
 public:
     explicit CecOutputConfiguration(std::shared_ptr<CecManager> manager);
 
-    void apply_configuration(
-        std::span<mir::graphics::UserDisplayConfigurationOutput> outputs) override;
-    void confirm_configuration(
-        std::span<mir::graphics::DisplayConfigurationOutput const> outputs) override;
+    void apply_configuration(std::span<mir::graphics::UserDisplayConfigurationOutput> outputs) override;
+    void confirm_configuration(std::span<mir::graphics::DisplayConfigurationOutput const> outputs) override;
 
 private:
     std::shared_ptr<CecManager> const manager;
