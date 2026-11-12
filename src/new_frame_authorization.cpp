@@ -50,9 +50,9 @@ auto default_auth_model() -> AuthModel const&
     return default_auth_model;
 }
 
-AuthModel::AuthModel(std::map<std::string, std::set<std::string>> const& privileged_clients) :
-    privileged_clients{privileged_clients},
-    authorise_without_apparmor{false}
+AuthModel::AuthModel(std::map<std::string, std::set<std::string>> const& privileged_clients)
+    : privileged_clients{privileged_clients},
+      authorise_without_apparmor{false}
 {}
 
 void AuthModel::add_privileged_client(std::string const& policy)

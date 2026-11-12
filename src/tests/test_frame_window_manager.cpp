@@ -94,10 +94,10 @@ miral::DisplayConfiguration write_and_build_display_config(
 class FrameWindowManagerWithSurfaceTitleInDisplayConfig : public FrameWindowManagerTest
 {
 protected:
-    FrameWindowManagerWithSurfaceTitleInDisplayConfig() :
-        display_config(write_and_build_display_config(
-            "/tmp/test.display",
-            R"(
+    FrameWindowManagerWithSurfaceTitleInDisplayConfig()
+        : display_config(write_and_build_display_config(
+              "/tmp/test.display",
+              R"(
 layouts:
   default:
     cards:
@@ -114,7 +114,7 @@ layouts:
       position: [ 100, 100 ]
       size: [ 50, 50 ]
 )",
-            runner))
+              runner))
     { display_config.operator()(server); }
 
     miral::DisplayConfiguration get_display_config() override { return display_config; }

@@ -43,22 +43,22 @@ AuthModel const auth_model{{
 
 namespace { bool authorise_without_apparmor = false; }
 
-AuthModel::AuthModel(std::vector<std::pair<std::string, std::vector<std::string>>> const& protocols_for_snaps) :
-    snaps_for_protocols{[&]()
-                        {
-                            // The mapping of snap names -> allowed protocols is convenient and less error-prone to specify,
-                            // but to use it we need to reverse the mapping into one of protocols -> snap names.
-                            std::map<std::string, std::set<std::string>> snaps_for_protocols;
-                            for (auto const& [snap, protocols] : protocols_for_snaps)
-                            {
-                                for (auto const& protocol : protocols)
-                                {
-                                    auto const iter = snaps_for_protocols.insert({protocol, {}}).first;
-                                    iter->second.insert(snap);
-                                }
-                            }
-                            return snaps_for_protocols;
-                        }()}
+AuthModel::AuthModel(std::vector<std::pair<std::string, std::vector<std::string>>> const& protocols_for_snaps)
+    : snaps_for_protocols{[&]()
+                          {
+                              // The mapping of snap names -> allowed protocols is convenient and less error-prone to specify,
+                              // but to use it we need to reverse the mapping into one of protocols -> snap names.
+                              std::map<std::string, std::set<std::string>> snaps_for_protocols;
+                              for (auto const& [snap, protocols] : protocols_for_snaps)
+                              {
+                                  for (auto const& protocol : protocols)
+                                  {
+                                      auto const iter = snaps_for_protocols.insert({protocol, {}}).first;
+                                      iter->second.insert(snap);
+                                  }
+                              }
+                              return snaps_for_protocols;
+                          }()}
 {}
 
 void init_authorization(miral::WaylandExtensions& extensions, AuthModel const& model)

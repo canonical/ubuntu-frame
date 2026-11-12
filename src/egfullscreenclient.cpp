@@ -83,14 +83,14 @@ void egmde::FullscreenClient::Output::scale(void* data, wl_output* /*wl_output*/
 egmde::FullscreenClient::Output::Output(
     wl_output* output,
     std::function<void(Output const&)> on_constructed,
-    std::function<void(Output const&)> on_change) :
-    output{output},
-    on_done{
-        [this, on_constructed = std::move(on_constructed), on_change = std::move(on_change)](Output const& o) mutable
-        {
-            on_constructed(o);
-            on_done = std::move(on_change);
-        }}
+    std::function<void(Output const&)> on_change)
+    : output{output},
+      on_done{
+          [this, on_constructed = std::move(on_constructed), on_change = std::move(on_change)](Output const& o) mutable
+          {
+              on_constructed(o);
+              on_done = std::move(on_change);
+          }}
 { wl_output_add_listener(output, &output_listener, this); }
 
 egmde::FullscreenClient::Output::~Output()
@@ -147,15 +147,15 @@ egmde::FullscreenClient::FullscreenClient(
     std::optional<Path> diagnostic_path,
     uint diagnostic_delay,
     miral::MirRunner* runner,
-    WindowManagerObserver* window_manager_observer) :
-    draw_signal{::eventfd(0, EFD_SEMAPHORE)},
-    shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
-    diagnostic_signal{inotify_init()},
-    registry{nullptr, [](auto) {}},
-    diagnostic_path{diagnostic_path},
-    diagnostic_delay{diagnostic_delay},
-    runner{runner},
-    window_manager_observer{window_manager_observer}
+    WindowManagerObserver* window_manager_observer)
+    : draw_signal{::eventfd(0, EFD_SEMAPHORE)},
+      shutdown_signal{::eventfd(0, EFD_CLOEXEC)},
+      diagnostic_signal{inotify_init()},
+      registry{nullptr, [](auto) {}},
+      diagnostic_path{diagnostic_path},
+      diagnostic_delay{diagnostic_delay},
+      runner{runner},
+      window_manager_observer{window_manager_observer}
 {
     fds[display_fd] = {wl_display_get_fd(display), POLLIN, 0};
     fds[draw_fd] = {draw_signal, POLLIN, 0};

@@ -172,10 +172,10 @@ std::string const FrameWindowManagerPolicy::snap_name = "snap-name";
 FrameWindowManagerPolicy::FrameWindowManagerPolicy(
     WindowManagerTools const& tools,
     WindowManagerObserver& window_manager_observer,
-    miral::DisplayConfiguration const& display_config) :
-    KioskWindowManagerPolicy{tools},
-    window_manager_observer{window_manager_observer},
-    display_config{display_config}
+    miral::DisplayConfiguration const& display_config)
+    : KioskWindowManagerPolicy{tools},
+      window_manager_observer{window_manager_observer},
+      display_config{display_config}
 { window_manager_observer.set_weak_window_count(window_count); }
 
 bool FrameWindowManagerPolicy::handle_keyboard_event(MirKeyboardEvent const* event) { return false; }

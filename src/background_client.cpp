@@ -81,9 +81,9 @@ auto TextRenderer::DiagnosticText::from(Path const& path) -> DiagnosticText
     return DiagnosticText{std::move(lines)};
 }
 
-BackgroundClient::BackgroundClient(miral::MirRunner* runner, WindowManagerObserver* window_manager_observer) :
-    runner{runner},
-    window_manager_observer{window_manager_observer}
+BackgroundClient::BackgroundClient(miral::MirRunner* runner, WindowManagerObserver* window_manager_observer)
+    : runner{runner},
+      window_manager_observer{window_manager_observer}
 {}
 
 struct BackgroundClient::Self : egmde::FullscreenClient
@@ -309,16 +309,16 @@ BackgroundClient::Self::Self(
     Colour const& crash_background_colour,
     Colour const& crash_text_colour,
     std::optional<Path> diagnostic_path,
-    uint diagnostic_delay) :
-    FullscreenClient(display, diagnostic_path, diagnostic_delay, runner, window_manager_observer),
-    runner{runner},
-    wallpaper_enabled{wallpaper_enabled},
-    wallpaper_top_colour{wallpaper_top_colour},
-    wallpaper_bottom_colour{wallpaper_bottom_colour},
-    crash_background_colour{crash_background_colour},
-    crash_text_colour{crash_text_colour},
-    text_renderer{TextRenderer(get_font_path())},
-    diagnostic_path{diagnostic_path}
+    uint diagnostic_delay)
+    : FullscreenClient(display, diagnostic_path, diagnostic_delay, runner, window_manager_observer),
+      runner{runner},
+      wallpaper_enabled{wallpaper_enabled},
+      wallpaper_top_colour{wallpaper_top_colour},
+      wallpaper_bottom_colour{wallpaper_bottom_colour},
+      crash_background_colour{crash_background_colour},
+      crash_text_colour{crash_text_colour},
+      text_renderer{TextRenderer(get_font_path())},
+      diagnostic_path{diagnostic_path}
 {
     wl_display_roundtrip(display);
     wl_display_roundtrip(display);

@@ -97,11 +97,11 @@ LayoutMetadata::LayoutApplicationPlacementStrategy::LayoutApplicationPlacementSt
     std::optional<std::string> const& snap_name,
     std::optional<std::string> const& surface_title,
     mir::geometry::Point const& position,
-    mir::geometry::Size const& size) :
-    snap_name(snap_name),
-    surface_title(surface_title),
-    position(position),
-    size(size)
+    mir::geometry::Size const& size)
+    : snap_name(snap_name),
+      surface_title(surface_title),
+      position(position),
+      size(size)
 {}
 
 std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata::LayoutApplicationPlacementStrategy::
