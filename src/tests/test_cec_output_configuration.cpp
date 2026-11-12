@@ -48,11 +48,13 @@ protected:
     void expect_active_source(std::promise<void>& sent)
     {
         EXPECT_CALL(mock_adapter, send_power_on_tv()).Times(1);
-        EXPECT_CALL(mock_adapter, send_make_active_source()).WillOnce([&sent]
-        {
-            sent.set_value();
-            return true;
-        });
+        EXPECT_CALL(mock_adapter, send_make_active_source())
+            .WillOnce(
+                [&sent]
+                {
+                    sent.set_value();
+                    return true;
+                });
     }
 
     std::unique_ptr<MockCecAdapter> adapter = std::make_unique<StrictMock<MockCecAdapter>>();
@@ -63,8 +65,7 @@ protected:
 
 TEST_F(CecOutputConfigurationTest, apply_does_not_modify_outputs)
 {
-    auto manager = std::make_shared<CecManager>(
-        std::make_unique<StrictMock<MockCecAdapterFactory>>());
+    auto manager = std::make_shared<CecManager>(std::make_unique<StrictMock<MockCecAdapterFactory>>());
     CecOutputConfiguration strategy{manager};
     mg::UserDisplayConfigurationOutput user_output{output};
 

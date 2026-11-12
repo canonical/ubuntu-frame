@@ -20,9 +20,9 @@
 #include <miral/version.h>
 
 #if MIRAL_VERSION >= MIR_VERSION_NUMBER(6, 0, 0)
-#include <miral/kiosk_window_manager.h>
+  #include <miral/kiosk_window_manager.h>
 #else
-#include <miral/minimal_window_manager.h>
+  #include <miral/minimal_window_manager.h>
 namespace miral { using KioskWindowManagerPolicy = MinimalWindowManager; }
 #endif
 
@@ -34,7 +34,11 @@ namespace miral { using KioskWindowManagerPolicy = MinimalWindowManager; }
 
 // FIXME Remove this once mir::optional_value is unavailable in any supported Mir version
 #ifndef MIR_OPTIONAL_VALUE_H_
-namespace mir { template<class T> using optional_value = std::optional<T>; }
+namespace mir
+{
+template<class T>
+using optional_value = std::optional<T>;
+}
 #endif
 using namespace mir::geometry;
 
@@ -94,14 +98,16 @@ public:
         miral::DisplayConfiguration const& display_config);
 
     auto place_new_window(miral::ApplicationInfo const& app_info, miral::WindowSpecification const& request)
-    -> miral::WindowSpecification override;
+        -> miral::WindowSpecification override;
 
     void handle_window_ready(miral::WindowInfo& window_info) override;
 
     bool handle_keyboard_event(MirKeyboardEvent const* event) override;
     void handle_modify_window(miral::WindowInfo& window_info, miral::WindowSpecification const& modifications) override;
 
-    auto confirm_placement_on_display(const miral::WindowInfo& window_info, MirWindowState new_state,
+    auto confirm_placement_on_display(
+        miral::WindowInfo const& window_info,
+        MirWindowState new_state,
         Rectangle const& new_placement) -> Rectangle override;
 
     void advise_delete_window(miral::WindowInfo const& /*window_info*/) override;
@@ -113,8 +119,8 @@ public:
     void advise_application_zone_create(miral::Zone const& application_zone) override;
     void advise_application_zone_update(miral::Zone const& updated, miral::Zone const& original) override;
     void advise_application_zone_delete(miral::Zone const& application_zone) override;
-    void advise_output_create(miral::Output const &output) override;
-    void advise_output_delete(miral::Output const &output) override;
+    void advise_output_create(miral::Output const& output) override;
+    void advise_output_delete(miral::Output const& output) override;
 
     void advise_output_update(miral::Output const& updated, miral::Output const& original) override;
 
@@ -132,7 +138,9 @@ private:
         void update(miral::Output const& output);
         void clear(miral::Output const& output);
 
-        bool set_output_for_surface(miral::WindowSpecification& specification, mir::optional_value<std::string> const& title) const;
+        bool set_output_for_surface(
+            miral::WindowSpecification& specification,
+            mir::optional_value<std::string> const& title) const;
         bool set_output_for_snap(miral::WindowSpecification& specification, std::string_view name) const;
 
     private:

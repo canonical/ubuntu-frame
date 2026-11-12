@@ -108,11 +108,6 @@ auto snap_name_of(miral::Application const& app, bool fallback_without_apparmor,
 }
 
 auto snap_name_of(miral::Application const& app, bool fallback_without_apparmor) -> std::string
-{
-    return snap_name_of(app, fallback_without_apparmor, true);
-}
+{ return snap_name_of(app, fallback_without_apparmor, true); }
 
-auto snap_instance_name_of(miral::Application const& app) -> std::string
-{
-    return snap_name_of(app, true, false);
-}
+auto snap_instance_name_of(miral::Application const& app) -> std::string { return snap_name_of(app, true, false); }

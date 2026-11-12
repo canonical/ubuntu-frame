@@ -20,16 +20,15 @@
 
 #include <miral/version.h>
 
-auto build_display_configuration(miral::MirRunner const& runner)
-    -> miral::DisplayConfiguration
+auto build_display_configuration(miral::MirRunner const& runner) -> miral::DisplayConfiguration
 {
     miral::DisplayConfiguration display_config{runner};
     display_config.add_output_attribute(FrameWindowManagerPolicy::surface_title);
     display_config.add_output_attribute(FrameWindowManagerPolicy::snap_name);
 
-    display_config.layout_userdata_builder("applications", [](miral::DisplayConfiguration::Node const& node) -> std::any
-    {
-        return std::make_shared<LayoutMetadata>(node);
-    });
+    display_config.layout_userdata_builder(
+        "applications",
+        [](miral::DisplayConfiguration::Node const& node) -> std::any
+        { return std::make_shared<LayoutMetadata>(node); });
     return display_config;
 }
