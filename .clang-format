@@ -41,7 +41,7 @@ BraceWrapping:
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
 BreakConstructorInitializers: BeforeColon
-BreakBeforeTernaryOperators: false
+BreakBeforeTernaryOperators: true
 ColumnLimit: 120
 Cpp11BracedListStyle: true
 EmptyLineAfterAccessModifier: Leave
