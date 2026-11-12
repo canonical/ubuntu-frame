@@ -431,8 +431,8 @@ void BackgroundClient::stop()
 
 inline auto area(geom::Size size) -> size_t
 {
-    return (size.width > geom::Width{} && size.height > geom::Height{}) ? size.width.as_int() * size.height.as_int() :
-                                                                          0;
+    return (size.width > geom::Width{} && size.height > geom::Height{}) ? size.width.as_int() * size.height.as_int()
+                                                                        : 0;
 }
 
 auto TextRenderer::convert_utf8_to_utf32(std::string const& text) -> std::u32string
