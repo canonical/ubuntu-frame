@@ -17,10 +17,26 @@
  */
 
 #include "background_client.h"
+
+#if defined(USE_NEW_FRAME_AUTHORIZATION)
+#include "new_frame_authorization.h"
+#else
 #include "frame_authorization.h"
+#endif
+
 #include "frame_window_manager.h"
 #include "display_configuration_builder.h"
 #include "safe_mode.h"
+
+#include <miral/version.h>
+
+#ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
+#include "cec_adapter.h"
+#include "cec_manager.h"
+#include "cec_output_configuration.h"
+#include "libcec_adapter.h"
+#include <miral/output_configuration.h>
+#endif
 
 #include <miral/configuration_option.h>
 #include <miral/decorations.h>
@@ -29,8 +45,6 @@
 #include <miral/runner.h>
 #include <miral/set_window_management_policy.h>
 #include <miral/wayland_extensions.h>
-
-#include <miral/version.h>
 
 #include <miral/live_config_ini_file.h>
 #include <miral/cursor_scale.h>
@@ -55,11 +69,26 @@ int main(int argc, char const* argv[])
     enable_safe_mode(argv, runner);
 
     WaylandExtensions wayland_extensions;
+
+#if defined(USE_NEW_FRAME_AUTHORIZATION)
+    AuthModel auth_model{default_auth_model()};
+#else
     init_authorization(wayland_extensions, auth_model);
+#endif
 
     BackgroundClient background_client(&runner, &window_manager_observer);
 
     runner.add_stop_callback([&] { background_client.stop(); });
+#ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
+    std::shared_ptr<CecManager> cec_manager;
+    miral::OutputConfiguration cec_output_configuration;
+    runner.add_stop_callback(
+        [&]
+        {
+            if (cec_manager)
+                cec_manager->shutdown();
+        });
+#endif
     auto display_config = build_display_configuration(runner);
 
     miral::live_config::IniFileWithOverrides ini_files;
@@ -87,11 +116,32 @@ int main(int argc, char const* argv[])
         },
         ".ini"};
 
+#ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
+    ConfigurationOption cec_option{
+        [&](bool enabled)
+        {
+            if (!enabled || cec_manager)
+                return;
+
+            cec_manager = std::make_shared<CecManager>(
+                std::make_unique<LibCecAdapterFactory>());
+            cec_manager->start();
+            cec_output_configuration.update_strategy(
+                std::make_shared<CecOutputConfiguration>(cec_manager));
+        },
+        "cec-control",
+        "Use HDMI-CEC to control compatible displays' power state and input",
+        false};
+#endif
+
     return runner.run_with(
         {
-            wayland_extensions,
             display_config,
             display_config.layout_option(),
+#ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
+            cec_option,
+            cec_output_configuration,
+#endif
             ConfigurationOption{[&](bool option) { background_client.set_wallpaper_enabled(option); },
                                "wallpaper", "Specifies whether or not the wallpaper is enabled", true},
             ConfigurationOption{[&](auto& option) { background_client.set_wallpaper_top_colour(option);},
@@ -107,8 +157,25 @@ int main(int argc, char const* argv[])
             ConfigurationOption{[&] (int option) { background_client.set_diagnostic_delay(option);},
                                 "diagnostic-delay", "Delay time (in seconds) before displaying diagnostic screen", 0},
             StartupInternalClient{std::ref(background_client)},
+#if defined(USE_NEW_FRAME_AUTHORIZATION)
+            miral::pre_init(ConfigurationOption{[&](bool option) { auth_model.set_authorise_without_apparmor(option); },
+                               "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false }),
+            miral::pre_init(ConfigurationOption{
+                [&](std::vector<std::string> const& privileged_clients) {
+                    for (auto const& privileged_client : privileged_clients) {
+                        auth_model.add_privileged_client(privileged_client);
+                    }
+                },
+               "privileged-client",
+               "Add a privileged client (snap:<snap-name>:<wayland-protocol>), can be provided multiple times. Omitting the protocol (snap:<snap-name>:) will clear the protocol list for a snap."}),
+            miral::pre_init([&]() {
+                auth_model.apply_to(wayland_extensions);
+            }),
+#else
             ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
                                "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
+#endif
+            wayland_extensions,
             set_window_management_policy<FrameWindowManagerPolicy>(
                 window_manager_observer,
                 display_config),

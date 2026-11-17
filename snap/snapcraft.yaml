@@ -42,12 +42,13 @@ apps:
     - bin/gpu-2604-wrapper
     command: usr/local/bin/frame
     plugs:
-      - opengl                # for compositing
-      - login-session-control # to run as a user login (e.g. from a VT)
-      - x11                   # to run on a host X11 server
-      - network-bind          # to run via X-forwarding (e.g. development in a container/VM)
-      - hardware-observe      # libinput likes to scan udev
       - desktop-launch
+      - hardware-observe      # libinput likes to scan udev
+      - login-session-control # to run as a user login (e.g. from a VT)
+      - network-bind          # to run via X-forwarding (e.g. development in a container/VM)
+      - opengl                # for compositing
+      - serial-port           # for USB-based HDMI-CEC adapters
+      - x11                   # to run on a host X11 server
     slots:
       - wayland
     environment:
@@ -85,9 +86,10 @@ apps:
       HOME: $SNAP_DATA
       XDG_DATA_DIRS: $SNAP/usr/share:/var/lib/snapd/desktop
     plugs:
+      - desktop-launch
       - hardware-observe      # libinput likes to scan udev
       - opengl
-      - desktop-launch
+      - serial-port           # for USB-based HDMI-CEC adapters
     slots:
       - wayland
 
@@ -117,8 +119,45 @@ slots:
       - $SNAP_COMMON/diagnostic
 
 parts:
-  ubuntu-frame:
+  libcec:
+    plugin: cmake
+    source: https://git.launchpad.net/~git-ubuntu-import/ubuntu/+source/libcec
+    source-type: git
+    source-branch: applied/debian/sid
     override-pull: |
+      # https://git.launchpad.net/ubuntu/+source/libcec/tree/debian/rules?h=applied/debian/sid#n20
+      craftctl default
+      cp --verbose \
+        debian/src/libcec/platform/adl/adl_defines.h \
+        debian/src/libcec/platform/adl/adl_sdk.h \
+        debian/src/libcec/platform/adl/adl_structures.h \
+        src/libcec/platform/adl/
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DDISABLE_CLIENT=ON
+      - -DDISABLE_STATIC=ON
+      - -DDISABLE_BUILDINFO=ON
+      - -DSKIP_PYTHON_WRAPPER=1
+      - -DHAVE_LINUX_API=ON
+      - -DHAVE_EXYNOS_API=ON
+      - -DHAVE_TEGRA_API=ON
+      - -DHAVE_AOCEC_API=ON
+    build-packages:
+      - libudev-dev
+    stage-packages:
+      - libudev1
+    override-stage: |
+      craftctl default
+      sed -i -E 's!^(libdir|includedir)=/usr!\1=${prefix}!' ${CRAFT_STAGE}/usr/lib/*/pkgconfig/libcec.pc
+    prime:
+      - -usr/include
+      - -usr/lib/*/pkgconfig
+      - -usr/lib/*/cmake
+
+  ubuntu-frame:
+    after: [libcec]
+    override-build: |
       craftctl default
       mir_version=`LANG=C apt-cache policy mir-graphics-drivers-desktop | sed -rne 's/^\s+Candidate:\s+([^-]*)-.+$/\1/p'`
       # work around https://github.com/diddlesnaps/snapcraft-multiarch-action/issues/22
@@ -131,13 +170,15 @@ parts:
       - -DENABLE_TESTING=OFF
     source: src
     build-packages:
-      - pkg-config
+      - libapparmor-dev
+      - libboost-iostreams-dev
+      - libfreetype6-dev
+      - libglm-dev
       - libmiral-dev
       - libmircommon-dev
+      - libudev-dev
       - libwayland-dev
-      - libboost-iostreams-dev
-      - libapparmor-dev
-      - libfreetype6-dev
+      - pkg-config
     stage-packages:
       - libboost-iostreams1.90.0
       # Stage libmiral<n> indirectly as we cannot (since core22) do `try:/else:`
@@ -160,10 +201,10 @@ parts:
   platform:
     plugin: nil
     stage-packages:
-      - mir-platform-graphics-gbm-kms
       - mir-platform-graphics-atomic-kms
-      - mir-platform-graphics-x
       - mir-platform-graphics-eglstream-kms
+      - mir-platform-graphics-gbm-kms
+      - mir-platform-graphics-x
     prime:
       - usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}
       - usr/share/libinput
@@ -191,13 +232,13 @@ parts:
 
   gpu-snap:
     after:
-      - ubuntu-frame
       - assets
-      - platform
-      - icons
-      - scripts
       - grim
+      - icons
       - launcher
+      - platform
+      - scripts
+      - ubuntu-frame
     source: https://github.com/canonical/gpu-snap.git
     plugin: dump
     override-prime: |

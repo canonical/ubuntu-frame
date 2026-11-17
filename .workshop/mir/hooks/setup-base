@@ -1,7 +1,0 @@
-add-apt-repository --yes --enable-source --update ppa:mir-team/dev
-apt-get install \
-  libmiral-dev \
-  libmircommon-dev \
-  libmirserver-dev \
-  mirtest-dev \
-  mir-graphics-drivers-desktop

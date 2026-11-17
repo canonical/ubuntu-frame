@@ -3,6 +3,7 @@
 src/build-*
 src/cmake-*
 src/build
+compile_commands.json
 
 /.vscode
 /.workshop.lock

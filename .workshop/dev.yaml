@@ -1,10 +1,14 @@
 name: dev
 base: ubuntu@26.04
 sdks:
-- name: project-mir
+- name: mir
 - name: project-frame
 - name: copilot
 - name: flutter
+
+connections:
+- plug: frame:mir
+  slot: mir:install
 
 actions:
   configure-frame: |
@@ -50,6 +54,14 @@ actions:
     set -euo pipefail
 
     cmake --build "$HOME/build/src" "$@"
+
+  coverage: |
+    set -euo pipefail
+
+    cmake -S src -B "$HOME/build/src" -DENABLE_COVERAGE=ON
+    cmake --build "$HOME/build/src" --target coverage_html "$@"
+    echo
+    echo "Coverage report available at http://$( hostname -f ):8001/"
 
   build-launcher: |
     set -euo pipefail
