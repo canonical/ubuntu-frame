@@ -22,13 +22,11 @@
 
 namespace { constexpr char const* log_component = "frame-cec"; }
 
-CecOutput::CecOutput(mir::graphics::DisplayConfigurationOutputId output_id, std::unique_ptr<CecAdapter> adapter) :
-    id{output_id},
-    adapter{std::move(adapter)},
-    worker{[this] { run(); }}
-{
-    mir::log(mir::logging::Severity::debug, log_component, "CEC worker created for output %d", id.as_value());
-}
+CecOutput::CecOutput(mir::graphics::DisplayConfigurationOutputId output_id, std::unique_ptr<CecAdapter> adapter)
+    : id{output_id},
+      adapter{std::move(adapter)},
+      worker{[this] { run(); }}
+{ mir::log(mir::logging::Severity::debug, log_component, "CEC worker created for output %d", id.as_value()); }
 
 CecOutput::~CecOutput() { shutdown(); }
 

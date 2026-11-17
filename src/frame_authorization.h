@@ -26,8 +26,7 @@
 class AuthModel
 {
 public:
-    AuthModel(
-        std::vector<std::pair<std::string, std::vector<std::string>>> const& protocols_for_snaps);
+    AuthModel(std::vector<std::pair<std::string, std::vector<std::string>>> const& protocols_for_snaps);
 
     std::map<std::string, std::set<std::string>> const snaps_for_protocols;
 };

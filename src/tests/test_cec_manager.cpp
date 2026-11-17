@@ -56,11 +56,13 @@ protected:
     void expect_on_state()
     {
         EXPECT_CALL(mock_adapter, send_power_on_tv()).Times(1);
-        EXPECT_CALL(mock_adapter, send_make_active_source()).WillOnce([this]
-        {
-            on_applied.set_value();
-            return true;
-        });
+        EXPECT_CALL(mock_adapter, send_make_active_source())
+            .WillOnce(
+                [this]
+                {
+                    on_applied.set_value();
+                    return true;
+                });
         EXPECT_CALL(mock_adapter, send_standby_tv()).Times(1);
     }
 

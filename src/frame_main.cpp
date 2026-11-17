@@ -19,9 +19,9 @@
 #include "background_client.h"
 
 #if defined(USE_NEW_FRAME_AUTHORIZATION)
-#include "new_frame_authorization.h"
+  #include "new_frame_authorization.h"
 #else
-#include "frame_authorization.h"
+  #include "frame_authorization.h"
 #endif
 
 #include "frame_window_manager.h"
@@ -31,11 +31,11 @@
 #include <miral/version.h>
 
 #ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
-#include "cec_adapter.h"
-#include "cec_manager.h"
-#include "cec_output_configuration.h"
-#include "libcec_adapter.h"
-#include <miral/output_configuration.h>
+  #include "cec_adapter.h"
+  #include "cec_manager.h"
+  #include "cec_output_configuration.h"
+  #include "libcec_adapter.h"
+  #include <miral/output_configuration.h>
 #endif
 
 #include <miral/configuration_option.h>
@@ -61,9 +61,7 @@ int main(int argc, char const* argv[])
     using namespace miral;
     // In safe mode use a known-good minimal config
     // to avoid re-parsing the broken config file
-    MirRunner runner = getenv(safe_mode_env) ?
-    MirRunner{argc, argv, "frame.safe-config"} :
-    MirRunner{argc, argv};
+    MirRunner runner = getenv(safe_mode_env) ? MirRunner{argc, argv, "frame.safe-config"} : MirRunner{argc, argv};
     WindowManagerObserver window_manager_observer{};
 
     enable_safe_mode(argv, runner);
@@ -109,11 +107,10 @@ int main(int argc, char const* argv[])
     }();
 
     miral::ConfigFile config_file{
-        runner, accessibility_config_path,
+        runner,
+        accessibility_config_path,
         miral::ConfigFile::Mode::reload_on_change,
-        [&ini_files](miral::live_config::OverridesList const &overrides) {
-          ini_files.load(overrides);
-        },
+        [&ini_files](miral::live_config::OverridesList const& overrides) { ini_files.load(overrides); },
         ".ini"};
 
 #ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
@@ -123,66 +120,91 @@ int main(int argc, char const* argv[])
             if (!enabled || cec_manager)
                 return;
 
-            cec_manager = std::make_shared<CecManager>(
-                std::make_unique<LibCecAdapterFactory>());
+            cec_manager = std::make_shared<CecManager>(std::make_unique<LibCecAdapterFactory>());
             cec_manager->start();
-            cec_output_configuration.update_strategy(
-                std::make_shared<CecOutputConfiguration>(cec_manager));
+            cec_output_configuration.update_strategy(std::make_shared<CecOutputConfiguration>(cec_manager));
         },
         "cec-control",
         "Use HDMI-CEC to control compatible displays' power state and input",
         false};
 #endif
 
-    return runner.run_with(
-        {
-            display_config,
-            display_config.layout_option(),
+    return runner.run_with({
+        display_config,
+        display_config.layout_option(),
 #ifdef FRAME_HAS_CEC_OUTPUT_CONFIGURATION
-            cec_option,
-            cec_output_configuration,
+        cec_option,
+        cec_output_configuration,
 #endif
-            ConfigurationOption{[&](bool option) { background_client.set_wallpaper_enabled(option); },
-                               "wallpaper", "Specifies whether or not the wallpaper is enabled", true},
-            ConfigurationOption{[&](auto& option) { background_client.set_wallpaper_top_colour(option);},
-                               "wallpaper-top",    "Colour of wallpaper RGB", "0x7f7f7f"},
-            ConfigurationOption{[&](auto& option) { background_client.set_wallpaper_bottom_colour(option);},
-                               "wallpaper-bottom", "Colour of wallpaper RGB", "0x1f1f1f"},
-            ConfigurationOption{[&](auto& option) { background_client.set_crash_background_colour(option);},
-                               "diagnostic-background", "Colour of diagnostic screen background RGB", "0x380c24"},
-            ConfigurationOption{[&](auto& option) { background_client.set_crash_text_colour(option);},
-                               "diagnostic-text",       "Colour of diagnostic screen text RGB", "0xffffff"},
-            ConfigurationOption{[&] (auto& option) { background_client.set_diagnostic_path(option);},
-                               "diagnostic-path",  "Path (including filename) of diagnostic file", ""},
-            ConfigurationOption{[&] (int option) { background_client.set_diagnostic_delay(option);},
-                                "diagnostic-delay", "Delay time (in seconds) before displaying diagnostic screen", 0},
-            StartupInternalClient{std::ref(background_client)},
+        ConfigurationOption{
+            [&](bool option) { background_client.set_wallpaper_enabled(option); },
+            "wallpaper",
+            "Specifies whether or not the wallpaper is enabled",
+            true},
+        ConfigurationOption{
+            [&](auto& option) { background_client.set_wallpaper_top_colour(option); },
+            "wallpaper-top",
+            "Colour of wallpaper RGB",
+            "0x7f7f7f"},
+        ConfigurationOption{
+            [&](auto& option) { background_client.set_wallpaper_bottom_colour(option); },
+            "wallpaper-bottom",
+            "Colour of wallpaper RGB",
+            "0x1f1f1f"},
+        ConfigurationOption{
+            [&](auto& option) { background_client.set_crash_background_colour(option); },
+            "diagnostic-background",
+            "Colour of diagnostic screen background RGB",
+            "0x380c24"},
+        ConfigurationOption{
+            [&](auto& option) { background_client.set_crash_text_colour(option); },
+            "diagnostic-text",
+            "Colour of diagnostic screen text RGB",
+            "0xffffff"},
+        ConfigurationOption{
+            [&](auto& option) { background_client.set_diagnostic_path(option); },
+            "diagnostic-path",
+            "Path (including filename) of diagnostic file",
+            ""},
+        ConfigurationOption{
+            [&](int option) { background_client.set_diagnostic_delay(option); },
+            "diagnostic-delay",
+            "Delay time (in seconds) before displaying diagnostic screen",
+            0},
+        StartupInternalClient{std::ref(background_client)},
 #if defined(USE_NEW_FRAME_AUTHORIZATION)
-            miral::pre_init(ConfigurationOption{[&](bool option) { auth_model.set_authorise_without_apparmor(option); },
-                               "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false }),
-            miral::pre_init(ConfigurationOption{
-                [&](std::vector<std::string> const& privileged_clients) {
-                    for (auto const& privileged_client : privileged_clients) {
+        miral::pre_init(
+            ConfigurationOption{
+                [&](bool option) { auth_model.set_authorise_without_apparmor(option); },
+                "authorise-without-apparmor",
+                "Use /proc/<pid>/cmdline if AppArmor is unavailable",
+                false}),
+        miral::pre_init(
+            ConfigurationOption{
+                [&](std::vector<std::string> const& privileged_clients)
+                {
+                    for (auto const& privileged_client : privileged_clients)
+                    {
                         auth_model.add_privileged_client(privileged_client);
                     }
                 },
-               "privileged-client",
-               "Add a privileged client (snap:<snap-name>:<wayland-protocol>), can be provided multiple times. Omitting the protocol (snap:<snap-name>:) will clear the protocol list for a snap."}),
-            miral::pre_init([&]() {
-                auth_model.apply_to(wayland_extensions);
-            }),
+                "privileged-client",
+                "Add a privileged client (snap:<snap-name>:<wayland-protocol>), can be provided multiple times. "
+                "Omitting the protocol (snap:<snap-name>:) will clear the protocol list for a snap."}),
+        miral::pre_init([&]() { auth_model.apply_to(wayland_extensions); }),
 #else
-            ConfigurationOption{[&](bool option) { init_authorise_without_apparmor(option);},
-                               "authorise-without-apparmor", "Use /proc/<pid>/cmdline if AppArmor is unavailable", false },
+        ConfigurationOption{
+            [&](bool option) { init_authorise_without_apparmor(option); },
+            "authorise-without-apparmor",
+            "Use /proc/<pid>/cmdline if AppArmor is unavailable",
+            false},
 #endif
-            wayland_extensions,
-            set_window_management_policy<FrameWindowManagerPolicy>(
-                window_manager_observer,
-                display_config),
-            Keymap{},
-            miral::Decorations::always_csd(),
-            cursor_scale,
-            output_filter,
-            magnifier,
-        });
+        wayland_extensions,
+        set_window_management_policy<FrameWindowManagerPolicy>(window_manager_observer, display_config),
+        Keymap{},
+        miral::Decorations::always_csd(),
+        cursor_scale,
+        output_filter,
+        magnifier,
+    });
 }

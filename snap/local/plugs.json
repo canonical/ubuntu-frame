@@ -1,5 +1,5 @@
 {
-  "desktop-launch": {
-    "allow-installation": "true"
-  }
+    "desktop-launch": {
+        "allow-installation": "true"
+    }
 }

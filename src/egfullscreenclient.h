@@ -36,9 +36,10 @@
 
 #include <sys/poll.h>
 
-namespace miral {
-    class MirRunner;
-    class FdHandle;
+namespace miral
+{
+class MirRunner;
+class FdHandle;
 }
 
 class WindowManagerObserver;
@@ -64,7 +65,7 @@ public:
     void stop();
 
     auto make_shm_pool(size_t size, void** data) const
-    -> std::unique_ptr<wl_shm_pool, std::function<void(wl_shm_pool*)>>;
+        -> std::unique_ptr<wl_shm_pool, std::function<void(wl_shm_pool*)>>;
 
     wl_display* display = nullptr;
     wl_compositor* compositor = nullptr;
@@ -95,6 +96,7 @@ public:
         int32_t transform = WL_OUTPUT_TRANSFORM_NORMAL;
         wl_output* output;
         int32_t scale_factor = 1;
+
     private:
         static void done(void* data, wl_output* output);
 
@@ -106,8 +108,8 @@ public:
             int32_t physical_width,
             int32_t physical_height,
             int32_t subpixel,
-            const char* make,
-            const char* model,
+            char const* make,
+            char const* model,
             int32_t transform);
 
         static void mode(
@@ -179,33 +181,17 @@ protected:
         wl_fixed_t x,
         wl_fixed_t y);
 
-    virtual void touch_up(
-        wl_touch* touch,
-        uint32_t serial,
-        uint32_t time,
-        int32_t id);
+    virtual void touch_up(wl_touch* touch, uint32_t serial, uint32_t time, int32_t id);
 
-    virtual void touch_motion(
-        wl_touch* touch,
-        uint32_t time,
-        int32_t id,
-        wl_fixed_t x,
-        wl_fixed_t y);
+    virtual void touch_motion(wl_touch* touch, uint32_t time, int32_t id, wl_fixed_t x, wl_fixed_t y);
 
     virtual void touch_frame(wl_touch* touch);
 
     virtual void touch_cancel(wl_touch* touch);
 
-    virtual void touch_shape(
-        wl_touch* touch,
-        int32_t id,
-        wl_fixed_t major,
-        wl_fixed_t minor);
+    virtual void touch_shape(wl_touch* touch, int32_t id, wl_fixed_t major, wl_fixed_t minor);
 
-    virtual void touch_orientation(
-        wl_touch* touch,
-        int32_t id,
-        wl_fixed_t orientation);
+    virtual void touch_orientation(wl_touch* touch, int32_t id, wl_fixed_t orientation);
 
     void flush_display();
 
@@ -232,18 +218,12 @@ private:
     wl_seat* seat = nullptr;
     wl_shm* shm = nullptr;
 
-    void new_global(
-        struct wl_registry* registry,
-        uint32_t id,
-        char const* interface,
-        uint32_t version);
+    void new_global(struct wl_registry* registry, uint32_t id, char const* interface, uint32_t version);
 
-    void remove_global(
-        struct wl_registry* registry,
-        uint32_t id);
+    void remove_global(struct wl_registry* registry, uint32_t id);
 
     void seat_capabilities(wl_seat* seat, uint32_t capabilities);
-    void seat_name(wl_seat* seat, const char* name);
+    void seat_name(wl_seat* seat, char const* name);
 
     void set_diagnostic_delay_alarm();
     void notify_diagnostic_delay_expired();
@@ -265,7 +245,8 @@ private:
     bool diagnostic_wants_to_draw = false;
     bool diagnostic_exists = false;
 
-    enum FdIndices {
+    enum FdIndices
+    {
         display_fd = 0,
         draw_fd,
         diagnostic,

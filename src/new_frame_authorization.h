@@ -23,29 +23,29 @@
 #include <miral/wayland_extensions.h>
 #include <set>
 
-class AuthModel {
+class AuthModel
+{
 public:
-  explicit AuthModel(std::map<std::string, std::set<std::string>> const
-                         &privileged_clients = {});
+    explicit AuthModel(std::map<std::string, std::set<std::string>> const& privileged_clients = {});
 
-  AuthModel(const AuthModel &) = default;
-  auto operator=(const AuthModel &) -> AuthModel & = default;
+    AuthModel(AuthModel const&) = default;
+    auto operator=(AuthModel const&) -> AuthModel& = default;
 
-  AuthModel(AuthModel &&) = default;
-  auto operator=(AuthModel &&) -> AuthModel & = default;
+    AuthModel(AuthModel&&) = default;
+    auto operator=(AuthModel&&) -> AuthModel& = default;
 
-  /// Add a privileged client, in the form `kind:value:protocol`.
-  ///
-  /// Currently, only `snap` is supported, where `value` is a snap name. If
-  /// `protocol` is empty, it will clear any previous policies for that snap.
-  void add_privileged_client(std::string const &policy);
-  void set_authorise_without_apparmor(bool value);
+    /// Add a privileged client, in the form `kind:value:protocol`.
+    ///
+    /// Currently, only `snap` is supported, where `value` is a snap name. If
+    /// `protocol` is empty, it will clear any previous policies for that snap.
+    void add_privileged_client(std::string const& policy);
+    void set_authorise_without_apparmor(bool value);
 
-  void apply_to(miral::WaylandExtensions &extensions) const;
+    void apply_to(miral::WaylandExtensions& extensions) const;
 
 protected:
-  std::map<std::string, std::set<std::string>> privileged_clients;
-  bool authorise_without_apparmor;
+    std::map<std::string, std::set<std::string>> privileged_clients;
+    bool authorise_without_apparmor;
 };
 
 auto default_auth_model() -> AuthModel const&;

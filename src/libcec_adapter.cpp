@@ -100,10 +100,10 @@ auto LibCecAdapter::open(std::string port, LibCecConnection connection) -> std::
 LibCecAdapter::LibCecAdapter(
     std::string port,
     LibCecConnection connection,
-    std::optional<std::uint16_t> physical_address) :
-    port_name{std::move(port)},
-    connection{std::move(connection)},
-    address{physical_address}
+    std::optional<std::uint16_t> physical_address)
+    : port_name{std::move(port)},
+      connection{std::move(connection)},
+      address{physical_address}
 {}
 
 LibCecAdapter::~LibCecAdapter() { close(); }
@@ -200,7 +200,7 @@ auto LibCecAdapterFactory::discover() -> std::vector<std::unique_ptr<CecAdapter>
     return adapters;
 }
 
-LibCecAdapterFactory::LibCecAdapterFactory(Initialize initialize, Destroy destroy) :
-    initialize{initialize ? std::move(initialize) : Initialize{&CECInitialise}},
-    destroy{destroy}
+LibCecAdapterFactory::LibCecAdapterFactory(Initialize initialize, Destroy destroy)
+    : initialize{initialize ? std::move(initialize) : Initialize{&CECInitialise}},
+      destroy{destroy}
 {}

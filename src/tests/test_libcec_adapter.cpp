@@ -26,10 +26,7 @@ using namespace testing;
 
 namespace
 {
-void destroy_mock(CEC::ICECAdapter* adapter)
-{
-    delete adapter;
-}
+void destroy_mock(CEC::ICECAdapter* adapter) { delete adapter; }
 
 class LibCecAdapterTest : public Test
 {
@@ -38,11 +35,13 @@ protected:
     {
         EXPECT_CALL(mock, InitVideoStandalone()).Times(AnyNumber());
         ON_CALL(mock, Open(_, _)).WillByDefault(Return(true));
-        ON_CALL(mock, GetCurrentConfiguration(_)).WillByDefault([this](CEC::libcec_configuration* config)
-        {
-            config->iPhysicalAddress = physical_address.value_or(CEC_INVALID_PHYSICAL_ADDRESS);
-            return true;
-        });
+        ON_CALL(mock, GetCurrentConfiguration(_))
+            .WillByDefault(
+                [this](CEC::libcec_configuration* config)
+                {
+                    config->iPhysicalAddress = physical_address.value_or(CEC_INVALID_PHYSICAL_ADDRESS);
+                    return true;
+                });
     }
 
     auto open_adapter(bool succeeds = true) -> std::unique_ptr<LibCecAdapter>

@@ -20,7 +20,7 @@
 
 namespace
 {
-bool try_parse_vec2(miral::DisplayConfiguration::Node const& node, const char* field_name, int& x, int& y)
+bool try_parse_vec2(miral::DisplayConfiguration::Node const& node, char const* field_name, int& x, int& y)
 {
     if (node.type() != miral::DisplayConfiguration::Node::Type::map)
     {
@@ -36,21 +36,25 @@ bool try_parse_vec2(miral::DisplayConfiguration::Node const& node, const char* f
 
     auto const field = node.at(field_name);
     std::vector<int> integers;
-    field.value().for_each([field_name, &integers](miral::DisplayConfiguration::Node const& node)
-    {
-        if (node.type() != miral::DisplayConfiguration::Node::Type::integer)
+    field.value().for_each(
+        [field_name, &integers](miral::DisplayConfiguration::Node const& node)
         {
-            mir::log_error("Invalid application strategy: vector 2 contains a non-integer member in %s", field_name);
-            return;
-        }
+            if (node.type() != miral::DisplayConfiguration::Node::Type::integer)
+            {
+                mir::log_error(
+                    "Invalid application strategy: vector 2 contains a non-integer member in %s", field_name);
+                return;
+            }
 
-        integers.push_back(node.as_int());
-    });
+            integers.push_back(node.as_int());
+        });
 
     if (integers.size() != 2)
     {
-        mir::log_error("Invalid application strategy: '%s' must have a length of 2, but has length %lu",
-            field_name, integers.size());
+        mir::log_error(
+            "Invalid application strategy: '%s' must have a length of 2, but has length %lu",
+            field_name,
+            integers.size());
         return false;
     }
 
@@ -62,14 +66,16 @@ bool try_parse_vec2(miral::DisplayConfiguration::Node const& node, const char* f
 
 LayoutMetadata::LayoutMetadata(miral::DisplayConfiguration::Node const& applications_node)
 {
-    applications_node.for_each([&](miral::DisplayConfiguration::Node const& node)
-    {
-        if (auto const app = LayoutApplicationPlacementStrategy::from_node(node))
-            applications.push_back(app.value());
-    });
+    applications_node.for_each(
+        [&](miral::DisplayConfiguration::Node const& node)
+        {
+            if (auto const app = LayoutApplicationPlacementStrategy::from_node(node))
+                applications.push_back(app.value());
+        });
 }
 
-bool LayoutMetadata::try_layout(miral::WindowSpecification& specification,
+bool LayoutMetadata::try_layout(
+    miral::WindowSpecification& specification,
     mir::optional_value<std::string> const& title,
     std::string_view snap_name) const
 {
@@ -98,8 +104,8 @@ LayoutMetadata::LayoutApplicationPlacementStrategy::LayoutApplicationPlacementSt
       size(size)
 {}
 
-std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata::LayoutApplicationPlacementStrategy::from_node(
-    miral::DisplayConfiguration::Node const& node)
+std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata::LayoutApplicationPlacementStrategy::
+    from_node(miral::DisplayConfiguration::Node const& node)
 {
     if (node.type() != miral::DisplayConfiguration::Node::Type::map)
     {
@@ -109,15 +115,17 @@ std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata
 
     if (!node.has("snap-name") && !node.has("surface-title"))
     {
-        mir::log_error("Invalid application strategy: missing snap-name and surface-title. One of them"
-                       " must be provided.");
+        mir::log_error(
+            "Invalid application strategy: missing snap-name and surface-title. One of them"
+            " must be provided.");
         return std::nullopt;
     }
 
     if (node.has("snap-name") && node.has("surface-title"))
     {
-        mir::log_error("Invalid application strategy: provided both snap-name and surface-title, but"
-                       " only one of them can be provided.");
+        mir::log_error(
+            "Invalid application strategy: provided both snap-name and surface-title, but"
+            " only one of them can be provided.");
         return std::nullopt;
     }
 
@@ -144,7 +152,6 @@ std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata
             return std::nullopt;
         }
 
-
         surface_title = node.at("surface-title").value().as_string();
     }
 
@@ -157,9 +164,5 @@ std::optional<LayoutMetadata::LayoutApplicationPlacementStrategy> LayoutMetadata
     if (!try_parse_vec2(node, "size", w, h))
         return std::nullopt;
 
-    return LayoutApplicationPlacementStrategy(
-        snap_name,
-        surface_title,
-        {x, y},
-        {w, h});
+    return LayoutApplicationPlacementStrategy(snap_name, surface_title, {x, y}, {w, h});
 }

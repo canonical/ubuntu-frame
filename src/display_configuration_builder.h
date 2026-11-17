@@ -19,12 +19,8 @@
 
 #include <miral/display_configuration.h>
 
-namespace miral
-{
-class MirRunner;
-}
+namespace miral { class MirRunner; }
 
-auto build_display_configuration(miral::MirRunner const& runner)
-    -> miral::DisplayConfiguration;
+auto build_display_configuration(miral::MirRunner const& runner) -> miral::DisplayConfiguration;
 
 #endif // FRAME_DISPLAY_CONFIGURATION_BUILDER_H

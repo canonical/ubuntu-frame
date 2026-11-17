@@ -111,9 +111,7 @@ void CecManager::shutdown()
 }
 
 auto CecManager::is_hdmi(mg::DisplayConfigurationOutputType type) -> bool
-{
-    return type == mg::DisplayConfigurationOutputType::hdmia || type == mg::DisplayConfigurationOutputType::hdmib;
-}
+{ return type == mg::DisplayConfigurationOutputType::hdmia || type == mg::DisplayConfigurationOutputType::hdmib; }
 
 void CecManager::refresh_outputs(std::span<mg::DisplayConfigurationOutput const> outputs, State& state)
 {
