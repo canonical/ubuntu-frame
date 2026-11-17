@@ -44,6 +44,7 @@ apps:
     plugs:
       - desktop-launch
       - hardware-observe      # libinput likes to scan udev
+      - hdmi-cec              # for HDMI-CEC control support
       - login-session-control # to run as a user login (e.g. from a VT)
       - network-bind          # to run via X-forwarding (e.g. development in a container/VM)
       - opengl                # for compositing
@@ -88,6 +89,7 @@ apps:
     plugs:
       - desktop-launch
       - hardware-observe      # libinput likes to scan udev
+      - hdmi-cec              # for HDMI-CEC control support
       - opengl
       - serial-port           # for USB-based HDMI-CEC adapters
     slots:
