@@ -12,6 +12,11 @@
       "matchPackageNames": ["myst-parser"],
       "matchFileNames": ["docs/requirements.txt"],
       "enabled": false
+    },
+    {
+      "matchPackageNames": ["flutter_lints"],
+      "matchFileNames": ["launcher/pubspec.yaml"],
+      "enabled": false
     }
   ]
 }
