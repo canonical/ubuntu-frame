@@ -13,41 +13,19 @@ jobs:
     permissions:
       contents: read
 
-    timeout-minutes: 90
-
     strategy:
       matrix:
         platform: [amd64, arm64]
       fail-fast: false
 
-    runs-on: >-
-      ${{ contains(fromJSON('["amd64","riscv64"]'), matrix.platform) && 'ubuntu-latest' ||
-          matrix.platform == 'arm64' && 'ubuntu-26.04-arm' ||
-          fromJSON(format('["self-hosted","{0}","medium"]', matrix.platform)) }}
-
-    steps:
-    - name: Check out code
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      with:
-        lfs: true
-        fetch-depth: 0  # needed for version determination
-        persist-credentials: false
-
-    - name: Patch PPA and version
-      run: |
+    uses: ./.github/workflows/reusable-snap.yml
+    with:
+      architecture: ${{ matrix.platform }}
+      checkout-lfs: true
+      prepare: |
         sed -i 's@mir-team/release@mir-team/dev@' snap/snapcraft.yaml
         sed -i 's@rev-list --count@rev-parse --short@' snap/snapcraft.yaml
-
-    - name: Build and publish the snap
-      uses: canonical/actions/build-snap@78e8dd5f693653767f2c60c4a6a421a1ebed35af # release @ 2025.06.05
-      with:
-        architecture: ${{ matrix.platform }}
-        snapcraft-token: ${{ secrets.SNAPCRAFT_TOKEN }}
-        publish: ${{ github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name }}
-        publish-channel: 26/edge/pr${{ github.event.number }}
-
-    - if: ${{ failure() && runner.debug  }}
-      name: Setup upterm session
-      uses: canonical/action-tmate@bda82e73586a62bf621881aab872a527c8a46e2d # main @ 2026.03.02
-      with:
-        limit-access-to-actor: true
+      publish: ${{ github.event_name == 'pull_request' && github.repository == github.event.pull_request.head.repo.full_name }}
+      publish-channel: 26/edge/pr${{ github.event.number }}
+    secrets:
+      snapcraft-token: ${{ secrets.SNAPCRAFT_TOKEN }}
