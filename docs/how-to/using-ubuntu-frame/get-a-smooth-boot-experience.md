@@ -34,19 +34,10 @@ sudo snap install wpe-webkit-mir-kiosk
 
 By default, Plymouth (the daemon responsible for the splash screen) quits at the end of the boot process. We need to prevent that, but make it release the GPU resources so that Frame can take over.
 
-To do this, we'll add the following changes to the Ubuntu Frame daemon service, either via `sudo systemctl edit snap.ubuntu-frame.daemon.service` or just dropping these lines into the file:
+To do this, we'll connect the `plymouth-replace` interface:
 
-```ini
-# /etc/systemd/system/snap.ubuntu-frame.daemon.service.d/override.conf
-[Unit]
-Conflicts=plymouth-quit.service
-After=plymouth-quit.service
-OnFailure=plymouth-quit.service
-
-[Service]
-ExecStartPre=-/usr/bin/plymouth deactivate
-ExecStartPost=/usr/bin/sleep 10
-ExecStartPost=-/usr/bin/plymouth quit --retain-splash
+```shell
+sudo snap connect ubuntu-frame:plymouth-replace
 ```
 
 Another change we want to do is tell Ubuntu Frame to not draw its wallpaper, and run on the first virtual terminal:
@@ -73,27 +64,8 @@ Refer to the relevant documentation for how to {ref}`configure Frame <configurin
       config: |
         vt=1
         wallpaper=false
-  ```
-
-- One way to include the necessary service changes is by {doc}`including cloud-init configuration <core:reference/gadget-snap-format>` in the gadget snap:
-
-  ```
-  # cloud.conf
-  #cloud-config
-  datasource_list: [NoCloud]
-
-  write_files:
-  - path: '/etc/systemd/system/snap.ubuntu-frame.daemon.service.d/override.conf'
-    content: |
-      [Unit]
-      Conflicts=plymouth-quit.service
-      After=plymouth-quit.service
-      OnFailure=plymouth-quit.service
-
-      [Service]
-      ExecStartPre=-/usr/bin/plymouth deactivate
-      ExecStartPost=/usr/bin/sleep 10
-      ExecStartPost=-/usr/bin/plymouth quit --retain-splash
+  connections:
+    - plug: BPZbvWzvoMTrpec4goCXlckLe2IhfthK:plymouth-replace
   ```
 
 ## Display configuration

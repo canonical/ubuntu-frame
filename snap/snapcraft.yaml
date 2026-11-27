@@ -89,6 +89,7 @@ apps:
       - desktop-launch
       - hardware-observe      # libinput likes to scan udev
       - opengl
+      - plymouth-replace
       - serial-port           # for USB-based HDMI-CEC adapters
     slots:
       - wayland
