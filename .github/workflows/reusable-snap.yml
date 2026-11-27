@@ -1,0 +1,145 @@
+name: Build snap
+
+on:
+  workflow_call:
+    inputs:
+      architecture:
+        description: Snap architecture to build
+        type: string
+        required: true
+      runner:
+        description: Override the architecture-based runner selection
+        type: string
+        default: ''
+      timeout-minutes:
+        type: number
+        default: 90
+      repository:
+        description: Repository to check out; defaults to the caller
+        type: string
+        default: ''
+      ref:
+        description: Ref to check out; defaults to the checkout action's default
+        type: string
+        default: ''
+      checkout-lfs:
+        type: boolean
+        default: false
+      fetch-depth:
+        type: number
+        default: 0
+      prepare:
+        description: Bash commands to run after checkout and before building
+        type: string
+        default: ''
+      test:
+        description: Bash commands to run after building, with SNAP_PATH and SNAP_NAME set
+        type: string
+        default: ''
+      snapcraft-channel:
+        type: string
+        default: stable
+      review:
+        type: boolean
+        default: true
+      review-opts:
+        type: string
+        default: ''
+      launchpad-accept-public-upload:
+        type: boolean
+        default: false
+      publish:
+        description: Whether to publish; callers must restrict this to trusted events
+        type: boolean
+        default: false
+      publish-channel:
+        type: string
+        default: ''
+      upload-artifact:
+        type: boolean
+        default: false
+    secrets:
+      snapcraft-token:
+        required: false
+      launchpad-credentials:
+        required: false
+    outputs:
+      snap-name:
+        description: Filename of the built snap
+        value: ${{ jobs.build.outputs.snap-name }}
+
+permissions: {}
+
+jobs:
+  build:
+    name: Snap (${{ inputs.architecture }})
+    runs-on: >-
+      ${{ inputs.runner ||
+          contains(fromJSON('["amd64","riscv64"]'), inputs.architecture) && 'ubuntu-latest' ||
+          inputs.architecture == 'arm64' && 'ubuntu-26.04-arm' ||
+          fromJSON(format('["self-hosted","{0}","medium"]', inputs.architecture)) }}
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    permissions:
+      contents: read
+    outputs:
+      snap-name: ${{ steps.build-snap.outputs.snap-name }}
+    steps:
+    - name: Check out code
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        repository: ${{ inputs.repository || github.repository }}
+        ref: ${{ inputs.ref }}
+        lfs: ${{ inputs.checkout-lfs }}
+        fetch-depth: ${{ inputs.fetch-depth }}
+        persist-credentials: false
+
+    - name: Prepare snap
+      if: inputs.prepare != ''
+      env:
+        PREPARE: ${{ inputs.prepare }}
+        SNAP_ARCHITECTURE: ${{ inputs.architecture }}
+      run: bash -eo pipefail -c "$PREPARE"
+
+    - name: Require consent for remote builds
+      if: >-
+        ${{ inputs.architecture != fromJSON('{"X86":"i386","X64":"amd64","ARM":"armhf","ARM64":"arm64"}')[runner.arch] &&
+            !inputs.launchpad-accept-public-upload }}
+      run: |
+        echo "::error::Remote builds require launchpad-accept-public-upload: true"
+        exit 1
+
+    - name: Build and publish the snap
+      id: build-snap
+      uses: canonical/actions/build-snap@78e8dd5f693653767f2c60c4a6a421a1ebed35af # release @ 2025.06.05
+      with:
+        architecture: ${{ inputs.architecture }}
+        snapcraft-channel: ${{ inputs.snapcraft-channel }}
+        review: ${{ inputs.review }}
+        review-opts: ${{ inputs.review-opts }}
+        snapcraft-token: ${{ secrets.snapcraft-token }}
+        launchpad-credentials: ${{ secrets.launchpad-credentials }}
+        launchpad-accept-public-upload: ${{ inputs.launchpad-accept-public-upload }}
+        publish: ${{ inputs.publish }}
+        publish-channel: ${{ inputs.publish-channel }}
+
+    - name: Test snap
+      if: inputs.test != ''
+      env:
+        TEST: ${{ inputs.test }}
+        SNAP_ARCHITECTURE: ${{ inputs.architecture }}
+        SNAP_PATH: ${{ steps.build-snap.outputs.snap-path }}
+        SNAP_NAME: ${{ steps.build-snap.outputs.snap-name }}
+      run: bash -eo pipefail -c "$TEST"
+
+    - name: Store snap as artifact
+      if: inputs.upload-artifact
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: ${{ steps.build-snap.outputs.snap-name }}
+        path: ${{ steps.build-snap.outputs.snap-path }}
+
+    - if: ${{ failure() && runner.debug }}
+      name: Setup upterm session
+      uses: canonical/action-tmate@bda82e73586a62bf621881aab872a527c8a46e2d # main @ 2026.03.02
+      with:
+        limit-access-to-actor: true

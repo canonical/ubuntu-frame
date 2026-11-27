@@ -8,15 +8,9 @@ permissions: {}
 
 jobs:
   close:
-    runs-on: ubuntu-latest
     permissions: {}
-
-    timeout-minutes: 5
-
-    steps:
-    - name: Close obsolete channels
-      uses: canonical/actions/close-snap@78e8dd5f693653767f2c60c4a6a421a1ebed35af # release @ 2025.06.05
-      continue-on-error: true
-      with:
-        channel: 26/edge/pr${{ github.event.number }}
-        snapcraft-token: ${{ secrets.SNAPCRAFT_TOKEN }}
+    uses: ./.github/workflows/reusable-close-snap.yml
+    with:
+      channel: 26/edge/pr${{ github.event.number }}
+    secrets:
+      snapcraft-token: ${{ secrets.SNAPCRAFT_TOKEN }}
