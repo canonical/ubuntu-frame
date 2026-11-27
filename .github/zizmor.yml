@@ -3,4 +3,6 @@ rules:
     ignore:
     - close-snap.yml
     - snap.yml
+    - reusable-close-snap.yml
+    - reusable-snap.yml
     - tics.yml
