@@ -82,7 +82,7 @@ jobs:
         git diff --name-only ${{ github.sha }}~1 ${{ github.sha }} >> $TICS_CHANGED_LIST
 
     - name: Run TICS analysis
-      uses: tiobe/tics-github-action@06afa6781ba53ab58efbe766d41d84febad1f683 # v4.0.0
+      uses: tiobe/tics-github-action@ef5606b61f5cf77831ea000680ed1dfad34ceff3 # v4.2.0
       with:
         mode: ${{ contains(fromJSON('["pull_request", "merge_group"]'), github.event_name) && 'client' || 'qserver' }}
         project: ubuntu-frame
